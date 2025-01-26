@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace araras_health_hub_api.Models
+namespace araras_health_hub_api.Dtos.Destination
 {
-    public class Destination
+    public class CreateDestinationRequestDto
     {
-        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
@@ -20,6 +19,5 @@ namespace araras_health_hub_api.Models
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         public DateTime UpdatedOn { get; set; }
         public bool IsActive { get; set; } = true;
-        public List<DestinationUser> DestinationUsers { get; set; } = new List<DestinationUser>();
     }
 }

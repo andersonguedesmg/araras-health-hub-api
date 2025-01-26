@@ -222,7 +222,7 @@ namespace araras_health_hub_api.Migrations
             modelBuilder.Entity("araras_health_hub_api.Models.DestinationUser", b =>
                 {
                     b.HasOne("araras_health_hub_api.Models.Destination", "Destination")
-                        .WithMany("Comments")
+                        .WithMany("DestinationUsers")
                         .HasForeignKey("DestinationId");
 
                     b.Navigation("Destination");
@@ -230,7 +230,7 @@ namespace araras_health_hub_api.Migrations
 
             modelBuilder.Entity("araras_health_hub_api.Models.Destination", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("DestinationUsers");
                 });
 #pragma warning restore 612, 618
         }

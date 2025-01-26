@@ -12,7 +12,7 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250126115919_init")]
+    [Migration("20250126141747_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -225,7 +225,7 @@ namespace araras_health_hub_api.Migrations
             modelBuilder.Entity("araras_health_hub_api.Models.DestinationUser", b =>
                 {
                     b.HasOne("araras_health_hub_api.Models.Destination", "Destination")
-                        .WithMany("Comments")
+                        .WithMany("DestinationUsers")
                         .HasForeignKey("DestinationId");
 
                     b.Navigation("Destination");
@@ -233,7 +233,7 @@ namespace araras_health_hub_api.Migrations
 
             modelBuilder.Entity("araras_health_hub_api.Models.Destination", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("DestinationUsers");
                 });
 #pragma warning restore 612, 618
         }
