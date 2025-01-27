@@ -14,5 +14,6 @@ namespace araras_health_hub_api.Interfaces
         Task<Destination> CreateAsync(Destination destinationModel);
         Task<Destination?> UpdateAsync(int id, UpdateDestinationRequestDto destinationDto);
         Task<Destination?> DeleteAsync(int id);
+        Task<bool> DestinationExists(int id);
     }
 }

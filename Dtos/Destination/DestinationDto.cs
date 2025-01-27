@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using araras_health_hub_api.Dtos.DestinationUser;
 
 namespace araras_health_hub_api.Dtos.Destination
 {
@@ -20,5 +21,6 @@ namespace araras_health_hub_api.Dtos.Destination
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         public DateTime UpdatedOn { get; set; }
         public bool IsActive { get; set; } = true;
+        public List<DestinationUserDto> DestinationUsers { get; set; } = new List<DestinationUserDto>();
     }
 }

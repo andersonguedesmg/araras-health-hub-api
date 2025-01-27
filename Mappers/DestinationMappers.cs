@@ -26,6 +26,7 @@ namespace araras_health_hub_api.Mappers
                 CreatedOn = DestinationModel.CreatedOn,
                 UpdatedOn = DestinationModel.UpdatedOn,
                 IsActive = DestinationModel.IsActive,
+                DestinationUsers = DestinationModel.DestinationUsers.Select(d => d.ToDestinationUserDto()).ToList(),
             };
         }
 

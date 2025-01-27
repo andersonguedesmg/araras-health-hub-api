@@ -12,7 +12,7 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250126141747_init")]
+    [Migration("20250127123415_init")]
     partial class init
     {
         /// <inheritdoc />

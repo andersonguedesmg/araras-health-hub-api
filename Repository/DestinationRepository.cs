@@ -40,14 +40,19 @@ namespace araras_health_hub_api.Repository
             return destinationModel;
         }
 
+        public Task<bool> DestinationExists(int id)
+        {
+            return _context.Destination.AnyAsync(s => s.Id == id);
+        }
+
         public async Task<List<Destination>> GetAllAsync()
         {
-            return await _context.Destination.ToListAsync();
+            return await _context.Destination.Include(u => u.DestinationUsers).ToListAsync();
         }
 
         public async Task<Destination?> GetByIdAsync(int id)
         {
-            return await _context.Destination.FindAsync(id);
+            return await _context.Destination.Include(u => u.DestinationUsers).FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<Destination?> UpdateAsync(int id, UpdateDestinationRequestDto destinationDto)
