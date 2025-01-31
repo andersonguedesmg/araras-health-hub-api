@@ -23,6 +23,9 @@ namespace araras_health_hub_api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllSuppliers()
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var suppliers = await _supplierRepo.GetAllAsync();
 
             var suppliersDto = suppliers.Select(s => s.ToSupplierDto());
@@ -49,6 +52,9 @@ namespace araras_health_hub_api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSupplier([FromBody] CreateSupplierRequestDto supplierDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var supplierModel = supplierDto.ToSupplierFromCreateDto();
             await _supplierRepo.CreateAsync(supplierModel);
 
@@ -59,6 +65,9 @@ namespace araras_health_hub_api.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateSupplier([FromRoute] int id, [FromBody] UpdateSupplierRequestDto updateDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var supplierModel = await _supplierRepo.UpdateAsync(id, updateDto);
 
             if (supplierModel == null)
