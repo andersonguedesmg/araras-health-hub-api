@@ -23,6 +23,9 @@ namespace araras_health_hub_api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllDestinationUser()
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var destinationsUser = await _destinationUserRepo.GetAllAsync();
 
             var destinationsUserDto = destinationsUser.Select(s => s.ToDestinationUserDto());
@@ -67,6 +70,9 @@ namespace araras_health_hub_api.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateDestinationUser([FromRoute] int id, [FromBody] UpdateDestinationUserRequestDto updateDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var destinationUserModel = await _destinationUserRepo.UpdateAsync(id, updateDto.ToDestinationUserFromUpdate());
 
             if (destinationUserModel == null)

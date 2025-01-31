@@ -45,7 +45,6 @@ namespace araras_health_hub_api.Mappers
                 Name = destinationUserDto.Name,
                 Password = destinationUserDto.Password,
                 Role = destinationUserDto.Role,
-                CreatedOn = destinationUserDto.CreatedOn,
                 UpdatedOn = destinationUserDto.UpdatedOn,
                 IsActive = destinationUserDto.IsActive,
             };
