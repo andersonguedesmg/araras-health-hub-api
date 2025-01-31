@@ -23,6 +23,9 @@ namespace araras_health_hub_api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUser()
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var users = await _userRepo.GetAllAsync();
 
             var usersDto = users.Select(s => s.ToUserDto());
@@ -49,6 +52,9 @@ namespace araras_health_hub_api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestDto userDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var userModel = userDto.ToUserFromCreateDto();
             await _userRepo.CreateAsync(userModel);
 
@@ -59,6 +65,9 @@ namespace araras_health_hub_api.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequestDto updateDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var userModel = await _userRepo.UpdateAsync(id, updateDto);
 
             if (userModel == null)
