@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace araras_health_hub_api.Controllers
 {
+    [Route("api/destinationuser")]
+    [ApiController]
     public class DestinationUserController : ControllerBase
     {
         private readonly IDestinationUserRepository _destinationUserRepo;
