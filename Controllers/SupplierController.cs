@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.Supplier;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace araras_health_hub_api.Controllers
@@ -21,6 +22,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllSuppliers()
         {
             if (!ModelState.IsValid)
@@ -34,6 +36,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetSupplierById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -50,6 +53,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateSupplier([FromBody] CreateSupplierRequestDto supplierDto)
         {
             if (!ModelState.IsValid)
@@ -63,6 +67,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateSupplier([FromRoute] int id, [FromBody] UpdateSupplierRequestDto updateDto)
         {
             if (!ModelState.IsValid)
@@ -80,6 +85,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> DeleteSupplier([FromRoute] int id)
         {
             if (!ModelState.IsValid)

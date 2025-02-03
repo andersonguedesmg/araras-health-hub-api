@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.DestinationUser;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace araras_health_hub_api.Controllers
@@ -21,6 +22,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllDestinationUser()
         {
             if (!ModelState.IsValid)
@@ -34,6 +36,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetDestinationUserById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -50,6 +53,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpPost("{destinationId:int}")]
+        [Authorize]
         public async Task<IActionResult> CreateDestinationUser([FromRoute] int destinationId, CreateDestinationUserRequestDto destinationUserDto)
         {
             if (!ModelState.IsValid)
@@ -68,6 +72,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateDestinationUser([FromRoute] int id, [FromBody] UpdateDestinationUserRequestDto updateDto)
         {
             if (!ModelState.IsValid)
@@ -85,6 +90,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDestinationUse([FromRoute] int id)
         {
             if (!ModelState.IsValid)

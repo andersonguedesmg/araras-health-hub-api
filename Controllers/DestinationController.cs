@@ -6,6 +6,7 @@ using araras_health_hub_api.Data;
 using araras_health_hub_api.Dtos.Destination;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllDestination()
         {
             if (!ModelState.IsValid)
@@ -36,6 +38,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetDestinationById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -52,6 +55,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateDestination([FromBody] CreateDestinationRequestDto destinationDto)
         {
             if (!ModelState.IsValid)
@@ -65,6 +69,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateDestination([FromRoute] int id, [FromBody] UpdateDestinationRequestDto updateDto)
         {
             if (!ModelState.IsValid)
@@ -82,6 +87,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDestination([FromRoute] int id)
         {
             if (!ModelState.IsValid)
