@@ -24,8 +24,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
+        [Route("getAll")]
         [Authorize]
-        public async Task<IActionResult> GetAllDestination()
+        public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -37,9 +38,10 @@ namespace araras_health_hub_api.Controllers
             return Ok(destinations);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route("getById/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> GetDestinationById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -55,8 +57,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         [Authorize]
-        public async Task<IActionResult> CreateDestination([FromBody] CreateDestinationRequestDto destinationDto)
+        public async Task<IActionResult> Create([FromBody] CreateDestinationRequestDto destinationDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -64,13 +67,13 @@ namespace araras_health_hub_api.Controllers
             var destinationModel = destinationDto.ToDestinationFromCreateDto();
             await _destinationRepo.CreateAsync(destinationModel);
 
-            return CreatedAtAction(nameof(GetDestinationById), new { id = destinationModel.Id }, destinationModel.ToDestinationDto());
+            return CreatedAtAction(nameof(GetById), new { id = destinationModel.Id }, destinationModel.ToDestinationDto());
         }
 
         [HttpPut]
-        [Route("{id:int}")]
+        [Route("update/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateDestination([FromRoute] int id, [FromBody] UpdateDestinationRequestDto updateDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateDestinationRequestDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -86,9 +89,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
+        [Route("delete/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> DeleteDestination([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -101,6 +104,24 @@ namespace araras_health_hub_api.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("changeStatus/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusDestinationRequestDto changeStatusDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var destinationModel = await _destinationRepo.ChangeStatusAsync(id, changeStatusDto);
+
+            if (destinationModel == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(destinationModel.ToDestinationDto());
         }
     }
 }

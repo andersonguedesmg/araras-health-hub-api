@@ -19,6 +19,23 @@ namespace araras_health_hub_api.Repository
             _context = context;
         }
 
+        public async Task<Destination?> ChangeStatusAsync(int id, ChangeStatusDestinationRequestDto destinationDto)
+        {
+            var existingDestination = await _context.Destination.FirstOrDefaultAsync(d => d.Id == id);
+
+            if (existingDestination == null)
+            {
+                return null;
+            }
+
+            existingDestination.IsActive = destinationDto.IsActive;
+            existingDestination.UpdatedOn = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return existingDestination;
+        }
+
         public async Task<Destination> CreateAsync(Destination destinationModel)
         {
             await _context.Destination.AddAsync(destinationModel);
@@ -73,7 +90,7 @@ namespace araras_health_hub_api.Repository
             existingDestination.Cep = destinationDto.Cep;
             existingDestination.Email = destinationDto.Email;
             existingDestination.Phone = destinationDto.Phone;
-            existingDestination.UpdatedOn = destinationDto.UpdatedOn;
+            existingDestination.UpdatedOn = DateTime.Now;
             existingDestination.IsActive = destinationDto.IsActive;
 
             await _context.SaveChangesAsync();
