@@ -19,6 +19,23 @@ namespace araras_health_hub_api.Repository
             _context = context;
         }
 
+        public async Task<User?> ChangeStatusAsync(int id, ChangeStatusUserRequestDto userDto)
+        {
+            var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (existingUser == null)
+            {
+                return null;
+            }
+
+            existingUser.IsActive = userDto.IsActive;
+            existingUser.UpdatedOn = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return existingUser;
+        }
+
         public async Task<User> CreateAsync(User userModel)
         {
             await _context.User.AddAsync(userModel);
@@ -64,7 +81,7 @@ namespace araras_health_hub_api.Repository
             existingUser.Function = userDto.Function;
             existingUser.Role = userDto.Role;
             existingUser.Phone = userDto.Phone;
-            existingUser.UpdatedOn = userDto.UpdatedOn;
+            existingUser.UpdatedOn = DateTime.Now;
             existingUser.IsActive = userDto.IsActive;
 
             await _context.SaveChangesAsync();

@@ -13,6 +13,7 @@ namespace araras_health_hub_api.Interfaces
         Task<User?> GetByIdAsync(int id);
         Task<User> CreateAsync(User userModel);
         Task<User?> UpdateAsync(int id, UpdateUserRequestDto userDto);
+        Task<User?> ChangeStatusAsync(int id, ChangeStatusUserRequestDto userDto);
         Task<User?> DeleteAsync(int id);
     }
 }

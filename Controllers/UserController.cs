@@ -22,8 +22,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
+        [Route("getAll")]
         [Authorize]
-        public async Task<IActionResult> GetAllUser()
+        public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -35,9 +36,10 @@ namespace araras_health_hub_api.Controllers
             return Ok(users);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route("getById/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> GetUserById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -53,8 +55,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         [Authorize]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestDto userDto)
+        public async Task<IActionResult> Create([FromBody] CreateUserRequestDto userDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -62,13 +65,13 @@ namespace araras_health_hub_api.Controllers
             var userModel = userDto.ToUserFromCreateDto();
             await _userRepo.CreateAsync(userModel);
 
-            return CreatedAtAction(nameof(GetUserById), new { id = userModel.Id }, userModel.ToUserDto());
+            return CreatedAtAction(nameof(GetById), new { id = userModel.Id }, userModel.ToUserDto());
         }
 
         [HttpPut]
-        [Route("{id:int}")]
+        [Route("update/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequestDto updateDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateUserRequestDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -84,9 +87,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
+        [Route("delete/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> DeleteUser([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -99,6 +102,24 @@ namespace araras_health_hub_api.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("changeStatus/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusUserRequestDto changeStatusDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var userModel = await _userRepo.ChangeStatusAsync(id, changeStatusDto);
+
+            if (userModel == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userModel.ToUserDto());
         }
     }
 }
