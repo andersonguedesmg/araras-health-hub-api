@@ -256,9 +256,14 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1883ac11-13e3-4f86-abf5-5fb5c7179721", null, "User", "USER" },
-                    { "b94ec09a-f3f3-4c60-8376-d655efd575ee", null, "Admin", "ADMIN" }
+                    { "72d45ae3-f618-41ac-8537-931764469b33", null, "User", "USER" },
+                    { "a92c85f0-afc4-4813-9f85-c8e9f41df991", null, "Admin", "ADMIN" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Destination",
+                columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5454), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5455) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

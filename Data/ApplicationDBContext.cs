@@ -41,6 +41,26 @@ namespace araras_health_hub_api.Data
             };
 
             builder.Entity<IdentityRole>().HasData(roles);
+
+            builder.Entity<Destination>().HasData(
+                new Destination
+                {
+                    Id = 1,
+                    Name = "Secretaria Municipal da Saúde",
+                    Address = "Rua Campos Sales",
+                    Number = "33",
+                    Neighborhood = "Jardim Belvedere",
+                    City = "Araras",
+                    State = "SP",
+                    Cep = "13.601-111",
+                    Email = "sms@araras.sp.gov.br",
+                    Phone = "(19) 3543-1522",
+                    CreatedOn = DateTime.Now,
+                    UpdatedOn = DateTime.Now,
+                    IsActive = true,
+                }
+            );
+
         }
     }
 }

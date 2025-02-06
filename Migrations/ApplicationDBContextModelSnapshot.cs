@@ -51,13 +51,13 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b94ec09a-f3f3-4c60-8376-d655efd575ee",
+                            Id = "a92c85f0-afc4-4813-9f85-c8e9f41df991",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "1883ac11-13e3-4f86-abf5-5fb5c7179721",
+                            Id = "72d45ae3-f618-41ac-8537-931764469b33",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -293,6 +293,24 @@ namespace araras_health_hub_api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Destination");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "Rua Campos Sales",
+                            Cep = "13.601-111",
+                            City = "Araras",
+                            CreatedOn = new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5454),
+                            Email = "sms@araras.sp.gov.br",
+                            IsActive = true,
+                            Name = "Secretaria Municipal da Saúde",
+                            Neighborhood = "Jardim Belvedere",
+                            Number = "33",
+                            Phone = "(19) 3543-1522",
+                            State = "SP",
+                            UpdatedOn = new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5455)
+                        });
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.DestinationUser", b =>
