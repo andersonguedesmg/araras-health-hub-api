@@ -51,13 +51,13 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a92c85f0-afc4-4813-9f85-c8e9f41df991",
+                            Id = "b0b45a8d-9582-4f5c-95ae-a65d02244961",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "72d45ae3-f618-41ac-8537-931764469b33",
+                            Id = "4720b971-0167-44d3-a897-83ecc4a0355e",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -181,6 +181,9 @@ namespace araras_health_hub_api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -219,6 +222,9 @@ namespace araras_health_hub_api.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -301,7 +307,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5454),
+                            CreatedOn = new DateTime(2025, 2, 7, 15, 42, 54, 202, DateTimeKind.Local).AddTicks(5771),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -309,7 +315,7 @@ namespace araras_health_hub_api.Migrations
                             Number = "33",
                             Phone = "(19) 3543-1522",
                             State = "SP",
-                            UpdatedOn = new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5455)
+                            UpdatedOn = new DateTime(2025, 2, 7, 15, 42, 54, 202, DateTimeKind.Local).AddTicks(5772)
                         });
                 });
 

@@ -32,6 +32,8 @@ namespace araras_health_hub_api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -256,14 +258,14 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "72d45ae3-f618-41ac-8537-931764469b33", null, "User", "USER" },
-                    { "a92c85f0-afc4-4813-9f85-c8e9f41df991", null, "Admin", "ADMIN" }
+                    { "4720b971-0167-44d3-a897-83ecc4a0355e", null, "User", "USER" },
+                    { "b0b45a8d-9582-4f5c-95ae-a65d02244961", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Destination",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5454), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 6, 8, 14, 43, 456, DateTimeKind.Local).AddTicks(5455) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 7, 15, 42, 54, 202, DateTimeKind.Local).AddTicks(5771), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 7, 15, 42, 54, 202, DateTimeKind.Local).AddTicks(5772) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

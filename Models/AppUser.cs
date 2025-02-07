@@ -8,6 +8,10 @@ namespace araras_health_hub_api.Models
 {
     public class AppUser : IdentityUser
     {
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+
+        public DateTime UpdatedOn { get; set; } = DateTime.Now;
+
         public bool IsActive { get; set; } = true;
     }
 }

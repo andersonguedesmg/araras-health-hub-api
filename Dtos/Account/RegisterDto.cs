@@ -14,6 +14,11 @@ namespace araras_health_hub_api.Dtos.Account
         [Required]
         public string? Password { get; set; }
 
+        [Required]
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+
+        public DateTime UpdatedOn { get; set; } = DateTime.Now;
+
         [Required(ErrorMessage = "O Status é obrigatório.")]
         public bool IsActive { get; set; } = true;
     }

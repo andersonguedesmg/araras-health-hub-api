@@ -37,7 +37,9 @@ namespace araras_health_hub_api.Controllers
                 var appUser = new AppUser
                 {
                     UserName = registerDto.UserName,
-                    IsActive = registerDto.IsActive
+                    CreatedOn = registerDto.CreatedOn,
+                    UpdatedOn = registerDto.UpdatedOn,
+                    IsActive = registerDto.IsActive,
                 };
 
                 var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
@@ -50,6 +52,8 @@ namespace araras_health_hub_api.Controllers
                         return Ok(new NewUserDto
                         {
                             UserName = appUser.UserName,
+                            CreatedOn = appUser.CreatedOn,
+                            UpdatedOn = appUser.UpdatedOn,
                             IsActive = appUser.IsActive,
                             Token = _tokenService.CreateToken(appUser)
                         });
@@ -89,10 +93,28 @@ namespace araras_health_hub_api.Controllers
                 new NewUserDto
                 {
                     UserName = user.UserName,
+                    CreatedOn = user.CreatedOn,
+                    UpdatedOn = user.UpdatedOn,
                     IsActive = user.IsActive,
                     Token = _tokenService.CreateToken(user)
                 }
             );
+        }
+
+        [HttpGet]
+        [Route("getAll")]
+        // [Authorize]
+
+        public async Task<IActionResult> GetAll()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var accounts = await _userManager.Users.ToListAsync();
+
+            // var destinationsUserDto = destinationsUser.Select(s => s.ToDestinationUserDto());
+
+            return Ok(accounts);
         }
     }
 }
