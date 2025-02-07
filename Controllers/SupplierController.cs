@@ -22,8 +22,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
+        [Route("getAll")]
         [Authorize]
-        public async Task<IActionResult> GetAllSuppliers()
+        public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -35,9 +36,10 @@ namespace araras_health_hub_api.Controllers
             return Ok(suppliers);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route("getById/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> GetSupplierById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -53,8 +55,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         [Authorize]
-        public async Task<IActionResult> CreateSupplier([FromBody] CreateSupplierRequestDto supplierDto)
+        public async Task<IActionResult> Create([FromBody] CreateSupplierRequestDto supplierDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -62,13 +65,13 @@ namespace araras_health_hub_api.Controllers
             var supplierModel = supplierDto.ToSupplierFromCreateDto();
             await _supplierRepo.CreateAsync(supplierModel);
 
-            return CreatedAtAction(nameof(GetSupplierById), new { id = supplierModel.Id }, supplierModel.ToSupplierDto());
+            return CreatedAtAction(nameof(GetById), new { id = supplierModel.Id }, supplierModel.ToSupplierDto());
         }
 
         [HttpPut]
-        [Route("{id:int}")]
+        [Route("update/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateSupplier([FromRoute] int id, [FromBody] UpdateSupplierRequestDto updateDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSupplierRequestDto updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -84,9 +87,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:int}")]
+        [Route("delete/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> DeleteSupplier([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -99,6 +102,24 @@ namespace araras_health_hub_api.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("changeStatus/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusSupplierRequestDto changeStatusDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var supplierModel = await _supplierRepo.ChangeStatusAsync(id, changeStatusDto);
+
+            if (supplierModel == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(supplierModel.ToSupplierDto());
         }
     }
 }

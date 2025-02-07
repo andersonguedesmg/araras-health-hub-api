@@ -13,6 +13,7 @@ namespace araras_health_hub_api.Interfaces
         Task<Supplier?> GetByIdAsync(int id);
         Task<Supplier> CreateAsync(Supplier supplierModel);
         Task<Supplier?> UpdateAsync(int id, UpdateSupplierRequestDto supplierDto);
+        Task<Supplier?> ChangeStatusAsync(int id, ChangeStatusSupplierRequestDto supplierDto);
         Task<Supplier?> DeleteAsync(int id);
     }
 }

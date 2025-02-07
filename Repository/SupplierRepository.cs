@@ -20,6 +20,23 @@ namespace araras_health_hub_api.Repository
             _context = context;
         }
 
+        public async Task<Supplier?> ChangeStatusAsync(int id, ChangeStatusSupplierRequestDto supplierDto)
+        {
+            var existingSupplier = await _context.Supplier.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (existingSupplier == null)
+            {
+                return null;
+            }
+
+            existingSupplier.IsActive = supplierDto.IsActive;
+            existingSupplier.UpdatedOn = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return existingSupplier;
+        }
+
         public async Task<Supplier> CreateAsync(Supplier supplierModel)
         {
             await _context.Supplier.AddAsync(supplierModel);
@@ -69,7 +86,7 @@ namespace araras_health_hub_api.Repository
             existingSupplier.Cep = supplierDto.Cep;
             existingSupplier.Email = supplierDto.Email;
             existingSupplier.Phone = supplierDto.Phone;
-            existingSupplier.UpdatedOn = supplierDto.UpdatedOn;
+            existingSupplier.UpdatedOn = DateTime.Now;
             existingSupplier.IsActive = supplierDto.IsActive;
 
             await _context.SaveChangesAsync();
