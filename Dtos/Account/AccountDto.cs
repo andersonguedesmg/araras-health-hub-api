@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace araras_health_hub_api.Dtos.Account
 {
-    public class NewUserDto
+    public class AccountDto
     {
-        public string UserName { get; set; } = string.Empty;
+        public string? UserName { get; set; }
+
+        public string? Password { get; set; }
 
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
@@ -16,7 +18,5 @@ namespace araras_health_hub_api.Dtos.Account
         public bool IsActive { get; set; } = true;
 
         public int? DestinationId { get; set; }
-
-        public string Token { get; set; } = string.Empty;
     }
 }

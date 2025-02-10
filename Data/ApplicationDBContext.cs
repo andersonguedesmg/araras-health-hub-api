@@ -17,7 +17,6 @@ namespace araras_health_hub_api.Data
         }
 
         public DbSet<Destination> Destination { get; set; }
-        public DbSet<DestinationUser> DestinationUser { get; set; }
         public DbSet<Supplier> Supplier { get; set; }
         public DbSet<User> User { get; set; }
 

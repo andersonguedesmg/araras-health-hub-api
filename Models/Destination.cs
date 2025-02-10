@@ -20,6 +20,6 @@ namespace araras_health_hub_api.Models
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         public DateTime UpdatedOn { get; set; }
         public bool IsActive { get; set; } = true;
-        public List<DestinationUser> DestinationUsers { get; set; } = new List<DestinationUser>();
+        public List<AppUser> AccountUsers { get; set; } = new List<AppUser>();
     }
 }

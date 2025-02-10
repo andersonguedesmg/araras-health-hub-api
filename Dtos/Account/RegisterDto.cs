@@ -19,7 +19,9 @@ namespace araras_health_hub_api.Dtos.Account
 
         public DateTime UpdatedOn { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "O Status é obrigatório.")]
+        [Required]
         public bool IsActive { get; set; } = true;
+
+        public int? DestinationId { get; set; }
     }
 }

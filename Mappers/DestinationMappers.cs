@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.Destination;
+using araras_health_hub_api.Dtos.Account;
 using araras_health_hub_api.Models;
 
 namespace araras_health_hub_api.Mappers
@@ -26,7 +27,7 @@ namespace araras_health_hub_api.Mappers
                 CreatedOn = DestinationModel.CreatedOn,
                 UpdatedOn = DestinationModel.UpdatedOn,
                 IsActive = DestinationModel.IsActive,
-                DestinationUsers = DestinationModel.DestinationUsers.Select(d => d.ToDestinationUserDto()).ToList(),
+                AccountUsers = DestinationModel.AccountUsers.Select(d => d.ToAccountDto()).ToList(),
             };
         }
 

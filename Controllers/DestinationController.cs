@@ -25,7 +25,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        [Authorize]
+        // [Authorize]
         public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)

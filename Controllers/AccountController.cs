@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.Account;
 using araras_health_hub_api.Interfaces;
+using araras_health_hub_api.Mappers;
 using araras_health_hub_api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,7 @@ namespace araras_health_hub_api.Controllers
                     CreatedOn = registerDto.CreatedOn,
                     UpdatedOn = registerDto.UpdatedOn,
                     IsActive = registerDto.IsActive,
+                    DestinationId = registerDto.DestinationId,
                 };
 
                 var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
@@ -55,6 +57,7 @@ namespace araras_health_hub_api.Controllers
                             CreatedOn = appUser.CreatedOn,
                             UpdatedOn = appUser.UpdatedOn,
                             IsActive = appUser.IsActive,
+                            DestinationId = appUser.DestinationId,
                             Token = _tokenService.CreateToken(appUser)
                         });
                     }
@@ -96,6 +99,7 @@ namespace araras_health_hub_api.Controllers
                     CreatedOn = user.CreatedOn,
                     UpdatedOn = user.UpdatedOn,
                     IsActive = user.IsActive,
+                    DestinationId = user.DestinationId,
                     Token = _tokenService.CreateToken(user)
                 }
             );
@@ -112,7 +116,7 @@ namespace araras_health_hub_api.Controllers
 
             var accounts = await _userManager.Users.ToListAsync();
 
-            // var destinationsUserDto = destinationsUser.Select(s => s.ToDestinationUserDto());
+            // var accountsUserDto = accounts.Select(s => s.ToAccountDto());
 
             return Ok(accounts);
         }

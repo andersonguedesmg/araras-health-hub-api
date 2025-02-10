@@ -64,12 +64,12 @@ namespace araras_health_hub_api.Repository
 
         public async Task<List<Destination>> GetAllAsync()
         {
-            return await _context.Destination.Include(u => u.DestinationUsers).ToListAsync();
+            return await _context.Destination.Include(u => u.AccountUsers).ToListAsync();
         }
 
         public async Task<Destination?> GetByIdAsync(int id)
         {
-            return await _context.Destination.Include(u => u.DestinationUsers).FirstOrDefaultAsync(i => i.Id == id);
+            return await _context.Destination.Include(u => u.AccountUsers).FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<Destination?> UpdateAsync(int id, UpdateDestinationRequestDto destinationDto)

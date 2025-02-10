@@ -28,34 +28,6 @@ namespace araras_health_hub_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Destination",
                 columns: table => new
                 {
@@ -145,6 +117,40 @@ namespace araras_health_hub_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    DestinationId = table.Column<int>(type: "int", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Destination_DestinationId",
+                        column: x => x.DestinationId,
+                        principalTable: "Destination",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -229,43 +235,19 @@ namespace araras_health_hub_api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "DestinationUser",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    DestinationId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DestinationUser", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DestinationUser_Destination_DestinationId",
-                        column: x => x.DestinationId,
-                        principalTable: "Destination",
-                        principalColumn: "Id");
-                });
-
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4720b971-0167-44d3-a897-83ecc4a0355e", null, "User", "USER" },
-                    { "b0b45a8d-9582-4f5c-95ae-a65d02244961", null, "Admin", "ADMIN" }
+                    { "28f9e764-1933-4775-a728-aff0bea50c4b", null, "User", "USER" },
+                    { "9872fff1-2677-4e28-93fa-f52bb5e466fd", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Destination",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 7, 15, 42, 54, 202, DateTimeKind.Local).AddTicks(5771), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 7, 15, 42, 54, 202, DateTimeKind.Local).AddTicks(5772) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 10, 15, 22, 21, 339, DateTimeKind.Local).AddTicks(2972), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 10, 15, 22, 21, 339, DateTimeKind.Local).AddTicks(2973) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -300,16 +282,16 @@ namespace araras_health_hub_api.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_DestinationId",
+                table: "AspNetUsers",
+                column: "DestinationId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DestinationUser_DestinationId",
-                table: "DestinationUser",
-                column: "DestinationId");
         }
 
         /// <inheritdoc />
@@ -329,9 +311,6 @@ namespace araras_health_hub_api.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "DestinationUser");
 
             migrationBuilder.DropTable(
                 name: "Supplier");
