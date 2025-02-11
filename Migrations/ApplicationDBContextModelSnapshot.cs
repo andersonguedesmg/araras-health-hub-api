@@ -51,13 +51,19 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9872fff1-2677-4e28-93fa-f52bb5e466fd",
+                            Id = "67011c88-377a-4f25-91eb-a28825fbb08d",
+                            Name = "Master",
+                            NormalizedName = "MASTER"
+                        },
+                        new
+                        {
+                            Id = "78113955-f903-437e-873c-45e2ad088fcd",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "28f9e764-1933-4775-a728-aff0bea50c4b",
+                            Id = "d8150a27-261c-4d62-9527-a7a8eeb2ba8d",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -148,6 +154,13 @@ namespace araras_health_hub_api.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "e0229249-3bba-4528-80f1-377821f50f6c",
+                            RoleId = "67011c88-377a-4f25-91eb-a28825fbb08d"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -246,6 +259,26 @@ namespace araras_health_hub_api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "e0229249-3bba-4528-80f1-377821f50f6c",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "6254e810-b3ab-4e60-bd7a-3f98999fc738",
+                            CreatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1387),
+                            DestinationId = 1,
+                            EmailConfirmed = false,
+                            IsActive = true,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "SMS_MASTER",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEigzPuP1aTnwUIWvBF3vszMBXPZ96WOsZL47SMXJI1ktr7gFcCDQnOlxQV/rwm//Q==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "f8332e02-4dd4-43bb-863e-3301bc698395",
+                            TwoFactorEnabled = false,
+                            UpdatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1389),
+                            UserName = "SMS_Master"
+                        });
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Destination", b =>
@@ -312,7 +345,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 2, 10, 15, 22, 21, 339, DateTimeKind.Local).AddTicks(2972),
+                            CreatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1252),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -320,7 +353,7 @@ namespace araras_health_hub_api.Migrations
                             Number = "33",
                             Phone = "(19) 3543-1522",
                             State = "SP",
-                            UpdatedOn = new DateTime(2025, 2, 10, 15, 22, 21, 339, DateTimeKind.Local).AddTicks(2973)
+                            UpdatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1253)
                         });
                 });
 

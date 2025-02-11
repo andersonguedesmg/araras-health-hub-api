@@ -24,21 +24,36 @@ namespace araras_health_hub_api.Data
         {
             base.OnModelCreating(builder);
 
+            Guid roleMasterId = Guid.NewGuid();
+            Guid roleAdminId = Guid.NewGuid();
+            Guid roleUserId = Guid.NewGuid();
+
+            Guid userMasterId = Guid.NewGuid();
+            PasswordHasher<AppUser> hasher = new();
+
             List<IdentityRole> roles = new List<IdentityRole>
             {
                 new IdentityRole
                 {
-                    Name = "Admin",
-                    NormalizedName="ADMIN"
+                    Id = roleMasterId.ToString(),
+                    Name = "Master",
+                    NormalizedName = "MASTER",
                 },
 
                 new IdentityRole
                 {
+                    Id = roleAdminId.ToString(),
+                    Name = "Admin",
+                    NormalizedName = "ADMIN",
+                },
+
+                new IdentityRole
+                {
+                    Id = roleUserId.ToString(),
                     Name = "User",
-                    NormalizedName="USER"
+                    NormalizedName = "USER",
                 },
             };
-
             builder.Entity<IdentityRole>().HasData(roles);
 
             builder.Entity<Destination>().HasData(
@@ -60,6 +75,26 @@ namespace araras_health_hub_api.Data
                 }
             );
 
+            AppUser userMaster = new()
+            {
+                Id = userMasterId.ToString(),
+                UserName = "SMS_Master",
+                NormalizedUserName = "SMS_MASTER",
+                CreatedOn = DateTime.Now,
+                UpdatedOn = DateTime.Now,
+                IsActive = true,
+                DestinationId = 1,
+                SecurityStamp = Guid.NewGuid().ToString(),
+            };
+            userMaster.PasswordHash = hasher.HashPassword(userMaster, "A2H@Master");
+            builder.Entity<AppUser>().HasData(userMaster);
+
+            IdentityUserRole<string> userMasterRole = new()
+            {
+                RoleId = roleMasterId.ToString(),
+                UserId = userMasterId.ToString(),
+            };
+            builder.Entity<IdentityUserRole<string>>().HasData(userMasterRole);
         }
     }
 }

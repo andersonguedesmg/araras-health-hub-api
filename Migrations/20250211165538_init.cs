@@ -240,14 +240,25 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "28f9e764-1933-4775-a728-aff0bea50c4b", null, "User", "USER" },
-                    { "9872fff1-2677-4e28-93fa-f52bb5e466fd", null, "Admin", "ADMIN" }
+                    { "67011c88-377a-4f25-91eb-a28825fbb08d", null, "Master", "MASTER" },
+                    { "78113955-f903-437e-873c-45e2ad088fcd", null, "Admin", "ADMIN" },
+                    { "d8150a27-261c-4d62-9527-a7a8eeb2ba8d", null, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Destination",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 10, 15, 22, 21, 339, DateTimeKind.Local).AddTicks(2972), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 10, 15, 22, 21, 339, DateTimeKind.Local).AddTicks(2973) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1252), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1253) });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "DestinationId", "Email", "EmailConfirmed", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
+                values: new object[] { "e0229249-3bba-4528-80f1-377821f50f6c", 0, "6254e810-b3ab-4e60-bd7a-3f98999fc738", new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1387), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEEigzPuP1aTnwUIWvBF3vszMBXPZ96WOsZL47SMXJI1ktr7gFcCDQnOlxQV/rwm//Q==", null, false, "f8332e02-4dd4-43bb-863e-3301bc698395", false, new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1389), "SMS_Master" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "67011c88-377a-4f25-91eb-a28825fbb08d", "e0229249-3bba-4528-80f1-377821f50f6c" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
