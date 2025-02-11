@@ -19,12 +19,14 @@ namespace araras_health_hub_api.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IDestinationRepository _destinationRepo;
 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, IDestinationRepository destinationRepo)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
+            _destinationRepo = destinationRepo;
         }
 
         [HttpPost("register")]
@@ -34,6 +36,11 @@ namespace araras_health_hub_api.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
+                {
+                    return BadRequest("O Destino informado não existe");
+                }
 
                 var appUser = new AppUser
                 {
