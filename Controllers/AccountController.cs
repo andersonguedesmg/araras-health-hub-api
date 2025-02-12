@@ -6,6 +6,7 @@ using araras_health_hub_api.Dtos.Account;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Mappers;
 using araras_health_hub_api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -114,8 +115,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        // [Authorize]
-
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
@@ -126,6 +126,24 @@ namespace araras_health_hub_api.Controllers
             // var accountsUserDto = accounts.Select(s => s.ToAccountDto());
 
             return Ok(accounts);
+        }
+
+        [HttpGet]
+        [Route("getByUserName/{userName}")]
+        [Authorize]
+        public async Task<IActionResult> GetByUserName([FromRoute] string userName)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var account = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName.ToLower());
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(account);
         }
     }
 }

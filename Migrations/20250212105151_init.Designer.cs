@@ -12,7 +12,7 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250211165538_init")]
+    [Migration("20250212105151_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -54,19 +54,19 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "67011c88-377a-4f25-91eb-a28825fbb08d",
+                            Id = "1ba6c4d2-9b86-493f-bff8-5f05d4d31919",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
-                            Id = "78113955-f903-437e-873c-45e2ad088fcd",
+                            Id = "4980a26e-d4fd-4827-8ede-40d5fadf9f36",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d8150a27-261c-4d62-9527-a7a8eeb2ba8d",
+                            Id = "0e887714-dbda-4079-bb0d-9006e3a03d88",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -161,8 +161,8 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "e0229249-3bba-4528-80f1-377821f50f6c",
-                            RoleId = "67011c88-377a-4f25-91eb-a28825fbb08d"
+                            UserId = "ed9f24db-c628-4536-a6b2-af916933ba80",
+                            RoleId = "1ba6c4d2-9b86-493f-bff8-5f05d4d31919"
                         });
                 });
 
@@ -266,20 +266,20 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e0229249-3bba-4528-80f1-377821f50f6c",
+                            Id = "ed9f24db-c628-4536-a6b2-af916933ba80",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6254e810-b3ab-4e60-bd7a-3f98999fc738",
-                            CreatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1387),
+                            ConcurrencyStamp = "cf371ca1-e04e-4039-b805-e20c94ab9684",
+                            CreatedOn = new DateTime(2025, 2, 12, 7, 51, 50, 658, DateTimeKind.Local).AddTicks(6028),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEigzPuP1aTnwUIWvBF3vszMBXPZ96WOsZL47SMXJI1ktr7gFcCDQnOlxQV/rwm//Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEEeKA0GlVSXXxW1OHfT5o1h9e9cipfqnMM1PBubt8kV4ffybfIws36DMq5FlBISHA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f8332e02-4dd4-43bb-863e-3301bc698395",
+                            SecurityStamp = "c8ea0d1e-9ea0-4c6f-8d1e-3d1c85d4bce8",
                             TwoFactorEnabled = false,
-                            UpdatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1389),
+                            UpdatedOn = new DateTime(2025, 2, 12, 7, 51, 50, 658, DateTimeKind.Local).AddTicks(6030),
                             UserName = "SMS_Master"
                         });
                 });
@@ -348,7 +348,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1252),
+                            CreatedOn = new DateTime(2025, 2, 12, 7, 51, 50, 658, DateTimeKind.Local).AddTicks(5794),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -356,7 +356,7 @@ namespace araras_health_hub_api.Migrations
                             Number = "33",
                             Phone = "(19) 3543-1522",
                             State = "SP",
-                            UpdatedOn = new DateTime(2025, 2, 11, 13, 55, 37, 836, DateTimeKind.Local).AddTicks(1253)
+                            UpdatedOn = new DateTime(2025, 2, 12, 7, 51, 50, 658, DateTimeKind.Local).AddTicks(5795)
                         });
                 });
 
