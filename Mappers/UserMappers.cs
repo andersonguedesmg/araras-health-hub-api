@@ -15,9 +15,7 @@ namespace araras_health_hub_api.Mappers
             {
                 Id = userModel.Id,
                 Name = userModel.Name,
-                Password = userModel.Password,
                 Function = userModel.Function,
-                Role = userModel.Role,
                 Phone = userModel.Phone,
                 CreatedOn = userModel.CreatedOn,
                 UpdatedOn = userModel.UpdatedOn,
@@ -30,12 +28,9 @@ namespace araras_health_hub_api.Mappers
             return new User
             {
                 Name = userModelDto.Name,
-                Password = userModelDto.Password,
                 Function = userModelDto.Function,
-                Role = userModelDto.Role,
                 Phone = userModelDto.Phone,
                 CreatedOn = userModelDto.CreatedOn,
-                UpdatedOn = userModelDto.UpdatedOn,
                 IsActive = userModelDto.IsActive,
             };
         }
