@@ -1,5 +1,6 @@
 using araras_health_hub_api.Data;
 using araras_health_hub_api.Interfaces;
+using araras_health_hub_api.Middlewares;
 using araras_health_hub_api.Models;
 using araras_health_hub_api.Repository;
 using araras_health_hub_api.Services;
@@ -81,7 +82,7 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
+            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)
         )
     };
 });
@@ -104,6 +105,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<AuthorizationErrorHandlingMiddleware>();
+app.UseMiddleware<ApiResponseMiddleware>();
 
 app.MapControllers();
 
