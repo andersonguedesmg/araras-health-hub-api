@@ -25,8 +25,5 @@ namespace araras_health_hub_api.Dtos.User
 
         [Required(ErrorMessage = "A Data de Atualização é obrigatória.")]
         public DateTime UpdatedOn { get; set; } = DateTime.Now;
-
-        [Required(ErrorMessage = "O Status é obrigatório.")]
-        public bool IsActive { get; set; } = true;
     }
 }

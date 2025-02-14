@@ -80,7 +80,6 @@ namespace araras_health_hub_api.Repository
             existingUser.Function = userDto.Function;
             existingUser.Phone = userDto.Phone;
             existingUser.UpdatedOn = DateTime.Now;
-            existingUser.IsActive = userDto.IsActive;
 
             await _context.SaveChangesAsync();
 

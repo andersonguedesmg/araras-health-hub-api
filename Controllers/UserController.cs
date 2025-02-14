@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.User;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Mappers;
+using araras_health_hub_api.Models;
+using araras_health_hub_api.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,9 +29,7 @@ namespace araras_health_hub_api.Controllers
 
             var users = await _userRepo.GetAllAsync();
 
-            var usersDto = users.Select(s => s.ToUserDto());
-
-            return Ok(users);
+            return Ok(new ApiResponse<List<User>>(StatusCodes.Status200OK, ApiMessages.MsgUsersFoundSuccessfully, users));
         }
 
         [HttpGet]
@@ -48,10 +44,10 @@ namespace araras_health_hub_api.Controllers
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<User>(StatusCodes.Status404NotFound, ApiMessages.MsgUserNotFound, null!));
             }
 
-            return Ok(user.ToUserDto());
+            return Ok(new ApiResponse<User>(StatusCodes.Status200OK, ApiMessages.MsgUserFoundSuccessfully, user));
         }
 
         [HttpPost]
@@ -63,9 +59,9 @@ namespace araras_health_hub_api.Controllers
                 return BadRequest(ModelState);
 
             var userModel = userDto.ToUserFromCreateDto();
-            await _userRepo.CreateAsync(userModel);
+            var newUser = await _userRepo.CreateAsync(userModel);
 
-            return CreatedAtAction(nameof(GetById), new { id = userModel.Id }, userModel.ToUserDto());
+            return CreatedAtAction(nameof(GetById), new { id = userModel.Id }, new ApiResponse<User>(StatusCodes.Status201Created, ApiMessages.MsgUserCreatedSuccessfully, newUser));
         }
 
         [HttpPut]
@@ -80,10 +76,11 @@ namespace araras_health_hub_api.Controllers
 
             if (userModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<User>(StatusCodes.Status404NotFound, ApiMessages.MsgUserNotFound, null!));
+
             }
 
-            return Ok(userModel.ToUserDto());
+            return Ok(new ApiResponse<User>(StatusCodes.Status200OK, ApiMessages.MsgUserUpdatedSuccessfully, userModel));
         }
 
         [HttpDelete]
@@ -98,10 +95,10 @@ namespace araras_health_hub_api.Controllers
 
             if (userModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<User>(StatusCodes.Status404NotFound, ApiMessages.MsgUserNotFound, null!));
             }
 
-            return NoContent();
+            return Ok(new ApiResponse<User>(StatusCodes.Status200OK, ApiMessages.MsgUserDeletedSuccessfully, userModel));
         }
 
         [HttpPatch]
@@ -116,10 +113,10 @@ namespace araras_health_hub_api.Controllers
 
             if (userModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<User>(StatusCodes.Status404NotFound, ApiMessages.MsgUserNotFound, null!));
             }
 
-            return Ok(userModel.ToUserDto());
+            return Ok(new ApiResponse<User>(StatusCodes.Status200OK, ApiMessages.MsgUserUpdatedSuccessfully, userModel));
         }
     }
 }
