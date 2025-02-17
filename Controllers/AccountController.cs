@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.Account;
 using araras_health_hub_api.Interfaces;
-using araras_health_hub_api.Mappers;
 using araras_health_hub_api.Models;
+using araras_health_hub_api.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +36,7 @@ namespace araras_health_hub_api.Controllers
 
                 if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
                 {
-                    return BadRequest("O Destino informado não existe");
+                    return BadRequest(new ApiResponse<AppUser>(StatusCodes.Status400BadRequest, ApiMessages.MsgDestinationDoesNotExist, null!));
                 }
 
                 var appUser = new AppUser
@@ -52,7 +48,7 @@ namespace araras_health_hub_api.Controllers
                     DestinationId = registerDto.DestinationId,
                 };
 
-                var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
+                var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
 
                 if (createdUser.Succeeded)
                 {
@@ -61,7 +57,7 @@ namespace araras_health_hub_api.Controllers
                     {
                         return Ok(new NewUserDto
                         {
-                            UserName = appUser.UserName,
+                            UserName = appUser.UserName!,
                             CreatedOn = appUser.CreatedOn,
                             UpdatedOn = appUser.UpdatedOn,
                             IsActive = appUser.IsActive,
@@ -94,23 +90,25 @@ namespace araras_health_hub_api.Controllers
 
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
 
-            if (user == null) return Unauthorized("Usuário invalido!");
+            if (user == null)
+                return Unauthorized(new ApiResponse<AppUser>(StatusCodes.Status401Unauthorized, ApiMessages.MsgAccountUnauthorized, null!));
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
-            if (!result.Succeeded) return Unauthorized("Senha ou usuário incorreto!");
+            if (!result.Succeeded)
+                return Unauthorized(new ApiResponse<AppUser>(StatusCodes.Status401Unauthorized, ApiMessages.MsgAccountIncorrect, null!));
 
-            return Ok(
-                new NewUserDto
-                {
-                    UserName = user.UserName,
-                    CreatedOn = user.CreatedOn,
-                    UpdatedOn = user.UpdatedOn,
-                    IsActive = user.IsActive,
-                    DestinationId = user.DestinationId,
-                    Token = _tokenService.CreateToken(user)
-                }
-            );
+            var account = new NewUserDto
+            {
+                UserName = user.UserName!,
+                CreatedOn = user.CreatedOn,
+                UpdatedOn = user.UpdatedOn,
+                IsActive = user.IsActive,
+                DestinationId = user.DestinationId,
+                Token = _tokenService.CreateToken(user)
+            };
+
+            return Ok(new ApiResponse<NewUserDto>(StatusCodes.Status200OK, ApiMessages.MsgAccountLoginSuccessful, account));
         }
 
         [HttpGet]
@@ -123,9 +121,7 @@ namespace araras_health_hub_api.Controllers
 
             var accounts = await _userManager.Users.ToListAsync();
 
-            // var accountsUserDto = accounts.Select(s => s.ToAccountDto());
-
-            return Ok(accounts);
+            return Ok(new ApiResponse<List<AppUser>>(StatusCodes.Status200OK, ApiMessages.MsgUsersFoundSuccessfully, accounts));
         }
 
         [HttpGet]
@@ -140,10 +136,10 @@ namespace araras_health_hub_api.Controllers
 
             if (account == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
             }
 
-            return Ok(account);
+            return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, account));
         }
     }
 }
