@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.Supplier;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Mappers;
+using araras_health_hub_api.Models;
+using araras_health_hub_api.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,9 +33,7 @@ namespace araras_health_hub_api.Controllers
 
             var suppliers = await _supplierRepo.GetAllAsync();
 
-            var suppliersDto = suppliers.Select(s => s.ToSupplierDto());
-
-            return Ok(suppliers);
+            return Ok(new ApiResponse<List<Supplier>>(StatusCodes.Status200OK, ApiMessages.MsgSuppliersFoundSuccessfully, suppliers));
         }
 
         [HttpGet]
@@ -48,10 +48,10 @@ namespace araras_health_hub_api.Controllers
 
             if (supplier == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Supplier>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, null!));
             }
 
-            return Ok(supplier.ToSupplierDto());
+            return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierFoundSuccessfully, supplier));
         }
 
         [HttpPost]
@@ -63,9 +63,9 @@ namespace araras_health_hub_api.Controllers
                 return BadRequest(ModelState);
 
             var supplierModel = supplierDto.ToSupplierFromCreateDto();
-            await _supplierRepo.CreateAsync(supplierModel);
+            var newSupplier = await _supplierRepo.CreateAsync(supplierModel);
 
-            return CreatedAtAction(nameof(GetById), new { id = supplierModel.Id }, supplierModel.ToSupplierDto());
+            return CreatedAtAction(nameof(GetById), new { id = supplierModel.Id }, new ApiResponse<Supplier>(StatusCodes.Status201Created, ApiMessages.MsgSupplierCreatedSuccessfully, newSupplier));
         }
 
         [HttpPut]
@@ -80,10 +80,11 @@ namespace araras_health_hub_api.Controllers
 
             if (supplierModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Supplier>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, null!));
+
             }
 
-            return Ok(supplierModel.ToSupplierDto());
+            return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierUpdatedSuccessfully, supplierModel));
         }
 
         [HttpDelete]
@@ -98,10 +99,10 @@ namespace araras_health_hub_api.Controllers
 
             if (supplierModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Supplier>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, null!));
             }
 
-            return NoContent();
+            return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierDeletedSuccessfully, supplierModel));
         }
 
         [HttpPatch]
@@ -116,10 +117,10 @@ namespace araras_health_hub_api.Controllers
 
             if (supplierModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Supplier>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, null!));
             }
 
-            return Ok(supplierModel.ToSupplierDto());
+            return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierUpdatedSuccessfully, supplierModel));
         }
     }
 }
