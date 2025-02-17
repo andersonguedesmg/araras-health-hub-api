@@ -6,6 +6,8 @@ using araras_health_hub_api.Data;
 using araras_health_hub_api.Dtos.Destination;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Mappers;
+using araras_health_hub_api.Models;
+using araras_health_hub_api.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +27,7 @@ namespace araras_health_hub_api.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        // [Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
@@ -33,9 +35,7 @@ namespace araras_health_hub_api.Controllers
 
             var destinations = await _destinationRepo.GetAllAsync();
 
-            var destinationsDto = destinations.Select(s => s.ToDestinationDto());
-
-            return Ok(destinations);
+            return Ok(new ApiResponse<List<Destination>>(StatusCodes.Status200OK, ApiMessages.MsgDestinationsFoundSuccessfully, destinations));
         }
 
         [HttpGet]
@@ -50,10 +50,10 @@ namespace araras_health_hub_api.Controllers
 
             if (destination == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Destination>(StatusCodes.Status404NotFound, ApiMessages.MsgDestinationNotFound, null!));
             }
 
-            return Ok(destination.ToDestinationDto());
+            return Ok(new ApiResponse<Destination>(StatusCodes.Status200OK, ApiMessages.MsgDestinationFoundSuccessfully, destination));
         }
 
         [HttpPost]
@@ -65,9 +65,9 @@ namespace araras_health_hub_api.Controllers
                 return BadRequest(ModelState);
 
             var destinationModel = destinationDto.ToDestinationFromCreateDto();
-            await _destinationRepo.CreateAsync(destinationModel);
+            var newDestination = await _destinationRepo.CreateAsync(destinationModel);
 
-            return CreatedAtAction(nameof(GetById), new { id = destinationModel.Id }, destinationModel.ToDestinationDto());
+            return CreatedAtAction(nameof(GetById), new { id = destinationModel.Id }, new ApiResponse<Destination>(StatusCodes.Status201Created, ApiMessages.MsgDestinationCreatedSuccessfully, newDestination));
         }
 
         [HttpPut]
@@ -82,10 +82,11 @@ namespace araras_health_hub_api.Controllers
 
             if (destinationModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Destination>(StatusCodes.Status404NotFound, ApiMessages.MsgDestinationNotFound, null!));
+
             }
 
-            return Ok(destinationModel.ToDestinationDto());
+            return Ok(new ApiResponse<Destination>(StatusCodes.Status200OK, ApiMessages.MsgDestinationUpdatedSuccessfully, destinationModel));
         }
 
         [HttpDelete]
@@ -100,10 +101,10 @@ namespace araras_health_hub_api.Controllers
 
             if (destinationModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Destination>(StatusCodes.Status404NotFound, ApiMessages.MsgDestinationNotFound, null!));
             }
 
-            return NoContent();
+            return Ok(new ApiResponse<Destination>(StatusCodes.Status200OK, ApiMessages.MsgDestinationDeletedSuccessfully, destinationModel));
         }
 
         [HttpPatch]
@@ -118,10 +119,10 @@ namespace araras_health_hub_api.Controllers
 
             if (destinationModel == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse<Destination>(StatusCodes.Status404NotFound, ApiMessages.MsgDestinationNotFound, null!));
             }
 
-            return Ok(destinationModel.ToDestinationDto());
+            return Ok(new ApiResponse<Destination>(StatusCodes.Status200OK, ApiMessages.MsgDestinationUpdatedSuccessfully, destinationModel));
         }
     }
 }
