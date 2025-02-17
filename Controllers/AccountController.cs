@@ -82,6 +82,62 @@ namespace araras_health_hub_api.Controllers
             }
         }
 
+        [HttpPost("registerAdmin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDto registerDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
+                {
+                    return BadRequest(new ApiResponse<AppUser>(StatusCodes.Status400BadRequest, ApiMessages.MsgDestinationDoesNotExist, null!));
+                }
+
+                var appUser = new AppUser
+                {
+                    UserName = registerDto.UserName,
+                    CreatedOn = registerDto.CreatedOn,
+                    UpdatedOn = registerDto.UpdatedOn,
+                    IsActive = registerDto.IsActive,
+                    DestinationId = registerDto.DestinationId,
+                };
+
+                var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
+
+                if (createdUser.Succeeded)
+                {
+                    var rolesResult = await _userManager.AddToRoleAsync(appUser, "Admin");
+                    if (rolesResult.Succeeded)
+                    {
+                        return Ok(new NewUserDto
+                        {
+                            UserName = appUser.UserName!,
+                            CreatedOn = appUser.CreatedOn,
+                            UpdatedOn = appUser.UpdatedOn,
+                            IsActive = appUser.IsActive,
+                            DestinationId = appUser.DestinationId,
+                            Token = _tokenService.CreateToken(appUser)
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode(500, rolesResult.Errors);
+                    }
+                }
+                else
+                {
+                    return StatusCode(500, createdUser.Errors);
+                }
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
