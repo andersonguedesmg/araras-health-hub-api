@@ -78,6 +78,7 @@ namespace araras_health_hub_api.Repository
             }
 
             existingSupplier.Name = supplierDto.Name;
+            existingSupplier.Cnpj = supplierDto.Cnpj;
             existingSupplier.Address = supplierDto.Address;
             existingSupplier.Number = supplierDto.Number;
             existingSupplier.Neighborhood = supplierDto.Neighborhood;

@@ -58,6 +58,7 @@ namespace araras_health_hub_api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cnpj = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Neighborhood = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -238,25 +239,25 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2ef66691-1a1c-4b04-b756-2568e85dc8f8", null, "Admin", "ADMIN" },
-                    { "628f62d6-1de1-44a0-aaf9-18a4e2d9433a", null, "User", "USER" },
-                    { "69b0c18c-2a8c-41c7-b242-200d8ef5000d", null, "Master", "MASTER" }
+                    { "25a5d7b3-d99c-4f56-930f-b603506b538a", null, "User", "USER" },
+                    { "49291557-c2b7-4ffe-9438-b65a62f01740", null, "Admin", "ADMIN" },
+                    { "bf92b693-061c-4f44-8260-bc3dadb9efb8", null, "Master", "MASTER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Destination",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 2, 12, 13, 3, 25, 126, DateTimeKind.Local).AddTicks(6016), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 2, 12, 13, 3, 25, 126, DateTimeKind.Local).AddTicks(6017) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 3, 17, 8, 46, 59, 324, DateTimeKind.Local).AddTicks(8459), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 3, 17, 8, 46, 59, 324, DateTimeKind.Local).AddTicks(8460) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "DestinationId", "Email", "EmailConfirmed", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { "b0a0db7c-33b7-4698-9f39-094a9992c29f", 0, "69f6466b-7bbf-438d-a056-7073ac6d30d1", new DateTime(2025, 2, 12, 13, 3, 25, 126, DateTimeKind.Local).AddTicks(6170), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEAu/AvCOk5Nw+M8jgb2baRS6D9ofJSlPqYhJ1el0dc4DWuAxLPijJLYw3wSJqxobjg==", null, false, "650f8104-341c-4afd-b6e6-8a8242d773f4", false, new DateTime(2025, 2, 12, 13, 3, 25, 126, DateTimeKind.Local).AddTicks(6171), "SMS_Master" });
+                values: new object[] { "b1fe0203-c1e7-4c0c-9c4b-9d6a3c7f3f71", 0, "bd0fd90e-3ee9-418b-9cb5-3c5fefb8081e", new DateTime(2025, 3, 17, 8, 46, 59, 324, DateTimeKind.Local).AddTicks(8578), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEPhZA7GeEtscRWDNV9qN5y1FhnRyBYIFNZEAQ1gn6HnEiD0UKSY2CnBl++e22Yqzcg==", null, false, "1fe711ae-6a8a-4e6c-8eda-d79970b2c932", false, new DateTime(2025, 3, 17, 8, 46, 59, 324, DateTimeKind.Local).AddTicks(8580), "SMS_Master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "69b0c18c-2a8c-41c7-b242-200d8ef5000d", "b0a0db7c-33b7-4698-9f39-094a9992c29f" });
+                values: new object[] { "bf92b693-061c-4f44-8260-bc3dadb9efb8", "b1fe0203-c1e7-4c0c-9c4b-9d6a3c7f3f71" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

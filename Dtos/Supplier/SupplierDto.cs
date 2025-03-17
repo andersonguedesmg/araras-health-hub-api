@@ -9,6 +9,7 @@ namespace araras_health_hub_api.Dtos.Supplier
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string Cnpj { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
         public string Neighborhood { get; set; } = string.Empty;

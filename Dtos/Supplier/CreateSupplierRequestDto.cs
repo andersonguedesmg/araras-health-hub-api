@@ -13,6 +13,10 @@ namespace araras_health_hub_api.Dtos.Supplier
         [MaxLength(280, ErrorMessage = "O Nome não pode ter mais de 280 caracteres.")]
         public string Name { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "O CNPJ é obrigatório.")]
+        [StringLength(18, ErrorMessage = "O CNPJ precisa ter 18 caracteres.")]
+        public string Cnpj { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "O Endereço é obrigatório.")]
         [MinLength(5, ErrorMessage = "O Endereço não pode ter menos de 5 caracteres.")]
         [MaxLength(280, ErrorMessage = "O Endereço não pode ter mais de 280 caracteres.")]

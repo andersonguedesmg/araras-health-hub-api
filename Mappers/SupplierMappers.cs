@@ -15,6 +15,7 @@ namespace araras_health_hub_api.Mappers
             {
                 Id = SupplierModel.Id,
                 Name = SupplierModel.Name,
+                Cnpj = SupplierModel.Cnpj,
                 Address = SupplierModel.Address,
                 Number = SupplierModel.Number,
                 Neighborhood = SupplierModel.Neighborhood,
@@ -34,6 +35,7 @@ namespace araras_health_hub_api.Mappers
             return new Supplier
             {
                 Name = SupplierModelDto.Name,
+                Cnpj = SupplierModelDto.Cnpj,
                 Address = SupplierModelDto.Address,
                 Number = SupplierModelDto.Number,
                 Neighborhood = SupplierModelDto.Neighborhood,
