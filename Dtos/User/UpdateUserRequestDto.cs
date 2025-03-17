@@ -13,6 +13,10 @@ namespace araras_health_hub_api.Dtos.User
         [MaxLength(280, ErrorMessage = "O Nome não pode ter mais de 280 caracteres.")]
         public string Name { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "O CPF é obrigatório.")]
+        [StringLength(14, ErrorMessage = "O CPF precisa ter 14 caracteres.")]
+        public string Cpf { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "A Função é obrigatória.")]
         [MinLength(5, ErrorMessage = "A Função não pode ter menos de 5 caracteres.")]
         [MaxLength(280, ErrorMessage = "A Função não pode ter mais de 280 caracteres.")]

@@ -15,6 +15,7 @@ namespace araras_health_hub_api.Mappers
             {
                 Id = userModel.Id,
                 Name = userModel.Name,
+                Cpf = userModel.Cpf,
                 Function = userModel.Function,
                 Phone = userModel.Phone,
                 CreatedOn = userModel.CreatedOn,
@@ -28,6 +29,7 @@ namespace araras_health_hub_api.Mappers
             return new User
             {
                 Name = userModelDto.Name,
+                Cpf = userModelDto.Cpf,
                 Function = userModelDto.Function,
                 Phone = userModelDto.Phone,
                 CreatedOn = userModelDto.CreatedOn,
