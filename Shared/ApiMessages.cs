@@ -26,11 +26,14 @@ namespace araras_health_hub_api.Shared
         public const string MsgSupplierDeletedSuccessfully = "Fornecedor excluído com sucesso.";
 
         public const string MsgDestinationNotFound = "Destino não encontrado.";
+        public const string MsgNotDestinationsFound = "Nenhum destino encontrado.";
         public const string MsgDestinationDoesNotExist = "O Destino informado não existe.";
         public const string MsgDestinationCreatedSuccessfully = "Destino criado com sucesso.";
         public const string MsgDestinationFoundSuccessfully = "Destino encontrado com sucesso.";
         public const string MsgDestinationsFoundSuccessfully = "Destinos encontrados com sucesso.";
         public const string MsgDestinationUpdatedSuccessfully = "Destino atualizado com sucesso.";
+        public const string MsgDestinationDisabledSuccessfully = "Destino desativado com sucesso.";
+        public const string MsgDestinationActivatedSuccessfully = "Destino ativado com sucesso.";
         public const string MsgDestinationDeletedSuccessfully = "Destino excluído com sucesso.";
 
         public const string MsgAccountUnauthorized = "Usuário invalido.";

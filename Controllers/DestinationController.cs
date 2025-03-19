@@ -31,9 +31,14 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Destination>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var destinations = await _destinationRepo.GetAllAsync();
+
+            if (destinations.Count == 0)
+            {
+                return NotFound(new ApiResponse<Destination>(StatusCodes.Status404NotFound, ApiMessages.MsgNotDestinationsFound, null!));
+            }
 
             return Ok(new ApiResponse<List<Destination>>(StatusCodes.Status200OK, ApiMessages.MsgDestinationsFoundSuccessfully, destinations));
         }
@@ -44,7 +49,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Destination>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var destination = await _destinationRepo.GetByIdAsync(id);
 
@@ -62,7 +67,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateDestinationRequestDto destinationDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Destination>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var destinationModel = destinationDto.ToDestinationFromCreateDto();
             var newDestination = await _destinationRepo.CreateAsync(destinationModel);
@@ -76,7 +81,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateDestinationRequestDto updateDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Destination>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var destinationModel = await _destinationRepo.UpdateAsync(id, updateDto);
 
@@ -95,7 +100,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Destination>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var destinationModel = await _destinationRepo.DeleteAsync(id);
 
@@ -113,7 +118,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusDestinationRequestDto changeStatusDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Destination>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var destinationModel = await _destinationRepo.ChangeStatusAsync(id, changeStatusDto);
 
@@ -122,7 +127,12 @@ namespace araras_health_hub_api.Controllers
                 return NotFound(new ApiResponse<Destination>(StatusCodes.Status404NotFound, ApiMessages.MsgDestinationNotFound, null!));
             }
 
-            return Ok(new ApiResponse<Destination>(StatusCodes.Status200OK, ApiMessages.MsgDestinationUpdatedSuccessfully, destinationModel));
+            if (changeStatusDto.IsActive == true)
+            {
+                return Ok(new ApiResponse<Destination>(StatusCodes.Status200OK, ApiMessages.MsgDestinationActivatedSuccessfully, destinationModel));
+            }
+
+            return Ok(new ApiResponse<Destination>(StatusCodes.Status200OK, ApiMessages.MsgDestinationDisabledSuccessfully, destinationModel));
         }
     }
 }
