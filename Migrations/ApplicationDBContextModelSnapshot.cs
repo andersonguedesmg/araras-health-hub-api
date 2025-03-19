@@ -51,19 +51,19 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b882841e-fa51-4b18-92d9-4d34ebd94fbc",
+                            Id = "b31350da-fa81-4471-9870-30de42d4eb4f",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
-                            Id = "50c03c3f-9213-4ab8-ad26-3a2ab607266d",
+                            Id = "4022beb2-480d-4f9e-875a-fc055da3ee6e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8cadc3af-311f-423e-b83f-bfb079a4bdcb",
+                            Id = "b21e22fe-8743-4b4b-bb72-e6c2936295d9",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -158,8 +158,8 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "a9df12da-0b73-4080-b5b8-efd5e703e2a1",
-                            RoleId = "b882841e-fa51-4b18-92d9-4d34ebd94fbc"
+                            UserId = "82d79ac3-5ff0-4a4e-a193-189e93bf0c6b",
+                            RoleId = "b31350da-fa81-4471-9870-30de42d4eb4f"
                         });
                 });
 
@@ -263,20 +263,20 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a9df12da-0b73-4080-b5b8-efd5e703e2a1",
+                            Id = "82d79ac3-5ff0-4a4e-a193-189e93bf0c6b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6683e187-63c0-42b6-9ea7-e94c06a857af",
-                            CreatedOn = new DateTime(2025, 3, 17, 9, 15, 48, 632, DateTimeKind.Local).AddTicks(5078),
+                            ConcurrencyStamp = "76410c4d-f47f-49c6-934e-ce9fcfe856aa",
+                            CreatedOn = new DateTime(2025, 3, 19, 17, 42, 43, 800, DateTimeKind.Local).AddTicks(6274),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOGVbTz0P9sI2DJOntCRO4wnvFB8JsQJWI0h8TL0066GQPcL7Fv6DI1xARgWhzRnoA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHpULWgTXwmsb37/PZgC9duUut2tg9YyX7sg5CFY3t63AbZfYdca7S1RhJo2Tlgoww==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "12c9df1e-d0c5-4425-ac8a-260004159111",
+                            SecurityStamp = "d58ba4ce-d284-49ae-a9db-df7677fb345a",
                             TwoFactorEnabled = false,
-                            UpdatedOn = new DateTime(2025, 3, 17, 9, 15, 48, 632, DateTimeKind.Local).AddTicks(5079),
+                            UpdatedOn = new DateTime(2025, 3, 19, 17, 42, 43, 800, DateTimeKind.Local).AddTicks(6279),
                             UserName = "SMS_Master"
                         });
                 });
@@ -345,7 +345,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 3, 17, 9, 15, 48, 632, DateTimeKind.Local).AddTicks(4964),
+                            CreatedOn = new DateTime(2025, 3, 19, 17, 42, 43, 800, DateTimeKind.Local).AddTicks(6107),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -353,8 +353,50 @@ namespace araras_health_hub_api.Migrations
                             Number = "33",
                             Phone = "(19) 3543-1522",
                             State = "SP",
-                            UpdatedOn = new DateTime(2025, 3, 17, 9, 15, 48, 632, DateTimeKind.Local).AddTicks(4965)
+                            UpdatedOn = new DateTime(2025, 3, 19, 17, 42, 43, 800, DateTimeKind.Local).AddTicks(6108)
                         });
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Manufacturer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Measure")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Supplier", b =>

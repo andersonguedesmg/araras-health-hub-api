@@ -45,5 +45,15 @@ namespace araras_health_hub_api.Shared
         public const string MsgAccountsFoundSuccessfully = "Clientes encontrados com sucesso.";
         public const string MsgAccountUpdatedSuccessfully = "Cliente atualizado com sucesso.";
         public const string MsgAccountDeletedSuccessfully = "Cliente excluído com sucesso.";
+
+        public const string MsgProductNotFound = "Produto não encontrado.";
+        public const string MsgNotProductsFound = "Nenhum produto encontrado.";
+        public const string MsgProductCreatedSuccessfully = "Produto criado com sucesso.";
+        public const string MsgProductFoundSuccessfully = "Produto encontrado com sucesso.";
+        public const string MsgProductsFoundSuccessfully = "Produtos encontrados com sucesso.";
+        public const string MsgProductUpdatedSuccessfully = "Produto atualizado com sucesso.";
+        public const string MsgProductDisabledSuccessfully = "Produto desativado com sucesso.";
+        public const string MsgProductActivatedSuccessfully = "Produto ativado com sucesso.";
+        public const string MsgProductDeletedSuccessfully = "Produto excluído com sucesso.";
     }
 }
