@@ -16,10 +16,13 @@ namespace araras_health_hub_api.Shared
         public const string MsgUserDeletedSuccessfully = "Usuário excluído com sucesso.";
 
         public const string MsgSupplierNotFound = "Fornecedor não encontrado.";
+        public const string MsgNotSuppliersFound = "Nenhum fornecedor encontrado.";
         public const string MsgSupplierCreatedSuccessfully = "Fornecedor criado com sucesso.";
         public const string MsgSupplierFoundSuccessfully = "Fornecedor encontrado com sucesso.";
         public const string MsgSuppliersFoundSuccessfully = "Fornecedores encontrados com sucesso.";
         public const string MsgSupplierUpdatedSuccessfully = "Fornecedor atualizado com sucesso.";
+        public const string MsgSupplierDisabledSuccessfully = "Fornecedor desativado com sucesso.";
+        public const string MsgSupplierActivatedSuccessfully = "Fornecedor ativado com sucesso.";
         public const string MsgSupplierDeletedSuccessfully = "Fornecedor excluído com sucesso.";
 
         public const string MsgDestinationNotFound = "Destino não encontrado.";

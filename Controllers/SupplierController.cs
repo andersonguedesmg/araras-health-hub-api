@@ -29,9 +29,14 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Supplier>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var suppliers = await _supplierRepo.GetAllAsync();
+
+            if (suppliers.Count == 0)
+            {
+                return NotFound(new ApiResponse<Supplier>(StatusCodes.Status404NotFound, ApiMessages.MsgNotSuppliersFound, null!));
+            }
 
             return Ok(new ApiResponse<List<Supplier>>(StatusCodes.Status200OK, ApiMessages.MsgSuppliersFoundSuccessfully, suppliers));
         }
@@ -42,7 +47,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Supplier>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var supplier = await _supplierRepo.GetByIdAsync(id);
 
@@ -60,7 +65,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateSupplierRequestDto supplierDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Supplier>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var supplierModel = supplierDto.ToSupplierFromCreateDto();
             var newSupplier = await _supplierRepo.CreateAsync(supplierModel);
@@ -74,7 +79,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSupplierRequestDto updateDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Supplier>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var supplierModel = await _supplierRepo.UpdateAsync(id, updateDto);
 
@@ -93,7 +98,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Supplier>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var supplierModel = await _supplierRepo.DeleteAsync(id);
 
@@ -111,7 +116,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusSupplierRequestDto changeStatusDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<Supplier>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var supplierModel = await _supplierRepo.ChangeStatusAsync(id, changeStatusDto);
 
@@ -120,7 +125,12 @@ namespace araras_health_hub_api.Controllers
                 return NotFound(new ApiResponse<Supplier>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, null!));
             }
 
-            return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierUpdatedSuccessfully, supplierModel));
+            if (changeStatusDto.IsActive == true)
+            {
+                return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierActivatedSuccessfully, supplierModel));
+            }
+
+            return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierDisabledSuccessfully, supplierModel));
         }
     }
 }
