@@ -1,3 +1,4 @@
+using araras_health_hub_api.Data;
 using araras_health_hub_api.Dtos.Account;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Models;
@@ -17,13 +18,15 @@ namespace araras_health_hub_api.Controllers
         private readonly ITokenService _tokenService;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IDestinationRepository _destinationRepo;
+        private readonly ApplicationDBContext _dbContext;
 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, IDestinationRepository destinationRepo)
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, IDestinationRepository destinationRepo, ApplicationDBContext dbContext)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
             _destinationRepo = destinationRepo;
+            _dbContext = dbContext;
         }
 
         [HttpPost("register")]
@@ -181,11 +184,15 @@ namespace araras_health_hub_api.Controllers
 
             foreach (var user in accounts)
             {
-                var roles = await _userManager.GetRolesAsync(user);
+                var userRoles = await _dbContext.UserRoles
+                    .Where(ur => ur.UserId == user.Id)
+                    .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new { RoleId = r.Id, RoleName = r.Name })
+                    .ToListAsync();
+
                 usersWithRoles.Add(new
                 {
                     User = user,
-                    Roles = roles
+                    Roles = userRoles
                 });
             }
 
@@ -193,21 +200,32 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
-        [Route("getByUserName/{userName}")]
+        [Route("getById/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> GetByUserName([FromRoute] string userName)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
-            var account = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName.ToLower());
+            var account = await _userManager.Users.Include(u => u.Destination).FirstOrDefaultAsync(x => x.Id == id);
 
             if (account == null)
             {
                 return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
             }
 
-            return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, account));
+            var userRoles = await _dbContext.UserRoles
+                .Where(ur => ur.UserId == id)
+                .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new { RoleId = r.Id, RoleName = r.Name })
+                .ToListAsync();
+
+            var response = new
+            {
+                User = account,
+                Roles = userRoles
+            };
+
+            return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, response));
         }
     }
 }
