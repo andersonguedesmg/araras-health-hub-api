@@ -22,10 +22,13 @@ namespace araras_health_hub_api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -51,25 +54,28 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9f64fc62-3831-4eae-bb0f-84c7f682ccaf",
+                            Id = 1,
+                            ConcurrencyStamp = "b78c4b56-0c5c-488e-97d3-00400f5a8547",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
-                            Id = "91724e42-3a33-4611-b039-4ed7bccebd0c",
+                            Id = 2,
+                            ConcurrencyStamp = "820adbb5-4ec9-48b7-b0b5-283db5152afd",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "54808c78-8566-42b6-8fa3-b3ab3d29a18b",
+                            Id = 3,
+                            ConcurrencyStamp = "1c7380e5-030d-4b81-a311-056283901c97",
                             Name = "User",
                             NormalizedName = "USER"
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,9 +89,8 @@ namespace araras_health_hub_api.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -94,7 +99,7 @@ namespace araras_health_hub_api.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,9 +113,8 @@ namespace araras_health_hub_api.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -119,7 +123,7 @@ namespace araras_health_hub_api.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -130,9 +134,8 @@ namespace araras_health_hub_api.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -141,13 +144,13 @@ namespace araras_health_hub_api.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -158,15 +161,15 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "951658bb-cc67-4357-90b6-0e022a79fd25",
-                            RoleId = "9f64fc62-3831-4eae-bb0f-84c7f682ccaf"
+                            UserId = 1,
+                            RoleId = 1
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -184,8 +187,11 @@ namespace araras_health_hub_api.Migrations
 
             modelBuilder.Entity("araras_health_hub_api.Models.AppUser", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -263,20 +269,20 @@ namespace araras_health_hub_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "951658bb-cc67-4357-90b6-0e022a79fd25",
+                            Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1c3f78e6-bfcb-40a9-9e96-48b8d1d3ae7c",
-                            CreatedOn = new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(8011),
+                            ConcurrencyStamp = "d98c0476-638d-4bde-b48c-b69eb9638408",
+                            CreatedOn = new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(4118),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPq0GWdOo2/peri6sffRw7BF4MpifHq7jg3zu9agAlAd0lbR6YoG48LR0yCpMgAdlA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAtBiYcWsTekkc9ZHuyLVuF+6cavAkKNzlBEAmpDH8nDRtnuQ5f15EIAsZAXQQs8hQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "84758551-918a-4de9-8d0b-f007ae01165c",
+                            SecurityStamp = "26da850a-2ca0-40d8-a31c-e0b2fed49b02",
                             TwoFactorEnabled = false,
-                            UpdatedOn = new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(8011),
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
                         });
                 });
@@ -345,7 +351,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(7846),
+                            CreatedOn = new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(3996),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -353,7 +359,7 @@ namespace araras_health_hub_api.Migrations
                             Number = "33",
                             Phone = "(19) 3543-1522",
                             State = "SP",
-                            UpdatedOn = new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(7847)
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -499,16 +505,16 @@ namespace araras_health_hub_api.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.HasOne("araras_health_hub_api.Models.AppUser", null)
                         .WithMany()
@@ -517,7 +523,7 @@ namespace araras_health_hub_api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.HasOne("araras_health_hub_api.Models.AppUser", null)
                         .WithMany()
@@ -526,9 +532,9 @@ namespace araras_health_hub_api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -541,7 +547,7 @@ namespace araras_health_hub_api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.HasOne("araras_health_hub_api.Models.AppUser", null)
                         .WithMany()

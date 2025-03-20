@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace araras_health_hub_api.Models
 {
-    public class AppUser : IdentityUser
+    public class AppUser : IdentityUser<int>
     {
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
-        public DateTime UpdatedOn { get; set; } = DateTime.Now;
+        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
 
         public bool IsActive { get; set; } = true;
 

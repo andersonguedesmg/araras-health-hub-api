@@ -17,7 +17,8 @@ namespace araras_health_hub_api.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -121,7 +122,7 @@ namespace araras_health_hub_api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -140,7 +141,8 @@ namespace araras_health_hub_api.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
@@ -176,7 +178,7 @@ namespace araras_health_hub_api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -198,7 +200,7 @@ namespace araras_health_hub_api.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -215,8 +217,8 @@ namespace araras_health_hub_api.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -239,7 +241,7 @@ namespace araras_health_hub_api.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -260,25 +262,25 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "54808c78-8566-42b6-8fa3-b3ab3d29a18b", null, "User", "USER" },
-                    { "91724e42-3a33-4611-b039-4ed7bccebd0c", null, "Admin", "ADMIN" },
-                    { "9f64fc62-3831-4eae-bb0f-84c7f682ccaf", null, "Master", "MASTER" }
+                    { 1, "b78c4b56-0c5c-488e-97d3-00400f5a8547", "Master", "MASTER" },
+                    { 2, "820adbb5-4ec9-48b7-b0b5-283db5152afd", "Admin", "ADMIN" },
+                    { 3, "1c7380e5-030d-4b81-a311-056283901c97", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Destination",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(7846), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(7847) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(3996), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "DestinationId", "Email", "EmailConfirmed", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { "951658bb-cc67-4357-90b6-0e022a79fd25", 0, "1c3f78e6-bfcb-40a9-9e96-48b8d1d3ae7c", new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(8011), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEPq0GWdOo2/peri6sffRw7BF4MpifHq7jg3zu9agAlAd0lbR6YoG48LR0yCpMgAdlA==", null, false, "84758551-918a-4de9-8d0b-f007ae01165c", false, new DateTime(2025, 3, 20, 11, 40, 39, 259, DateTimeKind.Local).AddTicks(8011), "SMS_Master" });
+                values: new object[] { 1, 0, "d98c0476-638d-4bde-b48c-b69eb9638408", new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(4118), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEAtBiYcWsTekkc9ZHuyLVuF+6cavAkKNzlBEAmpDH8nDRtnuQ5f15EIAsZAXQQs8hQ==", null, false, "26da850a-2ca0-40d8-a31c-e0b2fed49b02", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SMS_Master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "9f64fc62-3831-4eae-bb0f-84c7f682ccaf", "951658bb-cc67-4357-90b6-0e022a79fd25" });
+                values: new object[] { 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

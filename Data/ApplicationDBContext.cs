@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace araras_health_hub_api.Data
 {
-    public class ApplicationDBContext : IdentityDbContext<AppUser>
+    public class ApplicationDBContext : IdentityDbContext<AppUser, IdentityRole<int>, int, IdentityUserClaim<int>, IdentityUserRole<int>, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
-        public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> dbContextOptions) : base(dbContextOptions)
         {
 
         }
@@ -25,37 +25,43 @@ namespace araras_health_hub_api.Data
         {
             base.OnModelCreating(builder);
 
-            Guid roleMasterId = Guid.NewGuid();
-            Guid roleAdminId = Guid.NewGuid();
-            Guid roleUserId = Guid.NewGuid();
+            builder.Entity<AppUser>()
+                .Property(u => u.Id)
+                .ValueGeneratedOnAdd();
 
-            Guid userMasterId = Guid.NewGuid();
+            int roleMasterId = 1;
+            int roleAdminId = 2;
+            int roleUserId = 3;
+
             PasswordHasher<AppUser> hasher = new();
 
-            List<IdentityRole> roles = new List<IdentityRole>
+            List<IdentityRole<int>> roles = new List<IdentityRole<int>>
             {
-                new IdentityRole
+                new IdentityRole<int>
                 {
-                    Id = roleMasterId.ToString(),
+                    Id = roleMasterId,
                     Name = "Master",
                     NormalizedName = "MASTER",
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
                 },
 
-                new IdentityRole
+                new IdentityRole<int>
                 {
-                    Id = roleAdminId.ToString(),
+                    Id = roleAdminId,
                     Name = "Admin",
                     NormalizedName = "ADMIN",
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
                 },
 
-                new IdentityRole
+                new IdentityRole<int>
                 {
-                    Id = roleUserId.ToString(),
+                    Id = roleUserId,
                     Name = "User",
                     NormalizedName = "USER",
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
                 },
             };
-            builder.Entity<IdentityRole>().HasData(roles);
+            builder.Entity<IdentityRole<int>>().HasData(roles);
 
             builder.Entity<Destination>().HasData(
                 new Destination
@@ -71,18 +77,18 @@ namespace araras_health_hub_api.Data
                     Email = "sms@araras.sp.gov.br",
                     Phone = "(19) 3543-1522",
                     CreatedOn = DateTime.Now,
-                    UpdatedOn = DateTime.Now,
+                    UpdatedOn = DateTime.MinValue,
                     IsActive = true,
                 }
             );
 
             AppUser userMaster = new()
             {
-                Id = userMasterId.ToString(),
+                Id = 1,
                 UserName = "SMS_Master",
                 NormalizedUserName = "SMS_MASTER",
                 CreatedOn = DateTime.Now,
-                UpdatedOn = DateTime.Now,
+                UpdatedOn = DateTime.MinValue,
                 IsActive = true,
                 DestinationId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -90,12 +96,12 @@ namespace araras_health_hub_api.Data
             userMaster.PasswordHash = hasher.HashPassword(userMaster, "A2H@Master");
             builder.Entity<AppUser>().HasData(userMaster);
 
-            IdentityUserRole<string> userMasterRole = new()
+            IdentityUserRole<int> userMasterRole = new()
             {
-                RoleId = roleMasterId.ToString(),
-                UserId = userMasterId.ToString(),
+                RoleId = 1,
+                UserId = 1,
             };
-            builder.Entity<IdentityUserRole<string>>().HasData(userMasterRole);
+            builder.Entity<IdentityUserRole<int>>().HasData(userMasterRole);
         }
     }
 }

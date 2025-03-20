@@ -32,7 +32,7 @@ namespace araras_health_hub_api.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
                 if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
                 {
@@ -88,7 +88,7 @@ namespace araras_health_hub_api.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
                 if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
                 {
@@ -142,7 +142,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
 
@@ -173,11 +173,23 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> GetAll()
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
-            var accounts = await _userManager.Users.ToListAsync();
+            var accounts = await _userManager.Users.Include(u => u.Destination).ToListAsync();
 
-            return Ok(new ApiResponse<List<AppUser>>(StatusCodes.Status200OK, ApiMessages.MsgUsersFoundSuccessfully, accounts));
+            var usersWithRoles = new List<object>();
+
+            foreach (var user in accounts)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                usersWithRoles.Add(new
+                {
+                    User = user,
+                    Roles = roles
+                });
+            }
+
+            return Ok(new ApiResponse<List<object>>(StatusCodes.Status200OK, ApiMessages.MsgUsersFoundSuccessfully, usersWithRoles));
         }
 
         [HttpGet]
@@ -186,7 +198,7 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> GetByUserName([FromRoute] string userName)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var account = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName.ToLower());
 

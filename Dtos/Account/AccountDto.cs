@@ -13,7 +13,7 @@ namespace araras_health_hub_api.Dtos.Account
 
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
-        public DateTime UpdatedOn { get; set; } = DateTime.Now;
+        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
 
         public bool IsActive { get; set; } = true;
 
