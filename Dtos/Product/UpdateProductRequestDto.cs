@@ -24,13 +24,13 @@ namespace araras_health_hub_api.Dtos.Product
         public string Manufacturer { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A Medida é obrigatório.")]
-        [MinLength(5, ErrorMessage = "A Medida não pode ter menos de 14 caracteres.")]
-        [MaxLength(280, ErrorMessage = "A Medida não pode ter mais de 15 caracteres.")]
-        public string Measure { get; set; } = string.Empty;
+        [MinLength(5, ErrorMessage = "A Medida não pode ter menos de 5 caracteres.")]
+        [MaxLength(280, ErrorMessage = "A Medida não pode ter mais de 280 caracteres.")]
+        public string Format { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A Categoria é obrigatória.")]
-        [MinLength(5, ErrorMessage = "A Categoria não pode ter menos de 14 caracteres.")]
-        [MaxLength(280, ErrorMessage = "A Categoria não pode ter mais de 15 caracteres.")]
+        [MinLength(5, ErrorMessage = "A Categoria não pode ter menos de 5 caracteres.")]
+        [MaxLength(280, ErrorMessage = "A Categoria não pode ter mais de 280 caracteres.")]
         public string Category { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A Data de Atualização é obrigatória.")]

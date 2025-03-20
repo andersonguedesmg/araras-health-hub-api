@@ -11,7 +11,7 @@ namespace araras_health_hub_api.Dtos.Product
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Manufacturer { get; set; } = string.Empty;
-        public string Measure { get; set; } = string.Empty;
+        public string Format { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         public DateTime UpdatedOn { get; set; }
