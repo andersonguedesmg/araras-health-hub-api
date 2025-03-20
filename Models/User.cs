@@ -13,7 +13,7 @@ namespace araras_health_hub_api.Models
         public string Function { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public DateTime CreatedOn { get; set; } = DateTime.Now;
-        public DateTime UpdatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
         public bool IsActive { get; set; } = true;
     }
 }

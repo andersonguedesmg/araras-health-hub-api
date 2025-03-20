@@ -52,7 +52,7 @@ namespace araras_health_hub_api.Dtos.Destination
         [Required(ErrorMessage = "A Data de Criação é obrigatória.")]
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
-        public DateTime UpdatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
 
         [Required(ErrorMessage = "O Status é obrigatório.")]
         public bool IsActive { get; set; } = true;
