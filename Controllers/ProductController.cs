@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace araras_health_hub_api.Controllers
 {
+    [Route("api/product")]
+    [ApiController]
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepo;
