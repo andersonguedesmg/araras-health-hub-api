@@ -180,23 +180,25 @@ namespace araras_health_hub_api.Controllers
 
             var accounts = await _userManager.Users.Include(u => u.Destination).ToListAsync();
 
-            var usersWithRoles = new List<object>();
-
-            foreach (var user in accounts)
-            {
-                var userRoles = await _dbContext.UserRoles
-                    .Where(ur => ur.UserId == user.Id)
-                    .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new { RoleId = r.Id, RoleName = r.Name })
-                    .ToListAsync();
-
-                usersWithRoles.Add(new
+            var usersWithRoles = await _userManager.Users.Include(u => u.Destination)
+                .Select(user => new AccountWithRolesDto
                 {
-                    User = user,
-                    Roles = userRoles
-                });
-            }
+                    Id = user.Id,
+                    UserName = user.UserName!,
+                    NormalizedUserName = user.NormalizedUserName!,
+                    CreatedOn = user.CreatedOn,
+                    UpdatedOn = user.UpdatedOn,
+                    IsActive = user.IsActive,
+                    DestinationId = user.DestinationId,
+                    Destination = user.Destination!,
+                    Roles = _dbContext.UserRoles
+                        .Where(ur => ur.UserId == user.Id)
+                        .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new RoleDto { Id = r.Id, Name = r.Name! })
+                        .ToList()
+                })
+                .ToListAsync();
 
-            return Ok(new ApiResponse<List<object>>(StatusCodes.Status200OK, ApiMessages.MsgUsersFoundSuccessfully, usersWithRoles));
+            return Ok(new ApiResponse<List<AccountWithRolesDto>>(StatusCodes.Status200OK, ApiMessages.MsgUsersFoundSuccessfully, usersWithRoles));
         }
 
         [HttpGet]
