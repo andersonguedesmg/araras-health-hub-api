@@ -19,6 +19,8 @@ namespace araras_health_hub_api.Dtos.Account
 
         public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
 
+        public string Role { get; set; } = string.Empty;
+
         [Required]
         public bool IsActive { get; set; } = true;
 

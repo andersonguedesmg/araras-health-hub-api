@@ -45,6 +45,8 @@ namespace araras_health_hub_api.Shared
         public const string MsgAccountsFoundSuccessfully = "Clientes encontrados com sucesso.";
         public const string MsgAccountUpdatedSuccessfully = "Cliente atualizado com sucesso.";
         public const string MsgAccountDeletedSuccessfully = "Cliente excluído com sucesso.";
+        public const string MsgAccountCreationFailed = "Falha ao criar o cliente.";
+        public const string MsgRoleAssignmentFailed = "Falha ao atribuir o papel ao cliente.";
 
         public const string MsgProductNotFound = "Produto não encontrado.";
         public const string MsgNotProductsFound = "Nenhum produto encontrado.";

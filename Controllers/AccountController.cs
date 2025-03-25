@@ -32,113 +32,41 @@ namespace araras_health_hub_api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            try
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
+
+            if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgDestinationDoesNotExist, null!));
+
+            var appUser = new AppUser
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+                UserName = registerDto.UserName,
+                CreatedOn = registerDto.CreatedOn,
+                UpdatedOn = registerDto.UpdatedOn,
+                IsActive = registerDto.IsActive,
+                DestinationId = registerDto.DestinationId,
+            };
 
-                if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
-                {
-                    return BadRequest(new ApiResponse<AppUser>(StatusCodes.Status400BadRequest, ApiMessages.MsgDestinationDoesNotExist, null!));
-                }
+            var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
 
-                var appUser = new AppUser
-                {
-                    UserName = registerDto.UserName,
-                    CreatedOn = registerDto.CreatedOn,
-                    UpdatedOn = registerDto.UpdatedOn,
-                    IsActive = registerDto.IsActive,
-                    DestinationId = registerDto.DestinationId,
-                };
+            if (!createdUser.Succeeded)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountCreationFailed, createdUser.Errors));
 
-                var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
+            var rolesResult = await _userManager.AddToRoleAsync(appUser, registerDto.Role);
 
-                if (createdUser.Succeeded)
-                {
-                    var rolesResult = await _userManager.AddToRoleAsync(appUser, "User");
-                    if (rolesResult.Succeeded)
-                    {
-                        return Ok(new NewUserDto
-                        {
-                            UserName = appUser.UserName!,
-                            CreatedOn = appUser.CreatedOn,
-                            UpdatedOn = appUser.UpdatedOn,
-                            IsActive = appUser.IsActive,
-                            DestinationId = appUser.DestinationId,
-                            Token = _tokenService.CreateToken(appUser)
-                        });
-                    }
-                    else
-                    {
-                        return StatusCode(500, rolesResult.Errors);
-                    }
-                }
-                else
-                {
-                    return StatusCode(500, createdUser.Errors);
-                }
+            if (!rolesResult.Succeeded)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgRoleAssignmentFailed, rolesResult.Errors));
 
-            }
-            catch (Exception e)
+            var newUserDto = new NewUserDto
             {
-                return StatusCode(500, e);
-            }
-        }
+                UserName = appUser.UserName!,
+                CreatedOn = appUser.CreatedOn,
+                UpdatedOn = appUser.UpdatedOn,
+                IsActive = appUser.IsActive,
+                DestinationId = appUser.DestinationId,
+            };
 
-        [HttpPost("registerAdmin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDto registerDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-                if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
-                {
-                    return BadRequest(new ApiResponse<AppUser>(StatusCodes.Status400BadRequest, ApiMessages.MsgDestinationDoesNotExist, null!));
-                }
-
-                var appUser = new AppUser
-                {
-                    UserName = registerDto.UserName,
-                    CreatedOn = registerDto.CreatedOn,
-                    UpdatedOn = registerDto.UpdatedOn,
-                    IsActive = registerDto.IsActive,
-                    DestinationId = registerDto.DestinationId,
-                };
-
-                var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
-
-                if (createdUser.Succeeded)
-                {
-                    var rolesResult = await _userManager.AddToRoleAsync(appUser, "Admin");
-                    if (rolesResult.Succeeded)
-                    {
-                        return Ok(new NewUserDto
-                        {
-                            UserName = appUser.UserName!,
-                            CreatedOn = appUser.CreatedOn,
-                            UpdatedOn = appUser.UpdatedOn,
-                            IsActive = appUser.IsActive,
-                            DestinationId = appUser.DestinationId,
-                            Token = _tokenService.CreateToken(appUser)
-                        });
-                    }
-                    else
-                    {
-                        return StatusCode(500, rolesResult.Errors);
-                    }
-                }
-                else
-                {
-                    return StatusCode(500, createdUser.Errors);
-                }
-
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e);
-            }
+            return CreatedAtAction(nameof(Register), new ApiResponse<NewUserDto>(StatusCodes.Status201Created, ApiMessages.MsgAccountCreatedSuccessfully, newUserDto));
         }
 
         [HttpPost("login")]
