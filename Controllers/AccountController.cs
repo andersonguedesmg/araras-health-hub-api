@@ -193,5 +193,55 @@ namespace araras_health_hub_api.Controllers
 
             return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, response));
         }
+
+        [HttpPut]
+        [Route("update")]
+        [Authorize]
+        public async Task<IActionResult> Update([FromBody] UpdateUserNameDto updateUserNameDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
+
+            var user = await _userManager.FindByIdAsync(updateUserNameDto.Id.ToString());
+
+            if (user == null)
+                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
+
+            user.UserName = updateUserNameDto.UserName;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountUpdatedSuccessfully, result.Errors));
+
+            return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountUpdatedSuccessfully, user));
+        }
+
+        [HttpPut]
+        [Route("changeStatus")]
+        [Authorize]
+        public async Task<IActionResult> ChangeStatus([FromBody] UpdateUserNameDto updateUserNameDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
+
+            var user = await _userManager.FindByIdAsync(updateUserNameDto.Id.ToString());
+
+            if (user == null)
+                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
+
+            user.IsActive = updateUserNameDto.IsActive;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountUpdatedSuccessfully, result.Errors));
+
+            if (updateUserNameDto.IsActive == true)
+            {
+                return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountActivatedSuccessfully, user));
+            }
+
+            return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountDisabledSuccessfully, user));
+        }
     }
 }
