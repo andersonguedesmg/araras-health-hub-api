@@ -157,5 +157,41 @@ namespace araras_health_hub_api.Controllers
 
             return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, response));
         }
+
+        [HttpGet]
+        [Route("getByDestinationId/{destinationId:int}")]
+        [Authorize]
+        public async Task<IActionResult> GetByDestinationId([FromRoute] int destinationId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+
+            var accounts = await _userManager.Users
+                .Where(u => u.DestinationId == destinationId)
+                .ToListAsync();
+
+            if (accounts == null || accounts.Count == 0)
+            {
+                return NotFound(new ApiResponse<List<AppUser>>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
+            }
+
+            var userRoles = await _dbContext.UserRoles
+                .Where(ur => accounts.Select(a => a.Id).Contains(ur.UserId))
+                .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new { ur.UserId, RoleId = r.Id, RoleName = r.Name })
+                .ToListAsync();
+
+            var response = accounts.Select(account => new
+            {
+                account.Id,
+                account.UserName,
+                account.CreatedOn,
+                account.UpdatedOn,
+                account.IsActive,
+                account.DestinationId,
+                Roles = userRoles.Where(ur => ur.UserId == account.Id).Select(ur => new { ur.RoleId, ur.RoleName }).ToList()
+            }).ToList();
+
+            return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, response));
+        }
     }
 }
