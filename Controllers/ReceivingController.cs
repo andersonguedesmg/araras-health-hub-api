@@ -1,0 +1,203 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using araras_health_hub_api.Data;
+using araras_health_hub_api.Dtos.Receiving;
+using araras_health_hub_api.Dtos.Supplier;
+using araras_health_hub_api.Dtos.User;
+using araras_health_hub_api.Interfaces;
+using araras_health_hub_api.Models;
+using araras_health_hub_api.Shared;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+
+namespace araras_health_hub_api.Controllers
+{
+    [Route("api/receiving")]
+    [ApiController]
+    public class ReceivingController : ControllerBase
+    {
+        private readonly IReceivingRepository _receivingRepo;
+        private readonly ApplicationDBContext _dbContext;
+        private readonly UserManager<AppUser> _userManager;
+
+        public ReceivingController(IReceivingRepository receivingRepo, ApplicationDBContext dbContext, UserManager<AppUser> userManager)
+        {
+            _receivingRepo = receivingRepo;
+            _dbContext = dbContext;
+            _userManager = userManager;
+        }
+
+        [HttpPost]
+        [Route("create")]
+        [Authorize]
+        public async Task<IActionResult> Create([FromBody] CreateReceivingRequestDto receivingDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<Receiving>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+
+            var responsibleUser = await _dbContext.User.FindAsync(receivingDto.ResponsibleId);
+            if (responsibleUser == null)
+            {
+                return BadRequest(new ApiResponse<Receiving>(StatusCodes.Status400BadRequest, ApiMessages.MsgUserInvalid, null!));
+            }
+
+            var account = await _userManager.FindByIdAsync(receivingDto.AccountId.ToString());
+            if (account == null)
+            {
+                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
+            }
+
+            var receivingModel = new Receiving
+            {
+                InvoiceNumber = receivingDto.InvoiceNumber,
+                ReceivingDate = receivingDto.ReceivingDate,
+                Observations = receivingDto.Observations,
+                SupplierId = receivingDto.SupplierId,
+                ResponsibleId = receivingDto.ResponsibleId,
+                AccountId = receivingDto.AccountId,
+                ReceivedItems = new List<ReceivingItem>()
+            };
+
+            var newReceiving = await _receivingRepo.CreateAsync(receivingModel);
+
+            if (receivingDto.ReceivedItems != null)
+            {
+                foreach (var itemDto in receivingDto.ReceivedItems)
+                {
+                    var receivingItemModel = new ReceivingItem
+                    {
+                        ReceivingId = newReceiving.Id,
+                        ProductId = itemDto.ProductId,
+                        Quantity = itemDto.Quantity,
+                        Batch = itemDto.Batch,
+                        ExpiryDate = itemDto.ExpiryDate,
+                        ManufacturingDate = itemDto.ManufacturingDate,
+                    };
+                    await _receivingRepo.CreateReceivingItemAsync(receivingItemModel);
+                }
+            }
+            var response = await _receivingRepo.GetByIdAsync(newReceiving.Id);
+
+            return CreatedAtAction(nameof(GetById), new { id = newReceiving.Id }, new ApiResponse<Receiving>(StatusCodes.Status201Created, ApiMessages.MsgReceivingCreatedSuccessfully, response!));
+        }
+
+        [HttpGet]
+        [Route("getById/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            var receiving = await _receivingRepo.GetByIdAsync(id);
+
+            if (receiving == null)
+            {
+                return NotFound(new ApiResponse<ReceivingResponseDto>(StatusCodes.Status404NotFound, ApiMessages.MsgReceivingNotFound, null!));
+            }
+
+            var receivingResponseDto = new ReceivingResponseDto
+            {
+                Id = receiving.Id,
+                InvoiceNumber = receiving.InvoiceNumber,
+                Observations = receiving.Observations,
+                ReceivingDate = receiving.ReceivingDate,
+                SupplierId = receiving.SupplierId,
+                Supplier = receiving.Supplier != null ? new SupplierDto
+                {
+                    Id = receiving.Supplier.Id,
+                    Name = receiving.Supplier.Name,
+                    Cnpj = receiving.Supplier.Cnpj,
+                    Address = receiving.Supplier.Address,
+                    Phone = receiving.Supplier.Phone,
+                    Email = receiving.Supplier.Email
+                } : null,
+                ResponsibleId = receiving.ResponsibleId,
+                Responsible = receiving.Responsible != null ? new UserDto
+                {
+                    Id = receiving.Responsible.Id,
+                    Name = receiving.Responsible.Name,
+                    Cpf = receiving.Responsible.Cpf,
+                    Phone = receiving.Responsible.Phone,
+                    Function = receiving.Responsible.Function
+                } : null,
+                AccountId = receiving.AccountId,
+                Account = receiving.Account != null ? new AppUser
+                {
+                    Id = receiving.Account.Id,
+                    UserName = receiving.Account.UserName,
+                    Email = receiving.Account.Email
+                } : null,
+                ReceivedItems = receiving.ReceivedItems?.Select(item => new ReceivingItemResponseDto
+                {
+                    Id = item.Id,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Batch = item.Batch,
+                    ExpiryDate = item.ExpiryDate,
+                    ManufacturingDate = item.ManufacturingDate
+                }).ToList() ?? new List<ReceivingItemResponseDto>()
+            };
+
+            return Ok(new ApiResponse<ReceivingResponseDto>(StatusCodes.Status200OK, ApiMessages.MsgReceivingFoundSuccessfully, receivingResponseDto));
+        }
+
+        [HttpGet]
+        [Route("getAll")]
+        [Authorize]
+        public async Task<IActionResult> GetAll()
+        {
+            var receivings = await _receivingRepo.GetAllAsync();
+
+            if (receivings == null || !receivings.Any())
+            {
+                return NotFound(new ApiResponse<List<ReceivingResponseDto>>(StatusCodes.Status404NotFound, ApiMessages.MsgNotReceivingsFound, null!));
+            }
+
+            var receivingResponseDtos = receivings.Select(receiving => new ReceivingResponseDto
+            {
+                Id = receiving.Id,
+                InvoiceNumber = receiving.InvoiceNumber,
+                Observations = receiving.Observations,
+                ReceivingDate = receiving.ReceivingDate,
+                SupplierId = receiving.SupplierId,
+                Supplier = receiving.Supplier != null ? new SupplierDto
+                {
+                    Id = receiving.Supplier.Id,
+                    Name = receiving.Supplier.Name,
+                    Cnpj = receiving.Supplier.Cnpj,
+                    Address = receiving.Supplier.Address,
+                    Phone = receiving.Supplier.Phone,
+                    Email = receiving.Supplier.Email
+                } : null,
+                ResponsibleId = receiving.ResponsibleId,
+                Responsible = receiving.Responsible != null ? new UserDto
+                {
+                    Id = receiving.Responsible.Id,
+                    Name = receiving.Responsible.Name,
+                    Cpf = receiving.Responsible.Cpf,
+                    Phone = receiving.Responsible.Phone,
+                    Function = receiving.Responsible.Function
+                } : null,
+                AccountId = receiving.AccountId,
+                Account = receiving.Account != null ? new AppUser
+                {
+                    Id = receiving.Account.Id,
+                    UserName = receiving.Account.UserName,
+                    Email = receiving.Account.Email
+                } : null,
+                ReceivedItems = receiving.ReceivedItems?.Select(item => new ReceivingItemResponseDto
+                {
+                    Id = item.Id,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Batch = item.Batch,
+                    ExpiryDate = item.ExpiryDate,
+                    ManufacturingDate = item.ManufacturingDate
+                }).ToList() ?? new List<ReceivingItemResponseDto>()
+            }).ToList();
+
+            return Ok(new ApiResponse<List<ReceivingResponseDto>>(StatusCodes.Status200OK, ApiMessages.MsgReceivingsFoundSuccessfully, receivingResponseDtos));
+        }
+    }
+}

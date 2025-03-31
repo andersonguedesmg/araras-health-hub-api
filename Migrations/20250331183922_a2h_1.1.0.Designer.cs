@@ -12,8 +12,8 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250320190128_a2h")]
-    partial class a2h
+    [Migration("20250331183922_a2h_1.1.0")]
+    partial class a2h_110
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,21 +58,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "b78c4b56-0c5c-488e-97d3-00400f5a8547",
+                            ConcurrencyStamp = "7372d566-eec6-43d0-ac7b-6f6b63c97693",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "820adbb5-4ec9-48b7-b0b5-283db5152afd",
+                            ConcurrencyStamp = "e6afeb40-c209-4832-9193-bf018e5ecb7c",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "1c7380e5-030d-4b81-a311-056283901c97",
+                            ConcurrencyStamp = "99db0095-fc40-4b42-8139-a44f18787e08",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -206,7 +206,7 @@ namespace araras_health_hub_api.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DestinationId")
+                    b.Property<int>("DestinationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -274,16 +274,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d98c0476-638d-4bde-b48c-b69eb9638408",
-                            CreatedOn = new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(4118),
+                            ConcurrencyStamp = "e52ddcc5-f2c1-46bc-ade6-a6746780b203",
+                            CreatedOn = new DateTime(2025, 3, 31, 15, 39, 21, 841, DateTimeKind.Local).AddTicks(1962),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAtBiYcWsTekkc9ZHuyLVuF+6cavAkKNzlBEAmpDH8nDRtnuQ5f15EIAsZAXQQs8hQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEE35qJ7ly6R56gJF+e7rIIyA1RDZRySLTUZiDmYE9eQ9zn7VBv+hKsmORz6mR2wiIw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "26da850a-2ca0-40d8-a31c-e0b2fed49b02",
+                            SecurityStamp = "57ee4a00-a30b-48fa-9ab1-8d611cdc47dc",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -354,7 +354,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(3996),
+                            CreatedOn = new DateTime(2025, 3, 31, 15, 39, 21, 841, DateTimeKind.Local).AddTicks(1771),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -406,6 +406,81 @@ namespace araras_health_hub_api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Receiving", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Observations")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReceivingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ResponsibleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ResponsibleId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("Receiving");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.ReceivingItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Batch")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ManufacturingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReceivingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ReceivingId");
+
+                    b.ToTable("ReceivingItem");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Supplier", b =>
@@ -563,14 +638,67 @@ namespace araras_health_hub_api.Migrations
                 {
                     b.HasOne("araras_health_hub_api.Models.Destination", "Destination")
                         .WithMany("AccountUsers")
-                        .HasForeignKey("DestinationId");
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Destination");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Receiving", b =>
+                {
+                    b.HasOne("araras_health_hub_api.Models.AppUser", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("araras_health_hub_api.Models.User", "Responsible")
+                        .WithMany()
+                        .HasForeignKey("ResponsibleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("araras_health_hub_api.Models.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Responsible");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.ReceivingItem", b =>
+                {
+                    b.HasOne("araras_health_hub_api.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("araras_health_hub_api.Models.Receiving", "Receiving")
+                        .WithMany("ReceivedItems")
+                        .HasForeignKey("ReceivingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Receiving");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Destination", b =>
                 {
                     b.Navigation("AccountUsers");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Receiving", b =>
+                {
+                    b.Navigation("ReceivedItems");
                 });
 #pragma warning restore 612, 618
         }

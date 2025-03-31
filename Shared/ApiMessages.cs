@@ -14,6 +14,7 @@ namespace araras_health_hub_api.Shared
         public const string MsgUserDisabledSuccessfully = "Usuário desativado com sucesso.";
         public const string MsgUserActivatedSuccessfully = "Usuário ativado com sucesso.";
         public const string MsgUserDeletedSuccessfully = "Usuário excluído com sucesso.";
+        public const string MsgUserInvalid = "Usuário inválido.";
 
         public const string MsgSupplierNotFound = "Fornecedor não encontrado.";
         public const string MsgNotSuppliersFound = "Nenhum fornecedor encontrado.";
@@ -36,7 +37,7 @@ namespace araras_health_hub_api.Shared
         public const string MsgDestinationActivatedSuccessfully = "Destino ativado com sucesso.";
         public const string MsgDestinationDeletedSuccessfully = "Destino excluído com sucesso.";
 
-        public const string MsgAccountUnauthorized = "Usuário invalido.";
+        public const string MsgAccountUnauthorized = "Usuário não autorizado.";
         public const string MsgAccountIncorrect = "Senha ou Usuário incorreto.";
         public const string MsgAccountLoginSuccessful = "Login realizado sucesso.";
         public const string MsgAccountNotFound = "Cliente não encontrado.";
@@ -49,6 +50,7 @@ namespace araras_health_hub_api.Shared
         public const string MsgRoleAssignmentFailed = "Falha ao atribuir o papel ao cliente.";
         public const string MsgAccountDisabledSuccessfully = "Cliente desativado com sucesso.";
         public const string MsgAccountActivatedSuccessfully = "Cliente ativado com sucesso.";
+        public const string MsgAccountInvalid = "Usuário inválido.";
 
         public const string MsgProductNotFound = "Produto não encontrado.";
         public const string MsgNotProductsFound = "Nenhum produto encontrado.";
@@ -59,5 +61,15 @@ namespace araras_health_hub_api.Shared
         public const string MsgProductDisabledSuccessfully = "Produto desativado com sucesso.";
         public const string MsgProductActivatedSuccessfully = "Produto ativado com sucesso.";
         public const string MsgProductDeletedSuccessfully = "Produto excluído com sucesso.";
+
+        public const string MsgReceivingNotFound = "Recebimento não encontrado.";
+        public const string MsgNotReceivingsFound = "Nenhum recebimento encontrado.";
+        public const string MsgReceivingCreatedSuccessfully = "Recebimento criado com sucesso.";
+        public const string MsgReceivingFoundSuccessfully = "Recebimento encontrado com sucesso.";
+        public const string MsgReceivingsFoundSuccessfully = "Recebimentos encontrados com sucesso.";
+        public const string MsgReceivingUpdatedSuccessfully = "Recebimento atualizado com sucesso.";
+        public const string MsgReceivingDisabledSuccessfully = "Recebimento desativado com sucesso.";
+        public const string MsgReceivingActivatedSuccessfully = "Recebimento ativado com sucesso.";
+        public const string MsgReceivingDeletedSuccessfully = "Recebimento excluído com sucesso.";
     }
 }

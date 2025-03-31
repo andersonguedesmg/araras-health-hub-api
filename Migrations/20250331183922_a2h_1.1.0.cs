@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace araras_health_hub_api.Migrations
 {
     /// <inheritdoc />
-    public partial class a2h : Migration
+    public partial class a2h_110 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -146,7 +146,7 @@ namespace araras_health_hub_api.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    DestinationId = table.Column<int>(type: "int", nullable: true),
+                    DestinationId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -169,7 +169,8 @@ namespace araras_health_hub_api.Migrations
                         name: "FK_AspNetUsers_Destination_DestinationId",
                         column: x => x.DestinationId,
                         principalTable: "Destination",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -257,25 +258,91 @@ namespace araras_health_hub_api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Receiving",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Observations = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReceivingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    ResponsibleId = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Receiving", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Receiving_AspNetUsers_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Receiving_Supplier_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Supplier",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Receiving_User_ResponsibleId",
+                        column: x => x.ResponsibleId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReceivingItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Batch = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ManufacturingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ReceivingId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReceivingItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReceivingItem_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ReceivingItem_Receiving_ReceivingId",
+                        column: x => x.ReceivingId,
+                        principalTable: "Receiving",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "b78c4b56-0c5c-488e-97d3-00400f5a8547", "Master", "MASTER" },
-                    { 2, "820adbb5-4ec9-48b7-b0b5-283db5152afd", "Admin", "ADMIN" },
-                    { 3, "1c7380e5-030d-4b81-a311-056283901c97", "User", "USER" }
+                    { 1, "7372d566-eec6-43d0-ac7b-6f6b63c97693", "Master", "MASTER" },
+                    { 2, "e6afeb40-c209-4832-9193-bf018e5ecb7c", "Admin", "ADMIN" },
+                    { 3, "99db0095-fc40-4b42-8139-a44f18787e08", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Destination",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(3996), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 3, 31, 15, 39, 21, 841, DateTimeKind.Local).AddTicks(1771), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "DestinationId", "Email", "EmailConfirmed", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "d98c0476-638d-4bde-b48c-b69eb9638408", new DateTime(2025, 3, 20, 16, 1, 27, 839, DateTimeKind.Local).AddTicks(4118), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEAtBiYcWsTekkc9ZHuyLVuF+6cavAkKNzlBEAmpDH8nDRtnuQ5f15EIAsZAXQQs8hQ==", null, false, "26da850a-2ca0-40d8-a31c-e0b2fed49b02", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SMS_Master" });
+                values: new object[] { 1, 0, "e52ddcc5-f2c1-46bc-ade6-a6746780b203", new DateTime(2025, 3, 31, 15, 39, 21, 841, DateTimeKind.Local).AddTicks(1962), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEE35qJ7ly6R56gJF+e7rIIyA1RDZRySLTUZiDmYE9eQ9zn7VBv+hKsmORz6mR2wiIw==", null, false, "57ee4a00-a30b-48fa-9ab1-8d611cdc47dc", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SMS_Master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -325,6 +392,31 @@ namespace araras_health_hub_api.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Receiving_AccountId",
+                table: "Receiving",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Receiving_ResponsibleId",
+                table: "Receiving",
+                column: "ResponsibleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Receiving_SupplierId",
+                table: "Receiving",
+                column: "SupplierId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReceivingItem_ProductId",
+                table: "ReceivingItem",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReceivingItem_ReceivingId",
+                table: "ReceivingItem",
+                column: "ReceivingId");
         }
 
         /// <inheritdoc />
@@ -346,19 +438,25 @@ namespace araras_health_hub_api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ReceivingItem");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "Product");
+
+            migrationBuilder.DropTable(
+                name: "Receiving");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Supplier");
 
             migrationBuilder.DropTable(
                 name: "User");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Destination");
