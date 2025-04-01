@@ -12,7 +12,7 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250331183922_a2h_1.1.0")]
+    [Migration("20250401130927_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -58,21 +58,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "7372d566-eec6-43d0-ac7b-6f6b63c97693",
+                            ConcurrencyStamp = "4d853448-baa8-430b-916f-09ee5433613f",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "e6afeb40-c209-4832-9193-bf018e5ecb7c",
+                            ConcurrencyStamp = "ba6a2493-b56f-4349-9aee-02c4cf6e6346",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "99db0095-fc40-4b42-8139-a44f18787e08",
+                            ConcurrencyStamp = "1e4d27ae-86ac-4eef-8e4a-c2ab9e8bbdf2",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -274,16 +274,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e52ddcc5-f2c1-46bc-ade6-a6746780b203",
-                            CreatedOn = new DateTime(2025, 3, 31, 15, 39, 21, 841, DateTimeKind.Local).AddTicks(1962),
+                            ConcurrencyStamp = "1fe26bc5-94ab-4fec-b2b9-d21af0cf635c",
+                            CreatedOn = new DateTime(2025, 4, 1, 10, 9, 27, 181, DateTimeKind.Local).AddTicks(5881),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE35qJ7ly6R56gJF+e7rIIyA1RDZRySLTUZiDmYE9eQ9zn7VBv+hKsmORz6mR2wiIw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM5UmokPW+auecjM4FNJUx/pgbbvZ8dktQUenmwC2ysVfkIjMH/zdtsXNeFQTMVoGw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "57ee4a00-a30b-48fa-9ab1-8d611cdc47dc",
+                            SecurityStamp = "53c8bbbc-345f-4026-b4ab-d4f9e3707654",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -354,7 +354,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 3, 31, 15, 39, 21, 841, DateTimeKind.Local).AddTicks(1771),
+                            CreatedOn = new DateTime(2025, 4, 1, 10, 9, 27, 181, DateTimeKind.Local).AddTicks(5727),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -481,6 +481,27 @@ namespace araras_health_hub_api.Migrations
                     b.HasIndex("ReceivingId");
 
                     b.ToTable("ReceivingItem");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Stock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Stock");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Supplier", b =>
@@ -689,6 +710,17 @@ namespace araras_health_hub_api.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Receiving");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Stock", b =>
+                {
+                    b.HasOne("araras_health_hub_api.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Destination", b =>

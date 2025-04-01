@@ -22,6 +22,7 @@ namespace araras_health_hub_api.Data
         public DbSet<Product> Product { get; set; }
         public DbSet<Receiving> Receiving { get; set; }
         public DbSet<ReceivingItem> ReceivingItem { get; set; }
+        public DbSet<Stock> Stock { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

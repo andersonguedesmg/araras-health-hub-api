@@ -67,9 +67,10 @@ namespace araras_health_hub_api.Shared
         public const string MsgReceivingCreatedSuccessfully = "Recebimento criado com sucesso.";
         public const string MsgReceivingFoundSuccessfully = "Recebimento encontrado com sucesso.";
         public const string MsgReceivingsFoundSuccessfully = "Recebimentos encontrados com sucesso.";
-        public const string MsgReceivingUpdatedSuccessfully = "Recebimento atualizado com sucesso.";
-        public const string MsgReceivingDisabledSuccessfully = "Recebimento desativado com sucesso.";
-        public const string MsgReceivingActivatedSuccessfully = "Recebimento ativado com sucesso.";
-        public const string MsgReceivingDeletedSuccessfully = "Recebimento excluído com sucesso.";
+
+        public const string MsgNotStocksFound = "Nenhum estoque encontrado.";
+        public const string MsgProductStockFoundSuccessfully = "Estoque do produto não encontrado.";
+        public const string MsgProductStockNotFound = "Estoque do produto encontrado com sucesso.";
+        public const string MsgStocksFoundSuccessfully = "Estoques encontrados com sucesso.";
     }
 }

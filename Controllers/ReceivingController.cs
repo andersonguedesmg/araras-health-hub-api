@@ -22,12 +22,14 @@ namespace araras_health_hub_api.Controllers
         private readonly IReceivingRepository _receivingRepo;
         private readonly ApplicationDBContext _dbContext;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IStockRepository _stockRepo;
 
-        public ReceivingController(IReceivingRepository receivingRepo, ApplicationDBContext dbContext, UserManager<AppUser> userManager)
+        public ReceivingController(IReceivingRepository receivingRepo, ApplicationDBContext dbContext, UserManager<AppUser> userManager, IStockRepository stockRepo)
         {
             _receivingRepo = receivingRepo;
             _dbContext = dbContext;
             _userManager = userManager;
+            _stockRepo = stockRepo;
         }
 
         [HttpPost]
@@ -77,6 +79,8 @@ namespace araras_health_hub_api.Controllers
                         ManufacturingDate = itemDto.ManufacturingDate,
                     };
                     await _receivingRepo.CreateReceivingItemAsync(receivingItemModel);
+
+                    await _stockRepo.UpdateStock(itemDto.ProductId, itemDto.Quantity);
                 }
             }
             var response = await _receivingRepo.GetByIdAsync(newReceiving.Id);
