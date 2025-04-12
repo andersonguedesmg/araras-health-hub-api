@@ -88,6 +88,7 @@ namespace araras_health_hub_api.Controllers
             var account = new NewUserDto
             {
                 UserName = user.UserName!,
+                UserId = user.Id!,
                 CreatedOn = user.CreatedOn,
                 UpdatedOn = user.UpdatedOn,
                 IsActive = user.IsActive,

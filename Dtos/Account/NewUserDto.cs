@@ -9,6 +9,8 @@ namespace araras_health_hub_api.Dtos.Account
     {
         public string UserName { get; set; } = string.Empty;
 
+        public int UserId { get; set; }
+
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
         public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
