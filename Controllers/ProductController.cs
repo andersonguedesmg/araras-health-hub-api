@@ -132,5 +132,29 @@ namespace araras_health_hub_api.Controllers
 
             return Ok(new ApiResponse<Product>(StatusCodes.Status200OK, ApiMessages.MsgProductDisabledSuccessfully, productModel));
         }
+
+        [HttpGet]
+        [Route("getNames")]
+        [Authorize]
+        public async Task<IActionResult> GetNames()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<List<ProductNameDto>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+
+            var products = await _productRepo.GetAllAsync();
+
+            if (products.Count == 0)
+            {
+                return NotFound(new ApiResponse<ProductNameDto>(StatusCodes.Status404NotFound, ApiMessages.MsgNotProductsFound, null!));
+            }
+
+            var productNames = products.Select(d => new ProductNameDto
+            {
+                Id = d.Id,
+                Name = d.Name
+            }).ToList();
+
+            return Ok(new ApiResponse<List<ProductNameDto>>(StatusCodes.Status200OK, ApiMessages.MsgProductsFoundSuccessfully, productNames));
+        }
     }
 }
