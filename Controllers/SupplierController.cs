@@ -132,5 +132,29 @@ namespace araras_health_hub_api.Controllers
 
             return Ok(new ApiResponse<Supplier>(StatusCodes.Status200OK, ApiMessages.MsgSupplierDisabledSuccessfully, supplierModel));
         }
+
+        [HttpGet]
+        [Route("getNames")]
+        [Authorize]
+        public async Task<IActionResult> GetNames()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<List<SupplierNameDto>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+
+            var suppliers = await _supplierRepo.GetAllAsync();
+
+            if (suppliers.Count == 0)
+            {
+                return NotFound(new ApiResponse<SupplierNameDto>(StatusCodes.Status404NotFound, ApiMessages.MsgNotSuppliersFound, null!));
+            }
+
+            var supplierNames = suppliers.Select(d => new SupplierNameDto
+            {
+                Id = d.Id,
+                Name = d.Name
+            }).ToList();
+
+            return Ok(new ApiResponse<List<SupplierNameDto>>(StatusCodes.Status200OK, ApiMessages.MsgSuppliersFoundSuccessfully, supplierNames));
+        }
     }
 }
