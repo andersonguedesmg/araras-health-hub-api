@@ -18,14 +18,15 @@ namespace araras_health_hub_api.Services
         public TokenService(IConfiguration config)
         {
             _config = config;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
+            var signingKey = _config["JWT:SigningKey"] ?? throw new InvalidOperationException("JWT:SigningKey is not configured.");
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         }
 
         public string CreateToken(AppUser user)
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName ?? string.Empty)
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
