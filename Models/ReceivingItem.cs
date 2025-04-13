@@ -11,18 +11,20 @@ namespace araras_health_hub_api.Models
 
         public int Quantity { get; set; }
 
+        public decimal UnitValue { get; set; }
+
+        public decimal TotalValue { get; set; }
+
         public string Batch { get; set; } = string.Empty;
 
         public DateTime ExpiryDate { get; set; }
 
-        public DateTime ManufacturingDate { get; set; }
-
         public int ProductId { get; set; }
 
-        public Product? Product { get; set; }
+        public Product Product { get; set; } = null!;
 
         public int ReceivingId { get; set; }
 
-        public Receiving? Receiving { get; set; }
+        public Receiving Receiving { get; set; } = null!;
     }
 }

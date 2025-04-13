@@ -55,21 +55,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "4d853448-baa8-430b-916f-09ee5433613f",
+                            ConcurrencyStamp = "ab9d3fe2-8ce1-4bd1-9817-6339082e6b37",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "ba6a2493-b56f-4349-9aee-02c4cf6e6346",
+                            ConcurrencyStamp = "318284ee-0135-4c2c-8f54-c9286f8bb776",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "1e4d27ae-86ac-4eef-8e4a-c2ab9e8bbdf2",
+                            ConcurrencyStamp = "122e5682-5bbb-4e63-96b9-1868fe30a75f",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -271,16 +271,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1fe26bc5-94ab-4fec-b2b9-d21af0cf635c",
-                            CreatedOn = new DateTime(2025, 4, 1, 10, 9, 27, 181, DateTimeKind.Local).AddTicks(5881),
+                            ConcurrencyStamp = "a8c99aa1-92bd-464f-ba60-a9f7170bb87c",
+                            CreatedOn = new DateTime(2025, 4, 13, 18, 18, 56, 869, DateTimeKind.Local).AddTicks(6298),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM5UmokPW+auecjM4FNJUx/pgbbvZ8dktQUenmwC2ysVfkIjMH/zdtsXNeFQTMVoGw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEED8SvOeQls219Db/t7XoB78BzzjlcKpvFJTwZ/tZrN2a724nri9t9FwpuaXE9oNRQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "53c8bbbc-345f-4026-b4ab-d4f9e3707654",
+                            SecurityStamp = "8c0bce0a-4776-440b-9494-952ace12eaf4",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -351,7 +351,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 4, 1, 10, 9, 27, 181, DateTimeKind.Local).AddTicks(5727),
+                            CreatedOn = new DateTime(2025, 4, 13, 18, 18, 56, 869, DateTimeKind.Local).AddTicks(6133),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -433,6 +433,10 @@ namespace araras_health_hub_api.Migrations
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
 
+                    b.Property<string>("SupplyAuthorization")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -459,9 +463,6 @@ namespace araras_health_hub_api.Migrations
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ManufacturingDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -470,6 +471,12 @@ namespace araras_health_hub_api.Migrations
 
                     b.Property<int>("ReceivingId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TotalValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitValue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

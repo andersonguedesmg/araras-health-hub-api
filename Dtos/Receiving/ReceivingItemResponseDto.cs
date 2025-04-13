@@ -13,10 +13,12 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public int Quantity { get; set; }
 
+        public decimal UnitValue { get; set; }
+
+        public decimal TotalValue { get; set; }
+
         public string Batch { get; set; } = string.Empty;
 
         public DateTime ExpiryDate { get; set; }
-
-        public DateTime ManufacturingDate { get; set; }
     }
 }

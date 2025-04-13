@@ -55,6 +55,7 @@ namespace araras_health_hub_api.Controllers
             var receivingModel = new Receiving
             {
                 InvoiceNumber = receivingDto.InvoiceNumber,
+                SupplyAuthorization = receivingDto.SupplyAuthorization,
                 ReceivingDate = receivingDto.ReceivingDate,
                 Observations = receivingDto.Observations,
                 SupplierId = receivingDto.SupplierId,
@@ -74,9 +75,10 @@ namespace araras_health_hub_api.Controllers
                         ReceivingId = newReceiving.Id,
                         ProductId = itemDto.ProductId,
                         Quantity = itemDto.Quantity,
+                        UnitValue = itemDto.UnitValue,
+                        TotalValue = itemDto.TotalValue,
                         Batch = itemDto.Batch,
                         ExpiryDate = itemDto.ExpiryDate,
-                        ManufacturingDate = itemDto.ManufacturingDate,
                     };
                     await _receivingRepo.CreateReceivingItemAsync(receivingItemModel);
 
@@ -104,6 +106,7 @@ namespace araras_health_hub_api.Controllers
             {
                 Id = receiving.Id,
                 InvoiceNumber = receiving.InvoiceNumber,
+                SupplyAuthorization = receiving.SupplyAuthorization,
                 Observations = receiving.Observations,
                 ReceivingDate = receiving.ReceivingDate,
                 SupplierId = receiving.SupplierId,
@@ -137,9 +140,10 @@ namespace araras_health_hub_api.Controllers
                     Id = item.Id,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
+                    UnitValue = item.UnitValue,
+                    TotalValue = item.TotalValue,
                     Batch = item.Batch,
                     ExpiryDate = item.ExpiryDate,
-                    ManufacturingDate = item.ManufacturingDate
                 }).ToList() ?? new List<ReceivingItemResponseDto>()
             };
 
@@ -162,6 +166,7 @@ namespace araras_health_hub_api.Controllers
             {
                 Id = receiving.Id,
                 InvoiceNumber = receiving.InvoiceNumber,
+                SupplyAuthorization = receiving.SupplyAuthorization,
                 Observations = receiving.Observations,
                 ReceivingDate = receiving.ReceivingDate,
                 SupplierId = receiving.SupplierId,
@@ -195,9 +200,10 @@ namespace araras_health_hub_api.Controllers
                     Id = item.Id,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
+                    UnitValue = item.UnitValue,
+                    TotalValue = item.TotalValue,
                     Batch = item.Batch,
                     ExpiryDate = item.ExpiryDate,
-                    ManufacturingDate = item.ManufacturingDate
                 }).ToList() ?? new List<ReceivingItemResponseDto>()
             }).ToList();
 

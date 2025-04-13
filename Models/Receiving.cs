@@ -11,22 +11,24 @@ namespace araras_health_hub_api.Models
 
         public string InvoiceNumber { get; set; } = string.Empty;
 
+        public string SupplyAuthorization { get; set; } = string.Empty;
+
         public string Observations { get; set; } = string.Empty;
 
         public DateTime ReceivingDate { get; set; }
 
         public int SupplierId { get; set; }
 
-        public Supplier? Supplier { get; set; }
+        public Supplier Supplier { get; set; } = null!;
 
         public int ResponsibleId { get; set; }
 
-        public User? Responsible { get; set; }
+        public User Responsible { get; set; } = null!;
 
         public int AccountId { get; set; }
 
-        public AppUser? Account { get; set; }
+        public AppUser Account { get; set; } = null!;
 
-        public List<ReceivingItem>? ReceivedItems { get; set; }
+        public List<ReceivingItem> ReceivedItems { get; set; } = new();
     }
 }

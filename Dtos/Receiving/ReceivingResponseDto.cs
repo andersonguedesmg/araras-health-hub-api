@@ -20,6 +20,8 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public string InvoiceNumber { get; set; } = string.Empty;
 
+        public string SupplyAuthorization { get; set; } = string.Empty;
+
         public UserDto? Responsible { get; set; }
 
         public int ResponsibleId { get; set; }

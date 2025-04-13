@@ -9,6 +9,8 @@ namespace araras_health_hub_api.Dtos.Receiving
     {
         public string InvoiceNumber { get; set; } = string.Empty;
 
+        public string SupplyAuthorization { get; set; } = string.Empty;
+
         public string Observations { get; set; } = string.Empty;
 
         public DateTime ReceivingDate { get; set; }
@@ -19,6 +21,6 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public int AccountId { get; set; }
 
-        public List<CreateReceivingItemDto> ReceivedItems { get; set; }
+        public List<CreateReceivingItemDto>? ReceivedItems { get; set; }
     }
 }
