@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,8 +12,10 @@ namespace araras_health_hub_api.Models
 
         public int Quantity { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal UnitValue { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalValue { get; set; }
 
         public string Batch { get; set; } = string.Empty;
