@@ -19,15 +19,15 @@ namespace araras_health_hub_api.Models
 
         public int SupplierId { get; set; }
 
-        public Supplier Supplier { get; set; } = null!;
+        public Supplier? Supplier { get; set; }
 
         public int ResponsibleId { get; set; }
 
-        public User Responsible { get; set; } = null!;
+        public User? Responsible { get; set; }
 
         public int AccountId { get; set; }
 
-        public AppUser Account { get; set; } = null!;
+        public AppUser? Account { get; set; }
 
         public List<ReceivingItem> ReceivedItems { get; set; } = new();
     }

@@ -14,7 +14,7 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public int SupplierId { get; set; }
 
-        public SupplierDto Supplier { get; set; } = null!;
+        public SupplierDto? Supplier { get; set; }
 
         public DateTime ReceivingDate { get; set; }
 
@@ -22,13 +22,13 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public string SupplyAuthorization { get; set; } = string.Empty;
 
-        public UserDto Responsible { get; set; } = null!;
+        public UserDto? Responsible { get; set; }
 
         public int ResponsibleId { get; set; }
 
         public int AccountId { get; set; }
 
-        public AppUser Account { get; set; } = null!;
+        public AppUser? Account { get; set; }
 
         public string Observation { get; set; } = string.Empty;
 

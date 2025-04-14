@@ -82,7 +82,7 @@ namespace araras_health_hub_api.Controllers
                     };
                     await _receivingRepo.CreateReceivingItemAsync(receivingItemModel);
 
-                    await _stockRepo.UpdateStock(itemDto.ProductId, itemDto.Quantity);
+                    await _stockRepo.UpdateStock(itemDto.ProductId, itemDto.Quantity, itemDto.Batch);
                 }
             }
             var response = await _receivingRepo.GetByIdAsync(newReceiving.Id);

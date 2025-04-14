@@ -51,10 +51,10 @@ namespace araras_health_hub_api.Controllers
             return Ok(new ApiResponse<Stock>(StatusCodes.Status200OK, ApiMessages.MsgProductStockNotFound, stock));
         }
 
-        [HttpPost("updateInternal/{productId}/{quantity}")]
-        internal IActionResult UpdateStockInternal(int productId, int quantity)
+        [HttpPost("updateInternal/{productId}/{quantity}/{batch}")]
+        internal IActionResult UpdateStockInternal(int productId, int quantity, string batch)
         {
-            _stockRepo.UpdateStock(productId, quantity);
+            _stockRepo.UpdateStock(productId, quantity, batch);
             return Ok();
         }
     }

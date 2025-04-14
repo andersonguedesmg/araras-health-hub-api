@@ -55,21 +55,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "26d4ed62-624e-47b8-b0ff-cde81cd4bdeb",
+                            ConcurrencyStamp = "50a74b01-4be9-4f02-82fe-e94330dacf2f",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "edeaf72a-2264-48a3-8af3-544f7a2d245d",
+                            ConcurrencyStamp = "cb67bb6e-55ef-478d-85c2-10fe4e376b87",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "c0603acc-977b-4abc-92b7-7ed1f9e4d768",
+                            ConcurrencyStamp = "e8de87aa-eb2a-4f77-b6d6-896ad98d55a0",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -271,16 +271,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fdb22f41-7f53-4bdb-b781-d2fc4b425141",
-                            CreatedOn = new DateTime(2025, 4, 14, 14, 19, 57, 906, DateTimeKind.Local).AddTicks(9478),
+                            ConcurrencyStamp = "90025778-7298-4d1f-bcb8-0f7094d186c4",
+                            CreatedOn = new DateTime(2025, 4, 14, 15, 29, 46, 741, DateTimeKind.Local).AddTicks(4802),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEObyMldqjQZrJVnMizK5f3unoXnm5Vk9rWzv+6Z2K2+erNbPItpCRw8IRYcMOfvB4g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBAXW/vm/VZnfu+T9nuZVNs7rv797MOrGUe31T9cEkpT0HLfX0O0GqUC2GG9kl2XiA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c03c1277-8716-45db-8c6e-1356eca9eac5",
+                            SecurityStamp = "880863d1-2feb-4825-a71c-50f8588d907d",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -351,7 +351,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 4, 14, 14, 19, 57, 906, DateTimeKind.Local).AddTicks(9222),
+                            CreatedOn = new DateTime(2025, 4, 14, 15, 29, 46, 741, DateTimeKind.Local).AddTicks(4577),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -416,7 +416,7 @@ namespace araras_health_hub_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Observations")
+                    b.Property<string>("Observation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -490,6 +490,10 @@ namespace araras_health_hub_api.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Batch")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");

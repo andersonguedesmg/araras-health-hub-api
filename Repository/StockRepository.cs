@@ -29,13 +29,18 @@ namespace araras_health_hub_api.Repository
 
         }
 
-        public async Task UpdateStock(int productId, int quantity)
+        public async Task UpdateStock(int productId, int quantity, string batch)
         {
-            var stock = await _context.Stock.FirstOrDefaultAsync(s => s.ProductId == productId);
+            var stock = await _context.Stock.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == batch);
 
             if (stock == null)
             {
-                await _context.Stock.AddAsync(new Stock { ProductId = productId, Quantity = quantity });
+                await _context.Stock.AddAsync(new Stock
+                {
+                    ProductId = productId,
+                    Quantity = quantity,
+                    Batch = batch
+                });
             }
             else
             {

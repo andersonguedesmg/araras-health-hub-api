@@ -11,5 +11,6 @@ namespace araras_health_hub_api.Models
         public int ProductId { get; set; }
         public Product Product { get; set; } = null!;
         public int Quantity { get; set; }
+        public string Batch { get; set; } = string.Empty;
     }
 }
