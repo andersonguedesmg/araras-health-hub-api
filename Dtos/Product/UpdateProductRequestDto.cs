@@ -18,11 +18,6 @@ namespace araras_health_hub_api.Dtos.Product
         [MaxLength(280, ErrorMessage = "A Descrição não pode ter mais de 280 caracteres.")]
         public string Description { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O Fabricante é obrigatório.")]
-        [MinLength(5, ErrorMessage = "O Fabricante não pode ter menos de 5 caracteres.")]
-        [MaxLength(280, ErrorMessage = "O Fabricante não pode ter mais de 280 caracteres.")]
-        public string Manufacturer { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "A Medida é obrigatório.")]
         [MinLength(5, ErrorMessage = "A Medida não pode ter menos de 5 caracteres.")]
         [MaxLength(280, ErrorMessage = "A Medida não pode ter mais de 280 caracteres.")]

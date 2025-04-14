@@ -78,7 +78,6 @@ namespace araras_health_hub_api.Repository
 
             existingProduct.Name = productDto.Name;
             existingProduct.Description = productDto.Description;
-            existingProduct.Manufacturer = productDto.Manufacturer;
             existingProduct.Format = productDto.Format;
             existingProduct.Category = productDto.Category;
             existingProduct.UpdatedOn = DateTime.Now;

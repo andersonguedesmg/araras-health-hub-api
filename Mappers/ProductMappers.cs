@@ -17,7 +17,6 @@ namespace araras_health_hub_api.Mappers
                 Id = productModel.Id,
                 Name = productModel.Name,
                 Description = productModel.Description,
-                Manufacturer = productModel.Manufacturer,
                 Format = productModel.Format,
                 Category = productModel.Category,
                 CreatedOn = productModel.CreatedOn,
@@ -32,7 +31,6 @@ namespace araras_health_hub_api.Mappers
             {
                 Name = productrModelDto.Name,
                 Description = productrModelDto.Description,
-                Manufacturer = productrModelDto.Manufacturer,
                 Format = productrModelDto.Format,
                 Category = productrModelDto.Category,
                 CreatedOn = productrModelDto.CreatedOn,

@@ -55,21 +55,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "ab9d3fe2-8ce1-4bd1-9817-6339082e6b37",
+                            ConcurrencyStamp = "26d4ed62-624e-47b8-b0ff-cde81cd4bdeb",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "318284ee-0135-4c2c-8f54-c9286f8bb776",
+                            ConcurrencyStamp = "edeaf72a-2264-48a3-8af3-544f7a2d245d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "122e5682-5bbb-4e63-96b9-1868fe30a75f",
+                            ConcurrencyStamp = "c0603acc-977b-4abc-92b7-7ed1f9e4d768",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -271,16 +271,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a8c99aa1-92bd-464f-ba60-a9f7170bb87c",
-                            CreatedOn = new DateTime(2025, 4, 13, 18, 18, 56, 869, DateTimeKind.Local).AddTicks(6298),
+                            ConcurrencyStamp = "fdb22f41-7f53-4bdb-b781-d2fc4b425141",
+                            CreatedOn = new DateTime(2025, 4, 14, 14, 19, 57, 906, DateTimeKind.Local).AddTicks(9478),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEED8SvOeQls219Db/t7XoB78BzzjlcKpvFJTwZ/tZrN2a724nri9t9FwpuaXE9oNRQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEObyMldqjQZrJVnMizK5f3unoXnm5Vk9rWzv+6Z2K2+erNbPItpCRw8IRYcMOfvB4g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8c0bce0a-4776-440b-9494-952ace12eaf4",
+                            SecurityStamp = "c03c1277-8716-45db-8c6e-1356eca9eac5",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -351,7 +351,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 4, 13, 18, 18, 56, 869, DateTimeKind.Local).AddTicks(6133),
+                            CreatedOn = new DateTime(2025, 4, 14, 14, 19, 57, 906, DateTimeKind.Local).AddTicks(9222),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -388,10 +388,6 @@ namespace araras_health_hub_api.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Manufacturer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
