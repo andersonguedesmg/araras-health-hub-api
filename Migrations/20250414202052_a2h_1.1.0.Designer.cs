@@ -12,7 +12,7 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250414182947_a2h_1.1.0")]
+    [Migration("20250414202052_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -58,21 +58,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "50a74b01-4be9-4f02-82fe-e94330dacf2f",
+                            ConcurrencyStamp = "7c98e8f0-fa3f-4ca4-b4f9-4b942346f0c8",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "cb67bb6e-55ef-478d-85c2-10fe4e376b87",
+                            ConcurrencyStamp = "3ee664db-11ee-4108-b94d-248f97521ce3",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "e8de87aa-eb2a-4f77-b6d6-896ad98d55a0",
+                            ConcurrencyStamp = "239c46a1-631b-4d1c-8ef9-5c1740371872",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -274,16 +274,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "90025778-7298-4d1f-bcb8-0f7094d186c4",
-                            CreatedOn = new DateTime(2025, 4, 14, 15, 29, 46, 741, DateTimeKind.Local).AddTicks(4802),
+                            ConcurrencyStamp = "81144c4f-9e2a-4a3f-94b1-d9f1ead76df4",
+                            CreatedOn = new DateTime(2025, 4, 14, 17, 20, 52, 294, DateTimeKind.Local).AddTicks(8179),
                             DestinationId = 1,
                             EmailConfirmed = false,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBAXW/vm/VZnfu+T9nuZVNs7rv797MOrGUe31T9cEkpT0HLfX0O0GqUC2GG9kl2XiA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOUyrBg63Ga2KEhG6H/psJq8isT8Pf/nvZIIoTOD23+O3x/04oSgw2G+hnXs0d/uWw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "880863d1-2feb-4825-a71c-50f8588d907d",
+                            SecurityStamp = "e0ca3413-e240-4dd6-b698-8e3ea801f43d",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -354,7 +354,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 4, 14, 15, 29, 46, 741, DateTimeKind.Local).AddTicks(4577),
+                            CreatedOn = new DateTime(2025, 4, 14, 17, 20, 52, 294, DateTimeKind.Local).AddTicks(7782),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -364,6 +364,44 @@ namespace araras_health_hub_api.Migrations
                             State = "SP",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Function")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employee");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Product", b =>
@@ -573,44 +611,6 @@ namespace araras_health_hub_api.Migrations
                     b.ToTable("Supplier");
                 });
 
-            modelBuilder.Entity("araras_health_hub_api.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Function")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -681,7 +681,7 @@ namespace araras_health_hub_api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("araras_health_hub_api.Models.User", "Responsible")
+                    b.HasOne("araras_health_hub_api.Models.Employee", "Responsible")
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
                         .OnDelete(DeleteBehavior.Cascade)

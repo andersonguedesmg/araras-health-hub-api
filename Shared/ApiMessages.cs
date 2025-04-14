@@ -5,16 +5,16 @@ namespace araras_health_hub_api.Shared
         public const string MsgInternalServerError = "Ocorreu um erro interno no servidor.";
         public const string Msg400BadRequestError = "Ocorreu um erro interno.";
 
-        public const string MsgUserNotFound = "Usuário não encontrado.";
-        public const string MsgNotUsersFound = "Nenhum usuário encontrado.";
-        public const string MsgUserCreatedSuccessfully = "Usuário criado com sucesso.";
-        public const string MsgUserFoundSuccessfully = "Usuário encontrado com sucesso.";
-        public const string MsgUsersFoundSuccessfully = "Usuários encontrados com sucesso.";
-        public const string MsgUserUpdatedSuccessfully = "Usuário atualizado com sucesso.";
-        public const string MsgUserDisabledSuccessfully = "Usuário desativado com sucesso.";
-        public const string MsgUserActivatedSuccessfully = "Usuário ativado com sucesso.";
-        public const string MsgUserDeletedSuccessfully = "Usuário excluído com sucesso.";
-        public const string MsgUserInvalid = "Usuário inválido.";
+        public const string MsgEmployeeNotFound = "Funcionário não encontrado.";
+        public const string MsgNotEmployeesFound = "Nenhum funcionário encontrado.";
+        public const string MsgEmployeeCreatedSuccessfully = "Funcionário criado com sucesso.";
+        public const string MsgEmployeeFoundSuccessfully = "Funcionário encontrado com sucesso.";
+        public const string MsgEmployeesFoundSuccessfully = "Funcionários encontrados com sucesso.";
+        public const string MsgEmployeeUpdatedSuccessfully = "Funcionário atualizado com sucesso.";
+        public const string MsgEmployeeDisabledSuccessfully = "Funcionário desativado com sucesso.";
+        public const string MsgEmployeeActivatedSuccessfully = "Funcionário ativado com sucesso.";
+        public const string MsgEmployeeDeletedSuccessfully = "Funcionário excluído com sucesso.";
+        public const string MsgEmployeeInvalid = "Funcionário inválido.";
 
         public const string MsgSupplierNotFound = "Fornecedor não encontrado.";
         public const string MsgNotSuppliersFound = "Nenhum fornecedor encontrado.";

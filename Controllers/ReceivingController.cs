@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using araras_health_hub_api.Data;
 using araras_health_hub_api.Dtos.Receiving;
 using araras_health_hub_api.Dtos.Supplier;
-using araras_health_hub_api.Dtos.User;
+using araras_health_hub_api.Dtos.Employee;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Models;
 using araras_health_hub_api.Shared;
@@ -40,10 +40,10 @@ namespace araras_health_hub_api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new ApiResponse<Receiving>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
-            var responsibleUser = await _dbContext.User.FindAsync(receivingDto.ResponsibleId);
+            var responsibleUser = await _dbContext.Employee.FindAsync(receivingDto.ResponsibleId);
             if (responsibleUser == null)
             {
-                return BadRequest(new ApiResponse<Receiving>(StatusCodes.Status400BadRequest, ApiMessages.MsgUserInvalid, null!));
+                return BadRequest(new ApiResponse<Receiving>(StatusCodes.Status400BadRequest, ApiMessages.MsgEmployeeInvalid, null!));
             }
 
             var account = await _userManager.FindByIdAsync(receivingDto.AccountId.ToString());
@@ -120,7 +120,7 @@ namespace araras_health_hub_api.Controllers
                     Email = receiving.Supplier.Email
                 } : null,
                 ResponsibleId = receiving.ResponsibleId,
-                Responsible = receiving.Responsible != null ? new UserDto
+                Responsible = receiving.Responsible != null ? new EmployeeDto
                 {
                     Id = receiving.Responsible.Id,
                     Name = receiving.Responsible.Name,
@@ -180,7 +180,7 @@ namespace araras_health_hub_api.Controllers
                     Email = receiving.Supplier.Email
                 } : null,
                 ResponsibleId = receiving.ResponsibleId,
-                Responsible = receiving.Responsible != null ? new UserDto
+                Responsible = receiving.Responsible != null ? new EmployeeDto
                 {
                     Id = receiving.Responsible.Id,
                     Name = receiving.Responsible.Name,

@@ -127,7 +127,7 @@ namespace araras_health_hub_api.Controllers
                 })
                 .ToListAsync();
 
-            return Ok(new ApiResponse<List<AccountWithRolesDto>>(StatusCodes.Status200OK, ApiMessages.MsgUsersFoundSuccessfully, usersWithRoles));
+            return Ok(new ApiResponse<List<AccountWithRolesDto>>(StatusCodes.Status200OK, ApiMessages.MsgAccountsFoundSuccessfully, usersWithRoles));
         }
 
         [HttpGet]

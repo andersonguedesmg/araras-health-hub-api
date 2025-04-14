@@ -23,7 +23,7 @@ namespace araras_health_hub_api.Models
 
         public int ResponsibleId { get; set; }
 
-        public User? Responsible { get; set; }
+        public Employee? Responsible { get; set; }
 
         public int AccountId { get; set; }
 

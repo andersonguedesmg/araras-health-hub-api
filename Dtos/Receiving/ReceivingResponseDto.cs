@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using araras_health_hub_api.Dtos.Supplier;
-using araras_health_hub_api.Dtos.User;
+using araras_health_hub_api.Dtos.Employee;
 using araras_health_hub_api.Models;
 
 namespace araras_health_hub_api.Dtos.Receiving
@@ -22,7 +22,7 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public string SupplyAuthorization { get; set; } = string.Empty;
 
-        public UserDto? Responsible { get; set; }
+        public EmployeeDto? Responsible { get; set; }
 
         public int ResponsibleId { get; set; }
 
