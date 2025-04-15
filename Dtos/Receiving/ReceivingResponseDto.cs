@@ -22,6 +22,8 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public string SupplyAuthorization { get; set; } = string.Empty;
 
+        public decimal TotalValue { get; set; }
+
         public EmployeeDto? Responsible { get; set; }
 
         public int ResponsibleId { get; set; }

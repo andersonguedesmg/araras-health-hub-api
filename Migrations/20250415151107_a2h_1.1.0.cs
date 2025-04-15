@@ -288,6 +288,7 @@ namespace araras_health_hub_api.Migrations
                     SupplyAuthorization = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Observation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReceivingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SupplierId = table.Column<int>(type: "int", nullable: false),
                     ResponsibleId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false)
@@ -351,20 +352,20 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "1c0350a6-5718-4fb4-b077-1a5722c6659b", "Master", "MASTER" },
-                    { 2, "f74dd6b6-5dac-4592-a4f6-df17220d36f5", "Admin", "ADMIN" },
-                    { 3, "0622e814-a75c-4839-8963-ebd917a284cf", "User", "USER" }
+                    { 1, "55dcca98-5d75-449b-8cd0-3a4fa394ef72", "Master", "MASTER" },
+                    { 2, "45728034-6f57-4443-9880-180f353e7652", "Admin", "ADMIN" },
+                    { 3, "02d7fecd-29f4-4eb0-b2a6-dcd94ab03fec", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Facility",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 4, 15, 9, 32, 41, 887, DateTimeKind.Local).AddTicks(3324), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 4, 15, 12, 11, 7, 248, DateTimeKind.Local).AddTicks(2949), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "cabc4c55-82c3-494f-b45a-54df2de829bb", new DateTime(2025, 4, 15, 9, 32, 41, 887, DateTimeKind.Local).AddTicks(3451), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEPGuS9YimL9/ldPHYKjJwHWQ826j7xCEvFipwWfR1/TK7vDIk2Dxk/JbPTnCrcJ/1Q==", null, false, "cde03c80-a583-423f-8dca-49af6a7a3396", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SMS_Master" });
+                values: new object[] { 1, 0, "695f5571-3932-496b-8a5a-b1f5c46090ce", new DateTime(2025, 4, 15, 12, 11, 7, 248, DateTimeKind.Local).AddTicks(3092), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEGPitoWR1b6Z4fedXYx5fvyld4KdAgqU598yIzzXHuLkuX/lQUbeMo3i1CHfqyBaEw==", null, false, "c414f577-3c63-45fd-a336-d767292120d7", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SMS_Master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

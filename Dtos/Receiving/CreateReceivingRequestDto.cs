@@ -15,6 +15,8 @@ namespace araras_health_hub_api.Dtos.Receiving
 
         public DateTime ReceivingDate { get; set; }
 
+        public decimal TotalValue { get; set; }
+
         public int SupplierId { get; set; }
 
         public int ResponsibleId { get; set; }

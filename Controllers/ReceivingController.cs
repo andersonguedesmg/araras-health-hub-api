@@ -58,6 +58,7 @@ namespace araras_health_hub_api.Controllers
                 SupplyAuthorization = receivingDto.SupplyAuthorization,
                 ReceivingDate = receivingDto.ReceivingDate,
                 Observation = receivingDto.Observation,
+                TotalValue = receivingDto.TotalValue,
                 SupplierId = receivingDto.SupplierId,
                 ResponsibleId = receivingDto.ResponsibleId,
                 AccountId = receivingDto.AccountId,
@@ -109,6 +110,7 @@ namespace araras_health_hub_api.Controllers
                 SupplyAuthorization = receiving.SupplyAuthorization,
                 Observation = receiving.Observation,
                 ReceivingDate = receiving.ReceivingDate,
+                TotalValue = receiving.TotalValue,
                 SupplierId = receiving.SupplierId,
                 Supplier = receiving.Supplier != null ? new SupplierDto
                 {
@@ -169,6 +171,7 @@ namespace araras_health_hub_api.Controllers
                 SupplyAuthorization = receiving.SupplyAuthorization,
                 Observation = receiving.Observation,
                 ReceivingDate = receiving.ReceivingDate,
+                TotalValue = receiving.TotalValue,
                 SupplierId = receiving.SupplierId,
                 Supplier = receiving.Supplier != null ? new SupplierDto
                 {
