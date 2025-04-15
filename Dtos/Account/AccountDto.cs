@@ -17,6 +17,6 @@ namespace araras_health_hub_api.Dtos.Account
 
         public bool IsActive { get; set; } = true;
 
-        public int? DestinationId { get; set; }
+        public int? FacilityId { get; set; }
     }
 }

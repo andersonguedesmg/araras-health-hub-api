@@ -16,7 +16,7 @@ namespace araras_health_hub_api.Data
 
         }
 
-        public DbSet<Destination> Destination { get; set; }
+        public DbSet<Facility> Facility { get; set; }
         public DbSet<Supplier> Supplier { get; set; }
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Product> Product { get; set; }
@@ -66,8 +66,8 @@ namespace araras_health_hub_api.Data
             };
             builder.Entity<IdentityRole<int>>().HasData(roles);
 
-            builder.Entity<Destination>().HasData(
-                new Destination
+            builder.Entity<Facility>().HasData(
+                new Facility
                 {
                     Id = 1,
                     Name = "Secretaria Municipal da Saúde",
@@ -93,7 +93,7 @@ namespace araras_health_hub_api.Data
                 CreatedOn = DateTime.Now,
                 UpdatedOn = DateTime.MinValue,
                 IsActive = true,
-                DestinationId = 1,
+                FacilityId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
             userMaster.PasswordHash = hasher.HashPassword(userMaster, "A2H@Master");

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace araras_health_hub_api.Models
 {
-    public class Destination
+    public class Facility
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

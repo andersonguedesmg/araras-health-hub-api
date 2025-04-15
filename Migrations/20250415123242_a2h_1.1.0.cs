@@ -29,7 +29,26 @@ namespace araras_health_hub_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Destination",
+                name: "Employee",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cpf = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Function = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employee", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Facility",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -49,26 +68,7 @@ namespace araras_health_hub_api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Destination", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Employee",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Cpf = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Function = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employee", x => x.Id);
+                    table.PrimaryKey("PK_Facility", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,7 +145,7 @@ namespace araras_health_hub_api.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    DestinationId = table.Column<int>(type: "int", nullable: false),
+                    FacilityId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -165,9 +165,9 @@ namespace araras_health_hub_api.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Destination_DestinationId",
-                        column: x => x.DestinationId,
-                        principalTable: "Destination",
+                        name: "FK_AspNetUsers_Facility_FacilityId",
+                        column: x => x.FacilityId,
+                        principalTable: "Facility",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -351,20 +351,20 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "7c98e8f0-fa3f-4ca4-b4f9-4b942346f0c8", "Master", "MASTER" },
-                    { 2, "3ee664db-11ee-4108-b94d-248f97521ce3", "Admin", "ADMIN" },
-                    { 3, "239c46a1-631b-4d1c-8ef9-5c1740371872", "User", "USER" }
+                    { 1, "1c0350a6-5718-4fb4-b077-1a5722c6659b", "Master", "MASTER" },
+                    { 2, "f74dd6b6-5dac-4592-a4f6-df17220d36f5", "Admin", "ADMIN" },
+                    { 3, "0622e814-a75c-4839-8963-ebd917a284cf", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
-                table: "Destination",
+                table: "Facility",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 4, 14, 17, 20, 52, 294, DateTimeKind.Local).AddTicks(7782), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 4, 15, 9, 32, 41, 887, DateTimeKind.Local).AddTicks(3324), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "DestinationId", "Email", "EmailConfirmed", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "81144c4f-9e2a-4a3f-94b1-d9f1ead76df4", new DateTime(2025, 4, 14, 17, 20, 52, 294, DateTimeKind.Local).AddTicks(8179), 1, null, false, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEOUyrBg63Ga2KEhG6H/psJq8isT8Pf/nvZIIoTOD23+O3x/04oSgw2G+hnXs0d/uWw==", null, false, "e0ca3413-e240-4dd6-b698-8e3ea801f43d", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SMS_Master" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
+                values: new object[] { 1, 0, "cabc4c55-82c3-494f-b45a-54df2de829bb", new DateTime(2025, 4, 15, 9, 32, 41, 887, DateTimeKind.Local).AddTicks(3451), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEPGuS9YimL9/ldPHYKjJwHWQ826j7xCEvFipwWfR1/TK7vDIk2Dxk/JbPTnCrcJ/1Q==", null, false, "cde03c80-a583-423f-8dca-49af6a7a3396", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SMS_Master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -404,9 +404,9 @@ namespace araras_health_hub_api.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_DestinationId",
+                name: "IX_AspNetUsers_FacilityId",
                 table: "AspNetUsers",
-                column: "DestinationId");
+                column: "FacilityId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -489,7 +489,7 @@ namespace araras_health_hub_api.Migrations
                 name: "Supplier");
 
             migrationBuilder.DropTable(
-                name: "Destination");
+                name: "Facility");
         }
     }
 }

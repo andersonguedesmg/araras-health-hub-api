@@ -17,21 +17,21 @@ namespace araras_health_hub_api.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly IDestinationRepository _destinationRepo;
+        private readonly IFacilityRepository _facilityRepo;
         private readonly ApplicationDBContext _dbContext;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
 
         public AccountController(UserManager<AppUser> userManager,
         ITokenService tokenService,
         SignInManager<AppUser> signInManager,
-        IDestinationRepository destinationRepo,
+        IFacilityRepository facilityRepo,
         ApplicationDBContext dbContext,
         RoleManager<IdentityRole<int>> roleManager)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
-            _destinationRepo = destinationRepo;
+            _facilityRepo = facilityRepo;
             _dbContext = dbContext;
             _roleManager = roleManager;
         }
@@ -42,8 +42,8 @@ namespace araras_health_hub_api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
 
-            if (!await _destinationRepo.DestinationExists(registerDto.DestinationId))
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgDestinationDoesNotExist, null!));
+            if (!await _facilityRepo.FacilityExists(registerDto.FacilityId))
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgFacilityDoesNotExist, null!));
 
             var appUser = new AppUser
             {
@@ -51,7 +51,7 @@ namespace araras_health_hub_api.Controllers
                 CreatedOn = registerDto.CreatedOn,
                 UpdatedOn = registerDto.UpdatedOn,
                 IsActive = registerDto.IsActive,
-                DestinationId = registerDto.DestinationId,
+                FacilityId = registerDto.FacilityId,
             };
 
             var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
@@ -68,7 +68,7 @@ namespace araras_health_hub_api.Controllers
             {
                 UserName = appUser.UserName!,
                 IsActive = appUser.IsActive,
-                DestinationId = appUser.DestinationId,
+                FacilityId = appUser.FacilityId,
             };
 
             return CreatedAtAction(nameof(Register), new ApiResponse<NewUserDto>(StatusCodes.Status201Created, ApiMessages.MsgAccountCreatedSuccessfully, newUserDto));
@@ -106,7 +106,7 @@ namespace araras_health_hub_api.Controllers
                 UserName = user.UserName!,
                 UserId = user.Id!,
                 IsActive = user.IsActive,
-                DestinationId = user.DestinationId,
+                FacilityId = user.FacilityId,
                 Roles = roleDtos,
                 Token = _tokenService.CreateToken(user)
             };
@@ -122,9 +122,9 @@ namespace araras_health_hub_api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
-            var accounts = await _userManager.Users.Include(u => u.Destination).ToListAsync();
+            var accounts = await _userManager.Users.Include(u => u.Facility).ToListAsync();
 
-            var usersWithRoles = await _userManager.Users.Include(u => u.Destination)
+            var usersWithRoles = await _userManager.Users.Include(u => u.Facility)
                 .Select(user => new AccountWithRolesDto
                 {
                     Id = user.Id,
@@ -133,8 +133,8 @@ namespace araras_health_hub_api.Controllers
                     CreatedOn = user.CreatedOn,
                     UpdatedOn = user.UpdatedOn,
                     IsActive = user.IsActive,
-                    DestinationId = user.DestinationId,
-                    Destination = user.Destination!,
+                    FacilityId = user.FacilityId,
+                    Facility = user.Facility!,
                     Roles = _dbContext.UserRoles
                         .Where(ur => ur.UserId == user.Id)
                         .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new RoleDto { Id = r.Id, Name = r.Name! })
@@ -153,7 +153,7 @@ namespace araras_health_hub_api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
-            var account = await _userManager.Users.Include(u => u.Destination).FirstOrDefaultAsync(x => x.Id == id);
+            var account = await _userManager.Users.Include(u => u.Facility).FirstOrDefaultAsync(x => x.Id == id);
 
             if (account == null)
             {
@@ -175,15 +175,15 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
-        [Route("getByDestinationId/{destinationId:int}")]
+        [Route("getByFacilityId/{FacilityId:int}")]
         [Authorize]
-        public async Task<IActionResult> GetByDestinationId([FromRoute] int destinationId)
+        public async Task<IActionResult> GetByFacilityId([FromRoute] int FacilityId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
 
             var accounts = await _userManager.Users
-                .Where(u => u.DestinationId == destinationId)
+                .Where(u => u.FacilityId == FacilityId)
                 .ToListAsync();
 
             if (accounts == null || accounts.Count == 0)
@@ -203,7 +203,7 @@ namespace araras_health_hub_api.Controllers
                 account.CreatedOn,
                 account.UpdatedOn,
                 account.IsActive,
-                account.DestinationId,
+                account.FacilityId,
                 Roles = userRoles.Where(ur => ur.UserId == account.Id).Select(ur => new { ur.RoleId, ur.RoleName }).ToList()
             }).ToList();
 

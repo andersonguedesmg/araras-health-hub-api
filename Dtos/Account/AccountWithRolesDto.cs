@@ -8,7 +8,7 @@ public class AccountWithRolesDto
   public DateTime CreatedOn { get; set; }
   public DateTime UpdatedOn { get; set; }
   public bool IsActive { get; set; }
-  public int DestinationId { get; set; }
-  public Destination Destination { get; set; } = new Destination();
+  public int FacilityId { get; set; }
+  public Facility Facility { get; set; } = new Facility();
   public List<RoleDto> Roles { get; set; } = new List<RoleDto>();
 }

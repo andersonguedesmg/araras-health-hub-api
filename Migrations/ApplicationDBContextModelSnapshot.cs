@@ -55,21 +55,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "7c98e8f0-fa3f-4ca4-b4f9-4b942346f0c8",
+                            ConcurrencyStamp = "1c0350a6-5718-4fb4-b077-1a5722c6659b",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "3ee664db-11ee-4108-b94d-248f97521ce3",
+                            ConcurrencyStamp = "f74dd6b6-5dac-4592-a4f6-df17220d36f5",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "239c46a1-631b-4d1c-8ef9-5c1740371872",
+                            ConcurrencyStamp = "0622e814-a75c-4839-8963-ebd917a284cf",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -203,15 +203,15 @@ namespace araras_health_hub_api.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DestinationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<int>("FacilityId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -254,7 +254,7 @@ namespace araras_health_hub_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DestinationId");
+                    b.HasIndex("FacilityId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -271,23 +271,61 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "81144c4f-9e2a-4a3f-94b1-d9f1ead76df4",
-                            CreatedOn = new DateTime(2025, 4, 14, 17, 20, 52, 294, DateTimeKind.Local).AddTicks(8179),
-                            DestinationId = 1,
+                            ConcurrencyStamp = "cabc4c55-82c3-494f-b45a-54df2de829bb",
+                            CreatedOn = new DateTime(2025, 4, 15, 9, 32, 41, 887, DateTimeKind.Local).AddTicks(3451),
                             EmailConfirmed = false,
+                            FacilityId = 1,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOUyrBg63Ga2KEhG6H/psJq8isT8Pf/nvZIIoTOD23+O3x/04oSgw2G+hnXs0d/uWw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPGuS9YimL9/ldPHYKjJwHWQ826j7xCEvFipwWfR1/TK7vDIk2Dxk/JbPTnCrcJ/1Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e0ca3413-e240-4dd6-b698-8e3ea801f43d",
+                            SecurityStamp = "cde03c80-a583-423f-8dca-49af6a7a3396",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
                         });
                 });
 
-            modelBuilder.Entity("araras_health_hub_api.Models.Destination", b =>
+            modelBuilder.Entity("araras_health_hub_api.Models.Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Function")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Facility", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -342,7 +380,7 @@ namespace araras_health_hub_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Destination");
+                    b.ToTable("Facility");
 
                     b.HasData(
                         new
@@ -351,7 +389,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 4, 14, 17, 20, 52, 294, DateTimeKind.Local).AddTicks(7782),
+                            CreatedOn = new DateTime(2025, 4, 15, 9, 32, 41, 887, DateTimeKind.Local).AddTicks(3324),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -361,44 +399,6 @@ namespace araras_health_hub_api.Migrations
                             State = "SP",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
-                });
-
-            modelBuilder.Entity("araras_health_hub_api.Models.Employee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Function")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Employee");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Product", b =>
@@ -661,13 +661,13 @@ namespace araras_health_hub_api.Migrations
 
             modelBuilder.Entity("araras_health_hub_api.Models.AppUser", b =>
                 {
-                    b.HasOne("araras_health_hub_api.Models.Destination", "Destination")
+                    b.HasOne("araras_health_hub_api.Models.Facility", "Facility")
                         .WithMany("AccountUsers")
-                        .HasForeignKey("DestinationId")
+                        .HasForeignKey("FacilityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Destination");
+                    b.Navigation("Facility");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Receiving", b =>
@@ -727,7 +727,7 @@ namespace araras_health_hub_api.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("araras_health_hub_api.Models.Destination", b =>
+            modelBuilder.Entity("araras_health_hub_api.Models.Facility", b =>
                 {
                     b.Navigation("AccountUsers");
                 });

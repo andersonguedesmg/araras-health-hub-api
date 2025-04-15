@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace araras_health_hub_api.Dtos.Destination
+namespace araras_health_hub_api.Dtos.Facility
 {
-    public class UpdateDestinationRequestDto
+    public class CreateFacilityRequestDto
     {
         [Required(ErrorMessage = "O Nome é obrigatório.")]
         [MinLength(5, ErrorMessage = "O Nome não pode ter menos de 5 caracteres.")]
@@ -49,8 +49,10 @@ namespace araras_health_hub_api.Dtos.Destination
         [MaxLength(15, ErrorMessage = "O Telefone não pode ter mais de 15 caracteres.")]
         public string Phone { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "A Data de Atualização é obrigatória.")]
-        public DateTime UpdatedOn { get; set; }
+        [Required(ErrorMessage = "A Data de Criação é obrigatória.")]
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+
+        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
 
         [Required(ErrorMessage = "O Status é obrigatório.")]
         public bool IsActive { get; set; } = true;

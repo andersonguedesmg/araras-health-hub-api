@@ -17,7 +17,7 @@ namespace araras_health_hub_api.Mappers
                 CreatedOn = AppUserModel.CreatedOn,
                 UpdatedOn = AppUserModel.UpdatedOn,
                 IsActive = AppUserModel.IsActive,
-                DestinationId = AppUserModel.DestinationId,
+                FacilityId = AppUserModel.FacilityId,
             };
         }
     }
