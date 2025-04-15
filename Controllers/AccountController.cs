@@ -19,14 +19,21 @@ namespace araras_health_hub_api.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IDestinationRepository _destinationRepo;
         private readonly ApplicationDBContext _dbContext;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, IDestinationRepository destinationRepo, ApplicationDBContext dbContext)
+        public AccountController(UserManager<AppUser> userManager,
+        ITokenService tokenService,
+        SignInManager<AppUser> signInManager,
+        IDestinationRepository destinationRepo,
+        ApplicationDBContext dbContext,
+        RoleManager<IdentityRole<int>> roleManager)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
             _destinationRepo = destinationRepo;
             _dbContext = dbContext;
+            _roleManager = roleManager;
         }
 
         [HttpPost("register")]
@@ -60,8 +67,6 @@ namespace araras_health_hub_api.Controllers
             var newUserDto = new NewUserDto
             {
                 UserName = appUser.UserName!,
-                CreatedOn = appUser.CreatedOn,
-                UpdatedOn = appUser.UpdatedOn,
                 IsActive = appUser.IsActive,
                 DestinationId = appUser.DestinationId,
             };
@@ -85,14 +90,24 @@ namespace araras_health_hub_api.Controllers
             if (!result.Succeeded)
                 return Unauthorized(new ApiResponse<AppUser>(StatusCodes.Status401Unauthorized, ApiMessages.MsgAccountIncorrect, null!));
 
+            var roleNames = await _userManager.GetRolesAsync(user);
+
+            var roleDtos = _roleManager.Roles
+                .Where(r => roleNames.Contains(r.Name!))
+                .Select(r => new RoleDto
+                {
+                    Id = r.Id,
+                    Name = r.Name!
+                })
+                .ToList();
+
             var account = new NewUserDto
             {
                 UserName = user.UserName!,
                 UserId = user.Id!,
-                CreatedOn = user.CreatedOn,
-                UpdatedOn = user.UpdatedOn,
                 IsActive = user.IsActive,
                 DestinationId = user.DestinationId,
+                Roles = roleDtos,
                 Token = _tokenService.CreateToken(user)
             };
 

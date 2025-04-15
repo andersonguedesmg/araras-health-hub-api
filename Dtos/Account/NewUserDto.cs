@@ -11,13 +11,11 @@ namespace araras_health_hub_api.Dtos.Account
 
         public int UserId { get; set; }
 
-        public DateTime CreatedOn { get; set; } = DateTime.Now;
-
-        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
-
         public bool IsActive { get; set; } = true;
 
         public int? DestinationId { get; set; }
+
+        public List<RoleDto> Roles { get; set; } = new();
 
         public string Token { get; set; } = string.Empty;
     }
