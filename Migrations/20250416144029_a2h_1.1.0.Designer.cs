@@ -12,7 +12,7 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250415151107_a2h_1.1.0")]
+    [Migration("20250416144029_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -58,21 +58,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "55dcca98-5d75-449b-8cd0-3a4fa394ef72",
+                            ConcurrencyStamp = "b6688f7a-71fb-4cd8-90f5-48fd7d88ed29",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "45728034-6f57-4443-9880-180f353e7652",
+                            ConcurrencyStamp = "8864e29a-304c-45d4-b76a-d8dcc7249e23",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "02d7fecd-29f4-4eb0-b2a6-dcd94ab03fec",
+                            ConcurrencyStamp = "46133a53-ba60-49af-afd2-a71fca151df7",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -274,16 +274,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "695f5571-3932-496b-8a5a-b1f5c46090ce",
-                            CreatedOn = new DateTime(2025, 4, 15, 12, 11, 7, 248, DateTimeKind.Local).AddTicks(3092),
+                            ConcurrencyStamp = "2d8de38c-2bd2-4e89-92bf-433deec4f040",
+                            CreatedOn = new DateTime(2025, 4, 16, 11, 40, 29, 404, DateTimeKind.Local).AddTicks(8111),
                             EmailConfirmed = false,
                             FacilityId = 1,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGPitoWR1b6Z4fedXYx5fvyld4KdAgqU598yIzzXHuLkuX/lQUbeMo3i1CHfqyBaEw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGaRGJ7uwGhPlwUKP2TbtfMGYH9HNlmI34kw+Zd4BXqs+kmCCkSqkqkIIGNfaxZiAA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c414f577-3c63-45fd-a336-d767292120d7",
+                            SecurityStamp = "4badcdd6-6403-4f8f-97f7-2f5528a4d9de",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -392,7 +392,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 4, 15, 12, 11, 7, 248, DateTimeKind.Local).AddTicks(2949),
+                            CreatedOn = new DateTime(2025, 4, 16, 11, 40, 29, 404, DateTimeKind.Local).AddTicks(7909),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -423,7 +423,7 @@ namespace araras_health_hub_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Format")
+                    b.Property<string>("DosageForm")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -21,7 +21,7 @@ namespace araras_health_hub_api.Dtos.Product
         [Required(ErrorMessage = "A Medida é obrigatório.")]
         [MinLength(5, ErrorMessage = "A Medida não pode ter menos de 5 caracteres.")]
         [MaxLength(280, ErrorMessage = "A Medida não pode ter mais de 280 caracteres.")]
-        public string Format { get; set; } = string.Empty;
+        public string DosageForm { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A Categoria é obrigatória.")]
         [MinLength(5, ErrorMessage = "A Categoria não pode ter menos de 5 caracteres.")]

@@ -16,7 +16,7 @@ namespace araras_health_hub_api.Mappers
                 Id = productModel.Id,
                 Name = productModel.Name,
                 Description = productModel.Description,
-                Format = productModel.Format,
+                DosageForm = productModel.DosageForm,
                 Category = productModel.Category,
                 CreatedOn = productModel.CreatedOn,
                 UpdatedOn = productModel.UpdatedOn,
@@ -30,7 +30,7 @@ namespace araras_health_hub_api.Mappers
             {
                 Name = productrModelDto.Name,
                 Description = productrModelDto.Description,
-                Format = productrModelDto.Format,
+                DosageForm = productrModelDto.DosageForm,
                 Category = productrModelDto.Category,
                 CreatedOn = productrModelDto.CreatedOn,
                 IsActive = productrModelDto.IsActive,
