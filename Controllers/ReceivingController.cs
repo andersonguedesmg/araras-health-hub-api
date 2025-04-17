@@ -12,6 +12,7 @@ using araras_health_hub_api.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using araras_health_hub_api.Dtos.Product;
 
 namespace araras_health_hub_api.Controllers
 {
@@ -140,12 +141,20 @@ namespace araras_health_hub_api.Controllers
                 ReceivedItems = receiving.ReceivedItems?.Select(item => new ReceivingItemResponseDto
                 {
                     Id = item.Id,
-                    ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     UnitValue = item.UnitValue,
                     TotalValue = item.TotalValue,
                     Batch = item.Batch,
                     ExpiryDate = item.ExpiryDate,
+                    ProductId = item.ProductId,
+                    Product = item.Product != null ? new ProductDto
+                    {
+                        Id = item.Product.Id,
+                        Name = item.Product.Name,
+                        Description = item.Product.Description,
+                        DosageForm = item.Product.DosageForm,
+                        Category = item.Product.Category,
+                    } : null,
                 }).ToList() ?? new List<ReceivingItemResponseDto>()
             };
 
@@ -201,12 +210,20 @@ namespace araras_health_hub_api.Controllers
                 ReceivedItems = receiving.ReceivedItems?.Select(item => new ReceivingItemResponseDto
                 {
                     Id = item.Id,
-                    ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     UnitValue = item.UnitValue,
                     TotalValue = item.TotalValue,
                     Batch = item.Batch,
                     ExpiryDate = item.ExpiryDate,
+                    ProductId = item.ProductId,
+                    Product = item.Product != null ? new ProductDto
+                    {
+                        Id = item.Product.Id,
+                        Name = item.Product.Name,
+                        Description = item.Product.Description,
+                        DosageForm = item.Product.DosageForm,
+                        Category = item.Product.Category,
+                    } : null,
                 }).ToList() ?? new List<ReceivingItemResponseDto>()
             }).ToList();
 
