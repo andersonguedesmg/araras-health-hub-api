@@ -20,7 +20,7 @@ namespace araras_health_hub_api.Repository
 
         public async Task<List<Stock>> GetAllAsync()
         {
-            return await _context.Stock.ToListAsync();
+            return await _context.Stock.Include(s => s.Product).ToListAsync();
         }
 
         public async Task<Stock?> GetByProductIdAsync(int productId)
