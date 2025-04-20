@@ -37,20 +37,20 @@ namespace araras_health_hub_api.Shared
         public const string MsgFacilityActivatedSuccessfully = "Unidade ativada com sucesso.";
         public const string MsgFacilityDeletedSuccessfully = "Unidade excluída com sucesso.";
 
-        public const string MsgAccountUnauthorized = "Usuário não autorizado.";
+        public const string MsgAccountUnauthorized = "Conta não autorizada.";
         public const string MsgAccountIncorrect = "Senha ou Usuário incorreto.";
         public const string MsgAccountLoginSuccessful = "Login realizado sucesso.";
-        public const string MsgAccountNotFound = "Cliente não encontrado.";
-        public const string MsgAccountCreatedSuccessfully = "Cliente criado com sucesso.";
-        public const string MsgAccountFoundSuccessfully = "Cliente encontrado com sucesso.";
-        public const string MsgAccountsFoundSuccessfully = "Clientes encontrados com sucesso.";
-        public const string MsgAccountUpdatedSuccessfully = "Cliente atualizado com sucesso.";
-        public const string MsgAccountDeletedSuccessfully = "Cliente excluído com sucesso.";
-        public const string MsgAccountCreationFailed = "Falha ao criar o cliente.";
-        public const string MsgRoleAssignmentFailed = "Falha ao atribuir o papel ao cliente.";
-        public const string MsgAccountDisabledSuccessfully = "Cliente desativado com sucesso.";
-        public const string MsgAccountActivatedSuccessfully = "Cliente ativado com sucesso.";
-        public const string MsgAccountInvalid = "Usuário inválido.";
+        public const string MsgAccountNotFound = "Conta não encontrada.";
+        public const string MsgAccountCreatedSuccessfully = "Conta criada com sucesso.";
+        public const string MsgAccountFoundSuccessfully = "Conta encontrada com sucesso.";
+        public const string MsgAccountsFoundSuccessfully = "Contas encontradas com sucesso.";
+        public const string MsgAccountUpdatedSuccessfully = "Conta atualizada com sucesso.";
+        public const string MsgAccountDeletedSuccessfully = "Conta excluída com sucesso.";
+        public const string MsgAccountCreationFailed = "Falha ao criar a Conta.";
+        public const string MsgRoleAssignmentFailed = "Falha ao atribuir o papel a Conta.";
+        public const string MsgAccountDisabledSuccessfully = "Conta desativada com sucesso.";
+        public const string MsgAccountActivatedSuccessfully = "Conta ativada com sucesso.";
+        public const string MsgAccountInvalid = "Conta inválida.";
 
         public const string MsgProductNotFound = "Produto não encontrado.";
         public const string MsgNotProductsFound = "Nenhum produto encontrado.";
@@ -72,5 +72,13 @@ namespace araras_health_hub_api.Shared
         public const string MsgProductStockFoundSuccessfully = "Estoque do produto não encontrado.";
         public const string MsgProductStockNotFound = "Estoque do produto encontrado com sucesso.";
         public const string MsgStocksFoundSuccessfully = "Estoques encontrados com sucesso.";
+
+
+        public const string MsgOrderInvalid = "Pedido inválido.";
+        public const string MsgOrderNotFound = "Pedido não encontrado.";
+        public const string MsgNotOrdersFound = "Nenhum pedido encontrado.";
+        public const string MsgOrderCreatedSuccessfully = "Pedido criado com sucesso.";
+        public const string MsgOrderFoundSuccessfully = "Pedido encontrado com sucesso.";
+        public const string MsgOrdersFoundSuccessfully = "Pedidos encontrados com sucesso.";
     }
 }

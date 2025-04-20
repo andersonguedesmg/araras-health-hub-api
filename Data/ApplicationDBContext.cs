@@ -23,6 +23,9 @@ namespace araras_health_hub_api.Data
         public DbSet<Receiving> Receiving { get; set; }
         public DbSet<ReceivingItem> ReceivingItem { get; set; }
         public DbSet<Stock> Stock { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderItem> OrderItem { get; set; }
+        public DbSet<OrderStatus> OrderStatus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -105,6 +108,34 @@ namespace araras_health_hub_api.Data
                 UserId = 1,
             };
             builder.Entity<IdentityUserRole<int>>().HasData(userMasterRole);
+
+            List<OrderStatus> orderStatus = new List<OrderStatus>
+            {
+                new OrderStatus
+                {
+                    Id = 1,
+                    Description = "Criado",
+                },
+
+                new OrderStatus
+                {
+                    Id = 2,
+                    Description = "Aprovado",
+                },
+
+                new OrderStatus
+                {
+                    Id = 3,
+                    Description = "Separado",
+                },
+
+                new OrderStatus
+                {
+                    Id = 4,
+                    Description = "Finalizado",
+                },
+            };
+            builder.Entity<OrderStatus>().HasData(orderStatus);
         }
     }
 }

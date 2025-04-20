@@ -94,6 +94,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IReceivingRepository, ReceivingRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddCors(options =>
 {
