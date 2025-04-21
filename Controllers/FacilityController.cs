@@ -136,9 +136,9 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet]
-        [Route("getNames")]
+        [Route("getDropdownOptions")]
         [Authorize]
-        public async Task<IActionResult> GetNames()
+        public async Task<IActionResult> getDropdownOptions()
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ApiResponse<List<FacilityNameDto>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
