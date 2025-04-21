@@ -62,11 +62,11 @@ namespace araras_health_hub_api.Shared
         public const string MsgProductActivatedSuccessfully = "Produto ativado com sucesso.";
         public const string MsgProductDeletedSuccessfully = "Produto excluído com sucesso.";
 
-        public const string MsgReceivingNotFound = "Recebimento não encontrado.";
-        public const string MsgNotReceivingsFound = "Nenhum recebimento encontrado.";
-        public const string MsgReceivingCreatedSuccessfully = "Recebimento criado com sucesso.";
-        public const string MsgReceivingFoundSuccessfully = "Recebimento encontrado com sucesso.";
-        public const string MsgReceivingsFoundSuccessfully = "Recebimentos encontrados com sucesso.";
+        public const string MsgReceivingNotFound = "Entrada não encontrada.";
+        public const string MsgNotReceivingsFound = "Nenhum Entrada encontrada.";
+        public const string MsgReceivingCreatedSuccessfully = "Entrada criada com sucesso.";
+        public const string MsgReceivingFoundSuccessfully = "Entrada encontrada com sucesso.";
+        public const string MsgReceivingsFoundSuccessfully = "Entradas encontradas com sucesso.";
 
         public const string MsgNotStocksFound = "Nenhum estoque encontrado.";
         public const string MsgProductStockFoundSuccessfully = "Estoque do produto não encontrado.";
