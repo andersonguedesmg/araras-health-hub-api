@@ -47,6 +47,13 @@ namespace araras_health_hub_api.Repository
                 stock.Quantity += quantity;
             }
 
+            var emptyStock = await _context.Stock.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == "" && s.Quantity == 0);
+
+            if (emptyStock != null)
+            {
+                _context.Stock.Remove(emptyStock);
+            }
+
             await _context.SaveChangesAsync();
         }
     }

@@ -14,7 +14,7 @@ namespace araras_health_hub_api.Models
 
         public string SupplyAuthorization { get; set; } = string.Empty;
 
-        public string Observation { get; set; } = string.Empty;
+        public string? Observation { get; set; } = string.Empty;
 
         public DateTime ReceivingDate { get; set; }
 

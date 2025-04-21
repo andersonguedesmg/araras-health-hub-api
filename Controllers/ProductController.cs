@@ -17,10 +17,12 @@ namespace araras_health_hub_api.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepo;
+        private readonly IStockRepository _stockRepo;
 
-        public ProductController(IProductRepository productRepo)
+        public ProductController(IProductRepository productRepo, IStockRepository stockRepo)
         {
             _productRepo = productRepo;
+            _stockRepo = stockRepo;
         }
 
         [HttpGet]
@@ -69,6 +71,14 @@ namespace araras_health_hub_api.Controllers
 
             var productModel = productDto.ToProductFromCreateDto();
             var newProduct = await _productRepo.CreateAsync(productModel);
+
+            var stock = new Stock
+            {
+                ProductId = newProduct.Id,
+                Quantity = 0,
+                Batch = string.Empty,
+            };
+            await _stockRepo.UpdateStock(stock.ProductId, stock.Quantity, stock.Batch);
 
             return CreatedAtAction(nameof(GetById), new { id = productModel.Id }, new ApiResponse<Product>(StatusCodes.Status201Created, ApiMessages.MsgProductCreatedSuccessfully, newProduct));
         }
