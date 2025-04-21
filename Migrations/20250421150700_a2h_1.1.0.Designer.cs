@@ -12,7 +12,7 @@ using araras_health_hub_api.Data;
 namespace araras_health_hub_api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250416144029_a2h_1.1.0")]
+    [Migration("20250421150700_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -58,21 +58,21 @@ namespace araras_health_hub_api.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "b6688f7a-71fb-4cd8-90f5-48fd7d88ed29",
+                            ConcurrencyStamp = "7428d1fe-8abe-4675-a475-6ad01419183d",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "8864e29a-304c-45d4-b76a-d8dcc7249e23",
+                            ConcurrencyStamp = "e055e826-f533-4617-a4b9-8c6a8d89c01b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "46133a53-ba60-49af-afd2-a71fca151df7",
+                            ConcurrencyStamp = "b843418f-569c-4674-a990-1e2c7c13776d",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -274,16 +274,16 @@ namespace araras_health_hub_api.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2d8de38c-2bd2-4e89-92bf-433deec4f040",
-                            CreatedOn = new DateTime(2025, 4, 16, 11, 40, 29, 404, DateTimeKind.Local).AddTicks(8111),
+                            ConcurrencyStamp = "19eecf2f-98db-4495-ab56-1868d6cf2f34",
+                            CreatedOn = new DateTime(2025, 4, 21, 12, 6, 59, 733, DateTimeKind.Local).AddTicks(5815),
                             EmailConfirmed = false,
                             FacilityId = 1,
                             IsActive = true,
                             LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGaRGJ7uwGhPlwUKP2TbtfMGYH9HNlmI34kw+Zd4BXqs+kmCCkSqkqkIIGNfaxZiAA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEB7krMHPhTTWFs8rqh8+s4HeQcajRe7DcmWyT4IHpIz3b4znxIcwLWtWX0/V5OnR1w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4badcdd6-6403-4f8f-97f7-2f5528a4d9de",
+                            SecurityStamp = "4a7858de-e289-41f7-bf3a-e747374e3fb8",
                             TwoFactorEnabled = false,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "SMS_Master"
@@ -392,7 +392,7 @@ namespace araras_health_hub_api.Migrations
                             Address = "Rua Campos Sales",
                             Cep = "13.601-111",
                             City = "Araras",
-                            CreatedOn = new DateTime(2025, 4, 16, 11, 40, 29, 404, DateTimeKind.Local).AddTicks(7909),
+                            CreatedOn = new DateTime(2025, 4, 21, 12, 6, 59, 733, DateTimeKind.Local).AddTicks(5712),
                             Email = "sms@araras.sp.gov.br",
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde",
@@ -401,6 +401,157 @@ namespace araras_health_hub_api.Migrations
                             Phone = "(19) 3543-1522",
                             State = "SP",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApprovedByAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ApprovedByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedByAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreatedByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("FinalizedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("FinalizedByAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FinalizedByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Observation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SeparatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("SeparatedByAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SeparatedByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByAccountId");
+
+                    b.HasIndex("ApprovedByEmployeeId");
+
+                    b.HasIndex("CreatedByAccountId");
+
+                    b.HasIndex("CreatedByEmployeeId");
+
+                    b.HasIndex("FinalizedByAccountId");
+
+                    b.HasIndex("FinalizedByEmployeeId");
+
+                    b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("SeparatedByAccountId");
+
+                    b.HasIndex("SeparatedByEmployeeId");
+
+                    b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActualQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ApprovedQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestedQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeparatedQuantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItem");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatus");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Criado"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Aprovado"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Separado"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Finalizado"
                         });
                 });
 
@@ -458,7 +609,6 @@ namespace araras_health_hub_api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Observation")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ReceivingDate")
@@ -676,6 +826,88 @@ namespace araras_health_hub_api.Migrations
                     b.Navigation("Facility");
                 });
 
+            modelBuilder.Entity("araras_health_hub_api.Models.Order", b =>
+                {
+                    b.HasOne("araras_health_hub_api.Models.AppUser", "ApprovedByAccount")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByAccountId");
+
+                    b.HasOne("araras_health_hub_api.Models.Employee", "ApprovedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByEmployeeId");
+
+                    b.HasOne("araras_health_hub_api.Models.AppUser", "CreatedByAccount")
+                        .WithMany()
+                        .HasForeignKey("CreatedByAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("araras_health_hub_api.Models.Employee", "CreatedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("CreatedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("araras_health_hub_api.Models.AppUser", "FinalizedByAccount")
+                        .WithMany()
+                        .HasForeignKey("FinalizedByAccountId");
+
+                    b.HasOne("araras_health_hub_api.Models.Employee", "FinalizedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("FinalizedByEmployeeId");
+
+                    b.HasOne("araras_health_hub_api.Models.OrderStatus", "OrderStatus")
+                        .WithMany()
+                        .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("araras_health_hub_api.Models.AppUser", "SeparatedByAccount")
+                        .WithMany()
+                        .HasForeignKey("SeparatedByAccountId");
+
+                    b.HasOne("araras_health_hub_api.Models.Employee", "SeparatedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("SeparatedByEmployeeId");
+
+                    b.Navigation("ApprovedByAccount");
+
+                    b.Navigation("ApprovedByEmployee");
+
+                    b.Navigation("CreatedByAccount");
+
+                    b.Navigation("CreatedByEmployee");
+
+                    b.Navigation("FinalizedByAccount");
+
+                    b.Navigation("FinalizedByEmployee");
+
+                    b.Navigation("OrderStatus");
+
+                    b.Navigation("SeparatedByAccount");
+
+                    b.Navigation("SeparatedByEmployee");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.OrderItem", b =>
+                {
+                    b.HasOne("araras_health_hub_api.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("araras_health_hub_api.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("araras_health_hub_api.Models.Receiving", b =>
                 {
                     b.HasOne("araras_health_hub_api.Models.AppUser", "Account")
@@ -736,6 +968,11 @@ namespace araras_health_hub_api.Migrations
             modelBuilder.Entity("araras_health_hub_api.Models.Facility", b =>
                 {
                     b.Navigation("AccountUsers");
+                });
+
+            modelBuilder.Entity("araras_health_hub_api.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("araras_health_hub_api.Models.Receiving", b =>
