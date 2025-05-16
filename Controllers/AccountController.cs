@@ -114,6 +114,25 @@ namespace araras_health_hub_api.Controllers
             return Ok(new ApiResponse<NewUserDto>(StatusCodes.Status200OK, ApiMessages.MsgAccountLoginSuccessful, account));
         }
 
+        [HttpPost("resetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
+
+            var user = await _userManager.FindByNameAsync(resetPasswordDto.UserName);
+            if (user == null)
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, resetPasswordDto.NewPassword);
+
+            if (!result.Succeeded)
+                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountPasswordResetFailed, result.Errors));
+
+            return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountPasswordResetSuccessfully, null!));
+        }
+
         [HttpGet]
         [Route("getAll")]
         [Authorize]

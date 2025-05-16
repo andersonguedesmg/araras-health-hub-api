@@ -91,7 +91,7 @@ namespace araras_health_hub_api.Data
             AppUser userMaster = new()
             {
                 Id = 1,
-                UserName = "SMS_Master",
+                UserName = "sms_master",
                 NormalizedUserName = "SMS_MASTER",
                 CreatedOn = DateTime.Now,
                 UpdatedOn = DateTime.MinValue,
@@ -99,7 +99,7 @@ namespace araras_health_hub_api.Data
                 FacilityId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
-            userMaster.PasswordHash = hasher.HashPassword(userMaster, "A2H@Master");
+            userMaster.PasswordHash = hasher.HashPassword(userMaster, "A2H@master");
             builder.Entity<AppUser>().HasData(userMaster);
 
             IdentityUserRole<int> userMasterRole = new()

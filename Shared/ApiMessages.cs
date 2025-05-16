@@ -51,6 +51,8 @@ namespace araras_health_hub_api.Shared
         public const string MsgAccountDisabledSuccessfully = "Conta desativada com sucesso.";
         public const string MsgAccountActivatedSuccessfully = "Conta ativada com sucesso.";
         public const string MsgAccountInvalid = "Conta inválida.";
+        public const string MsgAccountPasswordResetSuccessfully = "Senha redefinida com sucesso.";
+        public const string MsgAccountPasswordResetFailed = "Falha na redefinição da senha.";
 
         public const string MsgProductNotFound = "Produto não encontrado.";
         public const string MsgNotProductsFound = "Nenhum produto encontrado.";
