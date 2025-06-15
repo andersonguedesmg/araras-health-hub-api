@@ -8,7 +8,6 @@ namespace araras_health_hub_api.Models
     public class Order
     {
         public int Id { get; set; }
-        public string OrderNumber { get; set; } = string.Empty;
         public string? Observation { get; set; } = string.Empty;
 
         public List<OrderItem> OrderItems { get; set; } = new();

@@ -7,8 +7,6 @@ namespace araras_health_hub_api.Dtos.Order
 {
     public class CreateOrderDto
     {
-        public string OrderNumber { get; set; } = string.Empty;
-
         public int CreatedByEmployeeId { get; set; }
 
         public int CreatedByAccountId { get; set; }

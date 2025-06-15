@@ -8,17 +8,11 @@ namespace araras_health_hub_api.Dtos.Order
 {
     public class CreateOrderItemDto
     {
-        public int Id { get; set; }
-
         public int ProductId { get; set; }
-
-        public ProductDto? Product { get; set; }
 
         public int RequestedQuantity { get; set; }
 
         public int ApprovedQuantity { get; set; }
-
-        public int SeparatedQuantity { get; set; }
 
         public int ActualQuantity { get; set; }
 

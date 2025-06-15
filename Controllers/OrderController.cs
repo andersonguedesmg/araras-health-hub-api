@@ -55,7 +55,6 @@ namespace araras_health_hub_api.Controllers
 
             var order = new Order
             {
-                OrderNumber = orderDto.OrderNumber,
                 CreatedAt = DateTime.UtcNow,
                 CreatedByEmployeeId = orderDto.CreatedByEmployeeId,
                 CreatedByAccountId = orderDto.CreatedByAccountId,
@@ -80,7 +79,6 @@ namespace araras_health_hub_api.Controllers
                         ProductId = itemDto.ProductId,
                         RequestedQuantity = itemDto.RequestedQuantity,
                         ApprovedQuantity = 0,
-                        SeparatedQuantity = 0,
                         ActualQuantity = 0
                     };
 
@@ -107,7 +105,6 @@ namespace araras_health_hub_api.Controllers
             var orderResponseDto = new OrderResponseDto
             {
                 Id = order.Id,
-                OrderNumber = order.OrderNumber,
                 Observation = order.Observation,
                 CreatedAt = order.CreatedAt,
                 CreatedByAccountId = order.CreatedByAccountId,
@@ -177,7 +174,6 @@ namespace araras_health_hub_api.Controllers
                     Id = item.Id,
                     RequestedQuantity = item.RequestedQuantity,
                     ApprovedQuantity = item.ApprovedQuantity,
-                    SeparatedQuantity = item.SeparatedQuantity,
                     ActualQuantity = item.ActualQuantity,
                     OrderId = item.OrderId,
                     ProductId = item.ProductId,
@@ -210,7 +206,6 @@ namespace araras_health_hub_api.Controllers
             var orderResponseDtos = orders.Select(order => new OrderResponseDto
             {
                 Id = order.Id,
-                OrderNumber = order.OrderNumber,
                 Observation = order.Observation,
                 CreatedAt = order.CreatedAt,
                 CreatedByAccountId = order.CreatedByAccountId,
@@ -280,7 +275,6 @@ namespace araras_health_hub_api.Controllers
                     Id = item.Id,
                     RequestedQuantity = item.RequestedQuantity,
                     ApprovedQuantity = item.ApprovedQuantity,
-                    SeparatedQuantity = item.SeparatedQuantity,
                     ActualQuantity = item.ActualQuantity,
                     OrderId = item.OrderId,
                     ProductId = item.ProductId,

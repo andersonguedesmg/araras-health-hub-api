@@ -10,7 +10,6 @@ namespace araras_health_hub_api.Dtos.Order
     public class OrderResponseDto
     {
         public int Id { get; set; }
-        public string OrderNumber { get; set; } = string.Empty;
         public string Observation { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }
