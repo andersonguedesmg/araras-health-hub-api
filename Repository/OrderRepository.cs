@@ -53,5 +53,17 @@ namespace araras_health_hub_api.Repository
             await _context.SaveChangesAsync();
             return orderItem;
         }
+
+        public async Task UpdateAsync(Order order)
+        {
+            _context.Order.Update(order);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateOrderItemAsync(OrderItem orderItem)
+        {
+            _context.OrderItem.Update(orderItem);
+            await _context.SaveChangesAsync();
+        }
     }
 }

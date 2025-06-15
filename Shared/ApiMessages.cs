@@ -75,12 +75,13 @@ namespace araras_health_hub_api.Shared
         public const string MsgProductStockNotFound = "Estoque do produto encontrado com sucesso.";
         public const string MsgStocksFoundSuccessfully = "Estoques encontrados com sucesso.";
 
-
-        public const string MsgOrderInvalid = "Pedido inválido.";
         public const string MsgOrderNotFound = "Pedido não encontrado.";
         public const string MsgNotOrdersFound = "Nenhum pedido encontrado.";
         public const string MsgOrderCreatedSuccessfully = "Pedido criado com sucesso.";
+        public const string MsgOrderApprovedSuccessfully = "Pedido aprovado com sucesso.";
         public const string MsgOrderFoundSuccessfully = "Pedido encontrado com sucesso.";
         public const string MsgOrdersFoundSuccessfully = "Pedidos encontrados com sucesso.";
+        public const string MsgOrderStatusInvalid = "Status Inválido.";
+        public const string MsgOrderCannotBeApprovedInItsCurrentStatus = "O pedido não pode ser aprovado em seu status atual.";
     }
 }

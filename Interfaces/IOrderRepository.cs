@@ -12,5 +12,7 @@ namespace araras_health_hub_api.Interfaces
         Task<Order?> GetByIdAsync(int id);
         Task<List<Order>> GetAllAsync();
         Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem);
+        Task UpdateAsync(Order order);
+        Task UpdateOrderItemAsync(OrderItem orderItem);
     }
 }

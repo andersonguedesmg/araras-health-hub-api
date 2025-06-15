@@ -9,6 +9,7 @@ using araras_health_hub_api.Dtos.Product;
 using araras_health_hub_api.Interfaces;
 using araras_health_hub_api.Models;
 using araras_health_hub_api.Shared;
+using araras_health_hub_api.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace araras_health_hub_api.Controllers
 
             var status = await _dbContext.OrderStatus.FindAsync(orderDto.OrderStatusId);
             if (status == null)
-                return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, ApiMessages.MsgOrderInvalid, null!));
+                return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, ApiMessages.MsgOrderStatusInvalid, null!));
 
             var order = new Order
             {
@@ -105,7 +106,7 @@ namespace araras_health_hub_api.Controllers
             var orderResponseDto = new OrderResponseDto
             {
                 Id = order.Id,
-                Observation = order.Observation,
+                Observation = order.Observation!,
                 CreatedAt = order.CreatedAt,
                 CreatedByAccountId = order.CreatedByAccountId,
                 CreatedByAccount = order.CreatedByAccount != null ? new AppUser
@@ -206,7 +207,7 @@ namespace araras_health_hub_api.Controllers
             var orderResponseDtos = orders.Select(order => new OrderResponseDto
             {
                 Id = order.Id,
-                Observation = order.Observation,
+                Observation = order.Observation!,
                 CreatedAt = order.CreatedAt,
                 CreatedByAccountId = order.CreatedByAccountId,
                 CreatedByAccount = order.CreatedByAccount != null ? new AppUser
@@ -289,7 +290,63 @@ namespace araras_health_hub_api.Controllers
                 }).ToList() ?? new List<OrderItemResponseDto>()
             }).ToList();
 
-            return Ok(new ApiResponse<List<OrderResponseDto>>(StatusCodes.Status200OK, ApiMessages.MsgReceivingsFoundSuccessfully, orderResponseDtos));
+            return Ok(new ApiResponse<List<OrderResponseDto>>(StatusCodes.Status200OK, ApiMessages.MsgOrdersFoundSuccessfully, orderResponseDtos));
+        }
+
+        [HttpPut]
+        [Route("approve/{id:int}")]
+        public async Task<IActionResult> ApproveOrder([FromRoute] int id, [FromBody] ApproveOrderRequestDto approvalDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+            }
+
+            var orderToApprove = await _orderRepo.GetByIdAsync(id);
+            if (orderToApprove == null)
+                return NotFound(new ApiResponse<Order>(StatusCodes.Status404NotFound, ApiMessages.MsgOrderNotFound, null!));
+
+            var approvedByEmployee = await _dbContext.Employee.FindAsync(approvalDto.ApprovedByEmployeeId);
+            if (approvedByEmployee == null)
+                return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, ApiMessages.MsgEmployeeInvalid, null!));
+
+            var approvedByAccount = await _userManager.FindByIdAsync(approvalDto.ApprovedByAccountId.ToString());
+            if (approvedByAccount == null)
+                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
+
+            if (orderToApprove.OrderStatusId != (int)OrderStatusEnum.Pending)
+                return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, ApiMessages.MsgOrderCannotBeApprovedInItsCurrentStatus, null!));
+
+            var status = await _dbContext.OrderStatus.FindAsync(approvalDto.OrderStatusId);
+            if (status == null)
+                return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, ApiMessages.MsgOrderStatusInvalid, null!));
+
+            orderToApprove.OrderStatusId = status.Id;
+            orderToApprove.ApprovedAt = DateTime.UtcNow;
+            orderToApprove.ApprovedByEmployeeId = approvalDto.ApprovedByEmployeeId;
+            orderToApprove.ApprovedByAccountId = approvalDto.ApprovedByAccountId;
+
+            foreach (var itemApprovalDto in approvalDto.OrderItemsApproval)
+            {
+                var orderItem = orderToApprove.OrderItems?.FirstOrDefault(oi => oi.Id == itemApprovalDto.OrderItemId);
+                if (orderItem == null)
+                {
+                    return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, $"Order item with ID {itemApprovalDto.OrderItemId} not found in this order.", null!));
+                }
+
+
+                if (itemApprovalDto.ApprovedQuantity > orderItem.RequestedQuantity)
+                {
+                    return BadRequest(new ApiResponse<Order>(StatusCodes.Status400BadRequest, $"Approved quantity for item {itemApprovalDto.OrderItemId} cannot exceed requested quantity ({orderItem.RequestedQuantity}).", null!));
+                }
+
+                orderItem.ApprovedQuantity = itemApprovalDto.ApprovedQuantity;
+            }
+
+            await _orderRepo.UpdateAsync(orderToApprove);
+
+            var response = await _orderRepo.GetByIdAsync(orderToApprove.Id);
+            return Ok(new ApiResponse<Order>(StatusCodes.Status200OK, ApiMessages.MsgOrderApprovedSuccessfully, response!));
         }
     }
 }

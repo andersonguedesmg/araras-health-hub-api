@@ -114,7 +114,7 @@ namespace araras_health_hub_api.Data
                 new OrderStatus
                 {
                     Id = 1,
-                    Description = "Criado",
+                    Description = "Pendente",
                 },
 
                 new OrderStatus
