@@ -297,7 +297,6 @@ namespace araras_health_hub_api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Observation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OrderStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -412,7 +411,6 @@ namespace araras_health_hub_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RequestedQuantity = table.Column<int>(type: "int", nullable: false),
                     ApprovedQuantity = table.Column<int>(type: "int", nullable: false),
-                    SeparatedQuantity = table.Column<int>(type: "int", nullable: false),
                     ActualQuantity = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false)
@@ -470,22 +468,22 @@ namespace araras_health_hub_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "ddf9a6ca-b476-4c79-a70f-8bf3589a5882", "Master", "MASTER" },
-                    { 2, "b52a2b1f-57d0-4e8b-b5fd-9cd5db503148", "Admin", "ADMIN" },
-                    { 3, "59359e2a-cb8d-40b0-a489-deabebbe1d9f", "User", "USER" }
+                    { 1, "1aea7a2d-d75f-4b1e-839b-43de453dc20c", "Master", "MASTER" },
+                    { 2, "dde83a47-cbfe-42d7-967f-2c5f52c906db", "Admin", "ADMIN" },
+                    { 3, "8007b3bd-f156-49ea-a3ba-cb6bdf07ce89", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Facility",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 5, 16, 10, 9, 30, 866, DateTimeKind.Local).AddTicks(9967), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2025, 6, 16, 19, 12, 29, 101, DateTimeKind.Local).AddTicks(4922), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "OrderStatus",
                 columns: new[] { "Id", "Description" },
                 values: new object[,]
                 {
-                    { 1, "Criado" },
+                    { 1, "Pendente" },
                     { 2, "Aprovado" },
                     { 3, "Separado" },
                     { 4, "Finalizado" }
@@ -494,7 +492,7 @@ namespace araras_health_hub_api.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "f9520274-c839-425f-b2d0-6355f1fd14a1", new DateTime(2025, 5, 16, 10, 9, 30, 867, DateTimeKind.Local).AddTicks(138), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEJN1ogLRDX8rgnSv/n+pDo/uDiC1KNPzAC0LlffLBPFyfHNtWAQXeazrWOf9r5kGgg==", null, false, "694f2029-7a47-4f65-b1c6-407d9873315b", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "sms_master" });
+                values: new object[] { 1, 0, "6b7ef041-03db-46ec-a965-faccd65d8500", new DateTime(2025, 6, 16, 19, 12, 29, 101, DateTimeKind.Local).AddTicks(5079), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEKTM3tBamagKGd6c4rSdxtaf4xfPsZVVCclI6Bjlm33fpG+oWD35i8sAbZF41kbnhA==", null, false, "664c8220-da1d-445e-aa84-be96787a959a", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "sms_master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
