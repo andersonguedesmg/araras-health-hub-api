@@ -20,7 +20,25 @@ namespace araras_health_hub_api.Repository
 
         public async Task<List<Stock>> GetAllAsync()
         {
-            return await _context.Stock.Include(s => s.Product).ToListAsync();
+            var allStockEntries = await _context.Stock.Include(s => s.Product).ToListAsync();
+            var filteredStock = new List<Stock>();
+            var groupedByProduct = allStockEntries.GroupBy(s => s.ProductId);
+
+            foreach (var group in groupedByProduct)
+            {
+                if (group.Count() == 1)
+                {
+                    var singleEntry = group.First();
+                    filteredStock.Add(singleEntry);
+                }
+                else
+                {
+                    var validEntries = group.Where(s => s.Quantity > 0 || !string.IsNullOrEmpty(s.Batch)).ToList();
+                    filteredStock.AddRange(validEntries);
+                }
+            }
+
+            return filteredStock;
         }
 
         public async Task<Stock?> GetByProductIdAsync(int productId)
