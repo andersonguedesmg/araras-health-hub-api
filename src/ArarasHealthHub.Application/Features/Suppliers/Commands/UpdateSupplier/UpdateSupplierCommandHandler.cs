@@ -30,16 +30,9 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
                 return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, false);
             }
 
-            if (existingSupplier.Cnpj != request.Cnpj)
-            {
-                var supplierWithSameCnpj = await _supplierRepository.GetByCnpjAsync(request.Cnpj);
-                if (supplierWithSameCnpj != null && supplierWithSameCnpj.Id != request.Id)
-                {
-                    return new ApiResponse<bool>(StatusCodes.Status409Conflict, ApiMessages.MsgCnpjAlreadyExists, false);
-                }
-            }
-
             _mapper.Map(request, existingSupplier);
+
+            existingSupplier.SetUpdatedOn();
 
             await _supplierRepository.UpdateAsync(existingSupplier);
 

@@ -5,17 +5,33 @@ using System.Threading.Tasks;
 
 namespace ArarasHealthHub.Shared.Core
 {
-    public class ApiResponse<T>
+    public class ApiResponse<T> : ApiResponseBase
     {
-        public int StatusCode { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public T Data { get; set; } = default!;
+        public T? Data { get; set; }
 
-        public ApiResponse(int statusCode, string message, T data)
+        public ApiResponse() { }
+
+        public ApiResponse(int statusCode, string message, T? data)
         {
             StatusCode = statusCode;
             Message = message;
             Data = data;
+            Success = true;
+        }
+
+        public ApiResponse(int statusCode, string message, bool success)
+        {
+            StatusCode = statusCode;
+            Message = message;
+            Success = success;
+        }
+
+        public ApiResponse(int statusCode, string message, Dictionary<string, List<string>> errors, bool success)
+        {
+            StatusCode = statusCode;
+            Message = message;
+            Errors = errors;
+            Success = success;
         }
     }
 }

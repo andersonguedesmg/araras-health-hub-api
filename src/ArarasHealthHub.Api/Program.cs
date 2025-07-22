@@ -1,13 +1,15 @@
 using System.Reflection;
-using ArarasHealthHub.Application.Features.Suppliers.Profiles;
+using ArarasHealthHub.Application.Behaviors;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
+using ArarasHealthHub.Application.Profiles;
 using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Data.Repositories;
 using ArarasHealthHub.Infrastructure.Identity;
 using ArarasHealthHub.Infrastructure.Services;
 using ArarasHealthHub.Middlewares;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -127,6 +129,9 @@ builder.Services.AddMediatR(typeof(GetAllSuppliersQuery).Assembly);
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 builder.Services.AddAutoMapper(typeof(SupplierProfile).Assembly);
+
+builder.Services.AddValidatorsFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
 
 var app = builder.Build();
 

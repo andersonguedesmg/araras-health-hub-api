@@ -5,6 +5,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string MsgInternalServerError = "Ocorreu um erro interno no servidor.";
         public const string Msg400BadRequestError = "Ocorreu um erro interno.";
         public const string MsgIdMismatch = "ID na rota não corresponde ao ID no corpo da requisição.";
+        public const string MsgValidationErrors = "Ocorreram um ou mais erros de validação.";
 
         public const string MsgEmployeeNotFound = "Funcionário não encontrado.";
         public const string MsgNotEmployeesFound = "Nenhum funcionário encontrado.";
@@ -23,7 +24,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string MsgSupplierFoundSuccessfully = "Fornecedor encontrado com sucesso.";
         public const string MsgSuppliersFoundSuccessfully = "Fornecedores encontrados com sucesso.";
         public const string MsgSupplierUpdatedSuccessfully = "Fornecedor atualizado com sucesso.";
-        public const string MsgSupplierDisabledSuccessfully = "Fornecedor desativado com sucesso.";
+        public const string MsgSupplierDeactivatedSuccessfully = "Fornecedor desativado com sucesso.";
         public const string MsgSupplierActivatedSuccessfully = "Fornecedor ativado com sucesso.";
         public const string MsgSupplierDeletedSuccessfully = "Fornecedor excluído com sucesso.";
         public const string MsgSupplierStatusAlreadyAsDesired = "Fornecedor já está no status desejado.";

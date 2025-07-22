@@ -18,27 +18,28 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.ChangeStatusSu
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(ChangeStatusSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<bool>> Handle(ChangeStatusSupplierCommand command, CancellationToken cancellationToken)
         {
-            var existingSupplier = await _supplierRepository.GetByIdAsync(request.Id);
+            var existingSupplier = await _supplierRepository.GetByIdAsync(command.Id);
 
             if (existingSupplier == null)
             {
                 return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, false);
             }
 
-            if (existingSupplier.IsActive == request.IsActive)
+            if (command.IsActive)
             {
-                return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgSupplierStatusAlreadyAsDesired, true);
+                existingSupplier.Activate();
             }
-
-            existingSupplier.IsActive = request.IsActive;
-            existingSupplier.UpdatedOn = DateTime.UtcNow;
+            else
+            {
+                existingSupplier.Deactivate();
+            }
 
             await _supplierRepository.UpdateAsync(existingSupplier);
 
-            string successMessage = request.IsActive ? ApiMessages.MsgSupplierActivatedSuccessfully : ApiMessages.MsgSupplierDisabledSuccessfully;
-            return new ApiResponse<bool>(StatusCodes.Status200OK, successMessage, true);
+            var message = command.IsActive ? ApiMessages.MsgSupplierActivatedSuccessfully : ApiMessages.MsgSupplierDeactivatedSuccessfully;
+            return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
         }
     }
 }
