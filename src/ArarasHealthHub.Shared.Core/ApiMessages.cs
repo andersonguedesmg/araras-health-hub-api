@@ -1,9 +1,10 @@
-namespace ArarasHealthHub.Shared
+namespace ArarasHealthHub.Shared.Core
 {
     public class ApiMessages
     {
         public const string MsgInternalServerError = "Ocorreu um erro interno no servidor.";
         public const string Msg400BadRequestError = "Ocorreu um erro interno.";
+        public const string MsgIdMismatch = "ID na rota não corresponde ao ID no corpo da requisição.";
 
         public const string MsgEmployeeNotFound = "Funcionário não encontrado.";
         public const string MsgNotEmployeesFound = "Nenhum funcionário encontrado.";
@@ -25,6 +26,8 @@ namespace ArarasHealthHub.Shared
         public const string MsgSupplierDisabledSuccessfully = "Fornecedor desativado com sucesso.";
         public const string MsgSupplierActivatedSuccessfully = "Fornecedor ativado com sucesso.";
         public const string MsgSupplierDeletedSuccessfully = "Fornecedor excluído com sucesso.";
+        public const string MsgSupplierStatusAlreadyAsDesired = "Fornecedor já está no status desejado.";
+        public const string MsgCnpjAlreadyExists = "CNPJ já registrado.";
 
         public const string MsgFacilityNotFound = "Unidade não encontrada.";
         public const string MsgNotFacilitiesFound = "Nenhuma unidade encontrada.";
