@@ -1,4 +1,5 @@
 using System.Reflection;
+using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Repositories;
@@ -8,7 +9,6 @@ using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Data.Repositories;
 using ArarasHealthHub.Infrastructure.Identity;
 using ArarasHealthHub.Infrastructure.Services;
-using ArarasHealthHub.Middlewares;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -146,10 +146,10 @@ app.UseCors("FrontEndUI");
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<AuthorizationErrorHandlingMiddleware>();
-app.UseMiddleware<ApiResponseMiddleware>();
 
 app.MapControllers();
 

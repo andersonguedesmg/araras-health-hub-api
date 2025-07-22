@@ -6,6 +6,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string Msg400BadRequestError = "Ocorreu um erro interno.";
         public const string MsgIdMismatch = "ID na rota não corresponde ao ID no corpo da requisição.";
         public const string MsgValidationErrors = "Ocorreram um ou mais erros de validação.";
+        public const string MsgNotFound = "O recurso solicitado não foi encontrado.";
 
         public const string MsgEmployeeNotFound = "Funcionário não encontrado.";
         public const string MsgNotEmployeesFound = "Nenhum funcionário encontrado.";
