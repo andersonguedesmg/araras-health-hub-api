@@ -39,16 +39,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Araras Health Hub API", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Araras Health Hub API",
+        Version = "v1",
+        Description = "API para gerenciamento do Araras Health Hub.",
+    });
+
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
+        Description = "Please enter 'Bearer' [space] and then your valid token in the text input below.\n\nExample: \"Bearer eyJhbGciOiJIUzI1Ni...\"",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
         Scheme = "Bearer"
     });
+
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -63,6 +70,13 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        option.IncludeXmlComments(xmlPath);
+    }
 });
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -142,7 +156,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(option =>
+    {
+        option.SwaggerEndpoint("/swagger/v1/swagger.json", "Araras Health Hub API v1");
+        option.RoutePrefix = string.Empty;
+        option.DocumentTitle = "Araras Health Hub API Documentation";
+    });
 }
 
 app.UseCors("FrontEndUI");
