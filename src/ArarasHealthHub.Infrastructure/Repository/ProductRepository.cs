@@ -2,88 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Product.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArarasHealthHub.Infrastructure.Data.Repositories
+namespace ArarasHealthHub.Infrastructure.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
-        private readonly ApplicationDBContext _context;
+        private readonly ApplicationDBContext _dbContext;
 
-        public ProductRepository(ApplicationDBContext context)
+        public ProductRepository(ApplicationDBContext dbContext) : base(dbContext)
         {
-            _context = context;
+            _dbContext = dbContext;
         }
 
-        public async Task<Product?> ChangeStatusAsync(int id, ChangeStatusProductRequestDto productDto)
+        public async Task<bool> HasProductNameUnique(string name, int productId, CancellationToken cancellationToken)
         {
-            var existingProduct = await _context.Product.FirstOrDefaultAsync(p => p.Id == id);
-
-            if (existingProduct == null)
-            {
-                return null;
-            }
-
-            existingProduct.IsActive = productDto.IsActive;
-            existingProduct.UpdatedOn = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            return existingProduct;
+            return !await _dbContext.Product.AnyAsync(p => p.Name == name && p.Id != productId, cancellationToken);
         }
 
-        public async Task<Product> CreateAsync(Product productModel)
+        public async Task<Product?> GetByProductNameAsync(string name)
         {
-            await _context.Product.AddAsync(productModel);
-            await _context.SaveChangesAsync();
-            return productModel;
-        }
-
-        public async Task<Product?> DeleteAsync(int id)
-        {
-            var productModel = await _context.Product.FirstOrDefaultAsync(u => u.Id == id);
-
-            if (productModel == null)
-            {
-                return null;
-            }
-
-            _context.Product.Remove(productModel);
-            await _context.SaveChangesAsync();
-            return productModel;
-        }
-
-        public async Task<List<Product>> GetAllAsync()
-        {
-            return await _context.Product.ToListAsync();
-        }
-
-        public async Task<Product?> GetByIdAsync(int id)
-        {
-            return await _context.Product.FindAsync(id);
-        }
-
-        public async Task<Product?> UpdateAsync(int id, UpdateProductRequestDto productDto)
-        {
-            var existingProduct = await _context.Product.FirstOrDefaultAsync(d => d.Id == id);
-
-            if (existingProduct == null)
-            {
-                return null;
-            }
-
-            existingProduct.Name = productDto.Name;
-            existingProduct.Description = productDto.Description;
-            existingProduct.DosageForm = productDto.DosageForm;
-            existingProduct.Category = productDto.Category;
-            existingProduct.UpdatedOn = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            return existingProduct;
+            return await _dbSet.FirstOrDefaultAsync(s => s.Name == name);
         }
     }
 }

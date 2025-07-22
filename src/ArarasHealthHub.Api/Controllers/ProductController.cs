@@ -2,10 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Product.Dtos;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared;
+using ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusProduct;
+using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
+using ArarasHealthHub.Application.Features.Products.Commands.DeleteProduct;
+using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
+using ArarasHealthHub.Application.Features.Products.Dtos;
+using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
+using ArarasHealthHub.Application.Features.Products.Queries.GetProductById;
+using ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdownOptions;
+using ArarasHealthHub.Shared.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,157 +19,89 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/product")]
     [ApiController]
+    // [Authorize]
     public class ProductController : ControllerBase
     {
-        private readonly IProductRepository _productRepo;
-        private readonly IStockRepository _stockRepo;
+        private readonly IMediator _mediator;
 
-        public ProductController(IProductRepository productRepo, IStockRepository stockRepo)
+        public ProductController(IMediator mediator)
         {
-            _productRepo = productRepo;
-            _stockRepo = stockRepo;
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        [Route("getAll")]
-        [Authorize]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(PagedResponse<ProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQuery query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Product>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var products = await _productRepo.GetAllAsync();
-
-            if (products.Count == 0)
-            {
-                return NotFound(new ApiResponse<Product>(StatusCodes.Status404NotFound, ApiMessages.MsgNotProductsFound, null!));
-            }
-
-            return Ok(new ApiResponse<List<Product>>(StatusCodes.Status200OK, ApiMessages.MsgProductsFoundSuccessfully, products));
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getById/{id:int}")]
-        [Authorize]
+        [HttpGet("getById/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<ProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Product>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var product = await _productRepo.GetByIdAsync(id);
-
-            if (product == null)
-            {
-                return NotFound(new ApiResponse<Product>(StatusCodes.Status404NotFound, ApiMessages.MsgProductNotFound, null!));
-            }
-
-            return Ok(new ApiResponse<Product>(StatusCodes.Status200OK, ApiMessages.MsgProductFoundSuccessfully, product));
+            var query = new GetProductByIdQuery(id);
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost]
-        [Route("create")]
-        [Authorize]
-        public async Task<IActionResult> Create([FromBody] CreateProductRequestDto productDto)
+        [HttpPost("create")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Product>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var productModel = productDto.ToProductFromCreateDto();
-            var newProduct = await _productRepo.CreateAsync(productModel);
-
-            var stock = new Stock
-            {
-                ProductId = newProduct.Id,
-                Quantity = 0,
-                Batch = string.Empty,
-            };
-            await _stockRepo.UpdateStock(stock.ProductId, stock.Quantity, stock.Batch);
-
-            return CreatedAtAction(nameof(GetById), new { id = productModel.Id }, new ApiResponse<Product>(StatusCodes.Status201Created, ApiMessages.MsgProductCreatedSuccessfully, newProduct));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPut]
-        [Route("update/{id:int}")]
-        [Authorize]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateProductRequestDto updateDto)
+        [HttpPut("update/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateProductCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Product>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var productModel = await _productRepo.UpdateAsync(id, updateDto);
-
-            if (productModel == null)
+            if (id != command.Id)
             {
-                return NotFound(new ApiResponse<Product>(StatusCodes.Status404NotFound, ApiMessages.MsgProductNotFound, null!));
-
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
             }
-
-            return Ok(new ApiResponse<Product>(StatusCodes.Status200OK, ApiMessages.MsgProductUpdatedSuccessfully, productModel));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpDelete]
-        [Route("delete/{id:int}")]
-        [Authorize]
+        [HttpDelete("delete/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Product>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var productModel = await _productRepo.DeleteAsync(id);
-
-            if (productModel == null)
-            {
-                return NotFound(new ApiResponse<Product>(StatusCodes.Status404NotFound, ApiMessages.MsgProductNotFound, null!));
-            }
-
-            return Ok(new ApiResponse<Product>(StatusCodes.Status200OK, ApiMessages.MsgProductDeletedSuccessfully, productModel));
+            var command = new DeleteProductCommand(id);
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPatch]
-        [Route("changeStatus/{id:int}")]
-        [Authorize]
-        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusProductRequestDto changeStatusDto)
+        [HttpPatch("changeStatus/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusProductCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Product>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var productModel = await _productRepo.ChangeStatusAsync(id, changeStatusDto);
-
-            if (productModel == null)
+            if (id != command.Id)
             {
-                return NotFound(new ApiResponse<Product>(StatusCodes.Status404NotFound, ApiMessages.MsgProductNotFound, null!));
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
             }
-
-            if (changeStatusDto.IsActive == true)
-            {
-                return Ok(new ApiResponse<Product>(StatusCodes.Status200OK, ApiMessages.MsgProductActivatedSuccessfully, productModel));
-            }
-
-            return Ok(new ApiResponse<Product>(StatusCodes.Status200OK, ApiMessages.MsgProductDisabledSuccessfully, productModel));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getDropdownOptions")]
-        [Authorize]
-        public async Task<IActionResult> getDropdownOptions()
+        [HttpGet("getDropdownOptions")]
+        [ProducesResponseType(typeof(ApiResponse<List<ProductNameDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDropdownOptions()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<ProductNameDto>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var products = await _productRepo.GetAllAsync();
-
-            if (products.Count == 0)
-            {
-                return NotFound(new ApiResponse<ProductNameDto>(StatusCodes.Status404NotFound, ApiMessages.MsgNotProductsFound, null!));
-            }
-
-            var productNames = products.Select(d => new ProductNameDto
-            {
-                Id = d.Id,
-                Name = d.Name
-            }).ToList();
-
-            return Ok(new ApiResponse<List<ProductNameDto>>(StatusCodes.Status200OK, ApiMessages.MsgProductsFoundSuccessfully, productNames));
+            var query = new GetProductDropdownOptionsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }
