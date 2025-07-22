@@ -1,3 +1,6 @@
+using System.Reflection;
+using ArarasHealthHub.Application.Features.Suppliers.Profiles;
+using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Infrastructure.Data;
@@ -5,6 +8,7 @@ using ArarasHealthHub.Infrastructure.Data.Repositories;
 using ArarasHealthHub.Infrastructure.Identity;
 using ArarasHealthHub.Infrastructure.Services;
 using ArarasHealthHub.Middlewares;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -118,6 +122,11 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
     });
 });
+
+builder.Services.AddMediatR(typeof(GetAllSuppliersQuery).Assembly);
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+
+builder.Services.AddAutoMapper(typeof(SupplierProfile).Assembly);
 
 var app = builder.Build();
 

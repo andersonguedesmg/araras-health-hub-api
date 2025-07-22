@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    public class Supplier
+    public class Supplier : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Cnpj { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
@@ -18,8 +17,5 @@ namespace ArarasHealthHub.Domain.Entities
         public string Cep { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
-        public DateTime CreatedOn { get; set; } = DateTime.Now;
-        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
-        public bool IsActive { get; set; } = true;
     }
 }

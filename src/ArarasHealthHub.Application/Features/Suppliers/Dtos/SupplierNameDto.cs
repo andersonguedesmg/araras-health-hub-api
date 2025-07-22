@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArarasHealthHub.Application.Features.Supplier.Dtos
+namespace ArarasHealthHub.Application.Features.Suppliers.Dtos
 {
     public class SupplierNameDto
     {

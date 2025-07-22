@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Supplier.Dtos;
+using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 using ArarasHealthHub.Domain.Entities;
 
 namespace ArarasHealthHub.Application.Interfaces.Repositories
@@ -11,9 +11,9 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     {
         Task<List<Supplier>> GetAllAsync();
         Task<Supplier?> GetByIdAsync(int id);
-        Task<Supplier> CreateAsync(Supplier supplierModel);
-        Task<Supplier?> UpdateAsync(int id, UpdateSupplierRequestDto supplierDto);
-        Task<Supplier?> ChangeStatusAsync(int id, ChangeStatusSupplierRequestDto supplierDto);
-        Task<Supplier?> DeleteAsync(int id);
+        Task CreateAsync(Supplier supplier);
+        Task UpdateAsync(Supplier supplier);
+        Task DeleteAsync(Supplier supplier);
+        Task<Supplier?> GetByCnpjAsync(string cnpj);
     }
 }
