@@ -8,11 +8,10 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
 {
-    public class GetAllSuppliersQueryHandler : IRequestHandler<GetAllSuppliersQuery, ApiResponse<List<SupplierDto>>>
+    public class GetAllSuppliersQueryHandler : IRequestHandler<GetAllSuppliersQuery, PagedResponse<SupplierDto>>
     {
         private readonly ISupplierRepository _supplierRepository;
         private readonly IMapper _mapper;
@@ -23,18 +22,45 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<List<SupplierDto>>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponse<SupplierDto>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
         {
-            var suppliers = await _supplierRepository.GetAllAsync();
+            var allSuppliers = await _supplierRepository.GetAllAsync();
 
-            if (suppliers == null || !suppliers.Any())
+            var totalCount = allSuppliers.Count();
+
+            IOrderedEnumerable<Supplier> orderedSuppliers;
+            switch (request.OrderBy.ToLower())
             {
-                return new ApiResponse<List<SupplierDto>>(StatusCodes.Status404NotFound, ApiMessages.MsgNotSuppliersFound, null!);
+                case "name":
+                    orderedSuppliers = request.SortOrder.ToLower() == "desc" ?
+                        allSuppliers.OrderByDescending(s => s.Name) :
+                        allSuppliers.OrderBy(s => s.Name);
+                    break;
+                case "cnpj":
+                    orderedSuppliers = request.SortOrder.ToLower() == "desc" ?
+                        allSuppliers.OrderByDescending(s => s.Cnpj) :
+                        allSuppliers.OrderBy(s => s.Cnpj);
+                    break;
+                default:
+                    orderedSuppliers = request.SortOrder.ToLower() == "desc" ?
+                        allSuppliers.OrderByDescending(s => s.Id) :
+                        allSuppliers.OrderBy(s => s.Id);
+                    break;
             }
 
-            var supplierDtos = _mapper.Map<List<SupplierDto>>(suppliers);
+            var pagedSuppliers = orderedSuppliers
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToList();
 
-            return new ApiResponse<List<SupplierDto>>(StatusCodes.Status200OK, ApiMessages.MsgSuppliersFoundSuccessfully, supplierDtos);
+            var supplierDtos = _mapper.Map<List<SupplierDto>>(pagedSuppliers);
+
+            return new PagedResponse<SupplierDto>(
+                request.PageNumber,
+                request.PageSize,
+                totalCount,
+                supplierDtos
+            );
         }
     }
 }

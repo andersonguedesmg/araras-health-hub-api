@@ -6,6 +6,7 @@ using ArarasHealthHub.Application.Features.Suppliers.Commands.ChangeStatusSuppli
 using ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.DeleteSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier;
+using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdownOptions;
@@ -18,6 +19,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/supplier")]
     [ApiController]
+    // [Authorize]
     public class SupplierController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,84 +29,78 @@ namespace ArarasHealthHub.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        [Route("getAll")]
-        // [Authorize]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(PagedResponse<SupplierDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllSuppliersQuery query)
         {
-
-            var result = await _mediator.Send(new GetAllSuppliersQuery());
-
+            var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getById/{id:int}")]
-        // [Authorize]
+        [HttpGet("getById/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<SupplierDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var result = await _mediator.Send(new GetSupplierByIdQuery(id));
-
+            var query = new GetSupplierByIdQuery(id);
+            var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost]
-        [Route("create")]
-        // [Authorize]
+        [HttpPost("create")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateSupplierCommand command)
         {
             var result = await _mediator.Send(command);
-
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPut]
-        [Route("update/{id:int}")]
-        // [Authorize]
+        [HttpPut("update/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSupplierCommand command)
         {
             if (id != command.Id)
             {
                 return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
             }
-
             var result = await _mediator.Send(command);
-
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpDelete]
-        [Route("delete/{id:int}")]
-        // [Authorize]
+        [HttpDelete("delete/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var result = await _mediator.Send(new DeleteSupplierCommand(id));
-
+            var command = new DeleteSupplierCommand(id);
+            var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPatch]
-        [Route("changeStatus/{id:int}")]
-        // [Authorize]
+        [HttpPatch("changeStatus/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusSupplierCommand command)
         {
             if (id != command.Id)
             {
                 return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
             }
-
             var result = await _mediator.Send(command);
-
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getDropdownOptions")]
-        // [Authorize]
+        [HttpGet("getDropdownOptions")]
+        [ProducesResponseType(typeof(ApiResponse<List<SupplierNameDto>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDropdownOptions()
         {
-            var result = await _mediator.Send(new GetSupplierDropdownOptionsQuery());
-
+            var query = new GetSupplierDropdownOptionsQuery();
+            var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
     }

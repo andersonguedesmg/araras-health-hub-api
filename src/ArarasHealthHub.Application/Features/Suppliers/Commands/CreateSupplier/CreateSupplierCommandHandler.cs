@@ -32,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
 
             var supplier = _mapper.Map<Supplier>(request);
 
-            await _supplierRepository.CreateAsync(supplier);
+            await _supplierRepository.AddAsync(supplier);
 
             return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.MsgSupplierCreatedSuccessfully, supplier.Id);
         }

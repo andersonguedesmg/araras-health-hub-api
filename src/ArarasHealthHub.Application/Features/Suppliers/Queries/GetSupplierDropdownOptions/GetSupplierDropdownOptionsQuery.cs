@@ -8,5 +8,5 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdownOptions
 {
-    public record GetSupplierDropdownOptionsQuery() : IRequest<ApiResponse<List<SupplierNameDto>>>;
+    public class GetSupplierDropdownOptionsQuery : IRequest<ApiResponse<List<SupplierNameDto>>> { }
 }

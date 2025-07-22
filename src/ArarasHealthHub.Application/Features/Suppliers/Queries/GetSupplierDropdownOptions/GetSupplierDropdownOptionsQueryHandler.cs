@@ -5,38 +5,41 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdownOptions
 {
     public class GetSupplierDropdownOptionsQueryHandler : IRequestHandler<GetSupplierDropdownOptionsQuery, ApiResponse<List<SupplierNameDto>>>
     {
         private readonly ISupplierRepository _supplierRepository;
+        private readonly IMapper _mapper;
 
-        public GetSupplierDropdownOptionsQueryHandler(ISupplierRepository supplierRepository)
+        public GetSupplierDropdownOptionsQueryHandler(ISupplierRepository supplierRepository, IMapper mapper)
         {
             _supplierRepository = supplierRepository;
+            _mapper = mapper;
         }
 
         public async Task<ApiResponse<List<SupplierNameDto>>> Handle(GetSupplierDropdownOptionsQuery request, CancellationToken cancellationToken)
         {
-            var suppliers = await _supplierRepository.GetAllAsync();
+            var query = _supplierRepository.AsQueryable();
 
-            suppliers = suppliers.Where(s => s.IsActive).ToList();
+            query = query.Where(s => s.IsActive);
 
-            if (suppliers == null || !suppliers.Any())
-            {
-                return new ApiResponse<List<SupplierNameDto>>(StatusCodes.Status404NotFound, ApiMessages.MsgNotSuppliersFound, null!);
-            }
+            query = query.OrderBy(s => s.Name);
 
-            var supplierNames = suppliers.Select(s => new SupplierNameDto
-            {
-                Id = s.Id,
-                Name = s.Name
-            }).ToList();
+            var activeSuppliers = await query.ToListAsync(cancellationToken);
 
-            return new ApiResponse<List<SupplierNameDto>>(StatusCodes.Status200OK, ApiMessages.MsgSuppliersFoundSuccessfully, supplierNames);
+            var dropdownOptions = _mapper.Map<List<SupplierNameDto>>(activeSuppliers);
+
+            return new ApiResponse<List<SupplierNameDto>>(
+                StatusCodes.Status200OK,
+                ApiMessages.MsgOperationSuccessful,
+                dropdownOptions
+            );
         }
     }
 }
