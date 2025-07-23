@@ -15,10 +15,11 @@ namespace ArarasHealthHub.Shared.Core
         public const string MsgEmployeeFoundSuccessfully = "Funcionário encontrado com sucesso.";
         public const string MsgEmployeesFoundSuccessfully = "Funcionários encontrados com sucesso.";
         public const string MsgEmployeeUpdatedSuccessfully = "Funcionário atualizado com sucesso.";
-        public const string MsgEmployeeDisabledSuccessfully = "Funcionário desativado com sucesso.";
+        public const string MsgEmployeeDeactivatedSuccessfully = "Funcionário desativado com sucesso.";
         public const string MsgEmployeeActivatedSuccessfully = "Funcionário ativado com sucesso.";
         public const string MsgEmployeeDeletedSuccessfully = "Funcionário excluído com sucesso.";
         public const string MsgEmployeeInvalid = "Funcionário inválido.";
+        public const string MsgCpfAlreadyExists = "CPF já registrado.";
 
         public const string MsgSupplierNotFound = "Fornecedor não encontrado.";
         public const string MsgNotSuppliersFound = "Nenhum fornecedor encontrado.";

@@ -9,6 +9,7 @@ using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Data.Repositories;
 using ArarasHealthHub.Infrastructure.Identity;
 using ArarasHealthHub.Infrastructure.Repositories;
+using ArarasHealthHub.Infrastructure.Repository;
 using ArarasHealthHub.Infrastructure.Services;
 using FluentValidation;
 using MediatR;
@@ -126,9 +127,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 builder.Services.AddScoped<IFacilityRepository, FacilityRepository>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IReceivingRepository, ReceivingRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();

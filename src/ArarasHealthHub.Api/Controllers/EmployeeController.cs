@@ -1,156 +1,107 @@
-using ArarasHealthHub.Application.Features.Employee.Dtos;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Application.Features.Employee.Mappers;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Application.Features.Employees.Dtos;
+using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
+using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById;
+using ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee;
+using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
+using ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee;
+using ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEmployee;
+using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdownOptions;
 
 namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/employee")]
     [ApiController]
+    // [Authorize]
     public class EmployeeController : ControllerBase
     {
-        private readonly IEmployeeRepository _employeeRepo;
+        private readonly IMediator _mediator;
 
-        public EmployeeController(IEmployeeRepository employeeRepo)
+        public EmployeeController(IMediator mediator)
         {
-            _employeeRepo = employeeRepo;
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        [Route("getAll")]
-        [Authorize]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(PagedResponse<EmployeeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllEmployeesQuery query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Employee>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var employees = await _employeeRepo.GetAllAsync();
-
-            if (employees.Count == 0)
-            {
-                return NotFound(new ApiResponse<Employee>(StatusCodes.Status404NotFound, ApiMessages.MsgNotEmployeesFound, null!));
-            }
-
-            return Ok(new ApiResponse<List<Employee>>(StatusCodes.Status200OK, ApiMessages.MsgEmployeesFoundSuccessfully, employees));
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getById/{id:int}")]
-        [Authorize]
+        [HttpGet("getById/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<EmployeeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Employee>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var employee = await _employeeRepo.GetByIdAsync(id);
-
-            if (employee == null)
-            {
-                return NotFound(new ApiResponse<Employee>(StatusCodes.Status404NotFound, ApiMessages.MsgEmployeeNotFound, null!));
-            }
-
-            return Ok(new ApiResponse<Employee>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeFoundSuccessfully, employee));
+            var query = new GetEmployeeByIdQuery(id);
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost]
-        [Route("create")]
-        [Authorize]
-        public async Task<IActionResult> Create([FromBody] CreateEmployeeRequestDto employeeDto)
+        [HttpPost("create")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Employee>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var employeeModel = employeeDto.ToEmployeeFromCreateDto();
-            var newEmployee = await _employeeRepo.CreateAsync(employeeModel);
-
-            return CreatedAtAction(nameof(GetById), new { id = employeeModel.Id }, new ApiResponse<Employee>(StatusCodes.Status201Created, ApiMessages.MsgEmployeeCreatedSuccessfully, newEmployee));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPut]
-        [Route("update/{id:int}")]
-        [Authorize]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateEmployeeRequestDto updateDto)
+        [HttpPut("update/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateEmployeeCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Employee>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var employeeModel = await _employeeRepo.UpdateAsync(id, updateDto);
-
-            if (employeeModel == null)
+            if (id != command.Id)
             {
-                return NotFound(new ApiResponse<Employee>(StatusCodes.Status404NotFound, ApiMessages.MsgEmployeeNotFound, null!));
-
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
             }
-
-            return Ok(new ApiResponse<Employee>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeUpdatedSuccessfully, employeeModel));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpDelete]
-        [Route("delete/{id:int}")]
-        [Authorize]
+        [HttpDelete("delete/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Employee>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var employeeModel = await _employeeRepo.DeleteAsync(id);
-
-            if (employeeModel == null)
-            {
-                return NotFound(new ApiResponse<Employee>(StatusCodes.Status404NotFound, ApiMessages.MsgEmployeeNotFound, null!));
-            }
-
-            return Ok(new ApiResponse<Employee>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeDeletedSuccessfully, employeeModel));
+            var command = new DeleteEmployeeCommand(id);
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPatch]
-        [Route("changeStatus/{id:int}")]
-        [Authorize]
-        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusEmployeeRequestDto changeStatusDto)
+        [HttpPatch("changeStatus/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusEmployeeCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<Employee>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var employeeModel = await _employeeRepo.ChangeStatusAsync(id, changeStatusDto);
-
-            if (employeeModel == null)
+            if (id != command.Id)
             {
-                return NotFound(new ApiResponse<Employee>(StatusCodes.Status404NotFound, ApiMessages.MsgEmployeeNotFound, null!));
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
             }
-
-            if (changeStatusDto.IsActive == true)
-            {
-                return Ok(new ApiResponse<Employee>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeActivatedSuccessfully, employeeModel));
-            }
-
-            return Ok(new ApiResponse<Employee>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeDisabledSuccessfully, employeeModel));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getDropdownOptions")]
-        [Authorize]
-        public async Task<IActionResult> getDropdownOptions()
+        [HttpGet("getDropdownOptions")]
+        [ProducesResponseType(typeof(ApiResponse<List<EmployeeNameDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDropdownOptions()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<EmployeeNameDto>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var employees = await _employeeRepo.GetAllAsync();
-
-            if (employees.Count == 0)
-            {
-                return NotFound(new ApiResponse<EmployeeNameDto>(StatusCodes.Status404NotFound, ApiMessages.MsgNotEmployeesFound, null!));
-            }
-
-            var employeeNames = employees.Select(d => new EmployeeNameDto
-            {
-                Id = d.Id,
-                Name = d.Name
-            }).ToList();
-
-            return Ok(new ApiResponse<List<EmployeeNameDto>>(StatusCodes.Status200OK, ApiMessages.MsgEmployeesFoundSuccessfully, employeeNames));
+            var query = new GetEmployeeDropdownOptionsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }
