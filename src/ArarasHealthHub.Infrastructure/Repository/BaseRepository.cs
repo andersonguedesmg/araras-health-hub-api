@@ -7,7 +7,7 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArarasHealthHub.Infrastructure.Repositories
+namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {

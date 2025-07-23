@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Employee.Dtos;
+using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Domain.Entities;
 
 namespace ArarasHealthHub.Application.Features.Order.Dtos

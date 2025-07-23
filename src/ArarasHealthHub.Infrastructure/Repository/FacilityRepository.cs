@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Facility.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArarasHealthHub.Infrastructure.Data.Repositories
+namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class FacilityRepository : IFacilityRepository
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Product.Dtos;
+using ArarasHealthHub.Application.Features.Products.Dtos;
 
 namespace ArarasHealthHub.Application.Features.Order.Dtos
 {

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArarasHealthHub.Infrastructure.Data.Repositories
+namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class OrderRepository : IOrderRepository
     {

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
-using ArarasHealthHub.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
