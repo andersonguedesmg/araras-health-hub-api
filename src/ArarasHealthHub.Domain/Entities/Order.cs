@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Domain.Identity;
 
 namespace ArarasHealthHub.Domain.Entities
 {
@@ -19,24 +20,24 @@ namespace ArarasHealthHub.Domain.Entities
         public int CreatedByEmployeeId { get; set; }
         public Employee? CreatedByEmployee { get; set; }
         public int CreatedByAccountId { get; set; }
-        // public AppUser? CreatedByAccount { get; set; }
+        public ApplicationUser? CreatedByAccount { get; set; }
 
         public DateTime? ApprovedAt { get; set; }
         public int? ApprovedByEmployeeId { get; set; }
         public Employee? ApprovedByEmployee { get; set; }
         public int? ApprovedByAccountId { get; set; }
-        // public AppUser? ApprovedByAccount { get; set; }
+        public ApplicationUser? ApprovedByAccount { get; set; }
 
         public DateTime? SeparatedAt { get; set; }
         public int? SeparatedByEmployeeId { get; set; }
         public Employee? SeparatedByEmployee { get; set; }
         public int? SeparatedByAccountId { get; set; }
-        // public AppUser? SeparatedByAccount { get; set; }
+        public ApplicationUser? SeparatedByAccount { get; set; }
 
         public DateTime? FinalizedAt { get; set; }
         public int? FinalizedByEmployeeId { get; set; }
         public Employee? FinalizedByEmployee { get; set; }
         public int? FinalizedByAccountId { get; set; }
-        // public AppUser? FinalizedByAccount { get; set; }
+        public ApplicationUser? FinalizedByAccount { get; set; }
     }
 }

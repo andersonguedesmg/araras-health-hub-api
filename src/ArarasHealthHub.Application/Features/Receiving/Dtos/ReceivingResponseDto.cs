@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Application.Features.Suppliers.Dtos;
+using ArarasHealthHub.Domain.Identity;
 
 namespace ArarasHealthHub.Application.Features.Receiving.Dtos
 {
@@ -29,7 +30,7 @@ namespace ArarasHealthHub.Application.Features.Receiving.Dtos
 
         public int AccountId { get; set; }
 
-        // public AppUser? Account { get; set; }
+        public ApplicationUser? Account { get; set; }
 
         public string Observation { get; set; } = string.Empty;
 

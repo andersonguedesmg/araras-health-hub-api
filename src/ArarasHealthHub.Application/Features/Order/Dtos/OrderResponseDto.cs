@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Domain.Identity;
 
 namespace ArarasHealthHub.Application.Features.Order.Dtos
 {
@@ -16,7 +17,7 @@ namespace ArarasHealthHub.Application.Features.Order.Dtos
         public int CreatedByEmployeeId { get; set; }
         public EmployeeDto? CreatedByEmployee { get; set; }
         public int CreatedByAccountId { get; set; }
-        // public AppUser? CreatedByAccount { get; set; }
+        public ApplicationUser? CreatedByAccount { get; set; }
 
         public int OrderStatusId { get; set; }
         public OrderStatus? OrderStatus { get; set; }
@@ -25,19 +26,19 @@ namespace ArarasHealthHub.Application.Features.Order.Dtos
         public int? ApprovedByEmployeeId { get; set; }
         public EmployeeDto? ApprovedByEmployee { get; set; }
         public int? ApprovedByAccountId { get; set; }
-        // public AppUser? ApprovedByAccount { get; set; }
+        public ApplicationUser? ApprovedByAccount { get; set; }
 
         public DateTime? SeparatedAt { get; set; }
         public int? SeparatedByEmployeeId { get; set; }
         public EmployeeDto? SeparatedByEmployee { get; set; }
         public int? SeparatedByAccountId { get; set; }
-        // public AppUser? SeparatedByAccount { get; set; }
+        public ApplicationUser? SeparatedByAccount { get; set; }
 
         public DateTime? FinalizedAt { get; set; }
         public int? FinalizedByEmployeeId { get; set; }
         public EmployeeDto? FinalizedByEmployee { get; set; }
         public int? FinalizedByAccountId { get; set; }
-        // public AppUser? FinalizedByAccount { get; set; }
+        public ApplicationUser? FinalizedByAccount { get; set; }
 
         public List<OrderItemResponseDto> OrderItems { get; set; } = new();
     }

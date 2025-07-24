@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Domain.Identity;
 
 namespace ArarasHealthHub.Domain.Entities
 {
@@ -31,7 +32,7 @@ namespace ArarasHealthHub.Domain.Entities
 
         public int AccountId { get; set; }
 
-        // public AppUser? Account { get; set; }
+        public ApplicationUser? Account { get; set; }
 
         public List<ReceivingItem> ReceivedItems { get; set; } = new();
     }
