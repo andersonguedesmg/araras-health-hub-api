@@ -17,8 +17,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
 {
     public class LoginAccountCommandHandler : IRequestHandler<LoginAccountCommand, ApiResponse<NewAccountDto>>
     {
-        private readonly UserManager<ApplicationUser> _userManager; // <--- PRECISA SER ApplicationUser
-        private readonly SignInManager<ApplicationUser> _signInManager; // S
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly ITokenService _tokenService;
 

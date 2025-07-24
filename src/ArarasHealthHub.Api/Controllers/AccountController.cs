@@ -54,7 +54,7 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
-            var command = new LoginAccountCommand { Password = request.Password };
+            var command = new LoginAccountCommand { UserName = request.UserName, Password = request.Password };
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
         }
