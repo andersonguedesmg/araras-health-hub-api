@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch ArarasHealthHub.Api",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/ArarasHealthHub.Api/bin/Debug/net9.0/ArarasHealthHub.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/ArarasHealthHub.Api",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:7087;http://localhost:5288"
+      },
+      "launchBrowser": {
+        "enabled": true,
+        "args": "https://localhost:7087/swagger",
+        "windows": {
+          "command": "cmd.exe",
+          "args": "/C start https://localhost:7087"
+        },
+        "osx": {
+          "command": "open"
+        },
+        "linux": {
+          "command": "xdg-open"
+        }
+      }
+    }
+  ]
+}
