@@ -11,9 +11,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
-        private readonly ApplicationDBContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        public ProductRepository(ApplicationDBContext dbContext) : base(dbContext)
+        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }

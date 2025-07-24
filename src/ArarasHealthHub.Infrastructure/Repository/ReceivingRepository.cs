@@ -11,9 +11,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class ReceivingRepository : IReceivingRepository
     {
-        private readonly ApplicationDBContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public ReceivingRepository(ApplicationDBContext context)
+        public ReceivingRepository(ApplicationDbContext context)
         {
             _context = context;
         }

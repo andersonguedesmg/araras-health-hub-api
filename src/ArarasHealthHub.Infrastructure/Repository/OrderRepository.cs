@@ -11,9 +11,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly ApplicationDBContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public OrderRepository(ApplicationDBContext context)
+        public OrderRepository(ApplicationDbContext context)
         {
             _context = context;
         }

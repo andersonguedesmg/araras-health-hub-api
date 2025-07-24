@@ -11,7 +11,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
-        public EmployeeRepository(ApplicationDBContext context) : base(context) { }
+        public EmployeeRepository(ApplicationDbContext context) : base(context) { }
 
         public async Task<Employee?> GetByCpfAsync(string cpf)
         {

@@ -11,7 +11,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class SupplierRepository : BaseRepository<Supplier>, ISupplierRepository
     {
-        public SupplierRepository(ApplicationDBContext context) : base(context) { }
+        public SupplierRepository(ApplicationDbContext context) : base(context) { }
 
         public async Task<Supplier?> GetByCnpjAsync(string cnpj)
         {
