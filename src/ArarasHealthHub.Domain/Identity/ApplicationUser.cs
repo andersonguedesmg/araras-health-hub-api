@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace ArarasHealthHub.Infrastructure.Identity
+namespace ArarasHealthHub.Domain.Identity
 {
-    public class AppUser : IdentityUser<int>
+    public class ApplicationUser : IdentityUser<int>, IApplicationUser
     {
-        public DateTime CreatedOn { get; set; } = DateTime.Now;
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
 

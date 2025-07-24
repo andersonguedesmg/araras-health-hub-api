@@ -45,13 +45,21 @@ namespace ArarasHealthHub.Shared.Core
         public const string MsgFacilityDeletedSuccessfully = "Unidade excluída com sucesso.";
 
         public const string MsgAccountUnauthorized = "Conta não autorizada.";
-        public const string MsgAccountIncorrect = "Senha ou Usuário incorreto.";
-        public const string MsgAccountLoginSuccessful = "Login realizado sucesso.";
+        public const string MsgAccountIncorrect = "Credenciais inválidas.";
+        public const string MsgAccountLoginSuccessful = "Login realizado com sucesso.";
+        public const string MsgAccountDisabled = "Esta conta está desativada. Entre em contato com o administrador.";
         public const string MsgAccountNotFound = "Conta não encontrada.";
+        public const string MsgPasswordResetSuccessfully = "Senha redefinida com sucesso.";
+        public const string MsgFailedToCreateAccount = "Falha ao criar a conta.";
+        public const string MsgFailedToAssignRoleToAccount = "Falha ao atribuir o papel a conta.";
+        public const string MsgAccountNameAlreadyInUse = "Nome da conta já está em uso.";
         public const string MsgAccountCreatedSuccessfully = "Conta criada com sucesso.";
-        public const string MsgAccountFoundSuccessfully = "Conta encontrada com sucesso.";
-        public const string MsgAccountsFoundSuccessfully = "Contas encontradas com sucesso.";
+        public const string MsgNotAccountsFound = "Nenhuma conta encontrada.";
+        public const string MsgAccountFoundSuccessfully = "Conta recuperada com sucesso.";
+        public const string MsgAccountsFoundSuccessfully = "Contas recuperadas com sucesso.";
         public const string MsgAccountUpdatedSuccessfully = "Conta atualizada com sucesso.";
+        public const string MsgFailedToUpdateAccount = "Falha ao atualizar a conta.";
+        public const string MsgFailedToChangeAccountStatus = "Falha ao alterar o status da conta.";
         public const string MsgAccountDeletedSuccessfully = "Conta excluída com sucesso.";
         public const string MsgAccountCreationFailed = "Falha ao criar a Conta.";
         public const string MsgRoleAssignmentFailed = "Falha ao atribuir o papel a Conta.";

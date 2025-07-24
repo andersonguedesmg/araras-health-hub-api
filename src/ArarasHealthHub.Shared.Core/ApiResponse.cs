@@ -24,7 +24,18 @@ namespace ArarasHealthHub.Shared.Core
             StatusCode = statusCode;
             Message = message;
             Success = success;
+            Data = default(T);
         }
+
+        public ApiResponse(int statusCode, string message, List<string> errorList, bool success = false)
+        {
+            StatusCode = statusCode;
+            Message = message;
+            Errors = new Dictionary<string, List<string>> { { "GeneralErrors", errorList } };
+            Success = success;
+            Data = default(T);
+        }
+
 
         public ApiResponse(int statusCode, string message, Dictionary<string, List<string>> errors, bool success)
         {
@@ -32,6 +43,7 @@ namespace ArarasHealthHub.Shared.Core
             Message = message;
             Errors = errors;
             Success = success;
+            Data = default(T);
         }
     }
 }

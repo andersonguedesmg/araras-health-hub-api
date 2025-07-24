@@ -28,8 +28,8 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 return null;
             }
 
-            existingFacility.IsActive = facilityDto.IsActive;
-            existingFacility.UpdatedOn = DateTime.Now;
+            // existingFacility.IsActive = facilityDto.IsActive;
+            // existingFacility.UpdatedOn = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
@@ -92,8 +92,8 @@ namespace ArarasHealthHub.Infrastructure.Repository
             existingFacility.Cep = facilityDto.Cep;
             existingFacility.Email = facilityDto.Email;
             existingFacility.Phone = facilityDto.Phone;
-            existingFacility.UpdatedOn = DateTime.Now;
-            existingFacility.IsActive = facilityDto.IsActive;
+            // existingFacility.UpdatedOn = DateTime.Now;
+            // existingFacility.IsActive = facilityDto.IsActive;
 
             await _context.SaveChangesAsync();
 

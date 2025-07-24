@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Role.Dtos;
 
-namespace ArarasHealthHub.Application.Features.Account.Dtos
+namespace ArarasHealthHub.Application.Features.Accounts.Dtos
 {
-    public class NewUserDto
+    public class NewAccountDto
     {
         public string UserName { get; set; } = string.Empty;
 

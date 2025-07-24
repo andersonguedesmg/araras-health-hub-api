@@ -50,7 +50,7 @@ namespace ArarasHealthHub.Api.Middlewares
             var response = new ApiResponse<object>(
                 StatusCodes.Status500InternalServerError,
                 errorMessage,
-                null
+                false
             );
 
             if (_isDevelopment && !string.IsNullOrEmpty(errorDetails))
@@ -73,7 +73,7 @@ namespace ArarasHealthHub.Api.Middlewares
             var response = new ApiResponse<object>(
                 StatusCodes.Status404NotFound,
                 ApiMessages.MsgNotFound,
-                null
+                false
             );
 
             var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });

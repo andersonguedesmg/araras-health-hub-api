@@ -1,285 +1,150 @@
-using ArarasHealthHub.Application.Features.Account.Dtos;
-using ArarasHealthHub.Application.Features.Role.Dtos;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Application.Interfaces.Services;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Infrastructure.Data;
-using ArarasHealthHub.Infrastructure.Identity;
-using ArarasHealthHub.Shared;
+
+using System.Net;
+using ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAccount;
+using ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount;
+using ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount;
+using ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword;
+using ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount;
+using ArarasHealthHub.Application.Features.Accounts.Dtos;
+using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById;
+using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacilityId;
+using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
+using ArarasHealthHub.Shared.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/account")]
     [ApiController]
+    // [Authorize]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly ITokenService _tokenService;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly IFacilityRepository _facilityRepo;
-        private readonly ApplicationDBContext _dbContext;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly IMediator _mediator;
 
-        public AccountController(UserManager<AppUser> userManager,
-        ITokenService tokenService,
-        SignInManager<AppUser> signInManager,
-        IFacilityRepository facilityRepo,
-        ApplicationDBContext dbContext,
-        RoleManager<IdentityRole<int>> roleManager)
+        public AccountController(IMediator mediator)
         {
-            _userManager = userManager;
-            _tokenService = tokenService;
-            _signInManager = signInManager;
-            _facilityRepo = facilityRepo;
-            _dbContext = dbContext;
-            _roleManager = roleManager;
+            _mediator = mediator;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        [Authorize(Roles = "Master,Admin")]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
-
-            if (!await _facilityRepo.FacilityExists(registerDto.FacilityId))
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgFacilityDoesNotExist, null!));
-
-            var appUser = new AppUser
+            var command = new RegisterAccountCommand
             {
-                UserName = registerDto.UserName,
-                CreatedOn = registerDto.CreatedOn,
-                UpdatedOn = registerDto.UpdatedOn,
-                IsActive = registerDto.IsActive,
-                FacilityId = registerDto.FacilityId,
+                UserName = request.UserName!,
+                Password = request.Password!,
+                FacilityId = request.FacilityId,
+                Role = request.Role,
+                IsActive = request.IsActive
             };
 
-            var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
-
-            if (!createdUser.Succeeded)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountCreationFailed, createdUser.Errors));
-
-            var rolesResult = await _userManager.AddToRoleAsync(appUser, registerDto.Role);
-
-            if (!rolesResult.Succeeded)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgRoleAssignmentFailed, rolesResult.Errors));
-
-            var newUserDto = new NewUserDto
-            {
-                UserName = appUser.UserName!,
-                IsActive = appUser.IsActive,
-                FacilityId = appUser.FacilityId,
-            };
-
-            return CreatedAtAction(nameof(Register), new ApiResponse<NewUserDto>(StatusCodes.Status201Created, ApiMessages.MsgAccountCreatedSuccessfully, newUserDto));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
-
-            if (user == null)
-                return Unauthorized(new ApiResponse<AppUser>(StatusCodes.Status401Unauthorized, ApiMessages.MsgAccountUnauthorized, null!));
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-
-            if (!result.Succeeded)
-                return Unauthorized(new ApiResponse<AppUser>(StatusCodes.Status401Unauthorized, ApiMessages.MsgAccountIncorrect, null!));
-
-            var roleNames = await _userManager.GetRolesAsync(user);
-
-            var roleDtos = _roleManager.Roles
-                .Where(r => roleNames.Contains(r.Name!))
-                .Select(r => new RoleDto
-                {
-                    Id = r.Id,
-                    Name = r.Name!
-                })
-                .ToList();
-
-            var account = new NewUserDto
-            {
-                UserName = user.UserName!,
-                UserId = user.Id!,
-                IsActive = user.IsActive,
-                FacilityId = user.FacilityId,
-                Roles = roleDtos,
-                Token = _tokenService.CreateToken(user.Id, user.UserName, roleDtos)
-            };
-
-            return Ok(new ApiResponse<NewUserDto>(StatusCodes.Status200OK, ApiMessages.MsgAccountLoginSuccessful, account));
+            var command = new LoginAccountCommand { Password = request.Password };
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost("resetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        [Authorize(Roles = "Master,Admin")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Forbidden)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
-
-            var user = await _userManager.FindByNameAsync(resetPasswordDto.UserName);
-            if (user == null)
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
-
-            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, resetToken, resetPasswordDto.NewPassword);
-
-            if (!result.Succeeded)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountPasswordResetFailed, result.Errors));
-
-            return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountPasswordResetSuccessfully, null!));
+            var command = new ResetPasswordCommand(request.UserName, request.NewPassword);
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getAll")]
-        [Authorize]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAllAccounts()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var accounts = await _userManager.Users.Include(u => u.Facility).ToListAsync();
-
-            var usersWithRoles = await _userManager.Users.Include(u => u.Facility)
-                .Select(user => new AccountWithRolesDto
-                {
-                    Id = user.Id,
-                    UserName = user.UserName!,
-                    NormalizedUserName = user.NormalizedUserName!,
-                    CreatedOn = user.CreatedOn,
-                    UpdatedOn = user.UpdatedOn,
-                    IsActive = user.IsActive,
-                    FacilityId = user.FacilityId,
-                    Facility = user.Facility!,
-                    Roles = _dbContext.UserRoles
-                        .Where(ur => ur.UserId == user.Id)
-                        .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new RoleDto { Id = r.Id, Name = r.Name! })
-                        .ToList()
-                })
-                .ToListAsync();
-
-            return Ok(new ApiResponse<List<AccountWithRolesDto>>(StatusCodes.Status200OK, ApiMessages.MsgAccountsFoundSuccessfully, usersWithRoles));
+            var query = new GetAllAccountsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet]
-        [Route("getById/{id:int}")]
-        [Authorize]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        [HttpGet("getById/{id:int}")]
+        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAccountById(int userId)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+            var query = new GetAccountByIdQuery(userId);
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
 
-            var account = await _userManager.Users.Include(u => u.Facility).FirstOrDefaultAsync(x => x.Id == id);
+        [HttpGet("getByFacilityId/{facilityId:int}")]
+        [Authorize(Roles = "Admin,Manager,User")]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Forbidden)]
+        public async Task<IActionResult> GetAccountsByFacilityId(int facilityId)
+        {
+            var query = new GetAccountsByFacilityIdQuery { FacilityId = facilityId };
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
 
-            if (account == null)
+        [HttpPut("update")]
+        [Authorize(Roles = "Master,Admin")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Forbidden)]
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto request)
+        {
+            var command = new UpdateAccountCommand(
+                request.UserId,
+                request.UserName
+            );
+
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPatch("changeStatus/{id}")]
+        [Authorize(Roles = "Master,Admin")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Forbidden)]
+        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusAccountCommand command)
+        {
+            if (id != command.UserId)
             {
-                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
             }
-
-            var userRoles = await _dbContext.UserRoles
-                .Where(ur => ur.UserId == id)
-                .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new { RoleId = r.Id, RoleName = r.Name })
-                .ToListAsync();
-
-            var response = new
-            {
-                User = account,
-                Roles = userRoles
-            };
-
-            return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, response));
-        }
-
-        [HttpGet]
-        [Route("getByFacilityId/{FacilityId:int}")]
-        [Authorize]
-        public async Task<IActionResult> GetByFacilityId([FromRoute] int FacilityId)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<List<AppUser>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-            var accounts = await _userManager.Users
-                .Where(u => u.FacilityId == FacilityId)
-                .ToListAsync();
-
-            if (accounts == null || accounts.Count == 0)
-            {
-                return NotFound(new ApiResponse<List<AppUser>>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
-            }
-
-            var userRoles = await _dbContext.UserRoles
-                .Where(ur => accounts.Select(a => a.Id).Contains(ur.UserId))
-                .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new { ur.UserId, RoleId = r.Id, RoleName = r.Name })
-                .ToListAsync();
-
-            var response = accounts.Select(account => new
-            {
-                account.Id,
-                account.UserName,
-                account.CreatedOn,
-                account.UpdatedOn,
-                account.IsActive,
-                account.FacilityId,
-                Roles = userRoles.Where(ur => ur.UserId == account.Id).Select(ur => new { ur.RoleId, ur.RoleName }).ToList()
-            }).ToList();
-
-            return Ok(new ApiResponse<object>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, response));
-        }
-
-        [HttpPut]
-        [Route("update")]
-        [Authorize]
-        public async Task<IActionResult> Update([FromBody] UpdateUserNameDto updateUserNameDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
-
-            var user = await _userManager.FindByIdAsync(updateUserNameDto.Id.ToString());
-
-            if (user == null)
-                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
-
-            user.UserName = updateUserNameDto.UserName;
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountUpdatedSuccessfully, result.Errors));
-
-            return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountUpdatedSuccessfully, user));
-        }
-
-        [HttpPut]
-        [Route("changeStatus")]
-        [Authorize]
-        public async Task<IActionResult> ChangeStatus([FromBody] UpdateUserNameDto updateUserNameDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, ModelState));
-
-            var user = await _userManager.FindByIdAsync(updateUserNameDto.Id.ToString());
-
-            if (user == null)
-                return NotFound(new ApiResponse<AppUser>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null!));
-
-            user.IsActive = updateUserNameDto.IsActive;
-
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-                return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountUpdatedSuccessfully, result.Errors));
-
-            if (updateUserNameDto.IsActive == true)
-            {
-                return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountActivatedSuccessfully, user));
-            }
-
-            return Ok(new ApiResponse<AppUser>(StatusCodes.Status200OK, ApiMessages.MsgAccountDisabledSuccessfully, user));
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

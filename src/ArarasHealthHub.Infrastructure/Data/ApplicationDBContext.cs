@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Infrastructure.Identity;
+using ArarasHealthHub.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Data
 {
-    public class ApplicationDBContext : IdentityDbContext<AppUser, IdentityRole<int>, int, IdentityUserClaim<int>, IdentityUserRole<int>, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int, IdentityUserClaim<int>, IdentityUserRole<int>, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>, IApplicationDbContext
     {
-        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> dbContextOptions) : base(dbContextOptions)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions) : base(dbContextOptions)
         {
 
         }
@@ -32,7 +33,7 @@ namespace ArarasHealthHub.Infrastructure.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<AppUser>()
+            builder.Entity<ApplicationUser>()
                 .Property(u => u.Id)
                 .ValueGeneratedOnAdd();
 
@@ -40,7 +41,7 @@ namespace ArarasHealthHub.Infrastructure.Data
             int roleAdminId = 2;
             int roleUserId = 3;
 
-            PasswordHasher<AppUser> hasher = new();
+            PasswordHasher<ApplicationUser> hasher = new();
 
             List<IdentityRole<int>> roles = new List<IdentityRole<int>>
             {
@@ -73,7 +74,7 @@ namespace ArarasHealthHub.Infrastructure.Data
             builder.Entity<Facility>().HasData(
                 new Facility
                 {
-                    Id = 1,
+                    // Id = 1,
                     Name = "Secretaria Municipal da Saúde",
                     Address = "Rua Campos Sales",
                     Number = "33",
@@ -83,13 +84,13 @@ namespace ArarasHealthHub.Infrastructure.Data
                     Cep = "13.601-111",
                     Email = "sms@araras.sp.gov.br",
                     Phone = "(19) 3543-1522",
-                    CreatedOn = DateTime.Now,
-                    UpdatedOn = DateTime.MinValue,
-                    IsActive = true,
+                    // CreatedOn = DateTime.Now,
+                    // UpdatedOn = DateTime.MinValue,
+                    // IsActive = true,
                 }
             );
 
-            AppUser userMaster = new()
+            ApplicationUser userMaster = new()
             {
                 Id = 1,
                 UserName = "sms_master",
@@ -101,7 +102,7 @@ namespace ArarasHealthHub.Infrastructure.Data
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
             userMaster.PasswordHash = hasher.HashPassword(userMaster, "A2H@master");
-            builder.Entity<AppUser>().HasData(userMaster);
+            builder.Entity<ApplicationUser>().HasData(userMaster);
 
             IdentityUserRole<int> userMasterRole = new()
             {

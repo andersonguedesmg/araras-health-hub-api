@@ -11,10 +11,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        protected readonly ApplicationDBContext _context;
+        protected readonly ApplicationDbContext _context;
         protected readonly DbSet<T> _dbSet;
 
-        public BaseRepository(ApplicationDBContext context)
+        public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();

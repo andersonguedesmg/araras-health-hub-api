@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArarasHealthHub.Application.Features.Account.Dtos
+namespace ArarasHealthHub.Application.Features.Accounts.Dtos
 {
     public class AccountDto
     {
