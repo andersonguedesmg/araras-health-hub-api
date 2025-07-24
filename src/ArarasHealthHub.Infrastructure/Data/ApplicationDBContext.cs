@@ -37,11 +37,10 @@ namespace ArarasHealthHub.Infrastructure.Data
                 .Property(u => u.Id)
                 .ValueGeneratedOnAdd();
 
+            // --- Seed das Funções ---
             int roleMasterId = 1;
             int roleAdminId = 2;
             int roleUserId = 3;
-
-            PasswordHasher<ApplicationUser> hasher = new();
 
             List<IdentityRole<int>> roles = new List<IdentityRole<int>>
             {
@@ -50,92 +49,78 @@ namespace ArarasHealthHub.Infrastructure.Data
                     Id = roleMasterId,
                     Name = "Master",
                     NormalizedName = "MASTER",
-                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    ConcurrencyStamp = Guid.Empty.ToString(),
                 },
-
                 new IdentityRole<int>
                 {
                     Id = roleAdminId,
                     Name = "Admin",
                     NormalizedName = "ADMIN",
-                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    ConcurrencyStamp = Guid.Empty.ToString(),
                 },
-
                 new IdentityRole<int>
                 {
                     Id = roleUserId,
                     Name = "User",
                     NormalizedName = "USER",
-                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    ConcurrencyStamp = Guid.Empty.ToString(),
                 },
             };
             builder.Entity<IdentityRole<int>>().HasData(roles);
 
+            // --- Seed da Unidade Principal ---
+            int facilityPrincipalId = 1;
             builder.Entity<Facility>().HasData(
-                new Facility
-                {
-                    // Id = 1,
-                    Name = "Secretaria Municipal da Saúde",
-                    Address = "Rua Campos Sales",
-                    Number = "33",
-                    Neighborhood = "Jardim Belvedere",
-                    City = "Araras",
-                    State = "SP",
-                    Cep = "13.601-111",
-                    Email = "sms@araras.sp.gov.br",
-                    Phone = "(19) 3543-1522",
-                    // CreatedOn = DateTime.Now,
-                    // UpdatedOn = DateTime.MinValue,
-                    // IsActive = true,
-                }
+                new Facility(
+                    id: facilityPrincipalId,
+                    name: "Secretaria Municipal da Saúde",
+                    address: "Rua Campos Sales",
+                    number: "33",
+                    neighborhood: "Jardim Belvedere",
+                    city: "Araras",
+                    state: "SP",
+                    cep: "13.601-111",
+                    email: "sms@araras.sp.gov.br",
+                    phone: "(19) 3543-1522",
+                    createdOn: DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
+                    updatedOn: DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
+                    isActive: true
+                )
             );
 
+            // --- Seed do Usuário Principal ---
             ApplicationUser userMaster = new()
             {
                 Id = 1,
                 UserName = "sms_master",
                 NormalizedUserName = "SMS_MASTER",
-                CreatedOn = DateTime.Now,
-                UpdatedOn = DateTime.MinValue,
+                Email = "master@araras.com.br",
+                NormalizedEmail = "MASTER@ARARAS.COM.BR",
+                CreatedOn = DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
+                UpdatedOn = DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
                 IsActive = true,
-                FacilityId = 1,
-                SecurityStamp = Guid.NewGuid().ToString(),
+                FacilityId = facilityPrincipalId,
+                SecurityStamp = Guid.Empty.ToString(),
+                ConcurrencyStamp = Guid.Empty.ToString(),
+                PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
             };
-            userMaster.PasswordHash = hasher.HashPassword(userMaster, "A2H@master");
             builder.Entity<ApplicationUser>().HasData(userMaster);
 
+            // --- Associar Usuário Principal à Função Master ---
             IdentityUserRole<int> userMasterRole = new()
             {
-                RoleId = 1,
-                UserId = 1,
+                RoleId = roleMasterId,
+                UserId = userMaster.Id,
             };
             builder.Entity<IdentityUserRole<int>>().HasData(userMasterRole);
 
+            // --- Seed de Status de Pedido ---
             List<OrderStatus> orderStatus = new List<OrderStatus>
             {
-                new OrderStatus
-                {
-                    Id = 1,
-                    Description = "Pendente",
-                },
-
-                new OrderStatus
-                {
-                    Id = 2,
-                    Description = "Aprovado",
-                },
-
-                new OrderStatus
-                {
-                    Id = 3,
-                    Description = "Separado",
-                },
-
-                new OrderStatus
-                {
-                    Id = 4,
-                    Description = "Finalizado",
-                },
+                new OrderStatus { Id = 1, Description = "Pendente" },
+                new OrderStatus { Id = 2, Description = "Aprovado" },
+                new OrderStatus { Id = 3, Description = "Separado" },
+                new OrderStatus { Id = 4, Description = "Finalizado" },
             };
             builder.Entity<OrderStatus>().HasData(orderStatus);
         }

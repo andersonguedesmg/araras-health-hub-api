@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
 
-namespace ArarasHealthHub.Application.Features.Facility.Dtos
+namespace ArarasHealthHub.Application.Features.Facilities.Dtos
 {
     public class FacilityDto
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Domain.Interfaces;
+using ArarasHealthHub.Domain.Identity;
 
 namespace ArarasHealthHub.Domain.Entities
 {
@@ -36,7 +36,26 @@ namespace ArarasHealthHub.Domain.Entities
         [MaxLength(20)]
         public string Phone { get; set; } = string.Empty;
 
-        public ICollection<IApplicationUser> Accounts { get; set; } = new List<IApplicationUser>();
+        public ICollection<ApplicationUser> Accounts { get; set; } = new List<ApplicationUser>();
 
+        public Facility() : base() { }
+
+        public Facility(int id, string name, string address, string number, string neighborhood, string city, string state, string cep, string email, string phone, DateTime createdOn, DateTime? updatedOn, bool isActive)
+        {
+            Id = id;
+            CreatedOn = createdOn;
+            UpdatedOn = updatedOn;
+            IsActive = isActive;
+
+            Name = name;
+            Address = address;
+            Number = number;
+            Neighborhood = neighborhood;
+            City = city;
+            State = state;
+            Cep = cep;
+            Email = email;
+            Phone = phone;
+        }
     }
 }

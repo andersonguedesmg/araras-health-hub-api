@@ -36,11 +36,12 @@ namespace ArarasHealthHub.Shared.Core
         public const string MsgFacilityNotFound = "Unidade não encontrada.";
         public const string MsgNotFacilitiesFound = "Nenhuma unidade encontrada.";
         public const string MsgFacilityDoesNotExist = "A unidade informada não existe.";
+        public const string MsgFacilityAlreadyExists = "Unidade já registrada.";
         public const string MsgFacilityCreatedSuccessfully = "Unidade criada com sucesso.";
         public const string MsgFacilityFoundSuccessfully = "Unidade encontrada com sucesso.";
         public const string MsgFacilitiesFoundSuccessfully = "Unidades encontradas com sucesso.";
         public const string MsgFacilityUpdatedSuccessfully = "Unidade atualizada com sucesso.";
-        public const string MsgFacilityDisabledSuccessfully = "Unidade desativada com sucesso.";
+        public const string MsgFacilityDeactivatedSuccessfully = "Unidade desativada com sucesso.";
         public const string MsgFacilityActivatedSuccessfully = "Unidade ativada com sucesso.";
         public const string MsgFacilityDeletedSuccessfully = "Unidade excluída com sucesso.";
 
@@ -51,7 +52,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string MsgAccountNotFound = "Conta não encontrada.";
         public const string MsgPasswordResetSuccessfully = "Senha redefinida com sucesso.";
         public const string MsgFailedToCreateAccount = "Falha ao criar a conta.";
-        public const string MsgFailedToAssignRoleToAccount = "Falha ao atribuir o papel a conta.";
+        public const string MsgFailedToAssignRoleToAccount = "Falha ao atribuir a função a conta.";
         public const string MsgAccountNameAlreadyInUse = "Nome da conta já está em uso.";
         public const string MsgAccountCreatedSuccessfully = "Conta criada com sucesso.";
         public const string MsgNotAccountsFound = "Nenhuma conta encontrada.";
