@@ -83,7 +83,7 @@ namespace ArarasHealthHub.Infrastructure.Data
                     email: "sms@araras.sp.gov.br",
                     phone: "(19) 3543-1522",
                     createdOn: DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
-                    updatedOn: DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
+                    updatedOn: null,
                     isActive: true
                 )
             );
@@ -94,10 +94,8 @@ namespace ArarasHealthHub.Infrastructure.Data
                 Id = 1,
                 UserName = "sms_master",
                 NormalizedUserName = "SMS_MASTER",
-                Email = "master@araras.com.br",
-                NormalizedEmail = "MASTER@ARARAS.COM.BR",
-                CreatedOn = DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
-                UpdatedOn = DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
+                CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 1, 1), DateTimeKind.Utc),
+                UpdatedOn = null,
                 IsActive = true,
                 FacilityId = facilityPrincipalId,
                 SecurityStamp = Guid.Empty.ToString(),

@@ -13,7 +13,7 @@ namespace ArarasHealthHub.Domain.Interfaces
 
         DateTime CreatedOn { get; set; }
 
-        DateTime UpdatedOn { get; set; }
+        DateTime? UpdatedOn { get; set; }
 
         bool IsActive { get; set; }
 

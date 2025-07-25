@@ -12,7 +12,7 @@ namespace ArarasHealthHub.Domain.Identity
     {
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
-        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
+        public DateTime? UpdatedOn { get; set; } = DateTime.MinValue;
 
         public bool IsActive { get; set; } = true;
 

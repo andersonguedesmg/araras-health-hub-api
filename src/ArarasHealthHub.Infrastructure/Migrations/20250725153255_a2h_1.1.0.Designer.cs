@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250724155517_a2h_1.1.0")]
+    [Migration("20250725153255_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -147,8 +147,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             Neighborhood = "Jardim Belvedere",
                             Number = "33",
                             Phone = "(19) 3543-1522",
-                            State = "SP",
-                            UpdatedOn = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                            State = "SP"
                         });
                 });
 
@@ -204,13 +203,21 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApprovedByAccountId");
+
                     b.HasIndex("ApprovedByEmployeeId");
 
+                    b.HasIndex("CreatedByAccountId");
+
                     b.HasIndex("CreatedByEmployeeId");
+
+                    b.HasIndex("FinalizedByAccountId");
 
                     b.HasIndex("FinalizedByEmployeeId");
 
                     b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("SeparatedByAccountId");
 
                     b.HasIndex("SeparatedByEmployeeId");
 
@@ -366,6 +373,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AccountId");
+
                     b.HasIndex("ResponsibleId");
 
                     b.HasIndex("SupplierId");
@@ -452,8 +461,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<string>("Cep")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -462,8 +471,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<string>("Cnpj")
                         .IsRequired()
-                        .HasMaxLength(14)
-                        .HasColumnType("nvarchar(14)");
+                        .HasMaxLength(18)
+                        .HasColumnType("nvarchar(18)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -478,8 +487,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Neighborhood")
                         .IsRequired()
@@ -569,7 +578,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
@@ -596,19 +605,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "00000000-0000-0000-0000-000000000000",
-                            CreatedOn = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "master@araras.com.br",
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             EmailConfirmed = false,
                             FacilityId = 1,
                             IsActive = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "MASTER@ARARAS.COM.BR",
                             NormalizedUserName = "SMS_MASTER",
                             PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "00000000-0000-0000-0000-000000000000",
                             TwoFactorEnabled = false,
-                            UpdatedOn = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserName = "sms_master"
                         });
                 });
@@ -778,15 +784,29 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "ApprovedByAccount")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByAccountId");
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "ApprovedByEmployee")
                         .WithMany()
                         .HasForeignKey("ApprovedByEmployeeId");
+
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "CreatedByAccount")
+                        .WithMany()
+                        .HasForeignKey("CreatedByAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "CreatedByEmployee")
                         .WithMany()
                         .HasForeignKey("CreatedByEmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "FinalizedByAccount")
+                        .WithMany()
+                        .HasForeignKey("FinalizedByAccountId");
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "FinalizedByEmployee")
                         .WithMany()
@@ -798,17 +818,29 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "SeparatedByAccount")
+                        .WithMany()
+                        .HasForeignKey("SeparatedByAccountId");
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "SeparatedByEmployee")
                         .WithMany()
                         .HasForeignKey("SeparatedByEmployeeId");
 
+                    b.Navigation("ApprovedByAccount");
+
                     b.Navigation("ApprovedByEmployee");
 
+                    b.Navigation("CreatedByAccount");
+
                     b.Navigation("CreatedByEmployee");
+
+                    b.Navigation("FinalizedByAccount");
 
                     b.Navigation("FinalizedByEmployee");
 
                     b.Navigation("OrderStatus");
+
+                    b.Navigation("SeparatedByAccount");
 
                     b.Navigation("SeparatedByEmployee");
                 });
@@ -834,6 +866,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "Responsible")
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
@@ -845,6 +883,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Account");
 
                     b.Navigation("Responsible");
 

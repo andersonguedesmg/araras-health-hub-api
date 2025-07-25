@@ -109,14 +109,14 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Cnpj = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Cnpj = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Neighborhood = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     State = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    Cep = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    Cep = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -156,7 +156,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     FacilityId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -186,59 +186,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Observation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderStatusId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedByEmployeeId = table.Column<int>(type: "int", nullable: false),
-                    CreatedByAccountId = table.Column<int>(type: "int", nullable: false),
-                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ApprovedByEmployeeId = table.Column<int>(type: "int", nullable: true),
-                    ApprovedByAccountId = table.Column<int>(type: "int", nullable: true),
-                    SeparatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SeparatedByEmployeeId = table.Column<int>(type: "int", nullable: true),
-                    SeparatedByAccountId = table.Column<int>(type: "int", nullable: true),
-                    FinalizedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    FinalizedByEmployeeId = table.Column<int>(type: "int", nullable: true),
-                    FinalizedByAccountId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Order_Employee_ApprovedByEmployeeId",
-                        column: x => x.ApprovedByEmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Order_Employee_CreatedByEmployeeId",
-                        column: x => x.CreatedByEmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Order_Employee_FinalizedByEmployeeId",
-                        column: x => x.FinalizedByEmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Order_Employee_SeparatedByEmployeeId",
-                        column: x => x.SeparatedByEmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Order_OrderStatus_OrderStatusId",
-                        column: x => x.OrderStatusId,
-                        principalTable: "OrderStatus",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Stock",
                 columns: table => new
                 {
@@ -255,38 +202,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         name: "FK_Stock_Product_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Product",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Receiving",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SupplyAuthorization = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Observation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReceivingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    SupplierId = table.Column<int>(type: "int", nullable: false),
-                    ResponsibleId = table.Column<int>(type: "int", nullable: false),
-                    AccountId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Receiving", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Receiving_Employee_ResponsibleId",
-                        column: x => x.ResponsibleId,
-                        principalTable: "Employee",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Receiving_Supplier_SupplierId",
-                        column: x => x.SupplierId,
-                        principalTable: "Supplier",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -377,6 +292,118 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Observation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrderStatusId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedByEmployeeId = table.Column<int>(type: "int", nullable: false),
+                    CreatedByAccountId = table.Column<int>(type: "int", nullable: false),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApprovedByEmployeeId = table.Column<int>(type: "int", nullable: true),
+                    ApprovedByAccountId = table.Column<int>(type: "int", nullable: true),
+                    SeparatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SeparatedByEmployeeId = table.Column<int>(type: "int", nullable: true),
+                    SeparatedByAccountId = table.Column<int>(type: "int", nullable: true),
+                    FinalizedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FinalizedByEmployeeId = table.Column<int>(type: "int", nullable: true),
+                    FinalizedByAccountId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Order_AspNetUsers_ApprovedByAccountId",
+                        column: x => x.ApprovedByAccountId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_AspNetUsers_CreatedByAccountId",
+                        column: x => x.CreatedByAccountId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_AspNetUsers_FinalizedByAccountId",
+                        column: x => x.FinalizedByAccountId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_AspNetUsers_SeparatedByAccountId",
+                        column: x => x.SeparatedByAccountId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_Employee_ApprovedByEmployeeId",
+                        column: x => x.ApprovedByEmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_Employee_CreatedByEmployeeId",
+                        column: x => x.CreatedByEmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_Employee_FinalizedByEmployeeId",
+                        column: x => x.FinalizedByEmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_Employee_SeparatedByEmployeeId",
+                        column: x => x.SeparatedByEmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_OrderStatus_OrderStatusId",
+                        column: x => x.OrderStatusId,
+                        principalTable: "OrderStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Receiving",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SupplyAuthorization = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Observation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReceivingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    ResponsibleId = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Receiving", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Receiving_AspNetUsers_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Receiving_Employee_ResponsibleId",
+                        column: x => x.ResponsibleId,
+                        principalTable: "Employee",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Receiving_Supplier_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Supplier",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderItem",
                 columns: table => new
                 {
@@ -449,7 +476,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Facility",
                 columns: new[] { "Id", "Address", "Cep", "City", "CreatedOn", "Email", "IsActive", "Name", "Neighborhood", "Number", "Phone", "State", "UpdatedOn" },
-                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) });
+                values: new object[] { 1, "Rua Campos Sales", "13.601-111", "Araras", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "sms@araras.sp.gov.br", true, "Secretaria Municipal da Saúde", "Jardim Belvedere", "33", "(19) 3543-1522", "SP", null });
 
             migrationBuilder.InsertData(
                 table: "OrderStatus",
@@ -465,7 +492,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "00000000-0000-0000-0000-000000000000", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "master@araras.com.br", false, 1, true, false, null, "MASTER@ARARAS.COM.BR", "SMS_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, "00000000-0000-0000-0000-000000000000", false, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "sms_master" });
+                values: new object[] { 1, 0, "00000000-0000-0000-0000-000000000000", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, "00000000-0000-0000-0000-000000000000", false, null, "sms_master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -517,14 +544,29 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Order_ApprovedByAccountId",
+                table: "Order",
+                column: "ApprovedByAccountId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Order_ApprovedByEmployeeId",
                 table: "Order",
                 column: "ApprovedByEmployeeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Order_CreatedByAccountId",
+                table: "Order",
+                column: "CreatedByAccountId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Order_CreatedByEmployeeId",
                 table: "Order",
                 column: "CreatedByEmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_FinalizedByAccountId",
+                table: "Order",
+                column: "FinalizedByAccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_FinalizedByEmployeeId",
@@ -535,6 +577,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "IX_Order_OrderStatusId",
                 table: "Order",
                 column: "OrderStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_SeparatedByAccountId",
+                table: "Order",
+                column: "SeparatedByAccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_SeparatedByEmployeeId",
@@ -550,6 +597,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "IX_OrderItem_ProductId",
                 table: "OrderItem",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Receiving_AccountId",
+                table: "Receiving",
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Receiving_ResponsibleId",
@@ -608,9 +660,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Order");
 
             migrationBuilder.DropTable(
@@ -620,16 +669,19 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "Product");
 
             migrationBuilder.DropTable(
-                name: "Facility");
+                name: "OrderStatus");
 
             migrationBuilder.DropTable(
-                name: "OrderStatus");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Employee");
 
             migrationBuilder.DropTable(
                 name: "Supplier");
+
+            migrationBuilder.DropTable(
+                name: "Facility");
         }
     }
 }
