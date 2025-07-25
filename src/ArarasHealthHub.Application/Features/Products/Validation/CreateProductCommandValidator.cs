@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
 
             RuleFor(command => command.DosageForm)
                 .NotEmpty().WithMessage("A dosagem do produto é obrigatória.")
-                .MaximumLength(20).WithMessage("A dosagem do produto não pode exceder 20 caracteres.");
+                .MaximumLength(100).WithMessage("A dosagem do produto não pode exceder 100 caracteres.");
 
             RuleFor(command => command.Category)
                 .NotEmpty().WithMessage("O categoria do produto é obrigatória.")
