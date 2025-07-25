@@ -16,7 +16,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
 
             RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("O nome de usuário é obrigatório.")
-                .Length(3, 50).WithMessage("O nome de usuário deve ter entre 3 e 50 caracteres.");
+                .Length(3, 150).WithMessage("O nome de usuário deve ter entre 3 e 150 caracteres.");
         }
     }
 }

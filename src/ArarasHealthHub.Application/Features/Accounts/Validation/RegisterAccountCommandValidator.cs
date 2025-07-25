@@ -13,7 +13,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
         {
             RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("O nome de usuário é obrigatório.")
-                .Length(3, 50).WithMessage("O nome de usuário deve ter entre 3 e 50 caracteres.");
+                .Length(3, 150).WithMessage("O nome de usuário deve ter entre 3 e 150 caracteres.");
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("A senha é obrigatória.")
@@ -24,16 +24,16 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
                 .Matches("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?~`]").WithMessage("A senha deve conter pelo menos um caractere especial.");
 
             RuleFor(x => x.FacilityId)
-                .GreaterThan(0).WithMessage("O ID da Facility é obrigatório e deve ser um número válido.");
+                .GreaterThan(0).WithMessage("O ID da unidade é obrigatório e deve ser um número válido.");
 
             RuleFor(x => x.Role)
-                .NotEmpty().WithMessage("A Role é obrigatória.")
-                .Must(BeAValidRole).WithMessage("Role inválida ou não permitida.");
+                .NotEmpty().WithMessage("A função é obrigatória.")
+                .Must(BeAValidRole).WithMessage("Função inválida ou não permitida.");
         }
 
         private bool BeAValidRole(string role)
         {
-            var allowedRoles = new List<string> { "User", "Manager", "Admin" };
+            var allowedRoles = new List<string> { "Master", "Admin", "User" };
             return allowedRoles.Contains(role);
         }
     }
