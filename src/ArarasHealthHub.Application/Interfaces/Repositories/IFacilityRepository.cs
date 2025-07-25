@@ -12,5 +12,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<bool> FacilityExists(int id);
 
         Task<Facility?> GetByNameAsync(string name);
+
+        Task<Facility?> GetByIdWithAccountsAsync(int id);
     }
 }

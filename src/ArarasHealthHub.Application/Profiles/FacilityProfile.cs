@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Domain.Identity;
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -16,6 +18,8 @@ namespace ArarasHealthHub.Application.Profiles
         {
             CreateMap<Facility, FacilityDto>();
             CreateMap<Facility, FacilityNameDto>();
+
+            CreateMap<ApplicationUser, AccountDto>();
 
             CreateMap<CreateFacilityCommand, Facility>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())

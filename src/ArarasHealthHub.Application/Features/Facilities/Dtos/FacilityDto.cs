@@ -18,9 +18,9 @@ namespace ArarasHealthHub.Application.Features.Facilities.Dtos
         public string Cep { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
-        public DateTime CreatedOn { get; set; } = DateTime.Now;
-        public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
+        public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
         public bool IsActive { get; set; } = true;
-        public List<AccountDto> AccountUsers { get; set; } = new List<AccountDto>();
+        public List<AccountDto> Accounts { get; set; } = new List<AccountDto>();
     }
 }

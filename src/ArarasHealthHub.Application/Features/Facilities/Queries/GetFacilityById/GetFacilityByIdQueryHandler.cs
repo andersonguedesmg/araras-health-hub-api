@@ -24,7 +24,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityByI
 
         public async Task<ApiResponse<FacilityDto>> Handle(GetFacilityByIdQuery request, CancellationToken cancellationToken)
         {
-            var facility = await _facilityRepository.GetByIdAsync(request.Id);
+            var facility = await _facilityRepository.GetByIdWithAccountsAsync(request.Id);
 
             if (facility == null)
             {
