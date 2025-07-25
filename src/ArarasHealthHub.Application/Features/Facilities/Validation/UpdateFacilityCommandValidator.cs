@@ -44,8 +44,8 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
 
             RuleFor(command => command.Cep)
                 .NotEmpty().WithMessage("O CEP da unidade é obrigatório.")
-                .Length(8).WithMessage("O CEP da unidade deve conter 8 dígitos.")
-                .Matches(@"^\d{8}$").WithMessage("O CEP deve conter apenas números.");
+                .Length(9).WithMessage("O CEP da unidade deve conter 9 dígitos.")
+                .Matches(@"^\d{5}-\d{3}$").WithMessage("O CEP deve estar no formato 'XXXXX-XXX'.");
 
             RuleFor(command => command.Email)
                 .NotEmpty().WithMessage("O email da unidade é obrigatório.")
@@ -58,10 +58,10 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
                 .Matches(@"^\d{10,11}$|^(\+\d{1,3}\s?)?(\(?\d{2}\)?\s?\d{4,5}-?\d{4})$").WithMessage("O formato do telefone é inválido.");
         }
 
-        private async Task<bool> BeUniqueName(string cnpj, CancellationToken cancellationToken)
+        private async Task<bool> BeUniqueName(UpdateFacilityCommand command, string name, CancellationToken cancellationToken)
         {
-            var existingFacility = await _facilityRepository.GetByNameAsync(cnpj);
-            return existingFacility == null;
+            var existingFacility = await _facilityRepository.GetByNameAsync(name);
+            return existingFacility == null || existingFacility.Id == command.Id;
         }
     }
 }
