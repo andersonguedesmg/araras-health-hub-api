@@ -91,16 +91,15 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetAccountById(int userId)
+        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAccountById(int id)
         {
-            var query = new GetAccountByIdQuery(userId);
+            var query = new GetAccountByIdQuery(id);
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet("getByFacilityId/{facilityId:int}")]
-        [Authorize(Roles = "Admin,Manager,User")]
         [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Unauthorized)]

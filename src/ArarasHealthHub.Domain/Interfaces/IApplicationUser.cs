@@ -11,8 +11,6 @@ namespace ArarasHealthHub.Domain.Interfaces
 
         string? UserName { get; set; }
 
-        string? Email { get; set; }
-
         DateTime CreatedOn { get; set; }
 
         DateTime UpdatedOn { get; set; }
