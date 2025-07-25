@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Validation
 
             RuleFor(command => command.Cnpj)
                 .NotEmpty().WithMessage("O CNPJ do fornecedor é obrigatório.")
-                .Length(14).WithMessage("O CNPJ do fornecedor deve conter 14 dígitos.")
+                .Length(18).WithMessage("O CNPJ do fornecedor deve conter 18 dígitos.")
                 .Matches(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$").WithMessage("O CNPJ do fornecedor deve estar no formato 'XX.XXX.XXX/XXXX-XX'.")
                 .MustAsync(BeUniqueCnpjForUpdate).WithMessage("Já existe outro fornecedor cadastrado com este CNPJ.");
 
