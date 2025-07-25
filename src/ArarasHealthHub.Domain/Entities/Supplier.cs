@@ -8,10 +8,10 @@ namespace ArarasHealthHub.Domain.Entities
 {
     public class Supplier : BaseEntity
     {
-        [MaxLength(100)]
+        [MaxLength(150)]
         public string Name { get; set; } = string.Empty;
 
-        [MaxLength(14)]
+        [MaxLength(18)]
         public string Cnpj { get; set; } = string.Empty;
 
         [MaxLength(200)]
@@ -29,7 +29,7 @@ namespace ArarasHealthHub.Domain.Entities
         [MaxLength(2)]
         public string State { get; set; } = string.Empty;
 
-        [MaxLength(8)]
+        [MaxLength(10)]
         public string Cep { get; set; } = string.Empty;
 
         [MaxLength(100)]
