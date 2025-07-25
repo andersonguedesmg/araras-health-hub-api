@@ -23,7 +23,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Validation
             RuleFor(command => command.Cpf)
                 .NotEmpty().WithMessage("O CPF do funcionário é obrigatório.")
                 .Length(14).WithMessage("O CPF do funcionário deve conter 14 dígitos.")
-                .Matches(@"^\d{14}$").WithMessage("O CPF do funcionário deve conter apenas números.")
+                .Matches(@"^\d{3}\.\d{3}\.\d{3}\-\d{2}$").WithMessage("O CPF do funcionário deve estar no formato 'XXX.XXX.XXX-XX'.")
                 .MustAsync(BeUniqueCpf).WithMessage("Já existe um funcionário cadastrado com este CPF.");
 
             RuleFor(command => command.Function)
@@ -36,10 +36,10 @@ namespace ArarasHealthHub.Application.Features.Employees.Validation
                 .Matches(@"^\d{10,11}$|^(\+\d{1,3}\s?)?(\(?\d{2}\)?\s?\d{4,5}-?\d{4})$").WithMessage("O formato do telefone é inválido.");
         }
 
-        private async Task<bool> BeUniqueCpf(string cnpj, CancellationToken cancellationToken)
+        private async Task<bool> BeUniqueCpf(UpdateEmployeeCommand command, string cpf, CancellationToken cancellationToken)
         {
-            var existingEmployee = await _employeeRepository.GetByCpfAsync(cnpj);
-            return existingEmployee == null;
+            var existingEmployee = await _employeeRepository.GetByCpfAsync(cpf);
+            return existingEmployee == null || existingEmployee.Id == command.Id;
         }
     }
 }

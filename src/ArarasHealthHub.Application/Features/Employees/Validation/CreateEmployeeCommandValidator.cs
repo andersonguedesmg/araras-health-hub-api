@@ -23,7 +23,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Validation
             RuleFor(command => command.Cpf)
                 .NotEmpty().WithMessage("O CPF do funcionário é obrigatório.")
                 .Length(14).WithMessage("O CPF do funcionário deve conter 14 dígitos.")
-                .Matches(@"^\d{14}$").WithMessage("O CPF do funcionário deve conter apenas números.")
+                .Matches(@"^\d{3}\.\d{3}\.\d{3}\-\d{2}$").WithMessage("O CPF do funcionário deve estar no formato 'XXX.XXX.XXX-XX'.")
                 .MustAsync(BeUniqueCpf).WithMessage("Já existe um funcionário cadastrado com este CPF.");
 
             RuleFor(command => command.Function)
