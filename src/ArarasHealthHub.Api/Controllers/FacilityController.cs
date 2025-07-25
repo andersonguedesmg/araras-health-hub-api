@@ -2,9 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared;
+using ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusFacility;
+using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
+using ArarasHealthHub.Application.Features.Facilities.Commands.DeleteFacility;
+using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
+using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
+using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById;
+using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdownOptions;
+using ArarasHealthHub.Shared.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,147 +19,89 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/facility")]
     [ApiController]
+    // [Authorize]
     public class FacilityController : ControllerBase
     {
-        // private readonly IFacilityRepository _facilityRepo;
+        private readonly IMediator _mediator;
 
-        // public FacilityController(IFacilityRepository facilityRepo)
-        // {
-        //     _facilityRepo = facilityRepo;
-        // }
+        public FacilityController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
-        // [HttpGet]
-        // [Route("getAll")]
-        // [Authorize]
-        // public async Task<IActionResult> GetAll()
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(new ApiResponse<List<Facility>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(PagedResponse<FacilityDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllFacilitiesQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
 
-        //     var facilities = await _facilityRepo.GetAllAsync();
+        [HttpGet("getById/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<FacilityDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            var query = new GetFacilityByIdQuery(id);
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
 
-        //     if (facilities.Count == 0)
-        //     {
-        //         return NotFound(new ApiResponse<Facility>(StatusCodes.Status404NotFound, ApiMessages.MsgNotFacilitiesFound, null!));
-        //     }
+        [HttpPost("create")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create([FromBody] CreateFacilityCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
 
-        //     return Ok(new ApiResponse<List<Facility>>(StatusCodes.Status200OK, ApiMessages.MsgFacilitiesFoundSuccessfully, facilities));
-        // }
+        [HttpPut("update/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFacilityCommand command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
+            }
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
 
-        // [HttpGet]
-        // [Route("getById/{id:int}")]
-        // [Authorize]
-        // public async Task<IActionResult> GetById([FromRoute] int id)
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(new ApiResponse<List<Facility>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
+        [HttpDelete("delete/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var command = new DeleteFacilityCommand(id);
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
 
-        //     var facility = await _facilityRepo.GetByIdAsync(id);
+        [HttpPatch("changeStatus/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusFacilityCommand command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
+            }
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
 
-        //     if (facility == null)
-        //     {
-        //         return NotFound(new ApiResponse<Facility>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, null!));
-        //     }
-
-        //     return Ok(new ApiResponse<Facility>(StatusCodes.Status200OK, ApiMessages.MsgFacilityFoundSuccessfully, facility));
-        // }
-
-        // [HttpPost]
-        // [Route("create")]
-        // [Authorize]
-        // public async Task<IActionResult> Create([FromBody] CreateFacilityRequestDto facilityDto)
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(new ApiResponse<List<Facility>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-        //     var facilityModel = facilityDto.ToFacilityFromCreateDto();
-        //     var newFacility = await _facilityRepo.CreateAsync(facilityModel);
-
-        //     return CreatedAtAction(nameof(GetById), new { id = facilityModel.Id }, new ApiResponse<Facility>(StatusCodes.Status201Created, ApiMessages.MsgFacilityCreatedSuccessfully, newFacility));
-        // }
-
-        // [HttpPut]
-        // [Route("update/{id:int}")]
-        // [Authorize]
-        // public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFacilityRequestDto updateDto)
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(new ApiResponse<List<Facility>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-        //     var facilityModel = await _facilityRepo.UpdateAsync(id, updateDto);
-
-        //     if (facilityModel == null)
-        //     {
-        //         return NotFound(new ApiResponse<Facility>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, null!));
-
-        //     }
-
-        //     return Ok(new ApiResponse<Facility>(StatusCodes.Status200OK, ApiMessages.MsgFacilityUpdatedSuccessfully, facilityModel));
-        // }
-
-        // [HttpDelete]
-        // [Route("delete/{id:int}")]
-        // [Authorize]
-        // public async Task<IActionResult> Delete([FromRoute] int id)
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(new ApiResponse<List<Facility>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-        //     var facilityModel = await _facilityRepo.DeleteAsync(id);
-
-        //     if (facilityModel == null)
-        //     {
-        //         return NotFound(new ApiResponse<Facility>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, null!));
-        //     }
-
-        //     return Ok(new ApiResponse<Facility>(StatusCodes.Status200OK, ApiMessages.MsgFacilityDeletedSuccessfully, facilityModel));
-        // }
-
-        // [HttpPatch]
-        // [Route("changeStatus/{id:int}")]
-        // [Authorize]
-        // public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusFacilityRequestDto changeStatusDto)
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(new ApiResponse<List<Facility>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-        //     var facilityModel = await _facilityRepo.ChangeStatusAsync(id, changeStatusDto);
-
-        //     if (facilityModel == null)
-        //     {
-        //         return NotFound(new ApiResponse<Facility>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, null!));
-        //     }
-
-        //     if (changeStatusDto.IsActive == true)
-        //     {
-        //         return Ok(new ApiResponse<Facility>(StatusCodes.Status200OK, ApiMessages.MsgFacilityActivatedSuccessfully, facilityModel));
-        //     }
-
-        //     return Ok(new ApiResponse<Facility>(StatusCodes.Status200OK, ApiMessages.MsgFacilityDisabledSuccessfully, facilityModel));
-        // }
-
-        // [HttpGet]
-        // [Route("getDropdownOptions")]
-        // [Authorize]
-        // public async Task<IActionResult> getDropdownOptions()
-        // {
-        //     if (!ModelState.IsValid)
-        //         return BadRequest(new ApiResponse<List<FacilityNameDto>>(StatusCodes.Status400BadRequest, ApiMessages.Msg400BadRequestError, null!));
-
-        //     var facilities = await _facilityRepo.GetAllAsync();
-
-        //     if (facilities.Count == 0)
-        //     {
-        //         return NotFound(new ApiResponse<FacilityNameDto>(StatusCodes.Status404NotFound, ApiMessages.MsgNotFacilitiesFound, null!));
-        //     }
-
-        //     var facilityNames = facilities.Select(d => new FacilityNameDto
-        //     {
-        //         Id = d.Id,
-        //         Name = d.Name
-        //     }).ToList();
-
-        //     return Ok(new ApiResponse<List<FacilityNameDto>>(StatusCodes.Status200OK, ApiMessages.MsgFacilitiesFoundSuccessfully, facilityNames));
-        // }
+        [HttpGet("getDropdownOptions")]
+        [ProducesResponseType(typeof(ApiResponse<List<FacilityNameDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDropdownOptions()
+        {
+            var query = new GetFacilityDropdownOptionsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }
