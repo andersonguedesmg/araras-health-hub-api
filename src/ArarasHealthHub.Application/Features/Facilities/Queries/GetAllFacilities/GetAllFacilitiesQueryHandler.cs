@@ -8,6 +8,7 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities
 {
@@ -24,37 +25,37 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
 
         public async Task<PagedResponse<FacilityDto>> Handle(GetAllFacilitiesQuery request, CancellationToken cancellationToken)
         {
-            var allFacilities = await _facilityRepository.GetAllAsync();
+            var query = _facilityRepository.AsQueryable();
+            query = query.Include(f => f.Accounts);
 
-            var totalCount = allFacilities.Count();
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            IOrderedEnumerable<Facility> orderedFacilities;
             switch (request.OrderBy.ToLower())
             {
                 case "name":
-                    orderedFacilities = request.SortOrder.ToLower() == "desc" ?
-                        allFacilities.OrderByDescending(s => s.Name) :
-                        allFacilities.OrderBy(s => s.Name);
+                    query = request.SortOrder.ToLower() == "desc" ?
+                            query.OrderByDescending(s => s.Name) :
+                            query.OrderBy(s => s.Name);
                     break;
                 default:
-                    orderedFacilities = request.SortOrder.ToLower() == "desc" ?
-                        allFacilities.OrderByDescending(s => s.Id) :
-                        allFacilities.OrderBy(s => s.Id);
+                    query = request.SortOrder.ToLower() == "desc" ?
+                            query.OrderByDescending(s => s.Id) :
+                            query.OrderBy(s => s.Id);
                     break;
             }
 
-            var pagedFacilities = orderedFacilities
+            var pagedFacilities = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .ToList();
+                .ToListAsync(cancellationToken);
 
-            var FacilityDtos = _mapper.Map<List<FacilityDto>>(pagedFacilities);
+            var facilityDtos = _mapper.Map<List<FacilityDto>>(pagedFacilities);
 
             return new PagedResponse<FacilityDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                FacilityDtos
+                facilityDtos
             );
         }
     }
