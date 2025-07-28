@@ -1089,123 +1089,247 @@ DECLARE @NOW DATETIME
 SET @NOW = GETDATE()
 
 INSERT INTO [dbo].[AspNetUsers]
-           ([UserName]
-           ,[NormalizedUserName]
-           ,[FacilityId]
-           ,[PasswordHash]
-           ,[IsActive]
-           ,[SecurityStamp]
-           ,[ConcurrencyStamp]
-           ,[CreatedOn]
-           ,[UpdatedOn]
-           ,[Email]
-           ,[NormalizedEmail]
-           ,[EmailConfirmed]
-           ,[PhoneNumber]
-           ,[PhoneNumberConfirmed]
-           ,[TwoFactorEnabled]
-           ,[LockoutEnd]
-           ,[LockoutEnabled]
-           ,[AccessFailedCount])
+            ([CreatedOn]
+            ,[UpdatedOn]
+            ,[IsActive]
+            ,[FacilityId]
+            ,[UserName]
+            ,[NormalizedUserName]
+            ,[Email]
+            ,[NormalizedEmail]
+            ,[EmailConfirmed]
+            ,[PasswordHash]
+            ,[SecurityStamp]
+            ,[ConcurrencyStamp]
+            ,[PhoneNumber]
+            ,[PhoneNumberConfirmed]
+            ,[TwoFactorEnabled]
+            ,[LockoutEnd]
+            ,[LockoutEnabled]
+            ,[AccessFailedCount])
      VALUES
-        --    ('sms_master'                            -- UserName
-        --    ,'SMS_MASTER'                            -- NormalizedUserName
-        --    ,1                                       -- FacilityId
-        --    ,'AQAAAAEAACcQAAAAEEZhAoV7oE3GgcF7YtS0BDX9FYH38ZxYYU8Fl8ewtTLR5zdpJxQfiAKGhT5G9KmnwA==' -- PasswordHash
-        --    ,1                                       -- IsActive
-        --    ,NEWID()                                 -- SecurityStamp
-        --    ,NEWID()                                 -- ConcurrencyStamp
-        --    ,GETDATE()                               -- CreatedOn
-        --    ,CONVERT(datetime2, '0001-01-01', 7)     -- UpdatedOn
-        --    ,NULL                                    -- Email
-        --    ,NULL                                    -- NormalizedEmail
-        --    ,0                                       -- EmailConfirmed
-        --    ,NULL                                    -- PhoneNumber
-        --    ,0                                       -- PhoneNumberConfirmed
-        --    ,0                                       -- TwoFactorEnabled
-        --    ,NULL                                    -- LockoutEnd
-        --    ,0                                       -- LockoutEnabled
-        --    ,0),                                     -- AccessFailedCount
+            -- ('CreatedOn', 'UpdatedOn', 'IsActive', 'FacilityId', 'UserName', 'NormalizedUserName', 'Email', 'NormalizedEmail', 'EmailConfirmed', 'PasswordHash', 'SecurityStamp', 'ConcurrencyStamp', 'PhoneNumber', 'PhoneNumberConfirmed', 'TwoFactorEnabled', 'LockoutEnd', 'LockoutEnabled', 'AccessFailedCount')
+            -- (@NOW, NULL, 1, 1, 'sms_master', 'SMS_MASTER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 1, 'sms_admin', 'SMS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAELrbTaOsjU/nSbwwor8wr2irt9ZJhh26FRn0Fpwse8Yqwc/XQ7B3KR9AAYNPh65/7w==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 1, 'sms_user', 'SMS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDR5p/FDbjAZWg8GmxSkqYBjbxoUS3Pnctb69y51r/JkRQYObcr+A67yTVm6TS9fYA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('sms_adm', 'SMS_ADM', 1, 'AQAAAAIAAYagAAAAEInDkN9GkBRjwZL1UTGSFszpxFvf9k9sOFUhuqi4znauqc6JO8lbfooD0SITg1UBOg==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('sms_user', 'SMS_USER', 1, 'AQAAAAIAAYagAAAAEM2pbNnxQjAZy1ulExcwNhD5P8uUdz9JCIOZrgVP9eNeY+D1QCN6cFWQ7mbL82vXlQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 2, 'cdm_master', 'CDM_MASTER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDgZorTwRiBt+jaGuACqXQEaqsge9wX/yUrEAINreRN8HxEAmmgV5j8xtk8hX9P8vg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 2, 'cdm_admin', 'CDM_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEC3tHi0zyN8zMRirOzKEzXsqx/QRsuPNEazbbdZhvX6Pj+vUpH8MXcxUILtIBw0x2A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 2, 'cdm_user', 'CDM_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEG3wsZnFjqrLpEEr1riCXtf66MaQiJLlMwrCQw1rTseC4LmTqi6KxGJdnQacQoDs+A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 2, 'cdm_user2', 'CDM_USER2', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEBjwkJTYyjHFP36i76CYr2wgEPioZOiOapk8vnBx2xFh4ez+paR4+7ZTEQo4I2EwMw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('cdm_master', 'CDM_MASTER', 2, 'AQAAAAIAAYagAAAAEFRqC6EXxKEk1X+t/9A7kD+mlP0eLh5hOSF67naQSVfVRuAAEUTDfBx8YwDN7Xb8zA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('cdm_adm', 'CDM_ADM', 2, 'AQAAAAIAAYagAAAAEGEznp4Mov+P807A8sXQeM3exnWC9HnnKiwS+g0w9J9wtTvY3heD1CZwp0PLV3jxOw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('cdm_user', 'CDM_USER', 2, 'AQAAAAIAAYagAAAAEHVpqFcQR594y6amhFY45ce+QR1OYR4OaC1Zqom/qF5pRrf2YcEBGj+gPqRWtfwU2g==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('cdm_user2', 'CDM_USER2', 2, 'AQAAAAIAAYagAAAAELCzawxsWKcTH++FqGHy0vMOkVUc3Y01SW+ZDKNo5HrCNxqOVqqP5FJBbG5hFXRrVw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 3, 'ubs_ev_admin', 'UBS_EV_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEN35ulBBEEMdYsGe+Dr7rRhlVJbgreodBOY+cp3TbhMIO6+Wh9QeoW/4JAVZBC+zPg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 3, 'ubs_ev_user', 'UBS_EV_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAELbjypAfD7G2SU6v0ZVh9LeedEMh4PTKuFayYudQL3O8qCaPpHuVib7/RBqjqjf8Fw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_ev_adm', 'UBS_EV_ADM', 3, 'AQAAAAIAAYagAAAAEJNIvNnGLov/l/UED4c7CwzFGepgyVSaYSnZ2eSYivKx6PT4j92I2j5iqJOA4WaSTA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_ev_user', 'UBS_EV_USER', 3, 'AQAAAAIAAYagAAAAEEjf7rif30IW7acNOoTYqNik1Ro4691IyNrB3u0y9ui1jjZt2UZardhHEoprHSvppQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 4, 'upa_esf_admin', 'UPA_ESF_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEPH+BChfALUyi+RjRLk2vAb79jj6WM2Qtt3I4uoQwZiI02sRqWaBMq8KhFbWTt2txA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 4, 'upa_esf_user', 'UPA_ESF_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEBzVzrKy6v5xX+GjxJG4j3niaI2MTSzkGybeJVeSy95y1vqsnffwrLhNzSFr5BbDLw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('upa_esf_adm', 'UPA_ESF_ADM', 4, 'AQAAAAIAAYagAAAAEEgcIeuUZjqfyOuof28XbT182pPA/9T09aKTLbZzSlZDy2PxG/THuyOuOlQon/W6UA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('upa_esf_user', 'UPA_ESF_USER', 4, 'AQAAAAIAAYagAAAAEBdbFwODdEHL0Vy42AxuMlUU7LuLrjqYoy8yES8tQYacW7Fl2uqp67B0whODjQo/sA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 5, 'fac_admin', 'FAC_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEGxoWPSzzmuqfXMBV2tJLoT4ZWmAbwfGuBspfSRZEaAUKi7hXKN4sa+LBrEjx4bk0A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 5, 'fac_user', 'FAC_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEJp1Na9cUFhHrwz7GN+HugdN6761k5rYkS2Of4FgxPF0MywZtueJ7vNvDTg/L0I3ww==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('fac_adm', 'FAC_ADM', 5, 'AQAAAAIAAYagAAAAEKasCL+Mw6RQ8jU368OHoC5rbKSJD0xm9PwXOwC8bqRl+hp6KACkDgOClo++tsvaFQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('fac_user', 'FAC_USER', 5, 'AQAAAAIAAYagAAAAEAvWYwjTHlGhEpQf50BJH4UMfYnlbjnrtwLeeLmRimDOy/7GHWljEGBvNxZGiLuN6Q==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 6, 'samu_admin', 'SAMU_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEGJdbUKsGVD/G7yYWPYb82YDdZ4/ZBxkODzQZp7WcPYtNV/SCHC71uNUxVsoOOp+pA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 6, 'samu_user', 'SAMU_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAaMeanAynQIdnL/lhr1dcSbthu1mah7NhN4k+Ap1pMv5ug4Y1GurFUC7yaAfrmvxA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('samu_adm', 'SAMU_ADM', 6, 'AQAAAAIAAYagAAAAELvDFeva3JzSRivYXOrj3WZepjpQpsx6nWHZmMQ52tE5Dn2b65N1Dm7gTAakW0CAGQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('samu_user', 'SAMU_USER', 6, 'AQAAAAIAAYagAAAAEGWBgT8org9flrFAVpavmmtYxV8YibiIKoYgspt62JHeTYLGU2m3Mr7IJIe3jGdyxw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 7, 'psf_eu_admin', 'PSF_EU_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEMGW9L9w2cJs7rptSIqeSrs7BXLCuUqS6Dht2WDOUcwLMk8rLYHcaFJtgBCstZ/vIQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 7, 'psf_eu_user', 'PSF_EU_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEJlhIrDYynGAjjhdBGXTQFcek1fdNV0UbHjI6N1MYEf5XTjNp+oDcDohNwPZx4QFMw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_eu_adm', 'PSF_EU_ADM', 7, 'AQAAAAIAAYagAAAAEKXH/iQs61MBHpR4wtEp6puw3K5DNM0pzfVDF/NZqvBok/U5CsBxgU1SbnzYsu1u4A==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_eu_user', 'PSF_EU_USER', 7, 'AQAAAAIAAYagAAAAEBBVjClnkcRkthTk580D7RRV3PAr5eoQsSgCiS3eVhrM4XViY+jCeMvc8SX5k5W1xQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 8, 'psf_ndl_admin', 'PSF_NDL_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEEfenVMhf32yrobWPKimmegSZUvB7/LelT8oyOIQni/irgb053F/Qx7t6RWaX1lyFg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 8, 'psf_ndl_user', 'PSF_NDL_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEKhmianNIvwaus1nubY3RL9jBrlgJQPYW72b+9mkhpN3SgbZrg8ME0AMCV22xfRCjw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_ndl_adm', 'PSF_NDL_ADM', 8, 'AQAAAAIAAYagAAAAEOnHq2t18LUkmmH4zRKWZKTtrECfOy7i7sIDOxQ4hyR76ybmkWFbUMhmzbV1CTrzaw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_ndl_user', 'PSF_NDL_USER', 8, 'AQAAAAIAAYagAAAAEG7EVAtV4Tnx6h38NGLZR1bXMCcZk0BSuZVZ9eOEFZDVm/btvHrS+VSXZj/6i9UqBA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 9, 'psf_jm_admin', 'PSF_JM_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEA6Te8vIUWZnb2Nmx4197fIErzWuMKtxgMe3Mxg3aRHCY3OZDB2oCl+BXbU4UlhwCw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 9, 'psf_jm_user', 'PSF_JM_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOrV65A44ugH+d3+fLdNSZkwX0Od4p9J4Fi6Zf+eXEUAl/cc6M9WbTwp11H80G2fQQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_jm_adm', 'PSF_JM_ADM', 9, 'AQAAAAIAAYagAAAAEMw0F1LApy6G/OMqqozbQ8WC0gjJJNKUYv8l3w8Xc/3ydJJXtnTSsK4zqJHvcRv5qw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_jm_user', 'PSF_JM_USER', 9, 'AQAAAAIAAYagAAAAEGKpbatgZWktGmp0Q1p8ZVPjybspM5loNvPsjuJdF3G1rEmY9fYS54xXNQf9MmhDmQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 10, 'ubs_jf_admin', 'UBS_JF_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEFgYqO74PFN+hg3jCnqYThjMqe3q/t1d8vPDj6dHKE6jZ1rlkxS9bLNxbU68/KSzOA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 10, 'ubs_jf_user', 'UBS_JF_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENc9ihwYOGcD4geaiJ3bKjY4zTiUrqaB5hcGrev/A6RKGtzMqHOg8IJgfyd3ZLey8g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_jf_adm', 'UBS_JF_ADM', 10, 'AQAAAAIAAYagAAAAEIDvGtcVPZXd0wJMOwHAmlMIz0txR0sjxbGqQF+A7QqliyBaagx9gZaWYzZZqi/YmA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_jf_user', 'UBS_JF_USER', 10, 'AQAAAAIAAYagAAAAECbGhXoE0L9vU83/ve6tpoUPpPBi4VakK9EHY/iPUSiZ1kqXPBVm3vpFJ2ICfUDHVw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 11, 'caem_ns_admin', 'CAEM_NS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEP42qRqIgquEENAXkhy83LXOxJwd5kIGg0oorANzyAb347P7QJwMh1xcTSFT1Pq7Tg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 11, 'caem_ns_user', 'CAEM_NS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDzFiUC5fF3KrLFPFWQv7LQ0SCSrokUOKjHLFdLpc91E9FNXIu1JL75FRwzns4NvPA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('caem_ns_adm', 'CAEM_NS_ADM', 11, 'AQAAAAIAAYagAAAAEHo/jYYefKVn2TjDVKUKCMcAeBLy3sZqlOw8ZXBiDnI6v96INeEyEq6vOSCRUCOSnQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('caem_ns_user', 'CAEM_NS_USER', 11, 'AQAAAAIAAYagAAAAEMHVjnJmZD02XN9/mgbEWy5oXYZf56pypAJmxplFW6cdQcUWgmQYloEy3uZliQ1xmw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 12, 'asm_ab_admin', 'ASM_AB_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEHmOJB0MuhFDB2Vo4StmKBn+H5ojOB+6w5uG1nCQdIODwkfmqtGufhK5PVFkLPCMyw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 12, 'asm_ab_user', 'ASM_AB_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAD/7uqisMnoBWf7noJT6wto/yd/S9sW7fFBvkdcI9yFdzTi/Qtrw1Rh7K2o/d8d6Q==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('asm_ab_adm', 'ASM_AB_ADM', 12, 'AQAAAAIAAYagAAAAEH7PM+alE7Elpui/nqfVfzhSuGxB1kjgqBuz++in1RBmEZGP5afoYPQC2F2BSbJkiw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('asm_ab_user', 'ASM_AB_USER', 12, 'AQAAAAIAAYagAAAAEFRlPQo3LvkloWhQ9F/Gp6lDNpxdsU54UhjOSlJW55fRdwNOQrPuUlmohTODmTXB7A==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 13, 'caps_ad_admin', 'CAPS_AD_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAELf9f+aBTfDYkPem7vkscjqEYgN7zUEHcYHWDRHrYPMdgAhzPI90CSFh3O56oL8eeg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 13, 'caps_ad_user', 'CAPS_AD_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEB6dXFwLmGfOXpXkBUXNO1mJVe7iyG29kJJXiMz9kgVYF+8PjdapFQ5/fupEMuCfSA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('caps_ad_adm', 'CAPS_AD_ADM', 13, 'AQAAAAIAAYagAAAAEGBvDaT5NNrOqIgxTzw85AXJrMuuG7VtxiGp9Fj/GjNQC7Rdt+2mlEOzMOd4Y6suQg==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('caps_ad_user', 'CAPS_AD_USER', 13, 'AQAAAAIAAYagAAAAEJRNkHH5pfoOczRbkhIdmHzKaVoKoaNuLV+g7X3cFsme35VwXd/U4QdMnVb73xHzcA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 14, 'ccz_admin', 'CCZ_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECWPaVYScJtNwx+WBYJJBBXdAwpFtGhZcX9CVBhzYhPot1HBDW+QqMLYQJuGE75kbA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 14, 'ccz_user', 'CCZ_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAf0HS/1Kaakil7wN1pI3Ab9Cp4qAMPyYH1LvETWdxqvoDLmcgZWPGxsMWm1LLMuzw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ccz_adm', 'CCZ_ADM', 14, 'AQAAAAIAAYagAAAAEOai27EJJ8ZPGdqmlUUjVwDcD1gFPsrjk3f4rB7tGl5VT0b0ZbzcS2zioVjErg5vpA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ccz_user', 'CCZ_USER', 14, 'AQAAAAIAAYagAAAAEJkeANhhudJCCl58Jc9Z6F74E94TeMSb0ruJ9BmOcUQJ+MJZeH3rXwQLzg6L3Eqynw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 15, 'ubs_sj_admin', 'UBS_SJ_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEFKhRq3tyb81NTtNEC7TM1g7KHKZmXQpEfRAS77eKMo7PZj46qkYqELqoR9sd4s/5Q==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 15, 'ubs_sj_user', 'UBS_SJ_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEKzNHCbS/5aZrwwGERf7q3siUz/QKVtTjb1sXfiJOUZ9SKyVs7oVjfLoQXCXvT5WHg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_sj_adm', 'UBS_SJ_ADM', 15, 'AQAAAAIAAYagAAAAEB0a4KQYTi6wgYPodEElD42IbrZEldGZmFV043akgwrP2D/qQ+XBdwUU5zmgDU6gdw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_sj_user', 'UBS_SJ_USER', 15, 'AQAAAAIAAYagAAAAEKbB3a6pPqqbjUcH4/Q1lIVjn6lqv+6FhYDJ4DGzLGxtrtOAdLkM+p+0k06qdhkOVg==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 16, 'psf_jo_admin', 'PSF_JO_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEPnesHyPlpQduabL7SyXFRcAUbFap96132tU7CUBfL/coFsMtbZw8wj+oLIJ9ngzbA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 16, 'psf_jo_user', 'PSF_JO_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIC8VRpLEFNCD/Pa6A1qt0frYD7h5CrBz5beL2Ldlarmz4V5gQMkupFtAOd2J867Kg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_jo_adm', 'PSF_JO_ADM', 16, 'AQAAAAIAAYagAAAAENNXaw3U1rmuZOmtabMX4Ra9NKrkWyx9GgJgNc9umOxG3iBwMIdFiDAXP+VuuzPumQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_jo_user', 'PSF_JO_USER', 16, 'AQAAAAIAAYagAAAAEKMG25TXKiCxydn3Bn+tJmxqz/0vfbmP7XcFce1WwAEIZmiAfGIRia3B8boA4+bHIA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 17, 'ubs_vp_admin', 'UBS_VP_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEKJ6DMC2J27/R3Paf1slCokeHBspmsnk2WcaGyn7QyNludT2Pt1zKUgTBJG/S9AxXg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 17, 'ubs_vp_user', 'UBS_VP_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOLJF5KQSiv9lxQ+LyMp4vMfko/ttBx5NuX+w+eKrcXzl6kUy8QFVwLCLGbaG2YkDw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_vp_adm', 'UBS_VP_ADM', 17, 'AQAAAAIAAYagAAAAEA1oZsGT0gaC6apXpIW34WSzTK9Gr3qPLKYSrGwImiOzi4c/1DPzEfVGK3Fm+1iuJw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_vp_user', 'UBS_VP_USER', 17, 'AQAAAAIAAYagAAAAEADU13Fz2StTHgtsC97gmHBIJJwODkKp2WRPkfvTEum/L4kDN2B6R26RlJWN1A23nQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 18, 'psf_pt_admin', 'PSF_PT_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENatpMQKHkO4G/vVQZf60thyQ5djjWHOIhCO2P7lDbIL8JcKqEo5vEGjC5hYuZTjMQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 18, 'psf_pt_user', 'PSF_PT_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEPdqUcxFP1d2EAOimcFlLyzwqf+mQW7BTxXsL2Kf7+zYHUXmrgSv8mktaGB6mqMM0g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_pt_adm', 'PSF_PT_ADM', 18, 'AQAAAAIAAYagAAAAEMpTcHK9BuS1QJ9KNTdS515TwDluXe5/4tYp9Yv61KgKckneWIdQ6axLMjALM+bPYg==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_pt_user', 'PSF_PT_USER', 18, 'AQAAAAIAAYagAAAAEI7IfGiAHjnDf8yzgDymkG76kKwziy579An9Wh15IMWKmzQNTJ9BgDE5yOpW8ZGI4A==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 19, 'ubs_vs_admin', 'UBS_VS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECJ122ApExmNxe6IGPuAQG2TP+YyjrsydlkiuautIW8Q6AHhzcU2vGg8Jg/tV/KvYg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 19, 'ubs_vs_user', 'UBS_VS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEHOgtFU8mHySklwtuAZx+HDlpTYvff2b8wlvrfmaFWSYe2xuzfigpu7OnAOlivIY5A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_vs_adm', 'UBS_VS_ADM', 19, 'AQAAAAIAAYagAAAAEJFU6ZHfiz4NGBIrEIjo6pL6E+PvCAxILQqfHRhGINijerhPVwdP/fz7QUglmJZdjA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_vs_user', 'UBS_VS_USER', 19, 'AQAAAAIAAYagAAAAEIfaFSbC6Ygyg1K+C6bcNEfJPkFVgb5/xw5d/UqobF2zLpP7Am6A6kEDElYsKtwP2g==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 20, 'caps_2_admin', 'CAPS_2_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEB6uHnaIYbaLPJ9OOE7fyBhCjlA6hkJ7kgMBySfe2M0OwG7512dOTEMm7mJt/OZu5g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 20, 'caps_2_user', 'CAPS_2_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEGSrkq3o1XiK7ehn91utF8fOFNeyljE20Ajl2S/qIoVFoYbWtR3ZOkfvuZpTH1fUPw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('caps_2_adm', 'CAPS_2_ADM', 20, 'AQAAAAIAAYagAAAAEA8SD842NmHpi+KIDp6Cps2QADaMbepuIKr+4R1kg8TZGHkC5bDXPjwZ81yS9mvIRA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('caps_2_user', 'CAPS_2_USER', 20, 'AQAAAAIAAYagAAAAEODDJoaHU++wbKns7SlvDa0SBbdFcDpuoTUnRbHBQuSDLTZfI4728m4GVHaqwxJLLw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 21, 'psf_rsb_admin', 'PSF_RSB_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEEh9VUkMsx12hKJJrPoP+Sb+Iw3BymFrwhdNgCdksUR2ypi97kUB0RKBhD7O40sUfQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 21, 'psf_rsb_user', 'PSF_RSB_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEP/DNfPLCYKCMk/+So38ArkFML2hCEvKz9kJYQopHUDQCsgbj1rr8MaPKqsLYnnbJA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_rsb_adm', 'PSF_RSB_ADM', 21, 'AQAAAAIAAYagAAAAEOZKNYAl8nzCWbY1bHJRuHZM8RhKX3oNPxbHjdQC62SnPhW4UKu+ijej0bRa0iOtmw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_rsb_user', 'PSF_RSB_USER', 21, 'AQAAAAIAAYagAAAAEBi4Z10w2p1ijfxSJtPZFj0ef65E/Bh166sV4G9MPD6OhMhv/oBa/+Oyi28SZvC0EA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 22, 'psf_rg_admin', 'PSF_RG_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEPRbZIDNgYg3UAatFO7i0R/JxIy1kX4pISxIxv+QHiJ3PKOAaTpsy5Vou99MAh0jrQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 22, 'psf_rg_user', 'PSF_RG_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEKglZ79JeWXk2N5nK7+cxAluU6EZCH+xQvjrQ7ZCq5ub1MM6RXczo32OD5ryFs+KpA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_rg_adm', 'PSF_RG_ADM', 22, 'AQAAAAIAAYagAAAAEEKi6tkwkQP1LmQfG1c4Ws0okbolefOa/UWdGaJ/WVgf5RTd4a4zwki5xUCP4HwL2w==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_rg_user', 'PSF_RG_USER', 22, 'AQAAAAIAAYagAAAAEFXApjAAi6TFP3KAz/hDU4gHH1in3arcjING4lpsbD3MU4fXjQtLRFqMsQz1GkE8mg==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 23, 'ubs_sr_admin', 'UBS_SR_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEG9h1KwPOXhf2Ue9Fxvkg18OaNa4tOKmAe99A+zI0O8jkUoBhPi8DaKSJro++rGElg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 23, 'ubs_sr_user', 'UBS_SR_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEPb5Mlws9GhGztEtGtlh052VmSiTf54x0joWVBcPuYGmPnlfVQSpmOg7j4WCp3u5kA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_sr_adm', 'UBS_SR_ADM', 23, 'AQAAAAIAAYagAAAAEENscNHKH4TvIYRn7d2JhiZoCXMV9qU9jdgpk8KzJXdVUp/hEsCU1OrL2s7yzfEgXw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_sr_user', 'UBS_SR_USER', 23, 'AQAAAAIAAYagAAAAENlfljRv1VRszHuuOmiSibtpSiEK02wyVV8mpsX1Xqmb2ISvLgQhjo5BGTdtbZOEKg==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 24, 'ubs_esj_admin', 'UBS_ESJ_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENnpMBKLoaUsYuAAVe8DosE2yxoBp+rA5qPFB4kBjku444vS1DhEli25ZDqHKxpotw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 24, 'ubs_esj_user', 'UBS_ESJ_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDWK5kr4PBApUFdWnjG1PN7geFNeZ1y5iLxu6lTICwob7hvdTOJIqFSHMTh9D/PdxQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_esj_adm', 'UBS_ESJ_ADM', 24, 'AQAAAAIAAYagAAAAEK8Xfz688AfumEA516BsLQ8kJufqoolj9zGaYWtQgVl+UpkVYi4PC9SBZUxcDxnS1A==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_esj_user', 'UBS_ESJ_USER', 24, 'AQAAAAIAAYagAAAAEH74u2NR2wdgiQ/UWgTxfsjNdUN7NulkzEjwBXVNe/s8zS5QFwsUs3k/IGLHRfQe0w==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 25, 'psf_rsj_admin', 'PSF_RSJ_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOccwQshuQf79qANYAjSGtLhXce/mrJ0lcjQhN6kr5db4ouA5Z/B4yAqkUHIL3Mhog==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 25, 'psf_rsj_user', 'PSF_RSJ_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEGe2gqpA3i+j+iL2flK6BVgGy0hKlrU+GXtjZbQQ+/VKh6BNNEmjwmrWU50cdP2NqA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('psf_rsj_adm', 'PSF_RSJ_ADM', 25, 'AQAAAAIAAYagAAAAEFvWaHoSHU4+2DJDINwiJ4/Qx4pRF22Fspzc9MUYD4YZZsPr8Ef1Y7Ecbtf4NISmxA==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('psf_rsj_user', 'PSF_RSJ_USER', 25, 'AQAAAAIAAYagAAAAEKLbJKM+iVyCWJ8KUfi27+IVHxm91tt2aHPZdGAkcrIyzq7OVuE7fdN16m1JFSlecw==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 26, 'ubs_je_admin', 'UBS_JE_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEFNebTUd/DIYZUKVoCp1T3GkJupAUs10Vs+Rm+QWHH8pWi9prXYpgWRzqtPPo8ytmg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 26, 'ubs_je_user', 'UBS_JE_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAED7gIoCCSuH0HI2D5Z39snk7G7oU3CXmgodaLL/d2+4TsFH30Z1mp0DiYq1x7zJhcA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
 
-           ('ubs_je_adm', 'UBS_JE_ADM', 26, 'AQAAAAIAAYagAAAAEPxM/2ah57++TC+gTDsborkuXA8z0H7l/7OinYt1gEVOR669ZdjC2dTa9jHTtgT4qQ==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0),
-           ('ubs_je_user', 'UBS_JE_USER', 26, 'AQAAAAIAAYagAAAAECQ6+53/DkBQFouc5i8FW2SkclPbU2gRaOuE2c80wKPWVDYjBxRYWhUf+2bOBlrVgg==', 1, NEWID(), NEWID(), @NOW, '', NULL, NULL, 0, NULL, 0, 0, NULL, 0, 0);
+            (@NOW, @NOW, 0, 27, 'apa_sfo_admin', 'APA_SFO_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEGqalT3NMD/gcz6fwwS4az3kowlAhzMItmGPx7tUy/DNz8HYrmgllmHCYmy6IFI4NA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 27, 'apa_sfo_user', 'APA_SFO_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENIGuS/kKaTVHh9i0b3AMhhcNNVCDgNR291eu/dAtn4Rjy9B1olJxazW4Y6ZARuxuQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 28, 'vs_admin', 'VS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIdW+Sito6knIRmzlirKRSpAdtmLdBzi9i2qyITeOytMlf3LsgxXXAQe1sCQWQ9pBg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 28, 'vs_user', 'VS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIOx/Mt1etL7C2KGBvClIymx2TQ3jE6j44Kzmr2c3t8RqmJFLevY2q9mdnkoFLnUQQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 29, 'umo_admin', 'UMO_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEMz17gHOKJOZcll5gvbNde+I19vyRFuveNOIhf/Pe/dZtQcexjn9D0mwNSYqX+VgCg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 29, 'umo_user', 'UMO_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECxH7N5T+uef3Sy1UD04gon+576U6aTgIUIwte3Jg6HghWip+JcrTwNBYhvspUstgQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 30, 'uve_admin', 'UVE_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAED7pWOjnRGf09WbltfZvH37rtEj8F1q9m7tPD1Cc2gQonBgUN6L7wBUexLwtR8pm3Q==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 30, 'uve_user', 'UVE_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEK1Sp7mUn5wLWS0iJlAhlw5vrccaCH0SkfHKCskpltTxIrabnY0R/KyVF0rGTr5PYw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 31, 'ubs_osd_admin', 'UBS_OSD_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDMRy7IL8ZrYW4K5ppID9EXcYWF9N0OOL3QGn23PqXRPxEBAT5BPBKE94V8Azj3aSg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 31, 'ubs_osd_user', 'UBS_OSD_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECaKEkZdRsQexYC/YpSbqaEDonAZt3H9fZr6agiDO320d7mPPjdwN6ST2/U1OslB+A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 32, 'ubs_hrj_admin', 'UBS_HRJ_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEClI2cFIDFDYbKW51LNZ4s2W62vO+he6cglzxD12tKVsGhTxit4lPaINk3QfiNJvNA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 32, 'ubs_hrj_user', 'UBS_HRJ_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEN9Eea+2DZHj8mqLqJeh8ziy+rA538oi8EjVFnlWp8S+Nq+eMMAwcUnXVlC3uUk5tw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 33, 'ubs_em_admin', 'UBS_EM_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOfdXxkBREwxS4VMcnhxpeMyQ8uVXSedLnH9cP6ttmGJ1Qa2sRY2YETYbcUsbWy1xA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 33, 'ubs_em_user', 'UBS_EM_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEPNk6binzSWicXhphUs4PTTbrEd5M+Z2RPNTPkMwplUZ9nru4soC4TVBMNhxMLxUGQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 34, 'ubs_asp_admin', 'UBS_ASP_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEODC9pjkbtr12UzU80e6S6tcDu50H2rN8mJHzZ8hsRqJ7ocqrA2CMN/ifxQvlx8HZg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 34, 'ubs_asp_user', 'UBS_ASP_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEABNrdHXiBF67z+i+5ScB3d+77dafaLLwJVEVRdOe0yFklmhH4bQvdXLQ2eVgcjGDQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 35, 'ubs_acf_admin', 'UBS_ACF_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIHpwKNvwRCf7r9WRhGcI393VP8LdCaT3C1u9XLRr0L0v+nUK1xlh/6bIMFczRMc4Q==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 35, 'ubs_acf_user', 'UBS_ACF_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOUdi5vKKcFNHtHpv+xuxccn6XbIlM0f4bXPXzc6M7dK6g4hkPN7GYcmxuKmaYuz5A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 36, 'ubs_af_admin', 'UBS_AF_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEBSX80VMHrcffGF/lD/FIzapIygQA8VlscFsMhrMbwoW8vFTjtaG7oiQiD25Wd10aQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 36, 'ubs_af_user', 'UBS_AF_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEENCLOPCWQGozKQXxWwV/4jWm2w0TSoVeyedsHSRIvTeO8RHSqcmEIJwWSmN7CIUCQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 37, 'hps_admin', 'HPS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEImFHsOVLe9HXjlKD8lpFNVUMQ84OAmTin8rriSIJUfqJK6zbUsCiXvpiz7GE239Gg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 37, 'hps_user', 'HPS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOR0CDzLdqB1oipoVmmA/uGKaZx+cPwjyMhd0a84uH/RmpUjoTptdcvaVNXj4oZdLQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 38, 'ps_afo_admin', 'PS_AFO_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEMWTcZxQXqOF498KRCKWrptmx5G6wTxtTp8fJE781jcm1IaA3dL0bxF2fNUiCDY+nA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 38, 'ps_afo_user', 'PS_AFO_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENz3CzLPv0LrC/3ra2Yqt6TMcJFQOswSMTivRlz58kkZnjEqqU+UqZ2fguGXGRnvHw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 39, 'easg_admin', 'EASG_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEE88tNQrj3L3StrsdsYNkUtmnYjUX2e1o9lymnQcTz+Wx6cvbMAhfSsK/fbKLqaovA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 39, 'easg_user', 'EASG_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECvkeJyFJEtbPOCHVRGocxsAYCzRX5PPI0cbQqcKNGijzdlHvKhFwF/VjADgBSUjog==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 40, 'pa_eacc_admin', 'PA_EACC_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEMLV1vh5IIne6aCnMPp2IEVI/snNvaZMzBVb6FFtsXQ7EwJKGUDwZUzl9P1SqOlwzA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 40, 'pa_eacc_user', 'PA_EACC_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEJppkLl/GRLS5dl/LXXkucaQu06igZ0Z4ld8reYzGbsh5C37YFQIJOen5QIzjDC8qQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 41, 'mdcs_admin', 'MDCS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDwJmsC1VqzrVIf1um8n4Vy6SxUo7b1tR8A1kc6AUEXzGE84N6kWWw0KYJSgn8sjig==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 41, 'mdcs_user', 'MDCS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEINSTaDrCnHzIQP9N58xdfWYgjQpLTF8c+Iz/JaCBEuvTmFsbV4pqFwkFsMX5bvVew==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 42, 'lv_admin', 'LV_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEKk9EilNuzNDgzGVmsp94PZPvoWyQ+aFCQHQicO+UM2hLJ10nS1x52QpYe4rrVuY5g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 42, 'lv_user', 'LV_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEN2gpT/sY3zzBw5GQQFSqVfg52agPIzZuXZ5u9hPUskCPzW45fTB8z7WW/5YnhasaA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 43, 'esf_vph_admin', 'ESF_VPH_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECz+Pl22l4/rre1So56FAWpbfEjCgEYfGnBfn/mRCsRuBPnOp3hIsqOH/hDT5LCA+A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 43, 'esf_vph_user', 'ESF_VPH_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAErhhQdnKP5Xt7vmYDfax4aDWcOnCiUIHYuu8Bx/PGbGgR8/2y3TqnT3htovR7I4A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 44, 'esf_zr_admin', 'ESF_ZR_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDUtd1MXpcQUL+T9RXwb0zJTftiokfMV+Hq7tvZDR2B7BO7L+n56QVzp8vzstd2E6w==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 44, 'esf_zr_user', 'ESF_ZR_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEO8EQeeUDiLzULObXZi0yVITKsKb75GaT7yananuJoVxAzNCPtnKc4brmwCP29vmNg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 45, 'hcc19_admin', 'HCC19_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEFDpcberLid53T0HfYhuHWbFveHVYji9btXDVDb2Hn1zek9w95leEbPtOJc0CY7d7g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 45, 'hcc19_user', 'HCC19_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOUxAAQe8qz7IpTKDsEMzjmFmNHDa03/fIsr8ofPGX5XCXaVK5uhvHI7sfxyUALHFg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 46, 'hslm_admin', 'HSLM_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENYZK47bcJHa3F3ZrmFVA5qeT3aFignT5K5Q+Gjrw6CSRkN2mD5hO8pisg1F1qNnxA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 46, 'hslm_user', 'HSLM_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEE1y3EoyayrWkljaTpONEAQ3DNcpoQFU1AOQsd2pzlfszIBUztYsdft1vLza5mTmaA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 47, 'hiscma_admin', 'HISCMA_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAELR59iriPH2Y9u6ieExWGekd4/meyB4UFteACXssClmTm2PFSxkyNRuh/Quw/8sIqg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 47, 'hiscma_user', 'HISCMA_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECTUhYOj17/YWoBf64o5usn1Ns4/SbDzyzJO7IPXJz5RAM7ctLBrRXftoDvqlhs8og==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 48, 'esf_oz_admin', 'ESF_OZ_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEJ9ZP5f07g/59PIoKfwfNks8AQiI9wCgsxApz8z959wmbapsjDUfZwWa+JGf2lXobw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 48, 'esf_oz_user', 'ESF_OZ_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEM2EfzhYjilXQHGJqvyp4LwKH/1CTwVyuj/C/X7OmVUxHkOy74FXoH5cczReqZyouA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 49, 'esf_sjm_admin', 'ESF_SJM_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEB4QlTnoETLczEyC3f6rJurnUGLMMe2zyzd65cdaEj4K6wp3whfPjjV+Z9K+npVyZQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 49, 'esf_sjm_user', 'ESF_SJM_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEFlAM/TvYVPL1wL9AzSjSZWQLWByuHwV25OEfCuxc3aRGOp17KE3UHWrGB5YXqeHtg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 50, 'esf_fnc_admin', 'ESF_FNC_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAELE0Cp3ppu4TWByST0/MwjUiXsfkWwgWgh3dBa+23h5pcAwpL10JMErWZytjATIIAA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 50, 'esf_fnc_user', 'ESF_FNC_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAELixgyLmUk8pcWeB35zJ6URdH40s4dUnE+z8pOBFkNT4a8Krkls8IzZbKnmD1UjhMQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 51, 'esf_jo_admin', 'ESF_JO_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAED/RzSL8j2BLAulbZohRGsAF42PS5Co79ptsBoQEicZSod8r79WOJ4vOGYQeicE1kw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 51, 'esf_jo_user', 'ESF_JO_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAAljIl8WD1wCJrPU9ggK9SJMir3rIs7ziWm+ib0nGeTTLHctDUxxsQhsJP8tTdlAg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 52, 'esf_lbm_admin', 'ESF_LBM_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAupG/M5XDxWL1ZQz9iTVXo2d1rdpYFc7qGSGs2Hj4oToURMWiTn24hZGCQq9dyemw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 52, 'esf_lbm_user', 'ESF_LBM_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEBYgz9F2D5oSeziduOA7VxLPOPM36ODwTXV72tYdBx+XquGxnCXjySjQS9IJgHJ9Eg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 53, 'esf_mcr_admin', 'ESF_MCR_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEFG98BeYflT5UoFzApJnS023phmn0mwsjPO0jnHzdXwOUUccrdYYW6Bw+GfPhvoGRw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 53, 'esf_mcr_user', 'ESF_MCR_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENUUW4gdhEh7DJKw0fH6w7watwT1r+X1D/pZZ/9K6c5P2ck1UD0yH7S/zJPhO874OA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 54, 'esf_ng_admin', 'ESF_NG_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEO5rFlb9O36UeV47+o7FEMqEuUTPul4GjTvxX/C74ZE3W6App72LcByovi8ZOV+0hQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 54, 'esf_ng_user', 'ESF_NG_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEKO151w7ySdteP1tmaOhm4Jta0t0SeJMjl5co/nsIlXunQV96fbTVZp5L+JNGQLodw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 55, 'esf_ogp_admin', 'ESF_OGP_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAELLDPpeir15UlZ7KBj/6uZ+fNH7/3Z2wr1MQwov43LqVZupc3Rrzx6r7wngRlFSILA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 55, 'esf_ogp_user', 'ESF_OGP_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEEi+G8YlbQdC3/xi9mu7tH3WjhCEHxWcanVMUdQHE3S9cNdwkyavw4bxABqlbr24tw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 56, 'esf_ojb_admin', 'ESF_OJB_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEEyA0fjr2Lrnak2Nc47q/Aiw4LfUCInSswQeSGmfrnBOMj6+fG/7FCJbedUNpCWqhA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 56, 'esf_ojb_user', 'ESF_OJB_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENAIaJfu5jYakIAn9uEnvZWSPg19LTQL1ias/5/qXJERqFmBN7MSrw2+GTn1X4sbaw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 57, 'esf_fbv_admin', 'ESF_FBV_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIbkGLpMG3FRXXPfXKoAueuJFaBL3Wv1IIXghVw2RBVr+WR7CFxc/y0RDod2/IozqA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 57, 'esf_fbv_user', 'ESF_FBV_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEMWPpTQG49O+LAPXAO0K4x+mdY7Zd6CaBlhsdjRus0Yfvb3odB+7VQc8aUygKCWNtQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 58, 'esf_bf_admin', 'ESF_BF_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEJJTLGbNwf1KwHn6xsN7VAUCxZpGfU7qj/tO+AG6ae2KCd08PfIV2fYpKxBizPcfvQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 58, 'esf_bf_user', 'ESF_BF_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEINH+fq2L/Q1ScuW8WzDnHfk/3qDeu6cEEwQhopFG58xPVOBUUpkSt3BOhoE9XBc7A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 59, 'esf_asp_admin', 'ESF_ASP_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEP2KLrwFKJqC5q2q3va/1RyuO0TFVGFu8JIr+E6EsEDj/4LPVigo0cBBu5LVLIKd2w==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 59, 'esf_asp_user', 'ESF_ASP_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECTaMb56SFZmN0I7QuMxLcc7BiYi3fy3wX3cfSykG0xDFHJmMGU6BvMzRFBnU3/6CQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 60, 'cr_admin', 'CR_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAENCL/UfpCF7AGtWBEARX+STNx4etGXqXEx8AlSKIHugxpmgijaN96aIPQM2YinH+jw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 60, 'cr_user', 'CR_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIv40keO92ZCJo0PKPEL0nIJR76Jfe/VsTAvN+OMDjQzoTc1UILxeSnUhzWLpK4bUw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 61, 'co_sof_admin', 'CO_SOF_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEF6e7kCt1IXrF6uppR2lJ0QC1m/CiNk153AiSE0auMN2FIzdaBsJWye8EhMLEsN+cw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 61, 'co_sof_user', 'CO_SOF_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEB7l0HdYOx0719/TzgHZSi/MSiXO50r+wsGPAOXv2LeY9KUtUaNvPmdRvumn3ZcHnA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 62, 'cm_imdp_admin', 'CM_IMDP_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEE9rhH8Qet7DtebCZuqY9dhV72ODgqKM9I4T+S7Oc7tRmna2Q565hxuwv+fgKeD9BA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 62, 'cm_imdp_user', 'CM_IMDP_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIa1cvqZU9hUZdFleF5GM0jYBTecIRQTJtM35XPh8pbIVvWqpgabrlp/zBP7I5OO+g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 63, 'ci_hmca_admin', 'CI_HMCA_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAgUUTyxnUO+SeP1wqR9xFVGOjiBpZyzWNQk99iwDNme4ELRVMIyNltdahkZwZQWLQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 63, 'ci_hmca_user', 'CI_HMCA_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEChDjkqWQlh8pjzAcYFoDhIERqZJjl5iN/p5ynNnh8KRec6WwJ1yNpAvB9KjvK3qAg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 64, 'cs_rct_admin', 'CS_RCT_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEKaarSg41ZUXAgk4lgvBnvOblwbRV8tIfrBSsCeFUifXGXRuQpDz1DA5y0ofssFCFA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 64, 'cs_rct_user', 'CS_RCT_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEE9wylBXK19SMMmqvtrwutChbxNBCP2Kn1hdBMKEfdPg3l9rpDw2MLr2023KlbXHVw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 65, 'csm_jad_admin', 'CSM_JAD_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDVxdAN9GLSPdsTnjRMtMacMVkb62SASVz6fHzGx+KYbMxoDKDk6ycA7lAOqLliEDg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 65, 'csm_jad_user', 'CSM_JAD_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEHpmkGXdAmfRtzzw5bgtnSxr4honedh/p6kurP94Ni09nu0Ow+PH9mZRNx/2icKt8w==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 66, 'cim_admin', 'CIM_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEJLNLl0px54ELyKVV0lloFJbnlaM45VGFhSkTc4d5dR+Fwg75PMHSs9XXsRWk7gbRQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 66, 'cim_user', 'CIM_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEOWBjhb1rdKgF5rU2l3DTa+hypIJgiU9mesofoD8lkTb617jve/G2aVlNJrH6cUDYQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, @NOW, 0, 67, 'cdis_admin', 'CDIS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEDHFso++6mDy0SVr7yQzeDmVdtl2V91sXS7VU+bjkEic+rmSvhZO8E6dxQajGXyX0g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, @NOW, 0, 67, 'cdis_user', 'CDIS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEFgJ1Eguus+oX10oOOGdqmNPkicBEZCtmXXGXByXxA1FcMCj1ZyKjE1b94hcoog/LQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 68, 'caps_ij_admin', 'CAPS_IJ_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEBqOQ5x/GHXEAyUZGLw/iD6Mqpyk/ma9MOsl2ZY/R//x5hqjL+0598XGLcm6wqBEWw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 68, 'caps_ij_user', 'CAPS_IJ_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEAW5H1r+gd+rJ3zr308+2Fxo9IvgFa5ZguUGDJjDWK2ZX2f+tvVFJHpL/irOp6fycw==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 69, 'caps_icv_admin', 'CAPS_ICV_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEM5ayTOMDaxjjL9OTMgtXZMLRBx5NNZWbdjk0PabppFLI3rUp/QPGc034gGzlzoB2g==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 69, 'caps_icv_user', 'CAPS_ICV_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECVdCsPDxq2+1K5LuhvwBCBP9CQ+12LYX745OqQg3eVnO5SvPmNi0F7MlHQPfjSYLQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 70, 'caps_as_admin', 'CAPS_AS_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEN+7nYYFrwTbzW/sY+5Qkb1k6P295CDFVvUm1mM/TU8APXIDdwIoxk+9RH3RMGMDjg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 70, 'caps_as_user', 'CAPS_AS_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEGuImZNfNz/R9ejoxm3EEHe2XovJG7JL3rKMVwjoisLG2OCu3A4j7UNwrl75wLcIHQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 71, 'apae_admin', 'APAE_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAECRlgrUvKxr13AqAmpP1A/YLJ96hjR8R9CqQL94jNRXSxIjaaNdnzXCsWvnHlBJoMQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 71, 'apae_user', 'APAE_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEPwpEEiCAj27UYkEHxBLnj6DR+NLVivFMXu0HpiCjAYiH8SFrJMPcQ66iPmiDd2fuQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 72, 'cdi_admin', 'CDI_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEGcdPGLtTPVBf7nEZkQNXLW8WPDvf9WZYILPfhy3BWc29ldeYnOFrzWRX7iJYaFPlg==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 72, 'cdi_user', 'CDI_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEB3uLK1LdeQ8ru1IAVxd/zDhXxzdlaX04YC3eAicwK3+eeMrP3wl1j7QSn2WvVeifQ==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+
+            (@NOW, NULL, 1, 73, 'cdb_admin', 'CDB_ADMIN', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEMJt1byOsA2sNlRR4yV3faUB9az83fwKDZ2uxgMlDfw6Npq4KfsFEx+af33J8cYE/A==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0),
+            (@NOW, NULL, 1, 73, 'cdb_user', 'CDB_USER', NULL, NULL, 0, 'AQAAAAIAAYagAAAAEIQO0SpBsvmevziwDg6COjjMopZCuqvF+hHJxd/qSxBB/0hihRRSo/up10NJTqneaA==', NEWID(), NEWID(), NULL, 0, 0, NULL, 0, 0);
 GO
 
 -- ==================================================================================================================================
