@@ -11,5 +11,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<bool> HasProductNameUnique(string name, int productId, CancellationToken cancellationToken);
 
         Task<Product?> GetByProductNameAsync(string name);
+
+        Task<bool> ProductExists(int id);
     }
 }

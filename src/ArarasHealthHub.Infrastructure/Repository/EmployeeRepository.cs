@@ -17,5 +17,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             return await _dbSet.FirstOrDefaultAsync(s => s.Cpf == cpf);
         }
+
+        public async Task<bool> EmployeeExists(int id)
+        {
+            return await _dbSet.AnyAsync(s => s.Id == id);
+        }
     }
 }

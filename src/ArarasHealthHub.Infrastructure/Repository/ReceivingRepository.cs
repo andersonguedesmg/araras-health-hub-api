@@ -9,47 +9,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
 {
-    public class ReceivingRepository : IReceivingRepository
+    public class ReceivingRepository : BaseRepository<Receiving>, IReceivingRepository
     {
-        private readonly ApplicationDbContext _context;
+        public ReceivingRepository(ApplicationDbContext context) : base(context) { }
 
-        public ReceivingRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
 
-        public async Task<Receiving> CreateAsync(Receiving receivingModel)
+        public async Task<Receiving?> GetByIdWithDetailsAsync(int id)
         {
-            await _context.Receiving.AddAsync(receivingModel);
-            await _context.SaveChangesAsync();
-            return receivingModel;
-        }
-
-        public async Task<Receiving?> GetByIdAsync(int id)
-        {
-            return await _context.Receiving
+            return await _dbSet
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
+                .Include(r => r.Account)
                 .Include(r => r.ReceivedItems)
-                .ThenInclude(ri => ri.Product)
+                    .ThenInclude(ri => ri.Product)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public async Task<List<Receiving>> GetAllAsync()
+        public async Task<List<Receiving>> GetAllWithDetailsAsync()
         {
-            return await _context.Receiving
+            return await _dbSet
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
+                .Include(r => r.Account)
                 .Include(r => r.ReceivedItems)
-                .ThenInclude(ri => ri.Product)
+                    .ThenInclude(ri => ri.Product)
                 .ToListAsync();
-        }
-
-        public async Task<ReceivingItem> CreateReceivingItemAsync(ReceivingItem receivingItem)
-        {
-            await _context.ReceivingItem.AddAsync(receivingItem);
-            await _context.SaveChangesAsync();
-            return receivingItem;
         }
     }
 }

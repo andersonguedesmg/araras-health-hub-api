@@ -6,11 +6,9 @@ using ArarasHealthHub.Domain.Entities;
 
 namespace ArarasHealthHub.Application.Interfaces.Repositories
 {
-    public interface IReceivingRepository
+    public interface IReceivingRepository : IBaseRepository<Receiving>
     {
-        Task<Receiving> CreateAsync(Receiving receiving);
-        Task<Receiving?> GetByIdAsync(int id);
-        Task<List<Receiving>> GetAllAsync();
-        Task<ReceivingItem> CreateReceivingItemAsync(ReceivingItem receivingItem);
+        Task<Receiving?> GetByIdWithDetailsAsync(int id);
+        Task<List<Receiving>> GetAllWithDetailsAsync();
     }
 }

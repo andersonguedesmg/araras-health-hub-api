@@ -9,5 +9,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     public interface ISupplierRepository : IBaseRepository<Supplier>
     {
         Task<Supplier?> GetByCnpjAsync(string cnpj);
+
+        Task<bool> SupplierExists(int id);
     }
 }

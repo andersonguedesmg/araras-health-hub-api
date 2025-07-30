@@ -9,5 +9,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     public interface IEmployeeRepository : IBaseRepository<Employee>
     {
         Task<Employee?> GetByCpfAsync(string cpf);
+
+        Task<bool> EmployeeExists(int id);
     }
 }
