@@ -13,7 +13,6 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
         string SupplyAuthorization,
         string? Observation,
         DateTime ReceivingDate,
-        decimal TotalValue,
         int SupplierId,
         int ResponsibleId,
         int AccountId,

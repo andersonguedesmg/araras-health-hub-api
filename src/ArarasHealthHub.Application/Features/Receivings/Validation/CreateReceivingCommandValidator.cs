@@ -33,8 +33,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Validation
                 .MaximumLength(50).WithMessage("O número da nota fiscal não pode exceder 50 caracteres.");
 
             RuleFor(r => r.SupplyAuthorization)
-                .NotEmpty().WithMessage("A autorização de suprimento é obrigatória.")
-                .MaximumLength(50).WithMessage("A autorização de suprimento não pode exceder 50 caracteres.");
+                .NotEmpty().WithMessage("A autorização de fornecimento é obrigatória.")
+                .MaximumLength(50).WithMessage("A autorização de fornecimento não pode exceder 50 caracteres.");
 
             RuleFor(r => r.ReceivingDate)
                 .NotEmpty().WithMessage("A data de recebimento é obrigatória.")

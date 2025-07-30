@@ -16,6 +16,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/receiving")]
     [ApiController]
+    // [Authorize]
     public class ReceivingController : ControllerBase
     {
         private readonly IMediator _mediator;

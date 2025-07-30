@@ -4,6 +4,7 @@ using ArarasHealthHub.Application.Behaviors;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
+using ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
@@ -134,6 +135,7 @@ builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 builder.Services.AddScoped<IFacilityRepository, FacilityRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IReceivingRepository, ReceivingRepository>();
+builder.Services.AddScoped<IReceivingItemRepository, ReceivingItemRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
@@ -149,17 +151,20 @@ builder.Services.AddMediatR(typeof(GetAllSuppliersQuery).Assembly);
 builder.Services.AddMediatR(typeof(GetAllEmployeesQuery).Assembly);
 builder.Services.AddMediatR(typeof(GetAllProductsQuery).Assembly);
 builder.Services.AddMediatR(typeof(GetAllFacilitiesQuery).Assembly);
+builder.Services.AddMediatR(typeof(GetAllReceivingsQuery).Assembly);
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 builder.Services.AddAutoMapper(typeof(SupplierProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(EmployeeProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(FacilityProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(ReceivingProfile).Assembly);
 
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllEmployeesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllProductsQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllFacilitiesQuery).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(GetAllReceivingsQuery).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
 
 var app = builder.Build();
