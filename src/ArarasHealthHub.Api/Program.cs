@@ -148,13 +148,15 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddMediatR(typeof(GetAllSuppliersQuery).Assembly);
-builder.Services.AddMediatR(typeof(GetAllEmployeesQuery).Assembly);
-builder.Services.AddMediatR(typeof(GetAllProductsQuery).Assembly);
-builder.Services.AddMediatR(typeof(GetAllFacilitiesQuery).Assembly);
-builder.Services.AddMediatR(typeof(GetAllReceivingsQuery).Assembly);
-builder.Services.AddMediatR(typeof(GetAllAccountsQuery).Assembly);
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
+
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+});
 
 builder.Services.AddAutoMapper(typeof(SupplierProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(EmployeeProfile).Assembly);
@@ -169,7 +171,6 @@ builder.Services.AddValidatorsFromAssembly(typeof(GetAllProductsQuery).Assembly)
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllFacilitiesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllReceivingsQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllAccountsQuery).Assembly);
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
 
 var app = builder.Build();
 

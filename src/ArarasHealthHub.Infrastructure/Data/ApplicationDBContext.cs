@@ -8,6 +8,7 @@ using ArarasHealthHub.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ArarasHealthHub.Infrastructure.Data
 {
@@ -17,6 +18,8 @@ namespace ArarasHealthHub.Infrastructure.Data
         {
 
         }
+
+        public new DatabaseFacade Database => base.Database;
 
         public DbSet<Facility> Facilities { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
