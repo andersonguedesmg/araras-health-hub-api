@@ -52,10 +52,10 @@ namespace ArarasHealthHub.Application.Features.Receivings.Validation
                 .NotEmpty().WithMessage("O ID da conta é obrigatório.")
                 .MustAsync(AccountExists).WithMessage("Conta não encontrada.");
 
-            RuleFor(r => r.Items)
+            RuleFor(r => r.ReceivedItems)
                 .NotEmpty().WithMessage("Um recebimento deve ter pelo menos um item.");
 
-            RuleForEach(r => r.Items).SetValidator(new CreateReceivingItemCommandValidator(_productRepository));
+            RuleForEach(r => r.ReceivedItems).SetValidator(new CreateReceivingItemCommandValidator(_productRepository));
         }
 
         private async Task<bool> SupplierExists(int supplierId, CancellationToken cancellationToken)

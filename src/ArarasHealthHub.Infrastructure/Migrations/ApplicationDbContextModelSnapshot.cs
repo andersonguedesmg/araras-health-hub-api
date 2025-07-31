@@ -61,7 +61,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employee");
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Facility", b =>
@@ -128,7 +128,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facility");
+                    b.ToTable("Facilities");
 
                     b.HasData(
                         new
@@ -218,7 +218,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("SeparatedByEmployeeId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItem", b =>
@@ -250,7 +250,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderStatus", b =>
@@ -267,7 +267,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderStatus");
+                    b.ToTable("OrderStatuses");
 
                     b.HasData(
                         new
@@ -331,7 +331,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
@@ -388,7 +388,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Receiving");
+                    b.ToTable("Receivings");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.ReceivingItem", b =>
@@ -437,7 +437,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("ReceivingId");
 
-                    b.ToTable("ReceivingItem");
+                    b.ToTable("ReceivingItems");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Stock", b =>
@@ -462,7 +462,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Stock");
+                    b.ToTable("Stocks");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Supplier", b =>
@@ -534,7 +534,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Supplier");
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Identity.ApplicationUser", b =>

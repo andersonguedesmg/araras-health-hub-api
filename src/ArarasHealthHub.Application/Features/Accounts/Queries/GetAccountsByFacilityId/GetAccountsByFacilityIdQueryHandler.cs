@@ -26,7 +26,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
 
         public async Task<ApiResponse<List<AccountDetailsDto>>> Handle(GetAccountsByFacilityIdQuery request, CancellationToken cancellationToken)
         {
-            var facility = await _dbContext.Facility.FirstOrDefaultAsync(f => f.Id == request.FacilityId, cancellationToken);
+            var facility = await _dbContext.Facilities.FirstOrDefaultAsync(f => f.Id == request.FacilityId, cancellationToken);
             if (facility == null)
             {
                 return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, new List<AccountDetailsDto>());

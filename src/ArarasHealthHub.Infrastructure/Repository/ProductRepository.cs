@@ -20,7 +20,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<bool> HasProductNameUnique(string name, int productId, CancellationToken cancellationToken)
         {
-            return !await _dbContext.Product.AnyAsync(p => p.Name == name && p.Id != productId, cancellationToken);
+            return !await _dbContext.Products.AnyAsync(p => p.Name == name && p.Id != productId, cancellationToken);
         }
 
         public async Task<Product?> GetByProductNameAsync(string name)

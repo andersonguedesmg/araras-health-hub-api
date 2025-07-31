@@ -18,16 +18,16 @@ namespace ArarasHealthHub.Infrastructure.Data
 
         }
 
-        public DbSet<Facility> Facility { get; set; }
-        public DbSet<Supplier> Supplier { get; set; }
-        public DbSet<Employee> Employee { get; set; }
-        public DbSet<Product> Product { get; set; }
-        public DbSet<Receiving> Receiving { get; set; }
-        public DbSet<ReceivingItem> ReceivingItem { get; set; }
-        public DbSet<Stock> Stock { get; set; }
-        public DbSet<Order> Order { get; set; }
-        public DbSet<OrderItem> OrderItem { get; set; }
-        public DbSet<OrderStatus> OrderStatus { get; set; }
+        public DbSet<Facility> Facilities { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Receiving> Receivings { get; set; }
+        public DbSet<ReceivingItem> ReceivingItems { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

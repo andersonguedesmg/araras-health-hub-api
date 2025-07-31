@@ -4,7 +4,7 @@ GO
 DECLARE @NOW DATETIME
 SET @NOW = GETDATE()
 
-INSERT INTO [dbo].[Employee]
+INSERT INTO [dbo].[Employees]
             ([Name]
             ,[Cpf]
             ,[Function]
@@ -116,7 +116,7 @@ GO
 DECLARE @NOW DATETIME
 SET @NOW = GETDATE()
 
-INSERT INTO [dbo].[Facility]
+INSERT INTO [dbo].[Facilities]
             ([Name]
             ,[Address]
             ,[Number]
@@ -212,7 +212,7 @@ GO
 DECLARE @NOW DATETIME
 SET @NOW = GETDATE()
 
-INSERT INTO [dbo].[Supplier]
+INSERT INTO [dbo].[Suppliers]
             ([Name]
             ,[Cnpj]
             ,[Address]
@@ -394,7 +394,7 @@ GO
 DECLARE @NOW DATETIME
 SET @NOW = GETDATE()
 
-INSERT INTO [dbo].[Product]
+INSERT INTO [dbo].[Products]
             ([Name]
             ,[Description]
             ,[DosageForm]
@@ -924,7 +924,7 @@ GO
 USE [ararashealthhub]
 GO
 
-INSERT INTO [dbo].[Stock]
+INSERT INTO [dbo].[Stocks]
             ([ProductId]
             ,[Quantity]
             ,[Batch])
@@ -1933,7 +1933,7 @@ GO
 USE [ararashealthhub]
 GO
 
-INSERT INTO [dbo].[Receiving]
+INSERT INTO [dbo].[Receivings]
            ([InvoiceNumber]
            ,[SupplyAuthorization]
            ,[Observation]
@@ -2029,7 +2029,7 @@ GO
 USE [ararashealthhub]
 GO
 
-INSERT INTO [dbo].[ReceivingItem]
+INSERT INTO [dbo].[ReceivingItems]
            ([Quantity]
            ,[UnitValue]
            ,[TotalValue]

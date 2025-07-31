@@ -20,14 +20,14 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<Order> CreateAsync(Order orderModel)
         {
-            await _context.Order.AddAsync(orderModel);
+            await _context.Orders.AddAsync(orderModel);
             await _context.SaveChangesAsync();
             return orderModel;
         }
 
         public async Task<Order?> GetByIdAsync(int id)
         {
-            return await _context.Order
+            return await _context.Orders
                 .Include(o => o.OrderStatus)
                 .Include(o => o.CreatedByEmployee)
                 // .Include(o => o.CreatedByAccount)
@@ -38,7 +38,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<List<Order>> GetAllAsync()
         {
-            return await _context.Order
+            return await _context.Orders
                 .Include(o => o.OrderStatus)
                 .Include(o => o.CreatedByEmployee)
                 // .Include(o => o.CreatedByAccount)
@@ -49,20 +49,20 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem)
         {
-            await _context.OrderItem.AddAsync(orderItem);
+            await _context.OrderItems.AddAsync(orderItem);
             await _context.SaveChangesAsync();
             return orderItem;
         }
 
         public async Task UpdateAsync(Order order)
         {
-            _context.Order.Update(order);
+            _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateOrderItemAsync(OrderItem orderItem)
         {
-            _context.OrderItem.Update(orderItem);
+            _context.OrderItems.Update(orderItem);
             await _context.SaveChangesAsync();
         }
     }

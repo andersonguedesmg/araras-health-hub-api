@@ -39,7 +39,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
         {
             var receiving = _mapper.Map<Receiving>(request);
 
-            foreach (var itemCommand in request.Items)
+            foreach (var itemCommand in request.ReceivedItems)
             {
                 if (!await _productRepository.ProductExists(itemCommand.ProductId))
                 {
@@ -59,7 +59,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
 
             var createdReceivingDto = _mapper.Map<ReceivingDto>(receiving);
 
-            return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, "Recebimento criado com sucesso.", createdReceivingDto);
+            return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.MsgReceivingCreatedSuccessfully, createdReceivingDto);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
         int SupplierId,
         int ResponsibleId,
         int AccountId,
-        List<CreateReceivingItemCommand> Items
+        List<CreateReceivingItemCommand> ReceivedItems
     ) : IRequest<ApiResponse<ReceivingDto>>;
 
     public record CreateReceivingItemCommand(

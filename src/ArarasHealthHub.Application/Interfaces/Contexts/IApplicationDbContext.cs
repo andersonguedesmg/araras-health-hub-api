@@ -11,7 +11,15 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
     public interface IApplicationDbContext
     {
         DbSet<ApplicationUser> Users { get; set; }
-        DbSet<Facility> Facility { get; set; }
+        DbSet<Facility> Facilities { get; set; }
+        DbSet<Supplier> Suppliers { get; set; }
+        DbSet<Employee> Employees { get; set; }
+        DbSet<Product> Products { get; set; }
+        DbSet<Receiving> Receivings { get; set; }
+        DbSet<ReceivingItem> ReceivingItems { get; set; }
+        DbSet<Stock> Stocks { get; set; }
+
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

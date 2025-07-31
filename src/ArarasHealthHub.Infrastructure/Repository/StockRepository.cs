@@ -20,7 +20,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<List<Stock>> GetAllAsync()
         {
-            var allStockEntries = await _context.Stock.Include(s => s.Product).ToListAsync();
+            var allStockEntries = await _context.Stocks.Include(s => s.Product).ToListAsync();
             var filteredStock = new List<Stock>();
             var groupedByProduct = allStockEntries.GroupBy(s => s.ProductId);
 
@@ -43,17 +43,17 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<Stock?> GetByProductIdAsync(int productId)
         {
-            return await _context.Stock.Include(p => p.Product).FirstOrDefaultAsync(s => s.ProductId == productId);
+            return await _context.Stocks.Include(p => p.Product).FirstOrDefaultAsync(s => s.ProductId == productId);
 
         }
 
         public async Task UpdateStock(int productId, int quantity, string batch)
         {
-            var stock = await _context.Stock.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == batch);
+            var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == batch);
 
             if (stock == null)
             {
-                await _context.Stock.AddAsync(new Stock
+                await _context.Stocks.AddAsync(new Stock
                 {
                     ProductId = productId,
                     Quantity = quantity,
@@ -65,11 +65,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 stock.Quantity += quantity;
             }
 
-            var emptyStock = await _context.Stock.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == "" && s.Quantity == 0);
+            var emptyStock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == "" && s.Quantity == 0);
 
             if (emptyStock != null)
             {
-                _context.Stock.Remove(emptyStock);
+                _context.Stocks.Remove(emptyStock);
             }
 
             await _context.SaveChangesAsync();
