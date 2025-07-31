@@ -1,6 +1,7 @@
 using System.Reflection;
 using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
+using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
@@ -152,6 +153,7 @@ builder.Services.AddMediatR(typeof(GetAllEmployeesQuery).Assembly);
 builder.Services.AddMediatR(typeof(GetAllProductsQuery).Assembly);
 builder.Services.AddMediatR(typeof(GetAllFacilitiesQuery).Assembly);
 builder.Services.AddMediatR(typeof(GetAllReceivingsQuery).Assembly);
+builder.Services.AddMediatR(typeof(GetAllAccountsQuery).Assembly);
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 builder.Services.AddAutoMapper(typeof(SupplierProfile).Assembly);
@@ -159,12 +161,14 @@ builder.Services.AddAutoMapper(typeof(EmployeeProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(FacilityProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ReceivingProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(AccountProfile).Assembly);
 
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllEmployeesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllProductsQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllFacilitiesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllReceivingsQuery).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(GetAllAccountsQuery).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
 
 var app = builder.Build();

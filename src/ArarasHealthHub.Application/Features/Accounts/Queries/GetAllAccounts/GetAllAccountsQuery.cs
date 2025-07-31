@@ -8,5 +8,5 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 {
-    public class GetAllAccountsQuery : IRequest<ApiResponse<List<AccountDetailsDto>>>;
+    public class GetAllAccountsQuery : PagedRequest, IRequest<PagedResponse<AccountDetailsDto>> { }
 }

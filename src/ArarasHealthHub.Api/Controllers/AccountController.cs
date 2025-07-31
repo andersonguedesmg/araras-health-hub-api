@@ -74,14 +74,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getAll")]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetAllAccounts()
+        [ProducesResponseType(typeof(PagedResponse<AccountDetailsDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllAccountsQuery query)
         {
-            var query = new GetAllAccountsQuery();
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
