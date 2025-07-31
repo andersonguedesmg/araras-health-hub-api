@@ -20,7 +20,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItems)
+                .Include(r => r.ReceivingItems)
                     .ThenInclude(ri => ri.Product)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
@@ -31,7 +31,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItems)
+                .Include(r => r.ReceivingItems)
                     .ThenInclude(ri => ri.Product)
                 .ToListAsync();
         }

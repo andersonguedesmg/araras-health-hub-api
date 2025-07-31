@@ -12,6 +12,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/stock")]
     [ApiController]
+    // [Authorize]
     public class StockController : ControllerBase
     {
     //     private readonly IStockRepository _stockRepo;

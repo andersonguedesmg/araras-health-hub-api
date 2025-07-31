@@ -448,19 +448,26 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Batch")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CurrentQuantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
                     b.ToTable("Stocks");
                 });
@@ -919,7 +926,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.Receiving", "Receiving")
-                        .WithMany("ReceivedItems")
+                        .WithMany("ReceivingItems")
                         .HasForeignKey("ReceivingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -932,8 +939,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Stock", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                        .WithOne("Stock")
+                        .HasForeignKey("ArarasHealthHub.Domain.Entities.Stock", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1012,9 +1019,14 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("OrderItems");
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Stock");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
-                    b.Navigation("ReceivedItems");
+                    b.Navigation("ReceivingItems");
                 });
 #pragma warning restore 612, 618
         }

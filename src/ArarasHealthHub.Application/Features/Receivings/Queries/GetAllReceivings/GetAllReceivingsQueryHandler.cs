@@ -29,7 +29,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItems)
+                .Include(r => r.ReceivingItems)
                     .ThenInclude(ri => ri.Product);
 
             var totalCount = await query.CountAsync(cancellationToken);

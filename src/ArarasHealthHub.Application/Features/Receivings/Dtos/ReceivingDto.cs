@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Dtos
         public EmployeeDto? Responsible { get; set; }
         public AccountDto? Account { get; set; }
 
-        public List<ReceivingItemDto> ReceivedItems { get; set; } = new();
+        public List<ReceivingItemDto> ReceivingItems { get; set; } = new();
 
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }

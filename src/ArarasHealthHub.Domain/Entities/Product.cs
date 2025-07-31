@@ -19,5 +19,7 @@ namespace ArarasHealthHub.Domain.Entities
 
         [MaxLength(100)]
         public string Category { get; set; } = string.Empty;
+
+        public Stock? Stock { get; set; }
     }
 }

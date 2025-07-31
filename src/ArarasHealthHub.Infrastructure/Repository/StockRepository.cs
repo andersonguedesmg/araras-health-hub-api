@@ -11,68 +11,68 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class StockRepository : IStockRepository
     {
-        private readonly ApplicationDbContext _context;
+        // private readonly ApplicationDbContext _context;
 
-        public StockRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        // public StockRepository(ApplicationDbContext context)
+        // {
+        //     _context = context;
+        // }
 
-        public async Task<List<Stock>> GetAllAsync()
-        {
-            var allStockEntries = await _context.Stocks.Include(s => s.Product).ToListAsync();
-            var filteredStock = new List<Stock>();
-            var groupedByProduct = allStockEntries.GroupBy(s => s.ProductId);
+        // public async Task<List<Stock>> GetAllAsync()
+        // {
+        //     var allStockEntries = await _context.Stocks.Include(s => s.Product).ToListAsync();
+        //     var filteredStock = new List<Stock>();
+        //     var groupedByProduct = allStockEntries.GroupBy(s => s.ProductId);
 
-            foreach (var group in groupedByProduct)
-            {
-                if (group.Count() == 1)
-                {
-                    var singleEntry = group.First();
-                    filteredStock.Add(singleEntry);
-                }
-                else
-                {
-                    var validEntries = group.Where(s => s.Quantity > 0 || !string.IsNullOrEmpty(s.Batch)).ToList();
-                    filteredStock.AddRange(validEntries);
-                }
-            }
+        //     foreach (var group in groupedByProduct)
+        //     {
+        //         if (group.Count() == 1)
+        //         {
+        //             var singleEntry = group.First();
+        //             filteredStock.Add(singleEntry);
+        //         }
+        //         else
+        //         {
+        //             var validEntries = group.Where(s => s.CurrentQuantity > 0 || !string.IsNullOrEmpty(s.Batch)).ToList();
+        //             filteredStock.AddRange(validEntries);
+        //         }
+        //     }
 
-            return filteredStock;
-        }
+        //     return filteredStock;
+        // }
 
-        public async Task<Stock?> GetByProductIdAsync(int productId)
-        {
-            return await _context.Stocks.Include(p => p.Product).FirstOrDefaultAsync(s => s.ProductId == productId);
+        // public async Task<Stock?> GetByProductIdAsync(int productId)
+        // {
+        //     return await _context.Stocks.Include(p => p.Product).FirstOrDefaultAsync(s => s.ProductId == productId);
 
-        }
+        // }
 
-        public async Task UpdateStock(int productId, int quantity, string batch)
-        {
-            var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == batch);
+        // public async Task UpdateStock(int productId, int quantity, string batch)
+        // {
+        //     var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == batch);
 
-            if (stock == null)
-            {
-                await _context.Stocks.AddAsync(new Stock
-                {
-                    ProductId = productId,
-                    Quantity = quantity,
-                    Batch = batch
-                });
-            }
-            else
-            {
-                stock.Quantity += quantity;
-            }
+        //     if (stock == null)
+        //     {
+        //         await _context.Stocks.AddAsync(new Stock
+        //         {
+        //             ProductId = productId,
+        //             CurrentQuantity = quantity,
+        //             Batch = batch
+        //         });
+        //     }
+        //     else
+        //     {
+        //         stock.CurrentQuantity += quantity;
+        //     }
 
-            var emptyStock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == "" && s.Quantity == 0);
+        //     var emptyStock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId && s.Batch == "" && s.CurrentQuantity == 0);
 
-            if (emptyStock != null)
-            {
-                _context.Stocks.Remove(emptyStock);
-            }
+        //     if (emptyStock != null)
+        //     {
+        //         _context.Stocks.Remove(emptyStock);
+        //     }
 
-            await _context.SaveChangesAsync();
-        }
+        //     await _context.SaveChangesAsync();
+        // }
     }
 }

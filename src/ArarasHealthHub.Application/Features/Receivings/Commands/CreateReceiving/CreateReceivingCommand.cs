@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
+using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 
@@ -16,8 +17,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
         int SupplierId,
         int ResponsibleId,
         int AccountId,
-        List<CreateReceivingItemCommand> ReceivedItems
-    ) : IRequest<ApiResponse<ReceivingDto>>;
+        List<CreateReceivingItemCommand> ReceivingItems
+    ) : IRequest<ApiResponse<ReceivingDto>>, ITransactionalRequest;
 
     public record CreateReceivingItemCommand(
         int Quantity,

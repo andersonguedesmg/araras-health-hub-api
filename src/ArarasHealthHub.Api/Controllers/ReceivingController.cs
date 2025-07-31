@@ -26,18 +26,18 @@ namespace ArarasHealthHub.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
-        [ProducesResponseType(typeof(ApiResponse<ReceivingDto>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ApiResponse<ReceivingDto>), StatusCodes.Status400BadRequest)]
+        [HttpPost("create")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create(CreateReceivingCommand command)
         {
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("getById/{id}")]
         [ProducesResponseType(typeof(ApiResponse<ReceivingDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<ReceivingDto>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var query = new GetReceivingByIdQuery(id);

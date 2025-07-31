@@ -192,8 +192,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Batch = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CurrentQuantity = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -632,7 +634,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Stocks_ProductId",
                 table: "Stocks",
-                column: "ProductId");
+                column: "ProductId",
+                unique: true);
         }
 
         /// <inheritdoc />

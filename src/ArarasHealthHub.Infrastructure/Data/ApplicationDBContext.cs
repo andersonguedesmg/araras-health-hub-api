@@ -124,6 +124,12 @@ namespace ArarasHealthHub.Infrastructure.Data
                 new OrderStatus { Id = 4, Description = "Finalizado" },
             };
             builder.Entity<OrderStatus>().HasData(orderStatus);
+
+            builder.Entity<Stock>(entity =>
+            {
+                entity.Property(e => e.CurrentQuantity)
+                    .HasPrecision(18, 2);
+            });
         }
     }
 }
