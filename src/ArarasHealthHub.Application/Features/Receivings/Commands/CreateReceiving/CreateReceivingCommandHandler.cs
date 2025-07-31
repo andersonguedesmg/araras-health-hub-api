@@ -71,6 +71,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                 var receivingItem = _mapper.Map<ReceivingItem>(itemCommand);
                 receivingItem.Product = product;
                 receivingItem.Receiving = receiving;
+                receivingItem.TotalValue = receivingItem.Quantity * receivingItem.UnitValue;
                 receiving.ReceivingItems.Add(receivingItem);
 
                 var updateStockCommand = new UpdateProductStockCommand(

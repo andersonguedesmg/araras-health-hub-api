@@ -13,5 +13,5 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
         int ProductId,
         decimal Quantity,
         StockOperationTypeEnum OperationType
-    ) : IRequest<ApiResponse<bool>>, ITransactionalRequest;
+    ) : IRequest<ApiResponse<bool>>;
 }
