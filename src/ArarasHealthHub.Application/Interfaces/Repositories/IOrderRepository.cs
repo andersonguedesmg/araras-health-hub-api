@@ -6,13 +6,10 @@ using ArarasHealthHub.Domain.Entities;
 
 namespace ArarasHealthHub.Application.Interfaces.Repositories
 {
-    public interface IOrderRepository
+    public interface IOrderRepository : IBaseRepository<Order>
     {
-        Task<Order> CreateAsync(Order order);
-        Task<Order?> GetByIdAsync(int id);
-        Task<List<Order>> GetAllAsync();
+        Task<Order?> GetByIdWithItemsAsync(int id);
         Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem);
-        Task UpdateAsync(Order order);
         Task UpdateOrderItemAsync(OrderItem orderItem);
     }
 }

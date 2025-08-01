@@ -9,42 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
 {
-    public class OrderRepository : IOrderRepository
+    public class OrderRepository : BaseRepository<Order>, IOrderRepository
     {
-        private readonly ApplicationDbContext _context;
+        public OrderRepository(ApplicationDbContext context) : base(context) { }
 
-        public OrderRepository(ApplicationDbContext context)
+        public async Task<Order?> GetByIdWithItemsAsync(int id)
         {
-            _context = context;
-        }
-
-        public async Task<Order> CreateAsync(Order orderModel)
-        {
-            await _context.Orders.AddAsync(orderModel);
-            await _context.SaveChangesAsync();
-            return orderModel;
-        }
-
-        public async Task<Order?> GetByIdAsync(int id)
-        {
-            return await _context.Orders
-                .Include(o => o.OrderStatus)
-                .Include(o => o.CreatedByEmployee)
-                // .Include(o => o.CreatedByAccount)
+            return await _dbSet
                 .Include(o => o.OrderItems)
-                .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
-        }
-
-        public async Task<List<Order>> GetAllAsync()
-        {
-            return await _context.Orders
-                .Include(o => o.OrderStatus)
-                .Include(o => o.CreatedByEmployee)
-                // .Include(o => o.CreatedByAccount)
-                .Include(o => o.OrderItems)
-                .ThenInclude(i => i.Product)
-                .ToListAsync();
         }
 
         public async Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem)
@@ -52,12 +25,6 @@ namespace ArarasHealthHub.Infrastructure.Repository
             await _context.OrderItems.AddAsync(orderItem);
             await _context.SaveChangesAsync();
             return orderItem;
-        }
-
-        public async Task UpdateAsync(Order order)
-        {
-            _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateOrderItemAsync(OrderItem orderItem)

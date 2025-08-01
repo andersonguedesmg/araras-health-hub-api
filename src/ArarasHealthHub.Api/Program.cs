@@ -8,12 +8,14 @@ using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
+using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Application.Profiles;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Infrastructure.Data;
+using ArarasHealthHub.Infrastructure.Persistence.Repositories;
 using ArarasHealthHub.Infrastructure.Repository;
 using ArarasHealthHub.Infrastructure.Services;
 using FluentValidation;
@@ -141,6 +143,7 @@ builder.Services.AddScoped<IReceivingItemRepository, ReceivingItemRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddCors(options =>
 {

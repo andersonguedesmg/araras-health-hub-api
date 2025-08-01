@@ -3,7 +3,9 @@ namespace ArarasHealthHub.Shared.Core
     public static class ApiMessages
     {
         public static string NotFound(string entity) => $"{entity} não encontrado.";
+        public static string NotItemsFound(string entity) => $"Nenhum {entity} encontrado.";
         public static string FoundSuccessfully(string entity) => $"{entity} encontrado com sucesso.";
+        public static string ItemsFoundSuccessfully(string entity) => $"{entity}s encontrados com sucesso.";
         public static string CreatedSuccessfully(string entity) => $"{entity} criado com sucesso.";
         public static string UpdatedSuccessfully(string entity) => $"{entity} atualizado com sucesso.";
         public static string DeletedSuccessfully(string entity) => $"{entity} excluído com sucesso.";
@@ -44,5 +46,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string StockSearchByIdSuccessful = "Busca de estoque por ID de produto realizada com sucesso.";
         public const string NoLowStockProductsFound = "Nenhum produto com estoque baixo encontrado.";
         public const string LowStockProductsFoundSuccessfully = "Lista de produtos com estoque baixo retornada com sucesso.";
+        public const string OrderApprovedSuccessfully = "Pedido aprovado com sucesso.";
+        public const string OrderCannotBeApproved = "O pedido não pode ser aprovado. O status atual não é 'Pendente'.";
     }
 }
