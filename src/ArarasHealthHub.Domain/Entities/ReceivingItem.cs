@@ -4,9 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
+    [Comment("Representa um item específico de um recebimento.")]
     public class ReceivingItem : BaseEntity
     {
         [Required]
@@ -28,11 +30,13 @@ namespace ArarasHealthHub.Domain.Entities
         public DateTime ExpiryDate { get; set; }
 
         [Required]
+        [ForeignKey("Product")]
         public int ProductId { get; set; }
 
         public Product Product { get; set; } = null!;
 
         [Required]
+        [ForeignKey("Receiving")]
         public int ReceivingId { get; set; }
 
         public Receiving Receiving { get; set; } = null!;
