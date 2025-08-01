@@ -6,6 +6,7 @@ using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
@@ -139,6 +140,7 @@ builder.Services.AddScoped<IReceivingRepository, ReceivingRepository>();
 builder.Services.AddScoped<IReceivingItemRepository, ReceivingItemRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -164,6 +166,7 @@ builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(FacilityProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ReceivingProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(AccountProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(StockProfile).Assembly);
 
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllEmployeesQuery).Assembly);
@@ -171,6 +174,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(GetAllProductsQuery).Assembly)
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllFacilitiesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllReceivingsQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllAccountsQuery).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(GetLowStockAlertsQuery).Assembly);
 
 var app = builder.Build();
 

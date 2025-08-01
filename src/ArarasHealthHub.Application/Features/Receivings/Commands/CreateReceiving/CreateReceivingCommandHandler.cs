@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
-using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
+using ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockEntry;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
@@ -59,6 +58,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             }
 
             decimal totalCalculatedValue = 0;
+            var newReceivingItems = new List<ReceivingItem>();
 
             foreach (var itemCommand in request.ReceivingItems)
             {
@@ -70,39 +70,34 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
 
                 var receivingItem = _mapper.Map<ReceivingItem>(itemCommand);
                 receivingItem.Product = product;
-                receivingItem.Receiving = receiving;
                 receivingItem.TotalValue = receivingItem.Quantity * receivingItem.UnitValue;
-                receiving.ReceivingItems.Add(receivingItem);
 
-                var updateStockCommand = new UpdateProductStockCommand(
-                    ProductId: itemCommand.ProductId,
-                    Quantity: itemCommand.Quantity,
-                    OperationType: StockOperationTypeEnum.Receipt
-                );
-
-                var stockUpdateResult = await _mediator.Send(updateStockCommand, cancellationToken);
-                if (!stockUpdateResult.Success)
-                {
-                    _logger.LogError("Falha ao atualizar estoque para o produto {ProductId}: {Errors}", itemCommand.ProductId, stockUpdateResult.Message);
-
-                    throw new ApplicationException($"Falha ao atualizar estoque para o produto {itemCommand.ProductId}: {stockUpdateResult.Message}");
-                }
-
-                totalCalculatedValue += receivingItem.UnitValue * receivingItem.Quantity;
+                newReceivingItems.Add(receivingItem);
+                totalCalculatedValue += receivingItem.TotalValue;
             }
 
+            receiving.ReceivingItems = newReceivingItems;
             receiving.TotalValue = totalCalculatedValue;
 
-            _dbContext.Receivings.Add(receiving);
+            await _dbContext.Receivings.AddAsync(receiving, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Recebimento {InvoiceNumber} e itens processados. Estoque atualizado.", request.InvoiceNumber);
+            _logger.LogInformation("Recebimento {ReceivingId} criado com sucesso. Agora gerando movimentos de estoque.", receiving.Id);
+
+            foreach (var item in receiving.ReceivingItems)
+            {
+                var createStockEntryCommand = new CreateStockEntryCommand(
+                    ProductId: item.ProductId,
+                    Quantity: item.Quantity,
+                    SourceDocumentId: receiving.Id,
+                    SourceDocumentType: "Receiving",
+                    ResponsibleId: receiving.ResponsibleId
+                );
+                await _mediator.Send(createStockEntryCommand, cancellationToken);
+            }
 
             var receivingDto = _mapper.Map<ReceivingDto>(receiving);
-            return new ApiResponse<ReceivingDto>(
-                StatusCodes.Status200OK, // Ou Status201Created se for uma criação
-                "Recebimento criado e estoque atualizado com sucesso.",
-                receivingDto
-            );
+            return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, "Recebimento e movimentos de estoque criados com sucesso.", receivingDto);
         }
     }
 }

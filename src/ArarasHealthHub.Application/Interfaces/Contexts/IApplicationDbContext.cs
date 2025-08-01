@@ -24,6 +24,7 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
         DbSet<Order> Orders { get; set; }
         DbSet<OrderItem> OrderItems { get; set; }
         DbSet<OrderStatus> OrderStatuses { get; set; }
+        DbSet<StockMovement> StockMovements { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

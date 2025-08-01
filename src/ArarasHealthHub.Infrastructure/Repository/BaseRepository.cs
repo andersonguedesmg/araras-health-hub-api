@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task AddAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
+            await AddWithoutSavingAsync(entity);
             await _context.SaveChangesAsync();
         }
 
@@ -51,6 +51,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task AddWithoutSavingAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
         }
     }
 }
