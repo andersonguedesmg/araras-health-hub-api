@@ -16,6 +16,8 @@ namespace ArarasHealthHub.Application.Profiles
             CreateMap<Product, ProductDto>();
 
             CreateMap<Stock, StockDto>();
+
+            CreateMap<Stock, StockOverviewDto>();
         }
     }
 }

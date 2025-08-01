@@ -129,6 +129,9 @@ namespace ArarasHealthHub.Infrastructure.Data
             {
                 entity.Property(e => e.CurrentQuantity)
                     .HasPrecision(18, 2);
+
+                entity.Property(e => e.MinQuantity)
+                    .HasPrecision(18, 2);
             });
         }
     }
