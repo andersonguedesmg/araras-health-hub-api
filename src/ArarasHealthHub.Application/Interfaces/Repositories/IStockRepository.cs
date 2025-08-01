@@ -8,8 +8,9 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
 {
     public interface IStockRepository
     {
-        // Task UpdateStock(int productId, int quantity, string batch);
-        // Task<List<Stock>> GetAllAsync();
-        // Task<Stock?> GetByProductIdAsync(int productId);
+        Task<Stock?> GetByProductIdAsync(int productId);
+        Task<IEnumerable<Stock>> GetStockOverviewAsync(int pageNumber, int pageSize, string orderBy, string sortOrder);
+        Task<IEnumerable<Stock>> GetLowStockAsync();
+        Task<int> GetTotalCountAsync();
     }
 }

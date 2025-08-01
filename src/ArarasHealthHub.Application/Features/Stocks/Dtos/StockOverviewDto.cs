@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Features.Products.Dtos;
 
-namespace ArarasHealthHub.Domain.Entities
+namespace ArarasHealthHub.Application.Features.Stocks.Dtos
 {
-    public class Stock : BaseEntity
+    public class StockOverviewDto
     {
+        public int Id { get; set; }
         public int ProductId { get; set; }
-        public Product Product { get; set; } = null!;
+        public ProductDto Product { get; set; } = null!;
         public decimal CurrentQuantity { get; set; }
         public decimal MinQuantity { get; set; }
     }

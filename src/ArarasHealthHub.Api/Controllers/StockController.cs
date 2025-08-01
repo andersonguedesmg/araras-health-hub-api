@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared;
+using ArarasHealthHub.Application.Features.Stocks.Dtos;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview;
+using ArarasHealthHub.Shared.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,48 +18,39 @@ namespace ArarasHealthHub.Api.Controllers
     // [Authorize]
     public class StockController : ControllerBase
     {
-    //     private readonly IStockRepository _stockRepo;
+        private readonly IMediator _mediator;
 
-    //     public StockController(IStockRepository stockRepo)
-    //     {
-    //         _stockRepo = stockRepo;
-    //     }
+        public StockController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
-    //     [HttpGet]
-    //     [Route("getAll")]
-    //     [Authorize]
-    //     public async Task<IActionResult> GetAll()
-    //     {
-    //         var stock = await _stockRepo.GetAllAsync();
+        [HttpGet("getAll")]
+        [ProducesResponseType(typeof(PagedResponse<StockOverviewDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll([FromQuery] GetStockOverviewQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
 
-    //         if (stock == null || !stock.Any())
-    //         {
-    //             return NotFound(new ApiResponse<List<Stock>>(StatusCodes.Status404NotFound, ApiMessages.MsgNotStocksFound, null!));
-    //         }
+        [HttpGet("getById/{productId}")]
+        [ProducesResponseType(typeof(ApiResponse<StockDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByProductId(int productId)
+        {
+            var query = new GetStockByProductIdQuery(productId);
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
 
-    //         return Ok(new ApiResponse<List<Stock>>(StatusCodes.Status200OK, ApiMessages.MsgStocksFoundSuccessfully, stock));
-    //     }
-
-    //     [HttpGet]
-    //     [Route("getByProductId/{productId:int}")]
-    //     [Authorize]
-    //     public async Task<IActionResult> GetByProductId([FromRoute] int productId)
-    //     {
-    //         var stock = await _stockRepo.GetByProductIdAsync(productId);
-
-    //         if (stock == null)
-    //         {
-    //             return NotFound(new ApiResponse<Stock>(StatusCodes.Status404NotFound, ApiMessages.MsgProductStockFoundSuccessfully, null!));
-    //         }
-
-    //         return Ok(new ApiResponse<Stock>(StatusCodes.Status200OK, ApiMessages.MsgProductStockNotFound, stock));
-    //     }
-
-    //     [HttpPost("updateInternal/{productId}/{quantity}/{batch}")]
-    //     internal IActionResult UpdateStockInternal(int productId, int quantity, string batch)
-    //     {
-    //         _stockRepo.UpdateStock(productId, quantity, batch);
-    //         return Ok();
-    //     }
+        [HttpGet("low-stock")]
+        [ProducesResponseType(typeof(ApiResponse<List<StockDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetLowStockAlerts()
+        {
+            var query = new GetLowStockAlertsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }
