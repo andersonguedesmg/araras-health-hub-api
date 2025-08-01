@@ -50,7 +50,7 @@ namespace ArarasHealthHub.Application.Behaviors
                 var response = new TResponse
                 {
                     StatusCode = StatusCodes.Status400BadRequest,
-                    Message = ApiMessages.MsgValidationErrors,
+                    Message = ApiMessages.ValidationErrors,
                     Errors = errors,
                     Success = false
                 };

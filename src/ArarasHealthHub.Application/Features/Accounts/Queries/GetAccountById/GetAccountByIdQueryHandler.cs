@@ -32,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
 
             if (user == null)
             {
-                return new ApiResponse<AccountDetailsDto>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, null);
+                return new ApiResponse<AccountDetailsDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), null);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -63,7 +63,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
                 };
             }
 
-            return new ApiResponse<AccountDetailsDto>(StatusCodes.Status200OK, ApiMessages.MsgAccountFoundSuccessfully, accountDto);
+            return new ApiResponse<AccountDetailsDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Conta"), accountDto);
         }
     }
 }

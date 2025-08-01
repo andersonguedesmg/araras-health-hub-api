@@ -59,7 +59,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var stockMovementDto = _mapper.Map<StockMovementDto>(stockMovement);
-            return new ApiResponse<StockMovementDto>(StatusCodes.Status201Created, "Saída de estoque registrada com sucesso.", stockMovementDto);
+            return new ApiResponse<StockMovementDto>(StatusCodes.Status201Created, ApiMessages.RegisteredSuccessfully("Saída de estoque"), stockMovementDto);
         }
     }
 }

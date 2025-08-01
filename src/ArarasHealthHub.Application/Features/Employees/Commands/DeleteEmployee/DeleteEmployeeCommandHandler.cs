@@ -24,12 +24,12 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee
 
             if (existingEmployee == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgEmployeeNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Funcionário"), false);
             }
 
             await _employeeRepository.DeleteAsync(existingEmployee);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeDeletedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Funcionário"), true);
         }
     }
 }

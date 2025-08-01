@@ -24,7 +24,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusF
 
             if (existingFacility == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), false);
             }
 
             if (command.IsActive)
@@ -38,7 +38,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusF
 
             await _facilityRepository.UpdateAsync(existingFacility);
 
-            var message = command.IsActive ? ApiMessages.MsgFacilityActivatedSuccessfully : ApiMessages.MsgFacilityDeactivatedSuccessfully;
+            var message = command.IsActive ? ApiMessages.ActivatedSuccessfully("Unidade") : ApiMessages.DeactivatedSuccessfully("Unidade");
             return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
         }
     }

@@ -29,7 +29,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
             var facility = await _dbContext.Facilities.FirstOrDefaultAsync(f => f.Id == request.FacilityId, cancellationToken);
             if (facility == null)
             {
-                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, new List<AccountDetailsDto>());
+                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), new List<AccountDetailsDto>());
             }
 
             var users = await _dbContext.Users
@@ -39,7 +39,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
 
             if (!users.Any())
             {
-                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status200OK, $"Nenhuma conta encontrada para a Facility com ID {request.FacilityId}.", new List<AccountDetailsDto>());
+                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status200OK, ApiMessages.NoAccountsFoundForFacility(request.FacilityId), new List<AccountDetailsDto>());
             }
 
             var accountDetailsList = new List<AccountDetailsDto>();
@@ -76,7 +76,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
                 accountDetailsList.Add(accountDto);
             }
 
-            return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status200OK, $"Contas da Facility com ID {request.FacilityId} recuperadas com sucesso.", accountDetailsList);
+            return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status200OK, ApiMessages.AccountsFoundForFacility(request.FacilityId), accountDetailsList);
         }
     }
 }

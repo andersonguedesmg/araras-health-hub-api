@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusPro
 
             if (existingProduct == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgProductNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Produto"), false);
             }
 
             if (command.IsActive)
@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusPro
                 existingProduct.Deactivate();
             }
 
-            string message = command.IsActive ? ApiMessages.MsgProductActivatedSuccessfully : ApiMessages.MsgProductDisabledSuccessfully;
+            string message = command.IsActive ? ApiMessages.ActivatedSuccessfully("Produto") : ApiMessages.DeactivatedSuccessfully("Produto");
             return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
         }
     }

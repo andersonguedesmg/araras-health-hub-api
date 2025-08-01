@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
 
             if (existingSupplier == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), false);
             }
 
             _mapper.Map(request, existingSupplier);
@@ -36,7 +36,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
 
             await _supplierRepository.UpdateAsync(existingSupplier);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgSupplierUpdatedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Fornecedor"), true);
         }
     }
 }

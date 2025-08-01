@@ -36,11 +36,11 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingBy
 
             if (receiving == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"Recebimento com ID {request.Id} não encontrado.", false);
+                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Recebimento", request.Id), false);
             }
 
             var receivingDto = _mapper.Map<ReceivingDto>(receiving);
-            return new ApiResponse<ReceivingDto>(StatusCodes.Status200OK, "Busca por ID realizada com sucesso.", receivingDto);
+            return new ApiResponse<ReceivingDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Recebimento"), receivingDto);
         }
     }
 }

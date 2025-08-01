@@ -28,12 +28,12 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
 
             if (products == null)
             {
-                return new ApiResponse<ProductDto>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, null!);
+                return new ApiResponse<ProductDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Produto"), null!);
             }
 
             var productDto = _mapper.Map<ProductDto>(products);
 
-            return new ApiResponse<ProductDto>(StatusCodes.Status200OK, ApiMessages.MsgSupplierFoundSuccessfully, productDto);
+            return new ApiResponse<ProductDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Produto"), productDto);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
 
             if (existingEmployee == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgEmployeeNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Funcionário"), false);
             }
 
             _mapper.Map(request, existingEmployee);
@@ -36,7 +36,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
 
             await _employeeRepository.UpdateAsync(existingEmployee);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeUpdatedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Funcionário"), true);
         }
     }
 }

@@ -28,14 +28,14 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
             var existingProduct = await _productRepository.GetByProductNameAsync(request.Name);
             if (existingProduct != null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.MsgCnpjAlreadyExists, 0);
+                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.ProductAlreadyExists, 0);
             }
 
             var product = _mapper.Map<Product>(request);
 
             await _productRepository.AddAsync(product);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.MsgSupplierCreatedSuccessfully, product.Id);
+            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Produto"), product.Id);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
                 _logger.LogWarning("Produto com ID {ProductId} não encontrado para atualização de estoque.", request.ProductId);
                 return new ApiResponse<bool>(
                     StatusCodes.Status404NotFound,
-                    $"Produto com ID {request.ProductId} não encontrado.",
+                    ApiMessages.NotFoundWithId("Produto", request.ProductId),
                     false
                 );
             }
@@ -77,7 +77,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
             product.Stock.SetUpdatedOn();
 
             _logger.LogInformation("Atualização de estoque do produto {ProductId} processada com sucesso. Nova Quantidade: {NewQuantity}", product.Id, product.Stock.CurrentQuantity);
-            return new ApiResponse<bool>(StatusCodes.Status200OK, "Estoque do produto atualizado com sucesso.", true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.ProductStockUpdatedSuccessfully, true);
         }
     }
 }

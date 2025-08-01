@@ -25,12 +25,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
 
             if (user == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
             }
 
             if (user.IsActive == request.IsActive)
             {
-                return new ApiResponse<bool>(StatusCodes.Status200OK, $"O status da conta já esta {(request.IsActive ? "ativada" : "desativada")}.", true);
+                var statusText = request.IsActive ? "ativada" : "desativada";
+                return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.AccountStatusAlreadyAsDesired(statusText), true);
             }
 
             user.IsActive = request.IsActive;
@@ -41,10 +42,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
             if (!updateResult.Succeeded)
             {
                 var identityErrors = updateResult.Errors.Select(e => e.Description).ToList();
-                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.MsgFailedToChangeAccountStatus, identityErrors, false);
+                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToChangeAccountStatus, identityErrors, false);
             }
 
-            string successMessage = request.IsActive ? ApiMessages.MsgAccountActivatedSuccessfully : ApiMessages.MsgAccountDisabledSuccessfully;
+            string successMessage = request.IsActive ? ApiMessages.ActivatedSuccessfully("Conta") : ApiMessages.DeactivatedSuccessfully("Conta");
             return new ApiResponse<bool>(StatusCodes.Status200OK, successMessage, true);
         }
     }

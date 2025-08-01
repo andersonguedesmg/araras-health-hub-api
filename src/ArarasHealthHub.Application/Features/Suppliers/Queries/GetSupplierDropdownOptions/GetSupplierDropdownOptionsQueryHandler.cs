@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
 
             return new ApiResponse<List<SupplierNameDto>>(
                 StatusCodes.Status200OK,
-                ApiMessages.MsgOperationSuccessful,
+                ApiMessages.OperationSuccessful,
                 dropdownOptions
             );
         }

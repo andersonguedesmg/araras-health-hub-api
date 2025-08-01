@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDro
 
             return new ApiResponse<List<FacilityNameDto>>(
                 StatusCodes.Status200OK,
-                ApiMessages.MsgOperationSuccessful,
+                ApiMessages.OperationSuccessful,
                 dropdownOptions
             );
         }

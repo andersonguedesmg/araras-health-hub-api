@@ -44,7 +44,7 @@ namespace ArarasHealthHub.Api.Middlewares
             context.Response.ContentType = MediaTypeNames.Application.Json;
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-            var errorMessage = ApiMessages.MsgInternalServerError;
+            var errorMessage = ApiMessages.InternalServerError;
             var errorDetails = _isDevelopment ? exception.ToString() : null;
 
             var response = new ApiResponse<object>(
@@ -72,7 +72,7 @@ namespace ArarasHealthHub.Api.Middlewares
 
             var response = new ApiResponse<object>(
                 StatusCodes.Status404NotFound,
-                ApiMessages.MsgNotFound,
+                ApiMessages.ResourceNotFound,
                 false
             );
 

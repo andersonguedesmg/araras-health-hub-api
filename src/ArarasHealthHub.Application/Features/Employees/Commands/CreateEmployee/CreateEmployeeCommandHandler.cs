@@ -27,14 +27,14 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
             var existingEmployee = await _employeeRepository.GetByCpfAsync(request.Cpf);
             if (existingEmployee != null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.MsgCpfAlreadyExists, 0);
+                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.CpfAlreadyExists, 0);
             }
 
             var employee = _mapper.Map<Employee>(request);
 
             await _employeeRepository.AddAsync(employee);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.MsgEmployeeCreatedSuccessfully, employee.Id);
+            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Funcionário"), employee.Id);
         }
     }
 }

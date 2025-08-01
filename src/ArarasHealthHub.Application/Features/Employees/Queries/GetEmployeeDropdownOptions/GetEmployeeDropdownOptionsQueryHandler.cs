@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDrop
 
             return new ApiResponse<List<EmployeeNameDto>>(
                 StatusCodes.Status200OK,
-                ApiMessages.MsgOperationSuccessful,
+                ApiMessages.OperationSuccessful,
                 dropdownOptions
             );
         }

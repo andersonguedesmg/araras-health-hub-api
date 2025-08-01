@@ -28,12 +28,12 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
 
             if (employee == null)
             {
-                return new ApiResponse<EmployeeDto>(StatusCodes.Status404NotFound, ApiMessages.MsgEmployeeNotFound, null!);
+                return new ApiResponse<EmployeeDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), null!);
             }
 
             var employeeDto = _mapper.Map<EmployeeDto>(employee);
 
-            return new ApiResponse<EmployeeDto>(StatusCodes.Status200OK, ApiMessages.MsgEmployeeFoundSuccessfully, employeeDto);
+            return new ApiResponse<EmployeeDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Unidade"), employeeDto);
         }
     }
 }

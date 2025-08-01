@@ -31,12 +31,12 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity
 
             if (stock == null)
             {
-                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, $"Estoque para o produto com ID {request.ProductId} não encontrado.", false);
+                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
             }
 
             if (request.NewMinQuantity < 0)
             {
-                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, "A quantidade mínima não pode ser um valor negativo.", false);
+                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, ApiMessages.MinimumQuantityCannotBeNegative, false);
             }
 
             stock.MinQuantity = request.NewMinQuantity;
@@ -44,7 +44,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var stockDto = _mapper.Map<StockDto>(stock);
-            return new ApiResponse<StockDto>(StatusCodes.Status200OK, "Quantidade mínima atualizada com sucesso.", stockDto);
+            return new ApiResponse<StockDto>(StatusCodes.Status200OK, ApiMessages.MinimumQuantityUpdatedSuccessfully, stockDto);
         }
     }
 }

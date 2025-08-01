@@ -28,12 +28,12 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById
 
             if (supplier == null)
             {
-                return new ApiResponse<SupplierDto>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, null!);
+                return new ApiResponse<SupplierDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), null!);
             }
 
             var supplierDto = _mapper.Map<SupplierDto>(supplier);
 
-            return new ApiResponse<SupplierDto>(StatusCodes.Status200OK, ApiMessages.MsgSupplierFoundSuccessfully, supplierDto);
+            return new ApiResponse<SupplierDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Fornecedor"), supplierDto);
         }
     }
 }

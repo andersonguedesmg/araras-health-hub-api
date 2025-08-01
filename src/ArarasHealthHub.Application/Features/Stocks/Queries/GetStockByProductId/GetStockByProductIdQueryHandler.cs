@@ -28,11 +28,11 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductI
 
             if (stock == null)
             {
-                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, $"Estoque para o produto com ID {request.ProductId} não encontrado.", false);
+                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
             }
 
             var stockDto = _mapper.Map<StockDto>(stock);
-            return new ApiResponse<StockDto>(StatusCodes.Status200OK, "Busca de estoque por ID de produto realizada com sucesso.", stockDto);
+            return new ApiResponse<StockDto>(StatusCodes.Status200OK, ApiMessages.StockSearchByIdSuccessful, stockDto);
         }
     }
 }

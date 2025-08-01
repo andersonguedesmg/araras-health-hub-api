@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword
 
             if (user == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -34,12 +34,12 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword
 
             if (result.Succeeded)
             {
-                return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgPasswordResetSuccessfully, true);
+                return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.PasswordResetSuccessfully, true);
             }
             else
             {
                 var errors = string.Join(" ", result.Errors.Select(e => e.Description));
-                return new ApiResponse<bool>(StatusCodes.Status400BadRequest, $"Falha ao redefinir a senha: {errors}", false);
+                return new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.PasswordResetFailed(errors), false);
             }
         }
     }

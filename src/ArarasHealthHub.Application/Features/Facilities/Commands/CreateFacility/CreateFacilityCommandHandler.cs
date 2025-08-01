@@ -27,14 +27,14 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacilit
             var existingFacility = await _facilityRepository.GetByNameAsync(request.Name);
             if (existingFacility != null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.MsgFacilityAlreadyExists, 0);
+                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.FacilityAlreadyExists, 0);
             }
 
             var facility = _mapper.Map<Facility>(request);
 
             await _facilityRepository.AddAsync(facility);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.MsgFacilityCreatedSuccessfully, facility.Id);
+            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Unidade"), facility.Id);
         }
     }
 }

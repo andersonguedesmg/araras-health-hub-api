@@ -24,12 +24,12 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.DeleteSupplier
 
             if (existingSupplier == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), false);
             }
 
             await _supplierRepository.DeleteAsync(existingSupplier);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgSupplierDeletedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Fornecedor"), true);
         }
     }
 }

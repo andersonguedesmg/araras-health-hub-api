@@ -24,7 +24,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.ChangeStatusSu
 
             if (existingSupplier == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgSupplierNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), false);
             }
 
             if (command.IsActive)
@@ -38,7 +38,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.ChangeStatusSu
 
             await _supplierRepository.UpdateAsync(existingSupplier);
 
-            var message = command.IsActive ? ApiMessages.MsgSupplierActivatedSuccessfully : ApiMessages.MsgSupplierDeactivatedSuccessfully;
+            var message = command.IsActive ? ApiMessages.ActivatedSuccessfully("Fornecedor") : ApiMessages.DeactivatedSuccessfully("Fornecedor");
             return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
         }
     }

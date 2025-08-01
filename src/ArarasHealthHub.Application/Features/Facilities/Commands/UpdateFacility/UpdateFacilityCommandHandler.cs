@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacilit
 
             if (existingFacility == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), false);
             }
 
             _mapper.Map(request, existingFacility);
@@ -36,7 +36,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacilit
 
             await _facilityRepository.UpdateAsync(existingFacility);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgFacilityUpdatedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Unidade"), true);
         }
     }
 }

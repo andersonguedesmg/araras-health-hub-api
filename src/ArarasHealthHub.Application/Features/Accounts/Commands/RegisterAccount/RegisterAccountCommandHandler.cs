@@ -7,7 +7,6 @@ using ArarasHealthHub.Application.Features.Role.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Domain.Interfaces;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -39,12 +38,12 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
             var facilityExists = await _facilityRepo.FacilityExists(request.FacilityId);
             if (!facilityExists)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.MsgFacilityDoesNotExist, false);
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.FacilityDoesNotExist, false);
             }
 
             if (await _userManager.FindByNameAsync(request.UserName) != null)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountNameAlreadyInUse, false);
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
             }
 
             var user = new ApplicationUser
@@ -62,7 +61,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
             {
                 var identityErrors = createUserResult.Errors.Select(e => e.Description).ToList();
                 var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.MsgFailedToCreateAccount, errorsDict, false);
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.FailedToCreateAccount, errorsDict, false);
             }
 
             if (!await _roleManager.RoleExistsAsync(request.Role))
@@ -76,7 +75,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
             {
                 var identityErrors = addRoleResult.Errors.Select(e => e.Description).ToList();
                 var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status500InternalServerError, ApiMessages.MsgFailedToAssignRoleToAccount, errorsDict, false);
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToAssignRoleToAccount, errorsDict, false);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -92,7 +91,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
                 Roles = roles.Select(r => new RoleDto { Name = r }).ToList()
             };
 
-            return new ApiResponse<NewAccountDto>(StatusCodes.Status201Created, ApiMessages.MsgAccountCreatedSuccessfully, NewAccountDto);
+            return new ApiResponse<NewAccountDto>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Conta"), NewAccountDto);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
 
             if (existingProduct == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgProductNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Produto"), false);
             }
 
             _mapper.Map(request, existingProduct);
@@ -36,7 +36,7 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
 
             await _productRepository.UpdateAsync(existingProduct);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgProductUpdatedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Produto"), true);
         }
     }
 }

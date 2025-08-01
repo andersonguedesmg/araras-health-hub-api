@@ -28,11 +28,11 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetStockMo
 
             if (movement == null)
             {
-                return new ApiResponse<StockMovementDto>(StatusCodes.Status404NotFound, "Movimento de estoque não encontrado.", false);
+                return new ApiResponse<StockMovementDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Movimento de estoque"), false);
             }
 
             var movementDto = _mapper.Map<StockMovementDto>(movement);
-            return new ApiResponse<StockMovementDto>(StatusCodes.Status200OK, "Movimento de estoque recuperado com sucesso.", movementDto);
+            return new ApiResponse<StockMovementDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Movimento de estoque"), movementDto);
         }
     }
 }

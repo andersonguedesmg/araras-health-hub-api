@@ -27,14 +27,14 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
             var existingSupplier = await _supplierRepository.GetByCnpjAsync(request.Cnpj);
             if (existingSupplier != null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.MsgCnpjAlreadyExists, 0);
+                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.CnpjAlreadyExists, 0);
             }
 
             var supplier = _mapper.Map<Supplier>(request);
 
             await _supplierRepository.AddAsync(supplier);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.MsgSupplierCreatedSuccessfully, supplier.Id);
+            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Fornecedor"), supplier.Id);
         }
     }
 }

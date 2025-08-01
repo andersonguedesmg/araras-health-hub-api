@@ -24,12 +24,12 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.DeleteFacilit
 
             if (existingFacility == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), false);
             }
 
             await _facilityRepository.DeleteAsync(existingFacility);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgFacilityDeletedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Unidade"), true);
         }
     }
 }

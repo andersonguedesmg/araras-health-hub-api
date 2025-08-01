@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdo
 
             return new ApiResponse<List<ProductNameDto>>(
                 StatusCodes.Status200OK,
-                ApiMessages.MsgOperationSuccessful,
+                ApiMessages.OperationSuccessful,
                 dropdownOptions
             );
         }

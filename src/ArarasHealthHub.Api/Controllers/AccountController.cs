@@ -136,7 +136,7 @@ namespace ArarasHealthHub.Api.Controllers
         {
             if (id != command.UserId)
             {
-                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgIdMismatch, false));
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
             }
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);

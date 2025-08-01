@@ -6,7 +6,6 @@ using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Role.Dtos;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Domain.Interfaces;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -40,19 +39,19 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
 
             if (user == null)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status401Unauthorized, ApiMessages.MsgAccountIncorrect, false);
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
             }
 
             if (!user.IsActive)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status403Forbidden, ApiMessages.MsgAccountDisabled, false);
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status403Forbidden, ApiMessages.AccountDisabled, false);
             }
 
             var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
 
             if (!signInResult.Succeeded)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status401Unauthorized, ApiMessages.MsgAccountIncorrect, false);
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -79,7 +78,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
                 Roles = roleDtos
             };
 
-            return new ApiResponse<NewAccountDto>(StatusCodes.Status200OK, ApiMessages.MsgAccountLoginSuccessful, NewAccountDto);
+            return new ApiResponse<NewAccountDto>(StatusCodes.Status200OK, ApiMessages.AccountLoginSuccessful, NewAccountDto);
         }
     }
 }

@@ -26,12 +26,12 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.DeleteProduct
 
             if (existingProduct == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgProductNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Produto"), false);
             }
 
             await _productRepository.DeleteAsync(existingProduct);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgProductDeletedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Produto"), true);
         }
     }
 }

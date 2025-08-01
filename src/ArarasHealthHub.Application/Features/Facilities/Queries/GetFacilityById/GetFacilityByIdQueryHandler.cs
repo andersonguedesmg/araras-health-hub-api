@@ -28,12 +28,12 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityByI
 
             if (facility == null)
             {
-                return new ApiResponse<FacilityDto>(StatusCodes.Status404NotFound, ApiMessages.MsgFacilityNotFound, null!);
+                return new ApiResponse<FacilityDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), null!);
             }
 
             var facilityDto = _mapper.Map<FacilityDto>(facility);
 
-            return new ApiResponse<FacilityDto>(StatusCodes.Status200OK, ApiMessages.MsgFacilityFoundSuccessfully, facilityDto);
+            return new ApiResponse<FacilityDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Unidade"), facilityDto);
         }
     }
 }

@@ -30,10 +30,10 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts
 
             if (lowStockDtos == null || lowStockDtos.Count == 0)
             {
-                return new ApiResponse<List<StockDto>>(StatusCodes.Status200OK, "Nenhum produto com estoque baixo encontrado.", new List<StockDto>());
+                return new ApiResponse<List<StockDto>>(StatusCodes.Status200OK, ApiMessages.NoLowStockProductsFound, new List<StockDto>());
             }
 
-            return new ApiResponse<List<StockDto>>(StatusCodes.Status200OK, "Lista de produtos com estoque baixo retornada com sucesso.", lowStockDtos);
+            return new ApiResponse<List<StockDto>>(StatusCodes.Status200OK, ApiMessages.LowStockProductsFoundSuccessfully, lowStockDtos);
         }
     }
 }

@@ -42,19 +42,19 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             receiving.Supplier = await _dbContext.Suppliers.FindAsync(request.SupplierId);
             if (receiving.Supplier == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"Fornecedor com ID {request.SupplierId} não encontrado.", false);
+                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Fornecedor", request.SupplierId), false);
             }
 
             receiving.Responsible = await _dbContext.Employees.FindAsync(request.ResponsibleId);
             if (receiving.Responsible == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"Responsável com ID {request.ResponsibleId} não encontrado.", false);
+                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.SupplierId), false);
             }
 
             var account = await _dbContext.Users.FindAsync(request.AccountId);
             if (account == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"Conta com ID {request.AccountId} não encontrada.", false);
+                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.SupplierId), false);
             }
 
             decimal totalCalculatedValue = 0;
@@ -65,7 +65,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                 var product = await _dbContext.Products.FindAsync(itemCommand.ProductId);
                 if (product == null)
                 {
-                    return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"Produto com ID {itemCommand.ProductId} não encontrado para o item.", false);
+                    return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"{ApiMessages.NotFoundWithId("Produto", itemCommand.ProductId)} para o item.", false);
                 }
 
                 var receivingItem = _mapper.Map<ReceivingItem>(itemCommand);
@@ -97,7 +97,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             }
 
             var receivingDto = _mapper.Map<ReceivingDto>(receiving);
-            return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, "Recebimento e movimentos de estoque criados com sucesso.", receivingDto);
+            return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.ReceivingAndStockMovementsCreatedSuccessfully, receivingDto);
         }
     }
 }

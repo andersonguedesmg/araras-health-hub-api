@@ -25,14 +25,14 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
 
             if (user == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MsgAccountNotFound, false);
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
             }
 
             if (user.UserName != request.UserName)
             {
                 if (await _userManager.FindByNameAsync(request.UserName) != null)
                 {
-                    return new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.MsgAccountNameAlreadyInUse, false);
+                    return new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
                 }
             }
 
@@ -45,10 +45,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
             {
                 var identityErrors = updateResult.Errors.Select(e => e.Description).ToList();
                 var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.MsgFailedToUpdateAccount, errorsDict, false);
+                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToUpdateAccount, errorsDict, false);
             }
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.MsgAccountUpdatedSuccessfully, true);
+            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Conta"), true);
         }
     }
 }

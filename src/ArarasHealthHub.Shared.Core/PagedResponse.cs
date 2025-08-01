@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Shared.Core
             TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             Data = data;
             StatusCode = StatusCodes.Status200OK;
-            Message = ApiMessages.MsgOperationSuccessful;
+            Message = ApiMessages.OperationSuccessful;
             Success = true;
         }
     }
