@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Features.Stocks.Commands.AdjustStock;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview;
 using ArarasHealthHub.Shared.Core;
@@ -62,6 +65,41 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var command = new UpdateMinQuantityCommand(productId, request.NewMinQuantity);
             var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPost("adjust")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Adjust([FromBody] AdjustStockDto adjustDto)
+        {
+            var command = new AdjustStockCommand(
+                adjustDto.ProductId,
+                adjustDto.Quantity,
+                adjustDto.Reason,
+                adjustDto.AdjustedByEmployeeId,
+                adjustDto.AdjustedByAccountId
+            );
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("adjustment/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<StockAdjustmentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetStockAdjustmentById(int id)
+        {
+            var query = new GetStockAdjustmentByIdQuery(id);
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("adjustments")]
+        [ProducesResponseType(typeof(PagedResponse<StockAdjustmentDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllStockAdjustments([FromQuery] GetAllStockAdjustmentsQuery query)
+        {
+            var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
     }

@@ -13,5 +13,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<Product?> GetByProductNameAsync(string name);
 
         Task<bool> ProductExists(int id);
+
+        Task<Product?> GetByIdWithStockAsync(int id);
     }
 }

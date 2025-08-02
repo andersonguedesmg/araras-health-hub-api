@@ -46,6 +46,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string MinimumQuantityUpdatedSuccessfully = "Quantidade mínima atualizada com sucesso.";
         public const string MinimumQuantityCannotBeNegative = "A quantidade mínima não pode ser um valor negativo.";
         public const string ProductStockUpdatedSuccessfully = "Estoque do produto atualizado com sucesso.";
+        public const string StockAdjustmentCompletedSuccessfully = "Ajuste de estoque realizado com sucesso.";
         public const string StockSearchByIdSuccessful = "Busca de estoque por ID de produto realizada com sucesso.";
         public const string NoLowStockProductsFound = "Nenhum produto com estoque baixo encontrado.";
         public const string LowStockProductsFoundSuccessfully = "Lista de produtos com estoque baixo retornada com sucesso.";
