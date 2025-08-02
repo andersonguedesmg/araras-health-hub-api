@@ -86,8 +86,14 @@ Gerenciamento de Estoque e Produtos:
 - [x]  Cadastro de Produto
 - [x]  Edição de Produto
 - [x]  Exclusão de Produto (Lógica)
-- [x]  Listagem de Produtoa
+- [x]  Listagem de Produtos
 - [x]  Busca de Produto por ID
-- [ ]  Recebimento de Produtos
-- [ ]  Saída de Produtos
+- [x]  Recebimento de Produtos
+- [x]  Saída de Produtos
 - [ ]  Inventário de Estoque
+
+Gerenciamento de Pedidos:
+- [x]  Cadastro de Pedido
+- [x]  Aprovação de Pedido
+- [x]  Separação de Pedido
+- [x]  Finalização de Pedido
