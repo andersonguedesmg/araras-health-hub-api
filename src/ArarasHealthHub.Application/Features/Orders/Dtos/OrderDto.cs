@@ -13,6 +13,9 @@ namespace ArarasHealthHub.Application.Features.Orders.Dtos
         public int CreatedByEmployeeId { get; set; }
         public int CreatedByAccountId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? ApprovedAt { get; set; }
+        public DateTime? SeparatedAt { get; set; }
+        public DateTime? FinalizedAt { get; set; }
         public List<OrderItemDto> OrderItems { get; set; } = new();
     }
 }

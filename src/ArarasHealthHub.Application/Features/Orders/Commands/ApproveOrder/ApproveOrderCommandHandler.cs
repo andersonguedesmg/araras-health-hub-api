@@ -77,7 +77,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
                     ProductId = oi.ProductId
                 }).ToList()
             };
-            return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderApprovedSuccessfully, orderDto);
+            return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("aprovado"), orderDto);
         }
     }
 }

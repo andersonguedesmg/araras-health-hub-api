@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250801210040_a2h_1.1.0")]
+    [Migration("20250802130259_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />

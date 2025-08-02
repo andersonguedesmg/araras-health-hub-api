@@ -10,5 +10,6 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     {
         Task<IEnumerable<StockMovement>> GetAllAsync(int pageNumber, int pageSize, string orderBy, string sortOrder);
         Task<int> GetTotalCountAsync();
+        Task AddRangeAsync(IEnumerable<StockMovement> entities);
     }
 }

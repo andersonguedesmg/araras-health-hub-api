@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder;
+using ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder;
+using ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById;
@@ -73,6 +75,41 @@ namespace ArarasHealthHub.Api.Controllers
                 orderDto.ApprovedByEmployeeId,
                 orderDto.ApprovedByAccountId,
                 orderDto.OrderItems
+            );
+
+            var result = await _mediator.Send(command);
+
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut("separate")]
+        [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Separate([FromBody] SeparateOrderDto orderDto)
+        {
+            var command = new SeparateOrderCommand(
+                orderDto.OrderId,
+                orderDto.SeparatedByEmployeeId,
+                orderDto.SeparatedByAccountId,
+                orderDto.OrderItems
+            );
+
+            var result = await _mediator.Send(command);
+
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut("finalize")]
+        [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Finalize([FromBody] FinalizeOrderDto orderDto)
+        {
+            var command = new FinalizeOrderCommand(
+                orderDto.OrderId,
+                orderDto.FinalizedByEmployeeId,
+                orderDto.FinalizedByAccountId
             );
 
             var result = await _mediator.Send(command);

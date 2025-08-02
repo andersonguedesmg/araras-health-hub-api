@@ -9,6 +9,8 @@ namespace ArarasHealthHub.Application.Features.Orders.Dtos
     {
         public int Id { get; set; }
         public int RequestedQuantity { get; set; }
+        public int ApprovedQuantity { get; set; }
+        public int ActualQuantity { get; set; }
         public int ProductId { get; set; }
     }
 }

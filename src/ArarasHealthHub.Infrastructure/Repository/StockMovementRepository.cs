@@ -55,5 +55,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             return await _dbContext.StockMovements.CountAsync();
         }
+
+        public async Task AddRangeAsync(IEnumerable<StockMovement> entities)
+        {
+            await _dbContext.Set<StockMovement>().AddRangeAsync(entities);
+        }
     }
 }
