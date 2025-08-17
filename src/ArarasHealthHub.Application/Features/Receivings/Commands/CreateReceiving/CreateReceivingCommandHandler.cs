@@ -58,9 +58,9 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             }
 
             decimal totalCalculatedValue = 0;
-            var newReceivingItems = new List<ReceivingItem>();
+            var newReceivedItems = new List<ReceivedItem>();
 
-            foreach (var itemCommand in request.ReceivingItems)
+            foreach (var itemCommand in request.ReceivedItems)
             {
                 var product = await _dbContext.Products.FindAsync(itemCommand.ProductId);
                 if (product == null)
@@ -68,15 +68,15 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                     return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"{ApiMessages.NotFoundWithId("Produto", itemCommand.ProductId)} para o item.", false);
                 }
 
-                var receivingItem = _mapper.Map<ReceivingItem>(itemCommand);
-                receivingItem.Product = product;
-                receivingItem.TotalValue = receivingItem.Quantity * receivingItem.UnitValue;
+                var receivedItems = _mapper.Map<ReceivedItem>(itemCommand);
+                receivedItems.Product = product;
+                receivedItems.TotalValue = receivedItems.Quantity * receivedItems.UnitValue;
 
-                newReceivingItems.Add(receivingItem);
-                totalCalculatedValue += receivingItem.TotalValue;
+                newReceivedItems.Add(receivedItems);
+                totalCalculatedValue += receivedItems.TotalValue;
             }
 
-            receiving.ReceivingItems = newReceivingItems;
+            receiving.ReceivedItem = newReceivedItems;
             receiving.TotalValue = totalCalculatedValue;
 
             await _dbContext.Receivings.AddAsync(receiving, cancellationToken);
@@ -84,7 +84,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
 
             _logger.LogInformation("Recebimento {ReceivingId} criado com sucesso. Agora gerando movimentos de estoque.", receiving.Id);
 
-            foreach (var item in receiving.ReceivingItems)
+            foreach (var item in receiving.ReceivedItem)
             {
                 var createStockEntryCommand = new CreateStockEntryCommand(
                     ProductId: item.ProductId,

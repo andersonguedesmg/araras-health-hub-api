@@ -48,6 +48,6 @@ namespace ArarasHealthHub.Domain.Entities
 
         public ApplicationUser? Account { get; set; }
 
-        public List<ReceivingItem> ReceivingItems { get; set; } = new();
+        public List<ReceivedItem> ReceivedItem { get; set; } = new();
     }
 }

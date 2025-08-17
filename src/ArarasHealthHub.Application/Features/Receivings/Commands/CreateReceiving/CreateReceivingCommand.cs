@@ -17,10 +17,10 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
         int SupplierId,
         int ResponsibleId,
         int AccountId,
-        List<CreateReceivingItemCommand> ReceivingItems
+        List<CreateReceivedItemCommand> ReceivedItems
     ) : IRequest<ApiResponse<ReceivingDto>>, ITransactionalRequest;
 
-    public record CreateReceivingItemCommand(
+    public record CreateReceivedItemCommand(
         int Quantity,
         decimal UnitValue,
         string Batch,

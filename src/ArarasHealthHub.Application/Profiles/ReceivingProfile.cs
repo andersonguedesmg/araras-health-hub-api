@@ -14,15 +14,15 @@ namespace ArarasHealthHub.Application.Profiles
         public ReceivingProfile()
         {
             CreateMap<Receiving, ReceivingDto>()
-                .ForMember(dest => dest.ReceivingItems, opt => opt.MapFrom(src => src.ReceivingItems));
+                .ForMember(dest => dest.ReceivedItem, opt => opt.MapFrom(src => src.ReceivedItem));
 
-            CreateMap<ReceivingItem, ReceivingItemDto>();
+            CreateMap<ReceivedItem, ReceivedItemDto>();
 
             CreateMap<CreateReceivingCommand, Receiving>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.ReceivingItems, opt => opt.Ignore());
+                .ForMember(dest => dest.ReceivedItem, opt => opt.Ignore());
 
-            CreateMap<CreateReceivingItemCommand, ReceivingItem>()
+            CreateMap<CreateReceivedItemCommand, ReceivedItem>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.ReceivingId, opt => opt.Ignore())
                 .ForMember(dest => dest.TotalValue, opt => opt.Ignore());

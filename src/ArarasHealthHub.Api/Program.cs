@@ -139,7 +139,7 @@ builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 builder.Services.AddScoped<IFacilityRepository, FacilityRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IReceivingRepository, ReceivingRepository>();
-builder.Services.AddScoped<IReceivingItemRepository, ReceivingItemRepository>();
+builder.Services.AddScoped<IReceivedItemRepository, ReceivedItemRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250802143914_a2h_1.1.0")]
+    [Migration("20250817140350_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -360,6 +360,58 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.ReceivedItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Batch")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReceivingId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ReceivingId");
+
+                    b.ToTable("ReceivedItems", t =>
+                        {
+                            t.HasComment("Representa um item específico de um recebimento.");
+                        });
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
                     b.Property<int>("Id")
@@ -417,58 +469,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.ToTable("Receivings", t =>
                         {
                             t.HasComment("Representa o registro de entrada no estoque.");
-                        });
-                });
-
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.ReceivingItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Batch")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReceivingId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalValue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("UnitValue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ReceivingId");
-
-                    b.ToTable("ReceivingItems", t =>
-                        {
-                            t.HasComment("Representa um item específico de um recebimento.");
                         });
                 });
 
@@ -1029,6 +1029,25 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.ReceivedItem", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Receiving", "Receiving")
+                        .WithMany("ReceivedItem")
+                        .HasForeignKey("ReceivingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Receiving");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "Account")
@@ -1054,25 +1073,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("Responsible");
 
                     b.Navigation("Supplier");
-                });
-
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.ReceivingItem", b =>
-                {
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Receiving", "Receiving")
-                        .WithMany("ReceivingItems")
-                        .HasForeignKey("ReceivingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Receiving");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Stock", b =>
@@ -1203,7 +1203,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
-                    b.Navigation("ReceivingItems");
+                    b.Navigation("ReceivedItem");
                 });
 #pragma warning restore 612, 618
         }

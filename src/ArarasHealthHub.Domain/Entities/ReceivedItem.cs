@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ArarasHealthHub.Domain.Entities
 {
     [Comment("Representa um item específico de um recebimento.")]
-    public class ReceivingItem : BaseEntity
+    public class ReceivedItem : BaseEntity
     {
         [Required]
         public int Quantity { get; set; }

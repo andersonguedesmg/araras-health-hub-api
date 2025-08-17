@@ -6,7 +6,7 @@ using ArarasHealthHub.Application.Features.Products.Dtos;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Dtos
 {
-    public class ReceivingItemDto
+    public class ReceivedItemDto
     {
         public int Id { get; set; }
         public int Quantity { get; set; }

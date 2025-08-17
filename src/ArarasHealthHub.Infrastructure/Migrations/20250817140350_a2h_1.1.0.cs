@@ -515,7 +515,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReceivingItems",
+                name: "ReceivedItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -533,15 +533,15 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReceivingItems", x => x.Id);
+                    table.PrimaryKey("PK_ReceivedItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReceivingItems_Products_ProductId",
+                        name: "FK_ReceivedItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReceivingItems_Receivings_ReceivingId",
+                        name: "FK_ReceivedItems_Receivings_ReceivingId",
                         column: x => x.ReceivingId,
                         principalTable: "Receivings",
                         principalColumn: "Id",
@@ -685,13 +685,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "SeparatedByEmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReceivingItems_ProductId",
-                table: "ReceivingItems",
+                name: "IX_ReceivedItems_ProductId",
+                table: "ReceivedItems",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReceivingItems_ReceivingId",
-                table: "ReceivingItems",
+                name: "IX_ReceivedItems_ReceivingId",
+                table: "ReceivedItems",
                 column: "ReceivingId");
 
             migrationBuilder.CreateIndex(
@@ -758,7 +758,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
-                name: "ReceivingItems");
+                name: "ReceivedItems");
 
             migrationBuilder.DropTable(
                 name: "StockAdjustments");

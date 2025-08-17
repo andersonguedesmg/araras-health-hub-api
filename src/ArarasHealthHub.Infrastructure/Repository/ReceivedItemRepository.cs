@@ -8,8 +8,8 @@ using ArarasHealthHub.Infrastructure.Data;
 
 namespace ArarasHealthHub.Infrastructure.Repository
 {
-    public class ReceivingItemRepository : BaseRepository<ReceivingItem>, IReceivingItemRepository
+    public class ReceivedItemRepository : BaseRepository<ReceivedItem>, IReceivedItemRepository
     {
-        public ReceivingItemRepository(ApplicationDbContext context) : base(context) { }
+        public ReceivedItemRepository(ApplicationDbContext context) : base(context) { }
     }
 }

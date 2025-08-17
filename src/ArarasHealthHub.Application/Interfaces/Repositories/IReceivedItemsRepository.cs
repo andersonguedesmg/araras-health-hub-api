@@ -6,5 +6,5 @@ using ArarasHealthHub.Domain.Entities;
 
 namespace ArarasHealthHub.Application.Interfaces.Repositories
 {
-    public interface IReceivingItemRepository : IBaseRepository<ReceivingItem> { }
+    public interface IReceivedItemRepository : IBaseRepository<ReceivedItem> { }
 }

@@ -26,7 +26,7 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Receiving> Receivings { get; set; }
-        public DbSet<ReceivingItem> ReceivingItems { get; set; }
+        public DbSet<ReceivedItem> ReceivedItems { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
