@@ -7,6 +7,7 @@ using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -17,20 +18,23 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
         private readonly IOrderRepository _orderRepo;
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public FinalizeOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<ApiResponse<OrderDto>> Handle(FinalizeOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepo.GetByIdAsync(request.OrderId);
+            var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
             if (order == null)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
@@ -56,25 +60,8 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
             await _orderRepo.UpdateAsync(order);
             await _unitOfWork.CommitAsync();
 
-            var orderDto = new OrderDto
-            {
-                Id = order.Id,
-                Observation = order.Observation,
-                OrderStatusId = order.OrderStatusId,
-                CreatedAt = order.CreatedAt,
-                ApprovedAt = order.ApprovedAt,
-                SeparatedAt = order.SeparatedAt,
-                FinalizedAt = order.FinalizedAt,
+            var orderDto = _mapper.Map<OrderDto>(order);
 
-                OrderItems = order.OrderItems.Select(oi => new OrderItemDto
-                {
-                    Id = oi.Id,
-                    RequestedQuantity = oi.RequestedQuantity,
-                    ApprovedQuantity = oi.ApprovedQuantity,
-                    ActualQuantity = oi.ActualQuantity,
-                    ProductId = oi.ProductId
-                }).ToList()
-            };
             return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("finalizado"), orderDto);
         }
     }

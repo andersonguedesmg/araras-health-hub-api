@@ -17,6 +17,20 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             return await _dbSet
                 .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.OrderStatus)
+                .Include(o => o.CreatedByEmployee)
+                .Include(o => o.CreatedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.ApprovedByEmployee)
+                .Include(o => o.ApprovedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.SeparatedByEmployee)
+                .Include(o => o.SeparatedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.FinalizedByEmployee)
+                .Include(o => o.FinalizedByAccount)
+                    .ThenInclude(a => a!.Facility)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
@@ -31,6 +45,34 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             _context.OrderItems.Update(orderItem);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetAllWithItemsAsync(int? orderStatusId = null)
+        {
+            IQueryable<Order> query = _dbSet
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.OrderStatus)
+                .Include(o => o.CreatedByEmployee)
+                .Include(o => o.CreatedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.ApprovedByEmployee)
+                .Include(o => o.ApprovedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.SeparatedByEmployee)
+                .Include(o => o.SeparatedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.FinalizedByEmployee)
+                .Include(o => o.FinalizedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .AsQueryable();
+
+            if (orderStatusId.HasValue)
+            {
+                query = query.Where(o => o.OrderStatusId == orderStatusId.Value);
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

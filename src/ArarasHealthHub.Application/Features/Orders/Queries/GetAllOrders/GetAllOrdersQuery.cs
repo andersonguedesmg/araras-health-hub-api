@@ -8,5 +8,8 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
 {
-    public record GetAllOrdersQuery() : IRequest<ApiResponse<List<OrderDto>>>;
+    public class GetAllOrdersQuery : PagedRequest, IRequest<PagedResponse<OrderDto>>
+    {
+        public int? OrderStatusId { get; set; }
+    }
 }

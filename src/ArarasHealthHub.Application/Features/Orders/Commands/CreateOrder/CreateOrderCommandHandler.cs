@@ -9,6 +9,7 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -22,19 +23,22 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IProductRepository _productRepo;
+        private readonly IMapper _mapper;
 
         public CreateOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
             IUnitOfWork unitOfWork,
             UserManager<ApplicationUser> userManager,
-            IProductRepository productRepo)
+            IProductRepository productRepo,
+            IMapper mapper)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _productRepo = productRepo;
+            _mapper = mapper;
         }
 
         public async Task<ApiResponse<OrderDto>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -74,38 +78,31 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
             };
 
             await _orderRepo.AddAsync(order);
+            await _unitOfWork.CommitAsync();
 
-            var orderItems = request.OrderItems.Select(itemDto => new OrderItem
+            foreach (var itemDto in request.OrderItems)
             {
-                OrderId = order.Id,
-                ProductId = itemDto.ProductId,
-                RequestedQuantity = itemDto.RequestedQuantity,
-                ApprovedQuantity = 0,
-                ActualQuantity = 0
-            }).ToList();
-
-            foreach (var orderItem in orderItems)
-            {
+                var orderItem = new OrderItem
+                {
+                    OrderId = order.Id,
+                    ProductId = itemDto.ProductId,
+                    RequestedQuantity = itemDto.RequestedQuantity,
+                    ApprovedQuantity = 0,
+                    ActualQuantity = 0
+                };
                 await _orderRepo.CreateOrderItemAsync(orderItem);
             }
 
             await _unitOfWork.CommitAsync();
 
-            var orderDto = new OrderDto
+            var createdOrderWithDetails = await _orderRepo.GetByIdWithItemsAsync(order.Id);
+
+            if (createdOrderWithDetails == null)
             {
-                Id = order.Id,
-                Observation = order.Observation,
-                OrderStatusId = order.OrderStatusId,
-                CreatedByEmployeeId = order.CreatedByEmployeeId,
-                CreatedByAccountId = order.CreatedByAccountId,
-                CreatedAt = order.CreatedAt,
-                OrderItems = orderItems.Select(oi => new OrderItemDto
-                {
-                    Id = oi.Id,
-                    ProductId = oi.ProductId,
-                    RequestedQuantity = oi.RequestedQuantity
-                }).ToList()
-            };
+                return new ApiResponse<OrderDto>(StatusCodes.Status500InternalServerError, ApiMessages.InternalServerError, false);
+            }
+
+            var orderDto = _mapper.Map<OrderDto>(createdOrderWithDetails);
 
             return new ApiResponse<OrderDto>(
                 StatusCodes.Status201Created,

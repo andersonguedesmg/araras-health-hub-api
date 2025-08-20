@@ -8,6 +8,7 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -20,19 +21,22 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
         private readonly IStockRepository _stockRepo;
         private readonly IStockMovementRepository _stockMovementRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public SeparateOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
             IStockRepository stockRepo,
             IStockMovementRepository stockMovementRepo,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
             _stockRepo = stockRepo;
             _stockMovementRepo = stockMovementRepo;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<ApiResponse<OrderDto>> Handle(SeparateOrderCommand request, CancellationToken cancellationToken)
@@ -62,10 +66,10 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
                     return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.ItemNotFoundInOrder(item.OrderItemId!), false);
                 }
 
-                var stock = await _stockRepo.GetByProductIdAsync(orderItem.ProductId);
-                if (stock == null || stock.CurrentQuantity < item.ActualQuantity)
+                var stockToVerify = await _stockRepo.GetByProductIdAsync(orderItem.ProductId);
+                if (stockToVerify == null || stockToVerify.CurrentQuantity < item.ActualQuantity)
                 {
-                    return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.InsufficientStock(orderItem.Product?.Name!), false);
+                    return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.InsufficientStock(stockToVerify?.Product?.Name ?? "produto desconhecido"), false);
                 }
             }
 
@@ -73,6 +77,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
             order.SeparatedByEmployeeId = request.SeparatedByEmployeeId;
             order.SeparatedByAccountId = request.SeparatedByAccountId;
             order.SeparatedAt = DateTime.UtcNow;
+            order.SetUpdatedOn();
 
             var stockMovements = new List<StockMovement>();
 
@@ -90,7 +95,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
                     {
                         ProductId = orderItemToUpdate.ProductId,
                         Quantity = item.ActualQuantity,
-                        Type = MovementTypeEnum.Entry,
+                        Type = MovementTypeEnum.Exit,
                         SourceDocumentId = order.Id,
                         SourceDocumentType = nameof(Order),
                         ResponsibleId = request.SeparatedByEmployeeId
@@ -99,27 +104,12 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
                 }
             }
 
+            await _orderRepo.UpdateAsync(order);
             await _stockMovementRepo.AddRangeAsync(stockMovements);
             await _unitOfWork.CommitAsync();
 
-            var orderDto = new OrderDto
-            {
-                Id = order.Id,
-                Observation = order.Observation,
-                OrderStatusId = order.OrderStatusId,
-                CreatedAt = order.CreatedAt,
-                ApprovedAt = order.ApprovedAt,
-                SeparatedAt = order.SeparatedAt,
+            var orderDto = _mapper.Map<OrderDto>(order);
 
-                OrderItems = order.OrderItems.Select(oi => new OrderItemDto
-                {
-                    Id = oi.Id,
-                    RequestedQuantity = oi.RequestedQuantity,
-                    ApprovedQuantity = oi.ApprovedQuantity,
-                    ActualQuantity = oi.ActualQuantity,
-                    ProductId = oi.ProductId
-                }).ToList()
-            };
             return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("separado"), orderDto);
         }
     }

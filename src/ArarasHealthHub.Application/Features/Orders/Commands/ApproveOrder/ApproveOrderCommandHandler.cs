@@ -7,6 +7,7 @@ using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -17,15 +18,18 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
         private readonly IOrderRepository _orderRepo;
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public ApproveOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<ApiResponse<OrderDto>> Handle(ApproveOrderCommand request, CancellationToken cancellationToken)
@@ -50,6 +54,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
             order.ApprovedByEmployeeId = request.ApprovedByEmployeeId;
             order.ApprovedByAccountId = request.ApprovedByAccountId;
             order.ApprovedAt = DateTime.UtcNow;
+            order.SetUpdatedOn();
 
             foreach (var item in request.OrderItems)
             {
@@ -60,23 +65,11 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
                 }
             }
 
+            await _orderRepo.UpdateAsync(order);
             await _unitOfWork.CommitAsync();
 
-            var orderDto = new OrderDto
-            {
-                Id = order.Id,
-                Observation = order.Observation,
-                OrderStatusId = order.OrderStatusId,
-                CreatedByEmployeeId = order.CreatedByEmployeeId,
-                CreatedByAccountId = order.CreatedByAccountId,
-                CreatedAt = order.CreatedAt,
-                OrderItems = order.OrderItems.Select(oi => new OrderItemDto
-                {
-                    Id = oi.Id,
-                    RequestedQuantity = oi.RequestedQuantity,
-                    ProductId = oi.ProductId
-                }).ToList()
-            };
+            var orderDto = _mapper.Map<OrderDto>(order);
+
             return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("aprovado"), orderDto);
         }
     }

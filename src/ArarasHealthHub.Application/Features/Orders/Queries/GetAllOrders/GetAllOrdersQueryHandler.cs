@@ -4,47 +4,60 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
 {
-    public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, ApiResponse<List<OrderDto>>>
+    public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, PagedResponse<OrderDto>>
     {
         private readonly IOrderRepository _orderRepo;
+        private readonly IMapper _mapper;
 
-        public GetAllOrdersQueryHandler(IOrderRepository orderRepo)
+        public GetAllOrdersQueryHandler(IOrderRepository orderRepo, IMapper mapper)
         {
             _orderRepo = orderRepo;
+            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<List<OrderDto>>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponse<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
-            var orders = await _orderRepo.GetAllAsync();
+            var allOrders = await _orderRepo.GetAllWithItemsAsync(request.OrderStatusId);
 
-            if (orders == null || !orders.Any())
+            var totalCount = allOrders.Count();
+
+            IOrderedEnumerable<Order> orderedOrders;
+            switch (request.OrderBy.ToLower())
             {
-                return new ApiResponse<List<OrderDto>>(StatusCodes.Status404NotFound, ApiMessages.NotItemsFound("pedido"), false);
+                case "createdat":
+                    orderedOrders = request.SortOrder.ToLower() == "desc" ?
+                        allOrders.OrderByDescending(o => o.CreatedAt) :
+                        allOrders.OrderBy(o => o.CreatedAt);
+                    break;
+                case "id":
+                default:
+                    orderedOrders = request.SortOrder.ToLower() == "desc" ?
+                        allOrders.OrderByDescending(o => o.Id) :
+                        allOrders.OrderBy(o => o.Id);
+                    break;
             }
 
-            var orderDtos = orders.Select(order => new OrderDto
-            {
-                Id = order.Id,
-                Observation = order.Observation,
-                OrderStatusId = order.OrderStatusId,
-                CreatedByEmployeeId = order.CreatedByEmployeeId,
-                CreatedByAccountId = order.CreatedByAccountId,
-                CreatedAt = order.CreatedAt,
-                OrderItems = order.OrderItems.Select(oi => new OrderItemDto
-                {
-                    Id = oi.Id,
-                    RequestedQuantity = oi.RequestedQuantity,
-                    ProductId = oi.ProductId
-                }).ToList()
-            }).ToList();
+            var pagedOrders = orderedOrders
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToList();
 
-            return new ApiResponse<List<OrderDto>>(StatusCodes.Status200OK, ApiMessages.ItemsFoundSuccessfully("Pedidos"), orderDtos);
+            var orderDtos = _mapper.Map<List<OrderDto>>(pagedOrders);
+
+            return new PagedResponse<OrderDto>(
+                request.PageNumber,
+                request.PageSize,
+                totalCount,
+                orderDtos
+            );
         }
     }
 }
