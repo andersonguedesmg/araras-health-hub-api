@@ -52,6 +52,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
             IQueryable<Order> query = _dbSet
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p!.Stock)
                 .Include(o => o.OrderStatus)
                 .Include(o => o.CreatedByEmployee)
                 .Include(o => o.CreatedByAccount)

@@ -28,7 +28,8 @@ namespace ArarasHealthHub.Application.Profiles
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product!.Name))
                 .ForMember(dest => dest.RequestedQuantity, opt => opt.MapFrom(src => src.RequestedQuantity))
                 .ForMember(dest => dest.ApprovedQuantity, opt => opt.MapFrom(src => src.ApprovedQuantity))
-                .ForMember(dest => dest.ActualQuantity, opt => opt.MapFrom(src => src.ActualQuantity));
+                .ForMember(dest => dest.ActualQuantity, opt => opt.MapFrom(src => src.ActualQuantity))
+                .ForMember(dest => dest.AvailableQuantity, opt => opt.MapFrom(src => src.Product!.Stock!.CurrentQuantity));
 
             CreateMap<Order, OrderDto>()
                 .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
