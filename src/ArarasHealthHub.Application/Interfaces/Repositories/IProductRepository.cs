@@ -15,5 +15,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<bool> ProductExists(int id);
 
         Task<Product?> GetByIdWithStockAsync(int id);
+
+        IQueryable<Product> GetQueryable();
     }
 }

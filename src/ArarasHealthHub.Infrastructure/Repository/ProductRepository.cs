@@ -39,5 +39,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(p => p.Stock)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
+
+        public IQueryable<Product> GetQueryable()
+        {
+            return _dbContext.Set<Product>();
+        }
     }
 }

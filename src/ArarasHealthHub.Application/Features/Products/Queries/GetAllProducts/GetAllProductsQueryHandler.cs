@@ -8,6 +8,7 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
 {
@@ -24,34 +25,47 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
 
         public async Task<PagedResponse<ProductDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            var allProducts = await _productRepository.GetAllAsync();
+            var productsQuery = _productRepository.GetQueryable();
 
-            var totalCount = allProducts.Count();
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTermLower = request.SearchTerm.ToLower();
+                productsQuery = productsQuery.Where(p =>
+                    p.Id.ToString().Contains(searchTermLower) ||
+                    p.Name.ToLower().Contains(searchTermLower) ||
+                    p.Description.ToLower().Contains(searchTermLower) ||
+                    p.DosageForm.ToLower().Contains(searchTermLower) ||
+                    p.Category.ToLower().Contains(searchTermLower) ||
+                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                );
+            }
 
-            IOrderedEnumerable<Product> orderedProducts;
-            switch (request.OrderBy.ToLower())
+            var totalCount = productsQuery.Count();
+
+            IQueryable<Product> orderedProducts;
+            switch (request.OrderBy?.ToLower())
             {
                 case "name":
-                    orderedProducts = request.SortOrder.ToLower() == "desc" ?
-                        allProducts.OrderByDescending(s => s.Name) :
-                        allProducts.OrderBy(s => s.Name);
+                    orderedProducts = request.SortOrder?.ToLower() == "desc" ?
+                        productsQuery.OrderByDescending(s => s.Name) :
+                        productsQuery.OrderBy(s => s.Name);
                     break;
                 case "category":
-                    orderedProducts = request.SortOrder.ToLower() == "desc" ?
-                        allProducts.OrderByDescending(s => s.Category) :
-                        allProducts.OrderBy(s => s.Category);
+                    orderedProducts = request.SortOrder?.ToLower() == "desc" ?
+                        productsQuery.OrderByDescending(s => s.Category) :
+                        productsQuery.OrderBy(s => s.Category);
                     break;
                 default:
-                    orderedProducts = request.SortOrder.ToLower() == "desc" ?
-                        allProducts.OrderByDescending(s => s.Id) :
-                        allProducts.OrderBy(s => s.Id);
+                    orderedProducts = request.SortOrder?.ToLower() == "desc" ?
+                        productsQuery.OrderByDescending(s => s.Id) :
+                        productsQuery.OrderBy(s => s.Id);
                     break;
             }
 
-            var pagedProducts = orderedProducts
+            var pagedProducts = await orderedProducts
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .ToList();
+                .ToListAsync(cancellationToken);
 
             var productDtos = _mapper.Map<List<ProductDto>>(pagedProducts);
 
