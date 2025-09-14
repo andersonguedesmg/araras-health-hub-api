@@ -150,7 +150,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "FrontEndUI", policy =>
     {
-        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().WithExposedHeaders("Content-Disposition");
     });
 });
 

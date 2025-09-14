@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.DeleteProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
 using ArarasHealthHub.Application.Features.Products.Dtos;
+using ArarasHealthHub.Application.Features.Products.Queries.ExportProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductById;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdownOptions;
@@ -102,6 +104,29 @@ namespace ArarasHealthHub.Api.Controllers
             var query = new GetProductDropdownOptionsQuery();
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("export")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Export([FromQuery] string? searchTerm)
+        {
+            var productDtos = await _mediator.Send(new ExportProductsQuery { SearchTerm = searchTerm });
+
+            var sb = new StringBuilder();
+            sb.AppendLine("ID,NOME,DESCRIÇÃO,UNIDADE DE MEDIDA,CATEGORIA,STATUS");
+
+            foreach (var productDto in productDtos)
+            {
+                sb.Append($"{productDto.Id},{productDto.Name},{productDto.Description},{productDto.DosageForm},{productDto.Category},{(productDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+            }
+
+            var fileName = $"produtos_{DateTime.Now:yyyyMMddHHmmss}.csv";
+
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
         }
     }
 }
