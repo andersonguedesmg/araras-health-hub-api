@@ -11,5 +11,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<Employee?> GetByCpfAsync(string cpf);
 
         Task<bool> EmployeeExists(int id);
+
+        IQueryable<Employee> GetQueryable();
     }
 }

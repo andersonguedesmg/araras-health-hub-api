@@ -11,7 +11,12 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
-        public EmployeeRepository(ApplicationDbContext context) : base(context) { }
+        private readonly ApplicationDbContext _dbContext;
+
+        public EmployeeRepository(ApplicationDbContext dbContext) : base(dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public async Task<Employee?> GetByCpfAsync(string cpf)
         {
@@ -21,6 +26,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
         public async Task<bool> EmployeeExists(int id)
         {
             return await _dbSet.AnyAsync(s => s.Id == id);
+        }
+
+        public IQueryable<Employee> GetQueryable()
+        {
+            return _dbContext.Set<Employee>();
         }
     }
 }

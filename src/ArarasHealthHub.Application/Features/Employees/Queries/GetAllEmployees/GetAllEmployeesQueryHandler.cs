@@ -8,6 +8,7 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
 {
@@ -24,34 +25,47 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
 
         public async Task<PagedResponse<EmployeeDto>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var allEmployees = await _employeeRepository.GetAllAsync();
+            var employeesQuery = _employeeRepository.GetQueryable();
 
-            var totalCount = allEmployees.Count();
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTermLower = request.SearchTerm.ToLower();
+                employeesQuery = employeesQuery.Where(p =>
+                    p.Id.ToString().Contains(searchTermLower) ||
+                    p.Name.ToLower().Contains(searchTermLower) ||
+                    p.Cpf.ToLower().Contains(searchTermLower) ||
+                    p.Function.ToLower().Contains(searchTermLower) ||
+                    p.Phone.ToLower().Contains(searchTermLower) ||
+                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                );
+            }
 
-            IOrderedEnumerable<Employee> orderedEmployees;
+            var totalCount = employeesQuery.Count();
+
+            IQueryable<Employee> orderedEmployees;
             switch (request.OrderBy.ToLower())
             {
                 case "name":
                     orderedEmployees = request.SortOrder.ToLower() == "desc" ?
-                        allEmployees.OrderByDescending(s => s.Name) :
-                        allEmployees.OrderBy(s => s.Name);
+                        employeesQuery.OrderByDescending(s => s.Name) :
+                        employeesQuery.OrderBy(s => s.Name);
                     break;
                 case "cpf":
                     orderedEmployees = request.SortOrder.ToLower() == "desc" ?
-                        allEmployees.OrderByDescending(s => s.Cpf) :
-                        allEmployees.OrderBy(s => s.Cpf);
+                        employeesQuery.OrderByDescending(s => s.Cpf) :
+                        employeesQuery.OrderBy(s => s.Cpf);
                     break;
                 default:
                     orderedEmployees = request.SortOrder.ToLower() == "desc" ?
-                        allEmployees.OrderByDescending(s => s.Id) :
-                        allEmployees.OrderBy(s => s.Id);
+                        employeesQuery.OrderByDescending(s => s.Id) :
+                        employeesQuery.OrderBy(s => s.Id);
                     break;
             }
 
-            var pagedEmployees = orderedEmployees
+            var pagedEmployees = await orderedEmployees
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .ToList();
+                .ToListAsync(cancellationToken);
 
             var employeeDtos = _mapper.Map<List<EmployeeDto>>(pagedEmployees);
 

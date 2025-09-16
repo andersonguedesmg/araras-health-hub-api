@@ -8,5 +8,8 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
 {
-    public class GetAllEmployeesQuery : PagedRequest, IRequest<PagedResponse<EmployeeDto>> { }
+    public class GetAllEmployeesQuery : PagedRequest, IRequest<PagedResponse<EmployeeDto>>
+    {
+        public string? SearchTerm { get; set; }
+    }
 }
