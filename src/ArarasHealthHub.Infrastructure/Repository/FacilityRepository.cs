@@ -12,7 +12,12 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class FacilityRepository : BaseRepository<Facility>, IFacilityRepository
     {
-        public FacilityRepository(ApplicationDbContext context) : base(context) { }
+        private readonly ApplicationDbContext _dbContext;
+
+        public FacilityRepository(ApplicationDbContext dbContext) : base(dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public Task<bool> FacilityExists(int id)
         {
@@ -29,6 +34,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
             return await _dbSet
                         .Include(f => f.Accounts)
                         .FirstOrDefaultAsync(f => f.Id == id);
+        }
+
+        public IQueryable<Facility> GetQueryable()
+        {
+            return _dbContext.Set<Facility>();
         }
     }
 }

@@ -14,5 +14,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<Facility?> GetByNameAsync(string name);
 
         Task<Facility?> GetByIdWithAccountsAsync(int id);
+
+        IQueryable<Facility> GetQueryable();
     }
 }
