@@ -11,7 +11,12 @@ namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class SupplierRepository : BaseRepository<Supplier>, ISupplierRepository
     {
-        public SupplierRepository(ApplicationDbContext context) : base(context) { }
+        private readonly ApplicationDbContext _dbContext;
+
+        public SupplierRepository(ApplicationDbContext dbContext) : base(dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public async Task<Supplier?> GetByCnpjAsync(string cnpj)
         {
@@ -21,6 +26,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
         public async Task<bool> SupplierExists(int id)
         {
             return await _dbSet.AnyAsync(s => s.Id == id);
+        }
+
+        public IQueryable<Supplier> GetQueryable()
+        {
+            return _dbContext.Set<Supplier>();
         }
     }
 }

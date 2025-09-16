@@ -8,5 +8,8 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
 {
-    public class GetAllSuppliersQuery : PagedRequest, IRequest<PagedResponse<SupplierDto>> { }
+    public class GetAllSuppliersQuery : PagedRequest, IRequest<PagedResponse<SupplierDto>>
+    {
+        public string? SearchTerm { get; set; }
+    }
 }

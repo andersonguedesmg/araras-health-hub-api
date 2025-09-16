@@ -11,5 +11,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<Supplier?> GetByCnpjAsync(string cnpj);
 
         Task<bool> SupplierExists(int id);
+
+        IQueryable<Supplier> GetQueryable();
     }
 }
