@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.DeleteFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Features.Facilities.Queries.ExportFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdownOptions;
@@ -102,6 +104,29 @@ namespace ArarasHealthHub.Api.Controllers
             var query = new GetFacilityDropdownOptionsQuery();
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("export")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Export([FromQuery] string? searchTerm)
+        {
+            var facilityDtos = await _mediator.Send(new ExportFacilitiesQuery { SearchTerm = searchTerm });
+
+            var sb = new StringBuilder();
+            sb.AppendLine("ID,NOME,ENDEREÇO,NÚMERO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
+
+            foreach (var facilityDto in facilityDtos)
+            {
+                sb.Append($"{facilityDto.Id},{facilityDto.Name},{facilityDto.Address},{facilityDto.Number},{facilityDto.Neighborhood},{facilityDto.City},{facilityDto.State},{facilityDto.Cep},{facilityDto.Email},{facilityDto.Phone},{(facilityDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+            }
+
+            var fileName = $"unidade_{DateTime.Now:yyyyMMddHHmmss}.csv";
+
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
         }
     }
 }
