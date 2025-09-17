@@ -14,6 +14,8 @@ using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEmployee;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdownOptions;
+using System.Text;
+using ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees;
 
 namespace ArarasHealthHub.Api.Controllers
 {
@@ -102,6 +104,29 @@ namespace ArarasHealthHub.Api.Controllers
             var query = new GetEmployeeDropdownOptionsQuery();
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("export")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Export([FromQuery] string? searchTerm)
+        {
+            var employeeDtos = await _mediator.Send(new ExportEmployeesQuery { SearchTerm = searchTerm });
+
+            var sb = new StringBuilder();
+            sb.AppendLine("ID,NOME,CPF,FUNÇÃO,TELEFONE,STATUS");
+
+            foreach (var employeeDto in employeeDtos)
+            {
+                sb.Append($"{employeeDto.Id},{employeeDto.Name},{employeeDto.Cpf},{employeeDto.Function},{employeeDto.Phone},{(employeeDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+            }
+
+            var fileName = $"funcionario_{DateTime.Now:yyyyMMddHHmmss}.csv";
+
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
         }
     }
 }
