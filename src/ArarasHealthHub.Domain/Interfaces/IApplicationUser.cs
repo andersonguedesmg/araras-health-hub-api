@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Domain.Enums;
 
 namespace ArarasHealthHub.Domain.Interfaces
 {
@@ -18,5 +19,7 @@ namespace ArarasHealthHub.Domain.Interfaces
         bool IsActive { get; set; }
 
         int FacilityId { get; set; }
+
+        public UserScopeEnum Scope { get; set; }
     }
 }

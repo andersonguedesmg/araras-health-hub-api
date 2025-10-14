@@ -40,6 +40,7 @@ namespace ArarasHealthHub.Api.Controllers
                 UserName = request.UserName!,
                 Password = request.Password!,
                 FacilityId = request.FacilityId,
+                Scope = request.Scope,
                 Role = request.Role,
                 IsActive = request.IsActive
             };
@@ -49,8 +50,8 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {

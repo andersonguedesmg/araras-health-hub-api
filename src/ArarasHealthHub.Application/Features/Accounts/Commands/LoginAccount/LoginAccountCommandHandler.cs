@@ -66,7 +66,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
                 }
             }
 
-            var token = _tokenService.CreateToken(user.Id, user.UserName!, roles);
+            var token = _tokenService.CreateToken(user.Id, user.UserName!, roles, user.Scope);
 
             var NewAccountDto = new NewAccountDto
             {
@@ -75,6 +75,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
                 IsActive = user.IsActive,
                 FacilityId = user.FacilityId,
                 Token = token,
+                Scope = user.Scope,
                 Roles = roleDtos
             };
 

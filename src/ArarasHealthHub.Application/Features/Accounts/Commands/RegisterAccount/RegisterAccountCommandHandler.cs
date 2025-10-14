@@ -6,6 +6,7 @@ using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Role.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
+using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
@@ -46,11 +47,22 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
                 return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
             }
 
+            if (request.Role == "MASTER" && request.Scope != UserScopeEnum.Management)
+            {
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.MasterRoleExclusiveToManagement, false);
+            }
+
+            if (request.Scope == UserScopeEnum.Operational && request.Role == "MASTER")
+            {
+                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.OperationalScopeForbidsMasterRole, false);
+            }
+
             var user = new ApplicationUser
             {
                 UserName = request.UserName,
                 FacilityId = request.FacilityId,
                 IsActive = request.IsActive,
+                Scope = request.Scope,
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.MinValue
             };
@@ -79,7 +91,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
             }
 
             var roles = await _userManager.GetRolesAsync(user);
-            var token = _tokenService.CreateToken(user.Id, user.UserName!, roles);
+            var token = _tokenService.CreateToken(user.Id, user.UserName!, roles, user.Scope);
 
             var NewAccountDto = new NewAccountDto
             {
@@ -87,6 +99,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
                 UserName = user.UserName!,
                 IsActive = user.IsActive,
                 FacilityId = user.FacilityId,
+                Scope = user.Scope,
                 Token = token,
                 Roles = roles.Select(r => new RoleDto { Name = r }).ToList()
             };

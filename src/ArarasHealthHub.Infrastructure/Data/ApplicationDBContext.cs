@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -103,6 +104,7 @@ namespace ArarasHealthHub.Infrastructure.Data
                 UpdatedOn = null,
                 IsActive = true,
                 FacilityId = facilityPrincipalId,
+                Scope = UserScopeEnum.Management,
                 SecurityStamp = Guid.Empty.ToString(),
                 ConcurrencyStamp = Guid.Empty.ToString(),
                 PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",

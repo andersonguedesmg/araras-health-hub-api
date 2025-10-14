@@ -734,6 +734,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -775,6 +778,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             NormalizedUserName = "SMS_MASTER",
                             PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
                             PhoneNumberConfirmed = false,
+                            Scope = 1,
                             SecurityStamp = "00000000-0000-0000-0000-000000000000",
                             TwoFactorEnabled = false,
                             UserName = "sms_master"

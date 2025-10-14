@@ -53,5 +53,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string OrderCannotBeApproved = "Não é possível aprovar o pedido. A aprovação só pode ser feita em pedidos com status 'Pendente'.";
         public const string OrderCannotBeSeparated = "Não é possível separar o pedido. O status atual é 'Pendente', e a separação só pode ser feita em pedidos com status 'Aprovado'.";
         public const string OrderCannotBeCompleted = "Não é possível finalizar o pedido. Para finalizar, o pedido precisa estar com o status 'Separado'.";
+        public const string MasterRoleExclusiveToManagement = "A função MASTER só pode ser atribuída no escopo de GERENCIAMENTO.";
+        public const string OperationalScopeForbidsMasterRole = "A função MASTER não é permitida no escopo OPERACIONAL.";
     }
 }
