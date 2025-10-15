@@ -1,4 +1,5 @@
 using System.Reflection;
+using araras_health_hub_api.Authorization;
 using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
@@ -13,6 +14,8 @@ using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Application.Profiles;
+using ArarasHealthHub.Domain.Authorization;
+using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Persistence.Repositories;
@@ -21,6 +24,7 @@ using ArarasHealthHub.Infrastructure.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -131,6 +135,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanManageMasterAccount", policy =>
+    {
+        policy.AddRequirements(new ManageAccountRequirement(UserScopeEnum.Management, "Master"));
+    });
+
+    options.AddPolicy("CanManageAdminOrUserAccount", policy =>
+    {
+        policy.AddRequirements(new ManageAccountRequirement(UserScopeEnum.Management, "Admin"));
+    });
+});
+
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -145,6 +162,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IStockAdjustmentRepository, StockAdjustmentRepository>();
+builder.Services.AddScoped<IAuthorizationHandler, AccountManagementAuthorizationHandler>();
 
 builder.Services.AddCors(options =>
 {

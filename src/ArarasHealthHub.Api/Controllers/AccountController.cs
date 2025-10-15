@@ -1,5 +1,5 @@
-
 using System.Net;
+using araras_health_hub_api.Filters;
 using ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount;
@@ -18,7 +18,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/account")]
     [ApiController]
-    // [Authorize]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -29,10 +29,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize(Roles = "Master,Admin")]
+        [AuthorizeAccountManagement(typeof(RegisterDto))]
         [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Forbidden)]
         public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
             var command = new RegisterAccountCommand
@@ -53,6 +53,8 @@ namespace ArarasHealthHub.Api.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Forbidden)]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             var command = new LoginAccountCommand { UserName = request.UserName, Password = request.Password };
@@ -77,6 +79,8 @@ namespace ArarasHealthHub.Api.Controllers
         [HttpGet("getAll")]
         [ProducesResponseType(typeof(PagedResponse<AccountDetailsDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllAccountsQuery query)
         {
             var result = await _mediator.Send(query);
@@ -88,7 +92,6 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAccountById(int id)
         {
             var query = new GetAccountByIdQuery(id);
@@ -109,7 +112,7 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPut("update")]
-        [Authorize(Roles = "Master,Admin")]
+        [AuthorizeAccountManagement(typeof(UpdateAccountDto))]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]

@@ -28,6 +28,7 @@ namespace ArarasHealthHub.Infrastructure.Services
         {
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.GivenName, userName ?? string.Empty),
                 new Claim("Scope", scope.ToString()),
             };

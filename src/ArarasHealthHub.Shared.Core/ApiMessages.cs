@@ -55,5 +55,9 @@ namespace ArarasHealthHub.Shared.Core
         public const string OrderCannotBeCompleted = "Não é possível finalizar o pedido. Para finalizar, o pedido precisa estar com o status 'Separado'.";
         public const string MasterRoleExclusiveToManagement = "A função MASTER só pode ser atribuída no escopo de GERENCIAMENTO.";
         public const string OperationalScopeForbidsMasterRole = "A função MASTER não é permitida no escopo OPERACIONAL.";
+        public const string AccessDenied = "Acesso negado.";
+        public const string AuthorizationRequired = "Autorização necessária.";
+        public const string UnauthenticatedUser = "Usuário não autenticado.";
+        public const string InsufficientPermissions = "Você não tem permissão para alterar a senha desta conta.";
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Domain.Enums;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Dtos
 {
@@ -12,6 +13,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Dtos
         public string UserName { get; set; } = string.Empty;
 
         public bool IsActive { get; set; }
+
+        public UserScopeEnum Scope { get; set; }
 
         public DateTime CreatedOn { get; set; }
 

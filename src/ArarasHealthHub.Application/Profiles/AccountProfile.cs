@@ -15,6 +15,7 @@ namespace ArarasHealthHub.Application.Profiles
         {
             CreateMap<ApplicationUser, AccountDetailsDto>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Scope, opt => opt.MapFrom(src => src.Scope))
                 .ForMember(dest => dest.Roles, opt => opt.Ignore());
 
             CreateMap<Facility, FacilityDetailsDto>();

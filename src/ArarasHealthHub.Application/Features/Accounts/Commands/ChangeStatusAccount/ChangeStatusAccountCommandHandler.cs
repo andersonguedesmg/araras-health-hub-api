@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,10 +15,14 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
     public class ChangeStatusAccountCommandHandler : IRequestHandler<ChangeStatusAccountCommand, ApiResponse<bool>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ChangeStatusAccountCommandHandler(UserManager<ApplicationUser> userManager)
+        public ChangeStatusAccountCommandHandler(UserManager<ApplicationUser> userManager, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
+            _authorizationService = authorizationService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<bool>> Handle(ChangeStatusAccountCommand request, CancellationToken cancellationToken)
@@ -26,6 +32,29 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
             if (user == null)
             {
                 return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+            }
+
+            var targetRoles = await _userManager.GetRolesAsync(user);
+            var targetRole = targetRoles.FirstOrDefault() ?? "User";
+            var targetScope = user.Scope;
+
+            var requiredPermission = new ManageAccountRequirement(targetScope, targetRole);
+
+            var currentUser = _httpContextAccessor.HttpContext?.User;
+            if (currentUser == null || !currentUser.Identity!.IsAuthenticated)
+            {
+                return new ApiResponse<bool>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, false);
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                currentUser,
+                null,
+                requiredPermission
+            );
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ApiResponse<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
             if (user.IsActive == request.IsActive)
@@ -42,7 +71,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
             if (!updateResult.Succeeded)
             {
                 var identityErrors = updateResult.Errors.Select(e => e.Description).ToList();
-                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToChangeAccountStatus, identityErrors, false);
+                var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
+                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToChangeAccountStatus, errorsDict, false);
             }
 
             string successMessage = request.IsActive ? ApiMessages.ActivatedSuccessfully("Conta") : ApiMessages.DeactivatedSuccessfully("Conta");

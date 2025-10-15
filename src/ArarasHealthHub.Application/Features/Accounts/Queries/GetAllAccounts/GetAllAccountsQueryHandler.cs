@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,19 +20,42 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GetAllAccountsQueryHandler(UserManager<ApplicationUser> userManager, IApplicationDbContext dbContext, IMapper mapper)
+        public GetAllAccountsQueryHandler(UserManager<ApplicationUser> userManager, IApplicationDbContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _dbContext = dbContext;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<PagedResponse<AccountDetailsDto>> Handle(GetAllAccountsQuery request, CancellationToken cancellationToken)
         {
+            var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>()) {
+                    StatusCode = StatusCodes.Status401Unauthorized, Success = false, Message = ApiMessages.AuthorizationRequired
+                };
+            }
+
+            var currentUser = await _userManager.FindByIdAsync(userId);
+            if (currentUser == null)
+            {
+                 return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>()) {
+                    StatusCode = StatusCodes.Status401Unauthorized, Success = false, Message = ApiMessages.AuthorizationRequired
+                };
+            }
+
             IQueryable<ApplicationUser> query = _dbContext.Users
                                                 .Include(u => u.Facility)
                                                 .AsQueryable();
+
+            if (currentUser.Scope == UserScopeEnum.Operational)
+            {
+                query = query.Where(u => u.FacilityId == currentUser.FacilityId);
+            }
 
             var totalCount = await query.CountAsync(cancellationToken);
 
@@ -80,6 +105,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 
                 var accountDto = _mapper.Map<AccountDetailsDto>(user);
                 accountDto.Roles = roles.ToList();
+                accountDto.Scope = user.Scope;
 
                 if (user.Facility != null)
                 {

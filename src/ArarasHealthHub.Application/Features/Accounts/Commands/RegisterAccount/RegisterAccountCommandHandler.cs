@@ -6,56 +6,79 @@ using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Role.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
+using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
 {
-    public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountCommand, ApiResponse<NewAccountDto>>
+    public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountCommand, ApiResponse<AccountCreatedDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly IFacilityRepository _facilityRepo;
-        private readonly ITokenService _tokenService;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public RegisterAccountCommandHandler(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole<int>> roleManager,
             IFacilityRepository facilityRepo,
-            ITokenService tokenService)
+            IAuthorizationService authorizationService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _facilityRepo = facilityRepo;
-            _tokenService = tokenService;
+            _authorizationService = authorizationService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ApiResponse<NewAccountDto>> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<AccountCreatedDto>> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
         {
+            var requiredPermission = new ManageAccountRequirement(request.Scope, request.Role);
+            var currentUser = _httpContextAccessor.HttpContext?.User;
+
+            if (currentUser == null || !currentUser.Identity!.IsAuthenticated)
+            {
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, false);
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                currentUser, null, requiredPermission
+            );
+
+            if (!authorizationResult.Succeeded)
+            {
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+            }
+
             var facilityExists = await _facilityRepo.FacilityExists(request.FacilityId);
             if (!facilityExists)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.FacilityDoesNotExist, false);
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.FacilityDoesNotExist, false);
             }
 
             if (await _userManager.FindByNameAsync(request.UserName) != null)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
             }
 
             if (request.Role == "MASTER" && request.Scope != UserScopeEnum.Management)
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.MasterRoleExclusiveToManagement, false);
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.MasterRoleExclusiveToManagement, false);
             }
 
             if (request.Scope == UserScopeEnum.Operational && request.Role == "MASTER")
             {
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.OperationalScopeForbidsMasterRole, false);
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.OperationalScopeForbidsMasterRole, false);
             }
+
 
             var user = new ApplicationUser
             {
@@ -64,7 +87,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
                 IsActive = request.IsActive,
                 Scope = request.Scope,
                 CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.MinValue
+                UpdatedOn = null,
             };
 
             var createUserResult = await _userManager.CreateAsync(user, request.Password);
@@ -73,7 +96,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
             {
                 var identityErrors = createUserResult.Errors.Select(e => e.Description).ToList();
                 var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status400BadRequest, ApiMessages.FailedToCreateAccount, errorsDict, false);
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.FailedToCreateAccount, errorsDict, false);
             }
 
             if (!await _roleManager.RoleExistsAsync(request.Role))
@@ -85,26 +108,22 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
 
             if (!addRoleResult.Succeeded)
             {
+                await _userManager.DeleteAsync(user);
                 var identityErrors = addRoleResult.Errors.Select(e => e.Description).ToList();
                 var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponse<NewAccountDto>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToAssignRoleToAccount, errorsDict, false);
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToAssignRoleToAccount, errorsDict, false);
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
-            var token = _tokenService.CreateToken(user.Id, user.UserName!, roles, user.Scope);
-
-            var NewAccountDto = new NewAccountDto
+            var createdDto = new AccountCreatedDto
             {
                 UserId = user.Id,
                 UserName = user.UserName!,
-                IsActive = user.IsActive,
-                FacilityId = user.FacilityId,
+                Role = request.Role,
                 Scope = user.Scope,
-                Token = token,
-                Roles = roles.Select(r => new RoleDto { Name = r }).ToList()
+                FacilityId = user.FacilityId
             };
 
-            return new ApiResponse<NewAccountDto>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Conta"), NewAccountDto);
+            return new ApiResponse<AccountCreatedDto>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Conta"), createdDto);
         }
     }
 }
