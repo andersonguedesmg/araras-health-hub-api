@@ -16,7 +16,7 @@ namespace araras_health_hub_api.Controllers
 {
     [Microsoft.AspNetCore.Mvc.Route("api/stock-movement")]
     [ApiController]
-    // [Authorize]
+    [Authorize(Policy = "CanReadManagementResource")]
     public class StockMovementController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -29,6 +29,8 @@ namespace araras_health_hub_api.Controllers
         [HttpPost("entry")]
         [ProducesResponseType(typeof(ApiResponse<StockMovementDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateEntry([FromBody] CreateStockEntryDto request)
         {
@@ -46,6 +48,8 @@ namespace araras_health_hub_api.Controllers
         [HttpPost("exit")]
         [ProducesResponseType(typeof(ApiResponse<StockMovementDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateExit([FromBody] CreateStockExitDto request)
         {
@@ -62,6 +66,8 @@ namespace araras_health_hub_api.Controllers
 
         [HttpGet("getById/{id}")]
         [ProducesResponseType(typeof(ApiResponse<StockMovementDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
@@ -72,6 +78,8 @@ namespace araras_health_hub_api.Controllers
 
         [HttpGet("getAll")]
         [ProducesResponseType(typeof(PagedResponse<StockMovementDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllStockMovementsQuery query)
         {
             var result = await _mediator.Send(query);
