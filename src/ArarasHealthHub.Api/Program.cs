@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using araras_health_hub_api.Authorization;
 using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
@@ -21,6 +22,7 @@ using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Persistence.Repositories;
 using ArarasHealthHub.Infrastructure.Repository;
 using ArarasHealthHub.Infrastructure.Services;
+using ArarasHealthHub.Shared.Core;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,6 +34,11 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ===============================================
+// 1. CONFIGURAÇÃO DE AMBIENTE E BANCO DE DADOS
+// ===============================================
+
+// Lógica para determinar o DataSource com base no nome da máquina (uso em desenvolvimento)
 var machineName = Environment.MachineName.ToLower();
 
 string dataSource = machineName switch
@@ -45,10 +52,32 @@ string connectionString = $"Data Source={dataSource};Initial Catalog=ararashealt
 
 builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configuração do DbContext para o SQL Server
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+
+// ===============================================
+// 2. CONFIGURAÇÕES BÁSICAS DO ASP.NET CORE
+// ===============================================
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Configura o uso de NewtonsoftJson para lidar com referência cíclica (Circular References)
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
+
+
+// ===============================================
+// 3. CONFIGURAÇÃO DO SWAGGER (OPENAPI)
+// ===============================================
+
+// Configuração da documentação e da segurança Bearer JWT no Swagger UI
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo
@@ -58,6 +87,7 @@ builder.Services.AddSwaggerGen(option =>
         Description = "API para gerenciamento do Araras Health Hub.",
     });
 
+    // Define o esquema de segurança JWT Bearer
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -68,6 +98,7 @@ builder.Services.AddSwaggerGen(option =>
         Scheme = "Bearer"
     });
 
+    // Adiciona o requisito de segurança globalmente
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -83,6 +114,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 
+    // Inclui comentários XML para documentação de endpoints (opcional)
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
@@ -91,27 +123,25 @@ builder.Services.AddSwaggerGen(option =>
     }
 });
 
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-{
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-});
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+// ===============================================
+// 4. CONFIGURAÇÃO DE AUTENTICAÇÃO (IDENTITY & JWT)
+// ===============================================
 
+// Configuração do ASP.NET Core Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 {
+    // Define requisitos de segurança da senha
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
 })
-.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddEntityFrameworkStores<ApplicationDbContext>() // Usa o DbContext para persistência
 .AddDefaultTokenProviders();
 
+// Configuração da Autenticação JWT Bearer
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
@@ -122,6 +152,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
+    // Parâmetros de validação do Token
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -133,21 +164,82 @@ builder.Services.AddAuthentication(options =>
             System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)
         )
     };
+
+    // Personaliza as respostas de 401 (Unauthorized) e 403 (Forbidden)
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = context =>
+        {
+            context.HandleResponse();
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/json";
+
+            var response = new ApiResponse<object>(
+                StatusCodes.Status401Unauthorized,
+                ApiMessages.AuthorizationRequired,
+                (List<string>)null!,
+                false
+            );
+
+            return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+        },
+
+        OnForbidden = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            context.Response.ContentType = "application/json";
+
+            var response = new ApiResponse<object>(
+                StatusCodes.Status403Forbidden,
+                ApiMessages.InsufficientPermissions,
+                (List<string>)null!,
+                false
+            );
+
+            return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+        }
+    };
 });
 
+
+// ===============================================
+// 5. CONFIGURAÇÃO DE AUTORIZAÇÃO (POLICIES)
+// ===============================================
+
+// Define as políticas de autorização baseadas em Claims e Requisitos
 builder.Services.AddAuthorization(options =>
 {
+    // Políticas para gerenciamento de contas (requerem checagem hierárquica)
     options.AddPolicy("CanManageMasterAccount", policy =>
     {
         policy.AddRequirements(new ManageAccountRequirement(UserScopeEnum.Management, "Master"));
     });
-
     options.AddPolicy("CanManageAdminOrUserAccount", policy =>
     {
         policy.AddRequirements(new ManageAccountRequirement(UserScopeEnum.Management, "Admin"));
     });
+
+    // Política para gerenciamento de recursos gerais (Employee, Facility, Product, Supplier)
+    // Requer: Scope Management E (Role Master OU Admin)
+    options.AddPolicy("CanManageResource", policy =>
+    {
+        policy.AddRequirements(new ResourceManagementRequirement());
+    });
+
+    // Política para leitura restrita (getAll, getById) de recursos de Management
+    // Requer: Apenas Scope Management (Master, Admin, User)
+    options.AddPolicy("CanReadManagementResource", policy =>
+    {
+        policy.RequireClaim("Scope", UserScopeEnum.Management.ToString());
+    });
 });
 
+
+// ===============================================
+// 6. INJEÇÃO DE DEPENDÊNCIA (SERVICES, REPOSITORIES, HANDLERS)
+// ===============================================
+
+// Registra Repositórios e Interfaces de Infraestrutura
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -162,26 +254,34 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IStockAdjustmentRepository, StockAdjustmentRepository>();
+
+// Registra os Authorization Handlers
 builder.Services.AddScoped<IAuthorizationHandler, AccountManagementAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, ResourceManagementAuthorizationHandler>();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: "FrontEndUI", policy =>
-    {
-        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().WithExposedHeaders("Content-Disposition");
-    });
-});
 
+// ===============================================
+// 7. CONFIGURAÇÃO DO MEDIATR (CQRS)
+// ===============================================
+
+// Configura o MediatR e registra Handlers/Comandos/Queries
 builder.Services.AddMediatR(cfg =>
 {
+    // Registra Handlers/Comandos/Queries de todos os assemblies necessários
     cfg.RegisterServicesFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
-
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
 
+    // Adiciona Behaviors de Pipeline (ex: Validação e Transação)
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 });
 
+
+// ===============================================
+// 8. CONFIGURAÇÃO DE MAPPERS E VALIDATORS
+// ===============================================
+
+// Configuração do AutoMapper
 builder.Services.AddAutoMapper(typeof(SupplierProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(EmployeeProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
@@ -190,6 +290,7 @@ builder.Services.AddAutoMapper(typeof(ReceivingProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(AccountProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(StockProfile).Assembly);
 
+// Configuração do FluentValidation
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllEmployeesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllProductsQuery).Assembly);
@@ -198,9 +299,28 @@ builder.Services.AddValidatorsFromAssembly(typeof(GetAllReceivingsQuery).Assembl
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllAccountsQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetLowStockAlertsQuery).Assembly);
 
+
+// ===============================================
+// 9. CONFIGURAÇÃO DE CORS
+// ===============================================
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "FrontEndUI", policy =>
+    {
+        // Política permissiva para desenvolvimento
+        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().WithExposedHeaders("Content-Disposition");
+    });
+});
+
+
+// ===============================================
+// 10. PIPELINE DE REQUISIÇÃO HTTP
+// ===============================================
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuração do pipeline HTTP para o ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -216,8 +336,10 @@ app.UseCors("FrontEndUI");
 
 app.UseHttpsRedirection();
 
+// Middleware customizado para capturar e formatar exceções (tratamento de erros global)
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+// Adiciona os middlewares de autenticação e autorização
 app.UseAuthentication();
 app.UseAuthorization();
 
