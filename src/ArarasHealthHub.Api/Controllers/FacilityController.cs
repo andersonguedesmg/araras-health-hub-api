@@ -21,7 +21,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/facility")]
     [ApiController]
-    // [Authorize]
+    [Authorize]
     public class FacilityController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -32,8 +32,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getAll")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(PagedResponse<FacilityDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllFacilitiesQuery query)
         {
             var result = await _mediator.Send(query);
@@ -41,7 +44,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getById/{id}")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<FacilityDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -51,8 +57,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Create([FromBody] CreateFacilityCommand command)
         {
             var result = await _mediator.Send(command);
@@ -60,9 +68,12 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPut("update/{id}")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFacilityCommand command)
         {
             if (id != command.Id)
@@ -74,6 +85,7 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete([FromRoute] int id)
@@ -84,9 +96,12 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPatch("changeStatus/{id}")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusFacilityCommand command)
         {
             if (id != command.Id)
@@ -107,6 +122,7 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("export")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Export([FromQuery] string? searchTerm)
