@@ -19,7 +19,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/stock")]
     [ApiController]
-    // [Authorize]
+    [Authorize]
     public class StockController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -30,8 +30,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getAll")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(PagedResponse<StockOverviewDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetStockOverviewQuery query)
         {
             var result = await _mediator.Send(query);
@@ -39,7 +42,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getById/{productId}")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<StockDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByProductId(int productId)
         {
@@ -49,7 +55,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("low-stock")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<List<StockDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetLowStockAlerts()
         {
             var query = new GetLowStockAlertsQuery();
@@ -58,8 +67,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPatch("{productId}/min-quantity")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<StockDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateMinQuantity(int productId, [FromBody] UpdateMinQuantityRequest request)
         {
@@ -69,8 +81,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPost("adjust")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Adjust([FromBody] AdjustStockDto adjustDto)
         {
@@ -86,7 +101,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("adjustment/{id}")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<StockAdjustmentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetStockAdjustmentById(int id)
         {
@@ -96,7 +114,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("adjustments")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(PagedResponse<StockAdjustmentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAllStockAdjustments([FromQuery] GetAllStockAdjustmentsQuery query)
         {
             var result = await _mediator.Send(query);
