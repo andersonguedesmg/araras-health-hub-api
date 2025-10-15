@@ -16,7 +16,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/receiving")]
     [ApiController]
-    // [Authorize]
+    [Authorize]
     public class ReceivingController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,8 +27,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Create(CreateReceivingCommand command)
         {
             var result = await _mediator.Send(command);
@@ -36,7 +38,10 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getById/{id}")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<ReceivingDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -46,8 +51,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getAll")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(PagedResponse<ReceivingDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllReceivingsQuery query)
         {
             var result = await _mediator.Send(query);
