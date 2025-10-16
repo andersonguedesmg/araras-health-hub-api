@@ -18,7 +18,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/order")]
     [ApiController]
-    // [Authorize]
+    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -31,7 +31,7 @@ namespace ArarasHealthHub.Api.Controllers
         [HttpPost("create")]
         [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [Authorize]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Create([FromBody] CreateOrderDto orderDto)
         {
             var command = new CreateOrderCommand(
@@ -47,6 +47,8 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpGet("getById/{id}")]
         [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -58,6 +60,8 @@ namespace ArarasHealthHub.Api.Controllers
         [HttpGet("getAll")]
         [ProducesResponseType(typeof(PagedResponse<OrderDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllOrdersQuery query)
         {
             var result = await _mediator.Send(query);
@@ -65,8 +69,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPut("approve")]
+        [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Approve([FromBody] ApproveOrderDto orderDto)
         {
@@ -83,8 +90,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPut("separate")]
+        [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Separate([FromBody] SeparateOrderDto orderDto)
         {
@@ -103,6 +113,8 @@ namespace ArarasHealthHub.Api.Controllers
         [HttpPut("finalize")]
         [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Finalize([FromBody] FinalizeOrderDto orderDto)
         {

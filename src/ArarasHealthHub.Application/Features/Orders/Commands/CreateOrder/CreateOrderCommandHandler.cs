@@ -24,6 +24,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IProductRepository _productRepo;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CreateOrderCommandHandler(
             IOrderRepository orderRepo,
@@ -31,7 +32,8 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
             IUnitOfWork unitOfWork,
             UserManager<ApplicationUser> userManager,
             IProductRepository productRepo,
-            IMapper mapper)
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
@@ -39,6 +41,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
             _userManager = userManager;
             _productRepo = productRepo;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<OrderDto>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -68,13 +71,22 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
                 }
             }
 
+            var currentUser = _httpContextAccessor.HttpContext?.User;
+            var facilityClaim = currentUser?.FindFirst("FacilityId")?.Value;
+
+            if (!int.TryParse(facilityClaim, out int facilityId))
+            {
+                return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.UnableToIdentifyFacilityOfTheLoggedAccount, false);
+            }
+
             var order = new Order
             {
                 Observation = request.Observation,
                 CreatedAt = DateTime.UtcNow,
                 CreatedByEmployeeId = request.CreatedByEmployeeId,
                 CreatedByAccountId = request.CreatedByAccountId,
-                OrderStatusId = (int)OrderStatusEnum.Pending
+                OrderStatusId = (int)OrderStatusEnum.Pending,
+                OrderFacilityId = facilityId
             };
 
             await _orderRepo.AddAsync(order);

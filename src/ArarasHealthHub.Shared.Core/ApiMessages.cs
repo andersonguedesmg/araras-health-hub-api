@@ -59,5 +59,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string AuthorizationRequired = "Autorização necessária.";
         public const string UnauthenticatedUser = "Usuário não autenticado.";
         public const string InsufficientPermissions = "Você não tem permissão para alterar a senha desta conta.";
+        public const string OperationRestrictedToFacility = "Operação restrita à unidade.";
+        public const string UnableToIdentifyFacilityOfTheLoggedAccount = "Não foi possível identificar a Facility do usuário logado.";
     }
 }

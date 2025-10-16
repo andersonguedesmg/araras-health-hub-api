@@ -43,6 +43,13 @@ namespace ArarasHealthHub.Infrastructure.Data
                 .Property(u => u.Id)
                 .ValueGeneratedOnAdd();
 
+            builder.Entity<ApplicationUser>()
+                .HasOne(u => u.Facility)
+                .WithMany(f => f.Accounts)
+                .HasForeignKey(u => u.FacilityId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // --- Seed das Funções ---
             int roleMasterId = 1;
             int roleAdminId = 2;
@@ -129,6 +136,7 @@ namespace ArarasHealthHub.Infrastructure.Data
             };
             builder.Entity<OrderStatus>().HasData(orderStatus);
 
+            // --- Configurações de precisão (Existentes) ---
             builder.Entity<Stock>(entity =>
             {
                 entity.Property(e => e.CurrentQuantity)

@@ -19,17 +19,20 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public FinalizeOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
             IUnitOfWork unitOfWork,
-            IMapper mapper)
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<OrderDto>> Handle(FinalizeOrderCommand request, CancellationToken cancellationToken)
@@ -43,6 +46,19 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
             if (order.OrderStatusId != (int)OrderStatusEnum.Separated)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeCompleted, false);
+            }
+
+            var currentUser = _httpContextAccessor.HttpContext?.User;
+            var userFacilityClaim = currentUser?.FindFirst("FacilityId");
+
+            if (userFacilityClaim == null || !int.TryParse(userFacilityClaim.Value, out int userFacilityId))
+            {
+                return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+            }
+
+            if (order.OrderFacilityId != userFacilityId)
+            {
+                return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.OperationRestrictedToFacility, false);
             }
 
             var responsible = await _employeeRepo.GetByIdAsync(request.FinalizedByEmployeeId);

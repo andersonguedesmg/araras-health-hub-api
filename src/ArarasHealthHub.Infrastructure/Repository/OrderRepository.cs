@@ -37,17 +37,15 @@ namespace ArarasHealthHub.Infrastructure.Repository
         public async Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem)
         {
             await _context.OrderItems.AddAsync(orderItem);
-            await _context.SaveChangesAsync();
             return orderItem;
         }
 
         public async Task UpdateOrderItemAsync(OrderItem orderItem)
         {
             _context.OrderItems.Update(orderItem);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Order>> GetAllWithItemsAsync(int? orderStatusId = null)
+        public async Task<IEnumerable<Order>> GetAllWithItemsAsync(int? orderStatusId = null, int? facilityId = null)
         {
             IQueryable<Order> query = _dbSet
                 .Include(o => o.OrderItems)
@@ -71,6 +69,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
             if (orderStatusId.HasValue)
             {
                 query = query.Where(o => o.OrderStatusId == orderStatusId.Value);
+            }
+
+            if (facilityId.HasValue)
+            {
+                query = query.Where(o => o.OrderFacilityId == facilityId.Value);
             }
 
             return await query.ToListAsync();

@@ -188,7 +188,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         column: x => x.FacilityId,
                         principalTable: "Facilities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -374,6 +374,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Observation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    OrderFacilityId = table.Column<int>(type: "int", nullable: false),
                     OrderStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedByEmployeeId = table.Column<int>(type: "int", nullable: false),

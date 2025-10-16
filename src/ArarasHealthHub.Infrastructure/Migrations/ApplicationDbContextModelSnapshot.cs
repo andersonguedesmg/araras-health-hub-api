@@ -199,6 +199,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("OrderFacilityId")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
 
@@ -1130,8 +1133,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Entities.Facility", "Facility")
                         .WithMany("Accounts")
                         .HasForeignKey("FacilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Facility");
                 });

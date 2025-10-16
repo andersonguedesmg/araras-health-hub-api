@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251014132430_a2h_1.1.0")]
+    [Migration("20251016150055_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -201,6 +201,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<string>("Observation")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("OrderFacilityId")
+                        .HasColumnType("int");
 
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
@@ -1133,8 +1136,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Entities.Facility", "Facility")
                         .WithMany("Accounts")
                         .HasForeignKey("FacilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Facility");
                 });
