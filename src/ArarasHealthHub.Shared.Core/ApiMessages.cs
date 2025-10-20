@@ -57,9 +57,9 @@ namespace ArarasHealthHub.Shared.Core
         public const string OperationalScopeForbidsMasterRole = "A função MASTER não é permitida no escopo OPERACIONAL.";
         public const string AccessDenied = "Acesso negado.";
         public const string AuthorizationRequired = "Autorização necessária.";
-        public const string UnauthenticatedUser = "Usuário não autenticado.";
-        public const string InsufficientPermissions = "Você não tem permissão para alterar a senha desta conta.";
+        public const string UnauthenticatedUser = "Conta não autenticada.";
+        public const string InsufficientPermissions = "Permissões insuficientes.";
         public const string OperationRestrictedToFacility = "Operação restrita à unidade.";
-        public const string UnableToIdentifyFacilityOfTheLoggedAccount = "Não foi possível identificar a Facility do usuário logado.";
+        public const string UnableToIdentifyFacilityOfTheLoggedAccount = "Não foi possível identificar a unidade da conta logada.";
     }
 }

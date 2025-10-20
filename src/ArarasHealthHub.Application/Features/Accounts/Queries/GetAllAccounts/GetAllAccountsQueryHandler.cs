@@ -35,16 +35,22 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
             var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
             if (string.IsNullOrEmpty(userId))
             {
-                return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>()) {
-                    StatusCode = StatusCodes.Status401Unauthorized, Success = false, Message = ApiMessages.AuthorizationRequired
+                return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    Success = false,
+                    Message = ApiMessages.AuthorizationRequired
                 };
             }
 
             var currentUser = await _userManager.FindByIdAsync(userId);
             if (currentUser == null)
             {
-                 return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>()) {
-                    StatusCode = StatusCodes.Status401Unauthorized, Success = false, Message = ApiMessages.AuthorizationRequired
+                return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    Success = false,
+                    Message = ApiMessages.AuthorizationRequired
                 };
             }
 
@@ -57,30 +63,43 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                 query = query.Where(u => u.FacilityId == currentUser.FacilityId);
             }
 
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTermLower = request.SearchTerm.ToLower();
+
+                query = query.Where(u =>
+                    u.Id.ToString().Contains(searchTermLower) ||
+                    u.UserName!.ToLower().Contains(searchTermLower) ||
+                    u.FacilityId.ToString().Contains(searchTermLower) ||
+                    (u.Facility != null && u.Facility.Name.ToLower().Contains(searchTermLower)) || u.IsActive.ToString().ToLower().Contains(searchTermLower) ||
+                    u.Scope.ToString().ToLower().Contains(searchTermLower)
+                );
+            }
+
             var totalCount = await query.CountAsync(cancellationToken);
 
             switch (request.OrderBy.ToLower())
             {
                 case "username":
-                    query = request.SortOrder.ToLower() == "desc" ?
-                            query.OrderByDescending(u => u.UserName) :
-                            query.OrderBy(u => u.UserName);
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                                query.OrderByDescending(u => u.UserName) :
+                                query.OrderBy(u => u.UserName);
                     break;
                 case "createdon":
-                    query = request.SortOrder.ToLower() == "desc" ?
-                            query.OrderByDescending(u => u.CreatedOn) :
-                            query.OrderBy(u => u.CreatedOn);
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                                query.OrderByDescending(u => u.CreatedOn) :
+                                query.OrderBy(u => u.CreatedOn);
                     break;
                 case "isactive":
-                    query = request.SortOrder.ToLower() == "desc" ?
-                            query.OrderByDescending(u => u.IsActive) :
-                            query.OrderBy(u => u.IsActive);
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                                query.OrderByDescending(u => u.IsActive) :
+                                query.OrderBy(u => u.IsActive);
                     break;
                 case "id":
                 default:
-                    query = request.SortOrder.ToLower() == "desc" ?
-                            query.OrderByDescending(u => u.Id) :
-                            query.OrderBy(u => u.Id);
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                                query.OrderByDescending(u => u.Id) :
+                                query.OrderBy(u => u.Id);
                     break;
             }
 
