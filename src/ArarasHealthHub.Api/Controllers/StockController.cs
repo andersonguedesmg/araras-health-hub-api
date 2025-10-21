@@ -6,6 +6,7 @@ using ArarasHealthHub.Application.Features.Stocks.Commands.AdjustStock;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantities;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
@@ -119,6 +120,18 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAllStockAdjustments([FromQuery] GetAllStockAdjustmentsQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("min-quantities")]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(PagedResponse<StockMinQuantityDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetAllMinQuantities([FromQuery] GetAllStockMinQuantitiesQuery query)
         {
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);

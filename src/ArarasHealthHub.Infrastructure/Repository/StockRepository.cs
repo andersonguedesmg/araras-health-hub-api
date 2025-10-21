@@ -70,5 +70,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             return await _dbContext.Stocks.CountAsync();
         }
+
+        public IQueryable<Stock> GetQueryable()
+        {
+            return _dbContext.Set<Stock>();
+        }
     }
 }

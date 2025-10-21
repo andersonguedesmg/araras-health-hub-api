@@ -18,6 +18,11 @@ namespace ArarasHealthHub.Application.Profiles
             CreateMap<Stock, StockDto>();
 
             CreateMap<Stock, StockOverviewDto>();
+
+            CreateMap<Stock, StockMinQuantityDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.Product.Description))
+                .ForMember(dest => dest.ProductIsActive, opt => opt.MapFrom(src => src.Product.IsActive));
         }
     }
 }
