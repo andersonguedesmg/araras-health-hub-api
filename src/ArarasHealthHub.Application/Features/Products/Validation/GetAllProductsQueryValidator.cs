@@ -32,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
 
         private bool BeValidOrderByProperty(string orderBy)
         {
-            var allowedProperties = new[] { "id", "name", "description", "dosageForm", "category" };
+            var allowedProperties = new[] { "id", "name", "description", "mainCategory", "subCategory", "presentationForm" };
             return allowedProperties.Contains(orderBy.ToLower());
         }
     }

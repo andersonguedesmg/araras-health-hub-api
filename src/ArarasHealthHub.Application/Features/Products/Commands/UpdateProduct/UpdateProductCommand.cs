@@ -7,14 +7,12 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
 {
-    /// <summary>
-    /// Comando para atualizar um produto existente.
-    /// </summary>
     public record UpdateProductCommand(
         int Id,
         string Name,
         string Description,
-        string DosageForm,
-        string Category
+        string MainCategory,
+        string SubCategory,
+        string PresentationForm
     ) : IRequest<ApiResponse<bool>>;
 }

@@ -32,8 +32,9 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.ExportProducts
                     p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Description.ToLower().Contains(searchTermLower) ||
-                    p.DosageForm.ToLower().Contains(searchTermLower) ||
-                    p.Category.ToLower().Contains(searchTermLower) ||
+                    p.MainCategory.ToLower().Contains(searchTermLower) ||
+                    p.SubCategory.ToLower().Contains(searchTermLower) ||
+                    p.PresentationForm.ToLower().Contains(searchTermLower) ||
                     p.IsActive.ToString().ToLower().Contains(searchTermLower)
                 );
             }

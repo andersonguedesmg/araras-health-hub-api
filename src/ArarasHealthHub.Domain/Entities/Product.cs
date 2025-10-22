@@ -11,20 +11,24 @@ namespace ArarasHealthHub.Domain.Entities
     public class Product : BaseEntity
     {
         [Required]
-        [MaxLength(100)]
+        [MaxLength(150)]
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(200)]
         public string Description { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(100)]
-        public string DosageForm { get; set; } = string.Empty;
+        public string MainCategory { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(100)]
-        public string Category { get; set; } = string.Empty;
+        public string SubCategory { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(100)]
+        public string PresentationForm { get; set; } = string.Empty;
 
         public Stock? Stock { get; set; }
     }

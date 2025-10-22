@@ -130,11 +130,11 @@ namespace ArarasHealthHub.Api.Controllers
             var productDtos = await _mediator.Send(new ExportProductsQuery { SearchTerm = searchTerm });
 
             var sb = new StringBuilder();
-            sb.AppendLine("ID,NOME,DESCRIÇÃO,UNIDADE DE MEDIDA,CATEGORIA,STATUS");
+            sb.AppendLine("ID,NOME,DESCRIÇÃO,CATEGORIA PRINCIPAL,SUBCATEGORIA,FORMA DE APRESENTAÇÃO,STATUS");
 
             foreach (var productDto in productDtos)
             {
-                sb.Append($"{productDto.Id},{productDto.Name},{productDto.Description},{productDto.DosageForm},{productDto.Category},{(productDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+                sb.Append($"{productDto.Id},{productDto.Name},{productDto.Description},{productDto.MainCategory},{productDto.SubCategory},{productDto.PresentationForm},{(productDto.IsActive ? "Ativo" : "Inativo")}\r\n");
             }
 
             var fileName = $"produtos_{DateTime.Now:yyyyMMddHHmmss}.csv";

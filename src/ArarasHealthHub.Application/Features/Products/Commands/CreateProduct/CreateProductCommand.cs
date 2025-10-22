@@ -7,13 +7,11 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
 {
-    /// <summary>
-    /// Comando para criar um novo produto.
-    /// </summary>
     public record CreateProductCommand(
         string Name,
         string Description,
-        string DosageForm,
-        string Category
+        string MainCategory,
+        string SubCategory,
+        string PresentationForm
     ) : IRequest<ApiResponse<int>>;
 }
