@@ -21,7 +21,9 @@ namespace ArarasHealthHub.Application.Profiles
 
             CreateMap<Stock, StockMinQuantityDto>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
-                .ForMember(dest => dest.ProductCode, opt => opt.MapFrom(src => src.Product.Description))
+                .ForMember(dest => dest.ProductMainCategory, opt => opt.MapFrom(src => src.Product.MainCategory))
+                .ForMember(dest => dest.ProductSubCategory, opt => opt.MapFrom(src => src.Product.SubCategory))
+                .ForMember(dest => dest.ProductPresentationForm, opt => opt.MapFrom(src => src.Product.PresentationForm))
                 .ForMember(dest => dest.ProductIsActive, opt => opt.MapFrom(src => src.Product.IsActive));
         }
     }

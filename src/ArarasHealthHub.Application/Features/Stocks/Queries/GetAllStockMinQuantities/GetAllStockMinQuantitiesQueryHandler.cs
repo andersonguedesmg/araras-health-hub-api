@@ -35,7 +35,9 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuan
                     s.Id.ToString().Contains(searchTermLower) ||
                     s.ProductId.ToString().Contains(searchTermLower) ||
                     s.MinQuantity.ToString().Contains(searchTermLower) ||
-                    s.Product.Name.ToLower().Contains(searchTermLower) ||
+                    s.Product.MainCategory.ToLower().Contains(searchTermLower) ||
+                    s.Product.SubCategory.ToLower().Contains(searchTermLower) ||
+                    s.Product.PresentationForm.ToLower().Contains(searchTermLower) ||
                     s.Product.Id.ToString().Contains(searchTermLower) ||
                     s.Product.IsActive.ToString().ToLower().Contains(searchTermLower)
                 );
@@ -56,11 +58,6 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuan
                     orderedStock = request.SortOrder?.ToLower() == "desc" ?
                         stockQuery.OrderByDescending(s => s.MinQuantity) :
                         stockQuery.OrderBy(s => s.MinQuantity);
-                    break;
-                case "productcode":
-                    orderedStock = request.SortOrder?.ToLower() == "desc" ?
-                        stockQuery.OrderByDescending(s => s.Product.Id) :
-                        stockQuery.OrderBy(s => s.Product.Id);
                     break;
                 default:
                     orderedStock = request.SortOrder?.ToLower() == "desc" ?
