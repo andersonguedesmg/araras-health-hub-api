@@ -8,5 +8,8 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings
 {
-    public class GetAllReceivingsQuery : PagedRequest, IRequest<PagedResponse<ReceivingDto>> { }
+    public class GetAllReceivingsQuery : PagedRequest, IRequest<PagedResponse<ReceivingDto>>
+    {
+        public string? SearchTerm { get; set; }
+    }
 }

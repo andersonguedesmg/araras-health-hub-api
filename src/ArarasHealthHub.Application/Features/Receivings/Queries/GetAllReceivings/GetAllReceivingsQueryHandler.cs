@@ -25,12 +25,36 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
         public async Task<PagedResponse<ReceivingDto>> Handle(GetAllReceivingsQuery request, CancellationToken cancellationToken)
         {
             var query = _receivingRepository.AsQueryable();
+
             query = query
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
                 .Include(r => r.ReceivedItem)
                     .ThenInclude(ri => ri.Product);
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTermLower = request.SearchTerm.ToLower();
+
+                query = query.Where(r =>
+                    r.Id.ToString().Contains(searchTermLower) ||
+                    r.InvoiceNumber.ToLower().Contains(searchTermLower) ||
+                    r.SupplyAuthorization.ToLower().Contains(searchTermLower) ||
+                    r.Observation!.ToLower().Contains(searchTermLower) ||
+                    r.ReceivingDate.ToString().Contains(searchTermLower) ||
+                    r.TotalValue.ToString().Contains(searchTermLower) ||
+
+                    (r.Supplier != null && r.Supplier.Name.ToLower().Contains(searchTermLower)) ||
+                    (r.Responsible != null && r.Responsible.Name.ToLower().Contains(searchTermLower)) ||
+                    (r.Account != null && r.Account.UserName!.ToLower().Contains(searchTermLower)) ||
+
+                    r.ReceivedItem.Any(ri =>
+                        ri.Batch.ToLower().Contains(searchTermLower) ||
+                        ri.Product.Name.ToLower().Contains(searchTermLower)
+                    )
+                );
+            }
 
             var totalCount = await query.CountAsync(cancellationToken);
 
@@ -46,10 +70,15 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
                            query.OrderByDescending(r => r.ReceivingDate) :
                            query.OrderBy(r => r.ReceivingDate);
                     break;
-                default:
+                case "suppliername":
                     query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderByDescending(r => r.Id) :
-                            query.OrderBy(r => r.Id);
+                            query.OrderByDescending(r => r.Supplier!.Name) :
+                            query.OrderBy(r => r.Supplier!.Name);
+                    break;
+                default:
+                    query = request.SortOrder?.ToLower() == "asc" ?
+                            query.OrderByDescending(r => r.CreatedOn) :
+                            query.OrderBy(r => r.CreatedOn);
                     break;
             }
 
