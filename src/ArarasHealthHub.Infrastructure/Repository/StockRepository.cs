@@ -75,5 +75,13 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             return _dbContext.Set<Stock>();
         }
+
+        public IQueryable<Stock> GetLowStockQueryable()
+        {
+            return _dbContext.Stocks
+                .Include(s => s.Product)
+                .AsNoTracking()
+                .Where(s => s.CurrentQuantity <= s.MinQuantity);
+        }
     }
 }

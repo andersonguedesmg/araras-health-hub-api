@@ -8,5 +8,8 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts
 {
-    public record GetLowStockAlertsQuery() : IRequest<ApiResponse<List<StockDto>>>;
+    public class GetLowStockAlertsQuery : PagedRequest, IRequest<PagedResponse<StockDto>>
+    {
+        public string? SearchTerm { get; set; }
+    }
 }

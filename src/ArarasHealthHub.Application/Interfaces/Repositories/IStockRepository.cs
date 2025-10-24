@@ -13,5 +13,6 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<IEnumerable<Stock>> GetLowStockAsync();
         Task<int> GetTotalCountAsync();
         IQueryable<Stock> GetQueryable();
+        IQueryable<Stock> GetLowStockQueryable();
     }
 }

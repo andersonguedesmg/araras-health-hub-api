@@ -60,9 +60,8 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<List<StockDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetLowStockAlerts()
+        public async Task<IActionResult> GetLowStockAlerts([FromQuery] GetLowStockAlertsQuery query)
         {
-            var query = new GetLowStockAlertsQuery();
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
