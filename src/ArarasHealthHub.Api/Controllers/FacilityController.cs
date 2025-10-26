@@ -12,6 +12,7 @@ using ArarasHealthHub.Application.Features.Facilities.Queries.ExportFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdownOptions;
+using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityProfile;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -143,6 +144,18 @@ namespace ArarasHealthHub.Api.Controllers
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());
 
             return File(fileBytes, "text/csv", fileName);
+        }
+
+        [HttpGet("profile")]
+        [ProducesResponseType(typeof(ApiResponse<FacilityProfileDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFacilityProfile()
+        {
+            var query = new GetFacilityProfileQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

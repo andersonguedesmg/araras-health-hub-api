@@ -31,6 +31,9 @@ namespace ArarasHealthHub.Application.Profiles
                 .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
                 .ForMember(dest => dest.IsActive, opt => opt.Ignore());
+
+            CreateMap<Facility, FacilityProfileDto>()
+                .ForMember(dest => dest.FacilityAccounts, opt => opt.Ignore());
         }
     }
 }
