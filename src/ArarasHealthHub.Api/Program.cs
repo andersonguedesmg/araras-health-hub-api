@@ -254,6 +254,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IStockAdjustmentRepository, StockAdjustmentRepository>();
+builder.Services.AddScoped<IStockAdjustmentItemRepository, StockAdjustmentItemRepository>();
 
 // Registra os Authorization Handlers
 builder.Services.AddScoped<IAuthorizationHandler, AccountManagementAuthorizationHandler>();

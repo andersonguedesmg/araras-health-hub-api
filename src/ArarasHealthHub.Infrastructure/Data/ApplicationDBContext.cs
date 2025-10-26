@@ -34,6 +34,7 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<StockAdjustment> StockAdjustments { get; set; }
+        public DbSet<StockAdjustmentItem> StockAdjustmentItem { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -152,7 +153,7 @@ namespace ArarasHealthHub.Infrastructure.Data
                     .HasPrecision(18, 2);
             });
 
-            builder.Entity<StockAdjustment>(entity =>
+            builder.Entity<StockAdjustmentItem>(entity =>
             {
                 entity.Property(e => e.Quantity)
                     .HasPrecision(18, 2);

@@ -25,32 +25,75 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustm
         public async Task<PagedResponse<StockAdjustmentDto>> Handle(GetAllStockAdjustmentsQuery request, CancellationToken cancellationToken)
         {
             var query = _repo.AsQueryable();
+
+            // 1. Inclusão das entidades relacionadas (JOINs)
+            query = query
+                .Include(a => a.Responsible) // Funcionário Responsável
+                .Include(a => a.Account) // Conta de Usuário
+                .Include(a => a.AdjustmentItems)
+                    .ThenInclude(ai => ai.Product); // Produto de cada item
+
+            // 2. Filtro (SearchTerm)
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTermLower = request.SearchTerm.ToLower();
+
+                query = query.Where(a =>
+                    a.Id.ToString().Contains(searchTermLower) ||
+                    a.Reason.ToLower().Contains(searchTermLower) ||
+                    a.Observation!.ToLower().Contains(searchTermLower) ||
+                    a.AdjustmentDate.ToString().Contains(searchTermLower) ||
+                    a.Type.ToString().ToLower().Contains(searchTermLower) ||
+
+                    // Busca pelo nome do responsável
+                    (a.Responsible != null && a.Responsible.Name.ToLower().Contains(searchTermLower)) ||
+                    // Busca pelo nome de usuário da conta
+                    (a.Account != null && a.Account.UserName!.ToLower().Contains(searchTermLower)) ||
+
+                    // Busca nos itens de ajuste (Batch ou Nome do Produto)
+                    a.AdjustmentItems.Any(ai =>
+                        (ai.Batch != null && ai.Batch.ToLower().Contains(searchTermLower)) ||
+                        ai.Product.Name.ToLower().Contains(searchTermLower)
+                    )
+                );
+            }
+
+            // 3. Contagem Total (Deve ser feita antes da paginação)
             var totalCount = await query.CountAsync(cancellationToken);
 
-            switch (request.OrderBy.ToLower())
+            // 4. Ordenação
+            switch (request.OrderBy?.ToLower())
             {
                 case "reason":
-                    query = request.SortOrder.ToLower() == "desc" ?
-                        query.OrderByDescending(a => a.Reason) :
-                        query.OrderBy(a => a.Reason);
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                            query.OrderByDescending(a => a.Reason) :
+                            query.OrderBy(a => a.Reason);
                     break;
-                case "productid":
-                    query = request.SortOrder.ToLower() == "desc" ?
-                        query.OrderByDescending(a => a.ProductId) :
-                        query.OrderBy(a => a.ProductId);
+                case "adjustmentdate": // Novo campo de ordenação
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                           query.OrderByDescending(a => a.AdjustmentDate) :
+                           query.OrderBy(a => a.AdjustmentDate);
+                    break;
+                case "responsible": // Ordenação pelo nome do responsável
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                            query.OrderByDescending(a => a.Responsible!.Name) :
+                            query.OrderBy(a => a.Responsible!.Name);
                     break;
                 default:
-                    query = request.SortOrder.ToLower() == "desc" ?
-                        query.OrderByDescending(a => a.Id) :
-                        query.OrderBy(a => a.Id);
+                    // Padrão: Ordenar por data de criação (Id ou CreatedOn)
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                            query.OrderByDescending(a => a.CreatedOn) :
+                            query.OrderBy(a => a.CreatedOn);
                     break;
             }
 
+            // 5. Paginação e Execução da Query
             var pagedAdjustments = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
 
+            // 6. Mapeamento
             var adjustmentDtos = _mapper.Map<List<StockAdjustmentDto>>(pagedAdjustments);
 
             return new PagedResponse<StockAdjustmentDto>(

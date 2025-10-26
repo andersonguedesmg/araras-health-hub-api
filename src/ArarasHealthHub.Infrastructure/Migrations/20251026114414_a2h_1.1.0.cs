@@ -193,38 +193,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StockAdjustments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "Quantidade ajustada. Pode ser positiva (adicionar) ou negativa (remover)."),
-                    Reason = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    ResponsibleId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StockAdjustments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StockAdjustments_Employees_ResponsibleId",
-                        column: x => x.ResponsibleId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StockAdjustments_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                },
-                comment: "Representa um ajuste manual na quantidade do estoque.");
-
-            migrationBuilder.CreateTable(
                 name: "StockMovements",
                 columns: table => new
                 {
@@ -489,6 +457,40 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 comment: "Representa o registro de entrada no estoque.");
 
             migrationBuilder.CreateTable(
+                name: "StockAdjustments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Observation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    AdjustmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ResponsibleId = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockAdjustments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockAdjustments_AspNetUsers_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StockAdjustments_Employees_ResponsibleId",
+                        column: x => x.ResponsibleId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Representa um ajuste manual na quantidade do estoque.");
+
+            migrationBuilder.CreateTable(
                 name: "OrderItems",
                 columns: table => new
                 {
@@ -551,6 +553,40 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "Representa um item específico de um recebimento.");
+
+            migrationBuilder.CreateTable(
+                name: "StockAdjustmentItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StockAdjustmentId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    UnitValue = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Batch = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockAdjustmentItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockAdjustmentItem_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StockAdjustmentItem_StockAdjustments_StockAdjustmentId",
+                        column: x => x.StockAdjustmentId,
+                        principalTable: "StockAdjustments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
@@ -713,9 +749,19 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "SupplierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockAdjustments_ProductId",
-                table: "StockAdjustments",
+                name: "IX_StockAdjustmentItem_ProductId",
+                table: "StockAdjustmentItem",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockAdjustmentItem_StockAdjustmentId",
+                table: "StockAdjustmentItem",
+                column: "StockAdjustmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockAdjustments_AccountId",
+                table: "StockAdjustments",
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockAdjustments_ResponsibleId",
@@ -764,7 +810,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "ReceivedItems");
 
             migrationBuilder.DropTable(
-                name: "StockAdjustments");
+                name: "StockAdjustmentItem");
 
             migrationBuilder.DropTable(
                 name: "StockMovements");
@@ -782,19 +828,22 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "Receivings");
 
             migrationBuilder.DropTable(
+                name: "StockAdjustments");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
                 name: "OrderStatuses");
 
             migrationBuilder.DropTable(
+                name: "Suppliers");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Employees");
-
-            migrationBuilder.DropTable(
-                name: "Suppliers");
 
             migrationBuilder.DropTable(
                 name: "Facilities");

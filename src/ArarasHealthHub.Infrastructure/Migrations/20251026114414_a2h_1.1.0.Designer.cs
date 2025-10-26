@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251022111023_a2h_1.1.0")]
+    [Migration("20251026114414_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -527,7 +527,63 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AdjustmentDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Observation")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ResponsibleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ResponsibleId");
+
+                    b.ToTable("StockAdjustments", t =>
+                        {
+                            t.HasComment("Representa um ajuste manual na quantidade do estoque.");
+                        });
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustmentItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Batch")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -538,16 +594,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Quantidade ajustada. Pode ser positiva (adicionar) ou negativa (remover).");
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("ResponsibleId")
+                    b.Property<int>("StockAdjustmentId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("TotalValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("UnitValue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
@@ -556,12 +612,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ResponsibleId");
+                    b.HasIndex("StockAdjustmentId");
 
-                    b.ToTable("StockAdjustments", t =>
-                        {
-                            t.HasComment("Representa um ajuste manual na quantidade do estoque.");
-                        });
+                    b.ToTable("StockAdjustmentItem");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockMovement", b =>
@@ -1100,9 +1153,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>
                 {
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "Account")
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1112,9 +1165,28 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.Navigation("Account");
 
                     b.Navigation("Responsible");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustmentItem", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.StockAdjustment", "StockAdjustment")
+                        .WithMany("AdjustmentItems")
+                        .HasForeignKey("StockAdjustmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("StockAdjustment");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockMovement", b =>
@@ -1215,6 +1287,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
                     b.Navigation("ReceivedItem");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>
+                {
+                    b.Navigation("AdjustmentItems");
                 });
 #pragma warning restore 612, 618
         }

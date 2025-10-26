@@ -8,5 +8,8 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments
 {
-    public class GetAllStockAdjustmentsQuery : PagedRequest, IRequest<PagedResponse<StockAdjustmentDto>> { }
+    public class GetAllStockAdjustmentsQuery : PagedRequest, IRequest<PagedResponse<StockAdjustmentDto>>
+    {
+        public string? SearchTerm { get; set; }
+    }
 }

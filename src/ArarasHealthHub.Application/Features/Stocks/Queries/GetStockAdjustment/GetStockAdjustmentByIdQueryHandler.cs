@@ -3,42 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
+using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment
 {
     public class GetStockAdjustmentByIdQueryHandler : IRequestHandler<GetStockAdjustmentByIdQuery, ApiResponse<StockAdjustmentDto>>
     {
-        private readonly IStockAdjustmentRepository _repo;
+        private readonly IApplicationDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public GetStockAdjustmentByIdQueryHandler(IStockAdjustmentRepository repo)
+        public GetStockAdjustmentByIdQueryHandler(IApplicationDbContext dbContext, IMapper mapper)
         {
-            _repo = repo;
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public async Task<ApiResponse<StockAdjustmentDto>> Handle(GetStockAdjustmentByIdQuery request, CancellationToken cancellationToken)
         {
-            var adjustment = await _repo.GetByIdAsync(request.Id);
+            var adjustment = await _dbContext.StockAdjustments
+                .Include(a => a.Responsible)
+                .Include(a => a.Account)
+                .Include(a => a.AdjustmentItems)
+                    .ThenInclude(ai => ai.Product)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
             if (adjustment == null)
             {
-                return new ApiResponse<StockAdjustmentDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Ajuste"), null);
+                return new ApiResponse<StockAdjustmentDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Ajuste de Estoque", request.Id), null);
             }
 
-            var adjustmentDto = new StockAdjustmentDto
-            {
-                Id = adjustment.Id,
-                ProductId = adjustment.ProductId,
-                Quantity = adjustment.Quantity,
-                Reason = adjustment.Reason,
-                ResponsibleId = adjustment.ResponsibleId,
-                CreatedOn = adjustment.CreatedOn
-            };
+            var adjustmentDto = _mapper.Map<StockAdjustmentDto>(adjustment);
 
-            return new ApiResponse<StockAdjustmentDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Ajuste"), adjustmentDto);
+            return new ApiResponse<StockAdjustmentDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Ajuste de Estoque"), adjustmentDto);
         }
     }
 }

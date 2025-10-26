@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Stocks.Commands.AdjustStock;
+using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
@@ -80,22 +80,15 @@ namespace ArarasHealthHub.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost("adjust")]
+        [HttpPost("create-adjustment")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Adjust([FromBody] AdjustStockDto adjustDto)
+        public async Task<IActionResult> CreateAdjustment([FromBody] CreateStockAdjustmentCommand command)
         {
-            var command = new AdjustStockCommand(
-                adjustDto.ProductId,
-                adjustDto.Quantity,
-                adjustDto.Reason,
-                adjustDto.AdjustedByEmployeeId,
-                adjustDto.AdjustedByAccountId
-            );
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
         }

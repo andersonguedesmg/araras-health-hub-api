@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Domain.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
@@ -11,22 +13,30 @@ namespace ArarasHealthHub.Domain.Entities
     [Comment("Representa um ajuste manual na quantidade do estoque.")]
     public class StockAdjustment : BaseEntity
     {
-        [Required]
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
-        public Product Product { get; set; } = null!;
+        public StockAdjustmentType Type { get; set; }
 
         [Required]
-        [Comment("Quantidade ajustada. Pode ser positiva (adicionar) ou negativa (remover).")]
-        public decimal Quantity { get; set; }
-
-        [Required]
-        [MaxLength(250)]
+        [MaxLength(100)]
         public string Reason { get; set; } = string.Empty;
+
+        [MaxLength(200)]
+        public string? Observation { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime AdjustmentDate { get; set; }
 
         [Required]
         [ForeignKey("Responsible")]
         public int ResponsibleId { get; set; }
-        public Employee Responsible { get; set; } = null!;
+
+        public Employee? Responsible { get; set; }
+
+        [Required]
+        [ForeignKey("Account")]
+        public int AccountId { get; set; }
+
+        public ApplicationUser? Account { get; set; }
+
+        public ICollection<StockAdjustmentItem> AdjustmentItems { get; set; } = new List<StockAdjustmentItem>();
     }
 }

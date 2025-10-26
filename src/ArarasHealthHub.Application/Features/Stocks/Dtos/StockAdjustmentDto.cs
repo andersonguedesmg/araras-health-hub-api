@@ -8,10 +8,11 @@ namespace ArarasHealthHub.Application.Features.Stocks.Dtos
     public class StockAdjustmentDto
     {
         public int Id { get; set; }
-        public int ProductId { get; set; }
-        public decimal Quantity { get; set; }
-        public string? Reason { get; set; }
-        public int ResponsibleId { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public string Reason { get; set; } = string.Empty;
+        public string? Observation { get; set; }
+        public DateTime AdjustmentDate { get; set; }
+        public string ResponsibleName { get; set; } = string.Empty;
+        public ICollection<StockAdjustmentItemDto> AdjustmentItems { get; set; } = new List<StockAdjustmentItemDto>();
     }
 }
