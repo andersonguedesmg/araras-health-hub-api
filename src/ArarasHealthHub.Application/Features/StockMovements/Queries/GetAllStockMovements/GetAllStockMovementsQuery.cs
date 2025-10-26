@@ -8,10 +8,8 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStockMovements
 {
-    public record GetAllStockMovementsQuery(
-        int PageNumber,
-        int PageSize,
-        string OrderBy,
-        string SortOrder
-    ) : IRequest<PagedResponse<StockMovementDto>>;
+    public class GetAllStockMovementsQuery : PagedRequest, IRequest<PagedResponse<StockMovementDto>>
+    {
+        public string? SearchTerm { get; set; }
+    }
 }

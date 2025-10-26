@@ -12,7 +12,11 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public StockMovementProfile()
         {
-            CreateMap<StockMovement, StockMovementDto>();
+            CreateMap<StockMovement, StockMovementDto>()
+                .ForMember(dest => dest.ProductName,
+                           opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.ResponsibleName,
+                           opt => opt.MapFrom(src => src.Responsible.Name));
         }
     }
 }

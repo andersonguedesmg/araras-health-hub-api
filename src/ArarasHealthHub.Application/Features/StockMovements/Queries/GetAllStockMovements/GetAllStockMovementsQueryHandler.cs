@@ -7,6 +7,7 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStockMovements
 {
@@ -23,15 +24,64 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStoc
 
         public async Task<PagedResponse<StockMovementDto>> Handle(GetAllStockMovementsQuery request, CancellationToken cancellationToken)
         {
-            var totalCount = await _stockMovementRepository.GetTotalCountAsync();
-            var movements = await _stockMovementRepository.GetAllAsync(
-                request.PageNumber,
-                request.PageSize,
-                request.OrderBy,
-                request.SortOrder
-            );
+            var query = _stockMovementRepository.AsQueryable();
 
-            var movementDtos = _mapper.Map<List<StockMovementDto>>(movements);
+            query = query
+                .Include(m => m.Product)
+                .Include(m => m.Responsible);
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var searchTermLower = request.SearchTerm.ToLower();
+
+                query = query.Where(m =>
+                    m.Id.ToString().Contains(searchTermLower) ||
+                    m.Quantity.ToString().Contains(searchTermLower) ||
+                    m.SourceDocumentType.ToLower().Contains(searchTermLower) ||
+                    m.Type.ToString().ToLower().Contains(searchTermLower) ||
+                    m.SourceDocumentId.ToString().Contains(searchTermLower) ||
+                    (m.Product != null && m.Product.Name.ToLower().Contains(searchTermLower)) ||
+                    (m.Responsible != null && m.Responsible.Name.ToLower().Contains(searchTermLower))
+                );
+            }
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            switch (request.OrderBy?.ToLower())
+            {
+                case "productname":
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                            query.OrderByDescending(m => m.Product.Name) :
+                            query.OrderBy(m => m.Product.Name);
+                    break;
+                case "sourcedocumenttype":
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                           query.OrderByDescending(m => m.SourceDocumentType) :
+                           query.OrderBy(m => m.SourceDocumentType);
+                    break;
+                case "type":
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                           query.OrderByDescending(m => m.Type) :
+                           query.OrderBy(m => m.Type);
+                    break;
+                case "responsible":
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                            query.OrderByDescending(m => m.Responsible.Name) :
+                            query.OrderBy(m => m.Responsible.Name);
+                    break;
+                default:
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                            query.OrderBy(m => m.CreatedOn) :
+                            query.OrderByDescending(m => m.CreatedOn);
+                    break;
+            }
+
+            var pagedMovements = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
+
+            var movementDtos = _mapper.Map<List<StockMovementDto>>(pagedMovements);
 
             return new PagedResponse<StockMovementDto>(
                 request.PageNumber,
