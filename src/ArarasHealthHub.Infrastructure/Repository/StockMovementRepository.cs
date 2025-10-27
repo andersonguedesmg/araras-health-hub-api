@@ -22,7 +22,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
         public async Task<IEnumerable<StockMovement>> GetAllAsync(int pageNumber, int pageSize, string orderBy, string sortOrder)
         {
             var query = _dbContext.StockMovements
-                .Include(sm => sm.Product)
+                .Include(sm => sm.StockLot)
+                    .ThenInclude(sl => sl.Stock)
+                        .ThenInclude(s => s.Product)
                 .Include(sm => sm.Responsible)
                 .AsNoTracking();
 
@@ -30,8 +32,8 @@ namespace ArarasHealthHub.Infrastructure.Repository
             {
                 case "productname":
                     query = sortOrder.ToLower() == "desc" ?
-                        query.OrderByDescending(sm => sm.Product.Name) :
-                        query.OrderBy(sm => sm.Product.Name);
+                        query.OrderByDescending(sm => sm.StockLot.Stock.Product.Name) :
+                        query.OrderBy(sm => sm.StockLot.Stock.Product.Name);
                     break;
                 case "createdon":
                     query = sortOrder.ToLower() == "desc" ?

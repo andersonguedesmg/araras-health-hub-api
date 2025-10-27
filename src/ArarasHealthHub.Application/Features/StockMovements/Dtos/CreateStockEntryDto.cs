@@ -9,6 +9,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Dtos
     {
         public int ProductId { get; set; }
         public decimal Quantity { get; set; }
+        public int StockLotId { get; set; }
         public int SourceDocumentId { get; set; }
         public string SourceDocumentType { get; set; } = string.Empty;
         public int ResponsibleId { get; set; }

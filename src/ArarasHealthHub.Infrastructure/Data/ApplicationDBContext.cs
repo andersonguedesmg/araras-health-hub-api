@@ -35,6 +35,7 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<StockAdjustment> StockAdjustments { get; set; }
         public DbSet<StockAdjustmentItem> StockAdjustmentItem { get; set; }
+        public DbSet<StockLot> StockLots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -141,22 +142,47 @@ namespace ArarasHealthHub.Infrastructure.Data
             builder.Entity<Stock>(entity =>
             {
                 entity.Property(e => e.CurrentQuantity)
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 3);
 
                 entity.Property(e => e.MinQuantity)
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 3);
             });
 
             builder.Entity<StockMovement>(entity =>
             {
                 entity.Property(e => e.Quantity)
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 3);
+
+                entity.HasOne(sm => sm.StockLot)
+                .WithMany()
+                .HasForeignKey(sm => sm.StockLotId)
+                .OnDelete(DeleteBehavior.Restrict);
             });
 
-            builder.Entity<StockAdjustmentItem>(entity =>
+            builder.Entity<StockLot>(entity =>
+            {
+                entity.Property(e => e.AvailableQuantity)
+                    .HasPrecision(18, 3);
+
+                entity.Property(e => e.UnitValue)
+                    .HasPrecision(18, 2);
+
+                entity.HasOne(sl => sl.Stock)
+                    .WithMany(s => s.Lots)
+                    .HasForeignKey(sl => sl.StockId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(sl => sl.ReceivedItem)
+                    .WithMany()
+                    .HasForeignKey(sl => sl.ReceivedItemId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<ReceivedItem>(entity =>
             {
                 entity.Property(e => e.Quantity)
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 3);
             });
         }
     }

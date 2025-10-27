@@ -13,12 +13,7 @@ namespace ArarasHealthHub.Domain.Entities
     public class StockMovement : BaseEntity
     {
         [Required]
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
-
-        public Product Product { get; set; } = null!;
-
-        [Required]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal Quantity { get; set; }
 
         [Required]
@@ -36,7 +31,15 @@ namespace ArarasHealthHub.Domain.Entities
         [Required]
         [ForeignKey("Responsible")]
         public int ResponsibleId { get; set; }
-
         public Employee Responsible { get; set; } = null!;
+
+        [Required]
+        [ForeignKey("StockLot")]
+        [Comment("ID do Lote de Estoque afetado pela movimentação.")]
+        public int StockLotId { get; set; }
+        public StockLot StockLot { get; set; } = null!;
+
+        [NotMapped]
+        public int ProductId => StockLot.Stock.ProductId;
     }
 }

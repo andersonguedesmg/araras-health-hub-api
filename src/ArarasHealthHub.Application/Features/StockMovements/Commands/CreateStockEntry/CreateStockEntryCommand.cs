@@ -11,6 +11,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
     public record CreateStockEntryCommand(
         int ProductId,
         decimal Quantity,
+        int StockLotId,
         int SourceDocumentId,
         string SourceDocumentType,
         int ResponsibleId
