@@ -10,16 +10,18 @@ namespace ArarasHealthHub.Domain.Entities
     public class StockAdjustmentItem : BaseEntity
     {
         [Required]
-        [ForeignKey("Receiving")]
+        [ForeignKey("StockAdjustment")]
         public int StockAdjustmentId { get; set; }
-
         public StockAdjustment StockAdjustment { get; set; } = null!;
 
         [Required]
         [ForeignKey("Product")]
         public int ProductId { get; set; }
-
         public Product Product { get; set; } = null!;
+
+        [ForeignKey("StockLot")]
+        public int? StockLotId { get; set; }
+        public StockLot? StockLot { get; set; }
 
         [Required]
         public decimal Quantity { get; set; }

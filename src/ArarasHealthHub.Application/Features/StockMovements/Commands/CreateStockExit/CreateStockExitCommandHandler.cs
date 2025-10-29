@@ -12,6 +12,7 @@ using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockExit
 {
@@ -37,9 +38,30 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
 
         public async Task<ApiResponse<StockMovementDto>> Handle(CreateStockExitCommand request, CancellationToken cancellationToken)
         {
+            var stockLot = await _dbContext.StockLots
+                .Include(sl => sl.Stock)
+                .FirstOrDefaultAsync(sl => sl.Id == request.StockLotId, cancellationToken);
+
+            if (stockLot == null)
+            {
+                return new ApiResponse<StockMovementDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound($"Lote de Estoque com ID {request.StockLotId}"), null);
+            }
+
+            if (stockLot.AvailableQuantity < request.Quantity)
+            {
+                return new ApiResponse<StockMovementDto>(
+                    StatusCodes.Status400BadRequest,
+                    $"Quantidade insuficiente no Lote {stockLot.Batch}. Necessário: {request.Quantity}, Disponível: {stockLot.AvailableQuantity}.",
+                    null
+                );
+            }
+
+            stockLot.RemoveQuantity(request.Quantity);
+            _dbContext.Set<StockLot>().Update(stockLot);
+
             var stockMovement = new StockMovement
             {
-                ProductId = request.ProductId,
+                StockLotId = request.StockLotId,
                 Quantity = request.Quantity,
                 Type = MovementTypeEnum.Exit,
                 SourceDocumentId = request.SourceDocumentId,
@@ -50,13 +72,25 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
             await _stockMovementRepository.AddWithoutSavingAsync(stockMovement);
 
             var updateCommand = new UpdateProductStockCommand(
-                request.ProductId,
+                stockLot.Stock.ProductId,
                 request.Quantity,
                 StockOperationTypeEnum.Dispatch
             );
             await _mediator.Send(updateCommand, cancellationToken);
-
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            stockMovement.StockLot = stockLot;
+            var responsible = await _dbContext.Users
+                .OfType<Employee>()
+                .FirstOrDefaultAsync(e => e.Id == request.ResponsibleId, cancellationToken);
+
+
+            if (responsible == null)
+            {
+                throw new InvalidOperationException($"O Responsável com ID {request.ResponsibleId} não foi encontrado durante o processamento da movimentação.");
+            }
+
+            stockMovement.Responsible = responsible;
 
             var stockMovementDto = _mapper.Map<StockMovementDto>(stockMovement);
             return new ApiResponse<StockMovementDto>(StatusCodes.Status201Created, ApiMessages.RegisteredSuccessfully("Saída de estoque"), stockMovementDto);

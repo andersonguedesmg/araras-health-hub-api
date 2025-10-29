@@ -38,7 +38,6 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
                     UnitValue = request.UnitValue,
                     ExpiryDate = request.ExpiryDate,
                     AvailableQuantity = request.Quantity,
-                    ReceivedItemId = request.ReceivedItemId,
                 };
                 await _dbContext.StockLots.AddAsync(stockLot, cancellationToken);
             }

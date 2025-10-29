@@ -37,6 +37,7 @@ namespace araras_health_hub_api.Controllers
             var command = new CreateStockEntryCommand(
                 request.ProductId,
                 request.Quantity,
+                request.StockLotId,
                 request.SourceDocumentId,
                 request.SourceDocumentType,
                 request.ResponsibleId
@@ -54,8 +55,8 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> CreateExit([FromBody] CreateStockExitDto request)
         {
             var command = new CreateStockExitCommand(
-                request.ProductId,
                 request.Quantity,
+                request.ProductId,
                 request.SourceDocumentId,
                 request.SourceDocumentType,
                 request.ResponsibleId

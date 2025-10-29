@@ -14,6 +14,7 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
         string Batch,
         decimal UnitValue,
         DateTime ExpiryDate,
-        int ReceivedItemId
+        int SourceDocumentId,
+        string SourceDocumentType
     ) : IRequest<ApiResponse<StockLot>>;
 }

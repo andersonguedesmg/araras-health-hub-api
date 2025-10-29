@@ -103,7 +103,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                     Batch: item.Batch,
                     UnitValue: item.UnitValue,
                     ExpiryDate: item.ExpiryDate,
-                    ReceivedItemId: item.Id
+                    SourceDocumentId: receiving.Id,
+                    SourceDocumentType: nameof(Receiving)
                 );
 
                 var lotResult = await _mediator.Send(updateLotCommand, cancellationToken);

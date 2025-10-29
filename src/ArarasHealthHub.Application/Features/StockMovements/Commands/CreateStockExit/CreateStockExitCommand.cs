@@ -9,8 +9,8 @@ using MediatR;
 namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockExit
 {
     public record CreateStockExitCommand(
-        int ProductId,
         decimal Quantity,
+        int StockLotId,
         int SourceDocumentId,
         string SourceDocumentType,
         int ResponsibleId

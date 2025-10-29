@@ -5,15 +5,16 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
 {
-    public class StockRepository : IStockRepository
+    public class StockRepository : BaseRepository<Stock>, IStockRepository
     {
-        private readonly IApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        public StockRepository(IApplicationDbContext dbContext)
+        public StockRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }

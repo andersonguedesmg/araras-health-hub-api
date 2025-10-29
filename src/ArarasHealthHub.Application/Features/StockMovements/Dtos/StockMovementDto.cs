@@ -9,6 +9,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Dtos
     public class StockMovementDto
     {
         public int Id { get; set; }
+        public int StockLotId { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public decimal Quantity { get; set; }
@@ -17,5 +18,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Dtos
         public string SourceDocumentType { get; set; } = string.Empty;
         public string ResponsibleName { get; set; } = string.Empty;
         public DateTime CreatedOn { get; set; }
+        public string Batch { get; set; } = string.Empty;
+        public DateTime ExpiryDate { get; set; }
     }
 }

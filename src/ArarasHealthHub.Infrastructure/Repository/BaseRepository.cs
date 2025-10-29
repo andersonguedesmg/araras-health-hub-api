@@ -57,5 +57,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             await _dbSet.AddAsync(entity);
         }
+
+        public void UpdateWithoutSaving(T entity)
+        {
+            _dbSet.Update(entity);
+        }
     }
 }

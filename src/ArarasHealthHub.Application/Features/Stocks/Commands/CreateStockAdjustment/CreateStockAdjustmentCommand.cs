@@ -21,6 +21,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
 
     public record AdjustmentItemCommand(
         int ProductId,
+        int? StockLotId,
         decimal Quantity,
         decimal? UnitValue,
         string? Batch,

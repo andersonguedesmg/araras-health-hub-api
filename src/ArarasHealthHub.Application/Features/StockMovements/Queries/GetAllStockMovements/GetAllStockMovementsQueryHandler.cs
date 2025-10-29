@@ -27,7 +27,9 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStoc
             var query = _stockMovementRepository.AsQueryable();
 
             query = query
-                .Include(m => m.Product)
+                .Include(m => m.StockLot)
+                    .ThenInclude(sl => sl.Stock)
+                        .ThenInclude(s => s.Product)
                 .Include(m => m.Responsible);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
@@ -40,7 +42,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStoc
                     m.SourceDocumentType.ToLower().Contains(searchTermLower) ||
                     m.Type.ToString().ToLower().Contains(searchTermLower) ||
                     m.SourceDocumentId.ToString().Contains(searchTermLower) ||
-                    (m.Product != null && m.Product.Name.ToLower().Contains(searchTermLower)) ||
+                    (m.StockLot != null && m.StockLot.Stock.Product != null && m.StockLot.Stock.Product.Name.ToLower().Contains(searchTermLower)) ||
                     (m.Responsible != null && m.Responsible.Name.ToLower().Contains(searchTermLower))
                 );
             }
@@ -51,28 +53,28 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStoc
             {
                 case "productname":
                     query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderByDescending(m => m.Product.Name) :
-                            query.OrderBy(m => m.Product.Name);
+                                query.OrderByDescending(m => m.StockLot.Stock.Product.Name) :
+                                query.OrderBy(m => m.StockLot.Stock.Product.Name);
                     break;
                 case "sourcedocumenttype":
                     query = request.SortOrder?.ToLower() == "desc" ?
-                           query.OrderByDescending(m => m.SourceDocumentType) :
-                           query.OrderBy(m => m.SourceDocumentType);
+                               query.OrderByDescending(m => m.SourceDocumentType) :
+                               query.OrderBy(m => m.SourceDocumentType);
                     break;
                 case "type":
                     query = request.SortOrder?.ToLower() == "desc" ?
-                           query.OrderByDescending(m => m.Type) :
-                           query.OrderBy(m => m.Type);
+                               query.OrderByDescending(m => m.Type) :
+                               query.OrderBy(m => m.Type);
                     break;
                 case "responsible":
                     query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderByDescending(m => m.Responsible.Name) :
-                            query.OrderBy(m => m.Responsible.Name);
+                                query.OrderByDescending(m => m.Responsible.Name) :
+                                query.OrderBy(m => m.Responsible.Name);
                     break;
                 default:
                     query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderBy(m => m.CreatedOn) :
-                            query.OrderByDescending(m => m.CreatedOn);
+                                query.OrderBy(m => m.CreatedOn) :
+                                query.OrderByDescending(m => m.CreatedOn);
                     break;
             }
 

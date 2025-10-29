@@ -16,5 +16,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task AddWithoutSavingAsync(T entity);
+
+        void UpdateWithoutSaving(T entity);
     }
 }
