@@ -184,6 +184,12 @@ namespace ArarasHealthHub.Infrastructure.Data
                 entity.Property(e => e.Quantity)
                     .HasPrecision(18, 3);
             });
+
+            builder.Entity<StockAdjustmentItem>(entity =>
+            {
+                entity.Property(e => e.Quantity)
+                    .HasPrecision(18, 6);
+            });
         }
     }
 }

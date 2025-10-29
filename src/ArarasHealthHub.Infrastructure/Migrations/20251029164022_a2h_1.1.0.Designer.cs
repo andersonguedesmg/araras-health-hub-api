@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251026114414_a2h_1.1.0")]
+    [Migration("20251029164022_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -394,6 +394,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
+                        .HasPrecision(18, 3)
                         .HasColumnType("int");
 
                     b.Property<int>("ReceivingId")
@@ -492,15 +493,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("CurrentQuantity")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasComment("Quantidade total disponível de todas as validades e lotes.");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("MinQuantity")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -515,7 +517,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.ToTable("Stocks", t =>
                         {
-                            t.HasComment("Representa o estoque atual de um produto.");
+                            t.HasComment("Representa o estoque atual de um produto (visão consolidada).");
                         });
                 });
 
@@ -593,10 +595,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<int>("StockAdjustmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StockLotId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("TotalValue")
@@ -614,7 +619,67 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("StockAdjustmentId");
 
+                    b.HasIndex("StockLotId");
+
                     b.ToTable("StockAdjustmentItem");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockLot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AvailableQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)")
+                        .HasComment("Quantidade disponível em estoque para este lote.");
+
+                    b.Property<string>("Batch")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasComment("Número/Código do lote do produto.");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de vencimento deste lote.");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ReceivedItemId")
+                        .HasColumnType("int")
+                        .HasComment("Opcional: ID do Item do Recebimento que deu origem a este lote (para rastreio).");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int")
+                        .HasComment("ID do registro consolidado de estoque (Stock) a que este lote pertence.");
+
+                    b.Property<decimal>("UnitValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("Custo unitário deste lote (custo de entrada).");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceivedItemId");
+
+                    b.HasIndex("StockId", "Batch")
+                        .IsUnique();
+
+                    b.ToTable("StockLots", t =>
+                        {
+                            t.HasComment("Representa o estoque detalhado de um produto por lote, valor e validade.");
+                        });
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockMovement", b =>
@@ -631,12 +696,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("ResponsibleId")
                         .HasColumnType("int");
@@ -651,6 +713,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasComment("Tipo do documento de origem (ex: 'Order', 'Receiving').");
 
+                    b.Property<int>("StockLotId")
+                        .HasColumnType("int")
+                        .HasComment("ID do Lote de Estoque afetado pela movimentação.");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -659,9 +725,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("ResponsibleId");
+
+                    b.HasIndex("StockLotId");
 
                     b.ToTable("StockMovements", t =>
                         {
@@ -1184,28 +1250,52 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
+                        .WithMany()
+                        .HasForeignKey("StockLotId");
+
                     b.Navigation("Product");
 
                     b.Navigation("StockAdjustment");
+
+                    b.Navigation("StockLot");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockLot", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.ReceivedItem", "ReceivedItem")
+                        .WithMany()
+                        .HasForeignKey("ReceivedItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Stock", "Stock")
+                        .WithMany("Lots")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ReceivedItem");
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockMovement", b =>
                 {
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "Responsible")
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
+                        .WithMany()
+                        .HasForeignKey("StockLotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Responsible");
+
+                    b.Navigation("StockLot");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Identity.ApplicationUser", b =>
@@ -1287,6 +1377,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
                     b.Navigation("ReceivedItem");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Stock", b =>
+                {
+                    b.Navigation("Lots");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>
