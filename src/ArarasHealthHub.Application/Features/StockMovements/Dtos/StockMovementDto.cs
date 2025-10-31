@@ -20,5 +20,6 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Dtos
         public DateTime CreatedOn { get; set; }
         public string Batch { get; set; } = string.Empty;
         public DateTime ExpiryDate { get; set; }
+        public decimal MovementCost { get; set; }
     }
 }

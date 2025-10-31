@@ -39,6 +39,11 @@ namespace ArarasHealthHub.Domain.Entities
         public int StockLotId { get; set; }
         public StockLot StockLot { get; set; } = null!;
 
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        [Comment("O custo financeiro da quantidade movimentada.")]
+        public decimal MovementCost { get; set; }
+
         [NotMapped]
         public int ProductId => StockLot.Stock.ProductId;
     }

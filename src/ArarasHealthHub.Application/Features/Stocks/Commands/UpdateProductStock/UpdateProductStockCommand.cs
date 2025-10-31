@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces;
+using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
@@ -13,5 +14,5 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
         int ProductId,
         decimal Quantity,
         StockOperationTypeEnum OperationType
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<Stock>>;
 }

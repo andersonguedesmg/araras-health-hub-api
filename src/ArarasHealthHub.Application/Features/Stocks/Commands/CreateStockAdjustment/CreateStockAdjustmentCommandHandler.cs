@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost;
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
 using ArarasHealthHub.Application.Interfaces;
+using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
@@ -22,7 +24,9 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
         private readonly IStockAdjustmentRepository _stockAdjustmentRepo;
         private readonly IStockRepository _stockRepo;
         private readonly IStockLotRepository _stockLotRepo;
+        private readonly IStockCostRepository _stockCostRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IApplicationDbContext _dbContext;
         private readonly IMediator _mediator;
 
         public CreateStockAdjustmentCommandHandler(
@@ -32,7 +36,9 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
             IStockAdjustmentRepository stockAdjustmentRepo,
             IStockRepository stockRepo,
             IStockLotRepository stockLotRepo,
+            IStockCostRepository stockCostRepository,
             IUnitOfWork unitOfWork,
+            IApplicationDbContext dbContext,
             IMediator mediator)
         {
             _productRepo = productRepo;
@@ -41,7 +47,9 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
             _stockAdjustmentRepo = stockAdjustmentRepo;
             _stockRepo = stockRepo;
             _stockLotRepo = stockLotRepo;
+            _stockCostRepository = stockCostRepository;
             _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
             _mediator = mediator;
         }
 
@@ -88,15 +96,21 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                 }
 
                 int stockLotId;
-                var movementQuantity = itemCommand.Quantity;
+                var movementQuantity = Math.Abs(itemCommand.Quantity);
+                decimal movementCost = 0M;
+                decimal averageUnitCost = 0M;
 
                 var adjustmentItem = new StockAdjustmentItem
                 {
+                    StockAdjustmentId = adjustment.Id,
                     ProductId = itemCommand.ProductId,
                     Quantity = itemCommand.Quantity,
                     Batch = itemCommand.Batch,
                     ExpiryDate = itemCommand.ExpiryDate,
                 };
+
+                var stockCost = await _stockCostRepository.GetByStockIdAsync(stock.Id);
+                averageUnitCost = stockCost?.AverageUnitCost ?? 0M;
 
                 if (isNegativeAdjustment)
                 {
@@ -107,19 +121,25 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     stockLotId = itemCommand.StockLotId.Value;
 
                     var lot = await _stockLotRepo.GetByIdAsync(stockLotId);
-
                     if (lot == null || lot.AvailableQuantity < movementQuantity)
                     {
                         throw new ApplicationException($"Lote {stockLotId} insuficiente ou não encontrado para o ajuste de saída.");
                     }
 
+                    movementCost = movementQuantity * averageUnitCost;
+
                     lot.RemoveQuantity(movementQuantity);
+                    _stockLotRepo.UpdateWithoutSaving(lot);
+
+                    if (stockCost != null)
+                    {
+                        stockCost.CurrentTotalCost -= movementCost;
+                        _stockCostRepository.UpdateWithoutSaving(stockCost);
+                    }
+
                     adjustmentItem.UnitValue = lot.UnitValue;
                     adjustmentItem.Batch = lot.Batch;
                     adjustmentItem.ExpiryDate = lot.ExpiryDate;
-
-                    adjustmentItem.StockLotId = stockLotId;
-                    _stockLotRepo.UpdateWithoutSaving(lot);
                 }
                 else
                 {
@@ -129,6 +149,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     }
 
                     decimal unitValue = itemCommand.UnitValue.Value;
+                    movementCost = movementQuantity * unitValue;
 
                     var updateLotCommand = new UpdateStockLotCommand(
                         StockId: stock.Id,
@@ -139,7 +160,6 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                         SourceDocumentId: adjustment.Id,
                         SourceDocumentType: nameof(StockAdjustment)
                     );
-
                     var lotResult = await _mediator.Send(updateLotCommand, cancellationToken);
                     if (!lotResult.Success)
                     {
@@ -147,12 +167,19 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     }
                     stockLotId = lotResult.Data!.Id;
 
-                    adjustmentItem.StockLotId = stockLotId;
-                    adjustmentItem.UnitValue = itemCommand.UnitValue;
+                    var updateCostCommand = new UpdateStockAverageCostCommand(
+                        StockId: stock.Id,
+                        EntryQuantity: movementQuantity,
+                        EntryUnitValue: unitValue
+                    );
+                    await _mediator.Send(updateCostCommand, cancellationToken);
+
+                    adjustmentItem.UnitValue = unitValue;
                     adjustmentItem.Batch = itemCommand.Batch;
                     adjustmentItem.ExpiryDate = itemCommand.ExpiryDate;
                 }
 
+                adjustmentItem.StockLotId = stockLotId;
                 adjustment.AdjustmentItems.Add(adjustmentItem);
 
                 var quantityChange = isNegativeAdjustment ? -movementQuantity : movementQuantity;
@@ -163,7 +190,8 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     Type = isNegativeAdjustment ? MovementTypeEnum.Exit : MovementTypeEnum.Entry,
                     SourceDocumentId = adjustment.Id,
                     SourceDocumentType = nameof(StockAdjustment),
-                    ResponsibleId = request.ResponsibleId
+                    ResponsibleId = request.ResponsibleId,
+                    MovementCost = movementCost
                 });
 
                 var updateStockCommand = new UpdateProductStockCommand(

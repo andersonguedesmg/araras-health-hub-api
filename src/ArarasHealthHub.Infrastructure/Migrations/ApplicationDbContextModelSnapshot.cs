@@ -621,6 +621,45 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.ToTable("StockAdjustmentItem");
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockCost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AverageUnitCost")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CurrentTotalCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StockId")
+                        .IsUnique();
+
+                    b.ToTable("StockCosts", t =>
+                        {
+                            t.HasComment("Armazena o custo médio unitário e o custo total atual do estoque consolidado.");
+                        });
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockLot", b =>
                 {
                     b.Property<int>("Id")
@@ -692,6 +731,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<decimal>("MovementCost")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("O custo financeiro da quantidade movimentada.");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
@@ -1256,6 +1299,17 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("StockAdjustment");
 
                     b.Navigation("StockLot");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockCost", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Stock", "Stock")
+                        .WithOne()
+                        .HasForeignKey("ArarasHealthHub.Domain.Entities.StockCost", "StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockLot", b =>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
+using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost;
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
 using ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockEntry;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
@@ -46,13 +47,13 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             receiving.Responsible = await _dbContext.Employees.FindAsync(request.ResponsibleId);
             if (receiving.Responsible == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.SupplierId), false);
+                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.ResponsibleId), false);
             }
 
             var account = await _dbContext.Users.FindAsync(request.AccountId);
             if (account == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.SupplierId), false);
+                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.AccountId), false);
             }
 
             decimal totalCalculatedValue = 0;
@@ -82,23 +83,22 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
 
             foreach (var item in receiving.ReceivedItem)
             {
-                var getOrCreateStockCommand = new UpdateProductStockCommand(
+                var updateStockCommand = new UpdateProductStockCommand(
                     ProductId: item.ProductId,
-                    Quantity: 0,
-                    OperationType: StockOperationTypeEnum.None
+                    Quantity: item.Quantity,
+                    OperationType: StockOperationTypeEnum.Receipt
                 );
+                var stockResult = await _mediator.Send(updateStockCommand, cancellationToken);
 
-                var stock = await _dbContext.Stocks.FirstOrDefaultAsync(s => s.ProductId == item.ProductId, cancellationToken);
-
-                if (stock == null)
+                if (!stockResult.Success || stockResult.Data == null)
                 {
-                    stock = new Domain.Entities.Stock { ProductId = item.ProductId, CurrentQuantity = 0, MinQuantity = 0 };
-                    _dbContext.Stocks.Add(stock);
-                    await _dbContext.SaveChangesAsync(cancellationToken);
+                    throw new InvalidOperationException($"Falha ao atualizar o estoque consolidado para o produto {item.ProductId}. Erro: {stockResult.Message}");
                 }
 
+                var updatedStock = stockResult.Data;
+
                 var updateLotCommand = new UpdateStockLotCommand(
-                    StockId: stock.Id,
+                    StockId: updatedStock.Id,
                     Quantity: item.Quantity,
                     Batch: item.Batch,
                     UnitValue: item.UnitValue,
@@ -106,21 +106,26 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                     SourceDocumentId: receiving.Id,
                     SourceDocumentType: nameof(Receiving)
                 );
-
                 var lotResult = await _mediator.Send(updateLotCommand, cancellationToken);
+
                 if (!lotResult.Success || lotResult.Data == null)
                 {
-                    return new ApiResponse<ReceivingDto>(lotResult.StatusCode, lotResult.Message, false);
+                    throw new InvalidOperationException($"Falha ao atualizar o lote para o produto {item.ProductId}. Erro: {lotResult.Message}");
                 }
 
                 var stockLot = lotResult.Data;
 
-                var updateStockCommand = new UpdateProductStockCommand(
-                    ProductId: item.ProductId,
-                    Quantity: item.Quantity,
-                    OperationType: StockOperationTypeEnum.Receipt
+                var updateCostCommand = new UpdateStockAverageCostCommand(
+                    StockId: updatedStock.Id,
+                    EntryQuantity: item.Quantity,
+                    EntryUnitValue: item.UnitValue
                 );
-                await _mediator.Send(updateStockCommand, cancellationToken);
+                var costResult = await _mediator.Send(updateCostCommand, cancellationToken);
+
+                if (!costResult.Success)
+                {
+                    throw new InvalidOperationException($"Falha ao recalcular o CMP para o produto {item.ProductId}. Erro: {costResult.Message}");
+                }
 
                 var createMovementCommand = new CreateStockEntryCommand(
                     ProductId: item.ProductId,
@@ -132,8 +137,6 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                 );
                 await _mediator.Send(createMovementCommand, cancellationToken);
             }
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             var receivingDto = _mapper.Map<ReceivingDto>(receiving);
             return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.ReceivingAndStockMovementsCreatedSuccessfully, receivingDto);

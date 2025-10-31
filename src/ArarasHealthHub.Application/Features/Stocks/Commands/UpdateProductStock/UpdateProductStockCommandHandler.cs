@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock
 {
-    public class UpdateProductStockCommandHandler : IRequestHandler<UpdateProductStockCommand, ApiResponse<bool>>
+    public class UpdateProductStockCommandHandler : IRequestHandler<UpdateProductStockCommand, ApiResponse<Stock>>
     {
         private readonly IApplicationDbContext _dbContext;
 
@@ -21,7 +21,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
             _dbContext = dbContext;
         }
 
-        public async Task<ApiResponse<bool>> Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<Stock>> Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
         {
             var stock = await _dbContext.Stocks
                 .FirstOrDefaultAsync(s => s.ProductId == request.ProductId, cancellationToken);
@@ -35,7 +35,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
                 }
                 else
                 {
-                    return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque do Produto", request.ProductId), false);
+                    return new ApiResponse<Stock>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque do Produto", request.ProductId), false);
                 }
             }
 
@@ -58,7 +58,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
 
             stock.SetUpdatedOn();
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.ProductStockUpdatedSuccessfully, true);
+            return new ApiResponse<Stock>(StatusCodes.Status200OK, ApiMessages.ProductStockUpdatedSuccessfully, stock);
         }
     }
 }

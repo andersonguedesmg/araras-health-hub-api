@@ -20,18 +20,21 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IStockMovementRepository _stockMovementRepository;
+        private readonly IStockCostRepository _stockCostRepository;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         public CreateStockExitCommandHandler(
             IApplicationDbContext dbContext,
             IStockMovementRepository stockMovementRepository,
+            IStockCostRepository stockCostRepository,
             IMediator mediator,
             IMapper mapper
         )
         {
             _dbContext = dbContext;
             _stockMovementRepository = stockMovementRepository;
+            _stockCostRepository = stockCostRepository;
             _mediator = mediator;
             _mapper = mapper;
         }
@@ -56,8 +59,19 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
                 );
             }
 
+            var stockCost = await _stockCostRepository.GetByStockIdAsync(stockLot.Stock.Id);
+
+            decimal averageUnitCost = stockCost?.AverageUnitCost ?? 0M;
+            decimal exitCost = request.Quantity * averageUnitCost;
+
             stockLot.RemoveQuantity(request.Quantity);
             _dbContext.Set<StockLot>().Update(stockLot);
+
+            if (stockCost != null)
+            {
+                stockCost.CurrentTotalCost -= exitCost;
+                _dbContext.StockCosts.Update(stockCost);
+            }
 
             var stockMovement = new StockMovement
             {
@@ -66,7 +80,8 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
                 Type = MovementTypeEnum.Exit,
                 SourceDocumentId = request.SourceDocumentId,
                 SourceDocumentType = request.SourceDocumentType,
-                ResponsibleId = request.ResponsibleId
+                ResponsibleId = request.ResponsibleId,
+                MovementCost = exitCost,
             };
 
             await _stockMovementRepository.AddWithoutSavingAsync(stockMovement);
@@ -77,6 +92,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
                 StockOperationTypeEnum.Dispatch
             );
             await _mediator.Send(updateCommand, cancellationToken);
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             stockMovement.StockLot = stockLot;

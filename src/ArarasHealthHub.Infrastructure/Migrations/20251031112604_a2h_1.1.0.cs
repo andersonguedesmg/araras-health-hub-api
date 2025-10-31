@@ -457,6 +457,31 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 comment: "Representa um ajuste manual na quantidade do estoque.");
 
             migrationBuilder.CreateTable(
+                name: "StockCosts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StockId = table.Column<int>(type: "int", nullable: false),
+                    AverageUnitCost = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    CurrentTotalCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockCosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockCosts_Stocks_StockId",
+                        column: x => x.StockId,
+                        principalTable: "Stocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Armazena o custo médio unitário e o custo total atual do estoque consolidado.");
+
+            migrationBuilder.CreateTable(
                 name: "OrderItems",
                 columns: table => new
                 {
@@ -606,6 +631,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     SourceDocumentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, comment: "Tipo do documento de origem (ex: 'Order', 'Receiving')."),
                     ResponsibleId = table.Column<int>(type: "int", nullable: false),
                     StockLotId = table.Column<int>(type: "int", nullable: false, comment: "ID do Lote de Estoque afetado pela movimentação."),
+                    MovementCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false, comment: "O custo financeiro da quantidade movimentada."),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
@@ -814,6 +840,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "ResponsibleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StockCosts_StockId",
+                table: "StockCosts",
+                column: "StockId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StockLots_ReceivedItemId",
                 table: "StockLots",
                 column: "ReceivedItemId");
@@ -864,6 +896,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "StockAdjustmentItem");
+
+            migrationBuilder.DropTable(
+                name: "StockCosts");
 
             migrationBuilder.DropTable(
                 name: "StockMovements");

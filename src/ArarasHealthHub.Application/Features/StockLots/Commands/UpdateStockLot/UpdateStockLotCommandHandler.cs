@@ -47,6 +47,8 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
                 _dbContext.StockLots.Update(stockLot);
             }
 
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
             return new ApiResponse<StockLot>(StatusCodes.Status200OK, "Lote de estoque atualizado com sucesso.", stockLot);
         }
     }

@@ -50,6 +50,10 @@ namespace ArarasHealthHub.Shared.Core
         public const string StockSearchByIdSuccessful = "Busca de estoque por ID de produto realizada com sucesso.";
         public const string NoLowStockProductsFound = "Nenhum produto com estoque baixo encontrado.";
         public const string LowStockProductsFoundSuccessfully = "Lista de produtos com estoque baixo retornada com sucesso.";
+        public const string CostOfInventoryInitializedAndSavedSuccessfully = "Custo do estoque inicializado e salvo com sucesso.";
+        public const string TheQuantityMustBeGreaterThanZero = "A quantidade de entrada deve ser maior que zero.";
+        public const string TheUnitValueCannotBeNegative = "O valor unitário de entrada não pode ser negativo.";
+        public const string WeightedAverageCostSuccessfullyUpdated = "Custo Médio Ponderado (CMP) atualizado com sucesso.";
         public const string OrderCannotBeApproved = "Não é possível aprovar o pedido. A aprovação só pode ser feita em pedidos com status 'Pendente'.";
         public const string OrderCannotBeSeparated = "Não é possível separar o pedido. O status atual é 'Pendente', e a separação só pode ser feita em pedidos com status 'Aprovado'.";
         public const string OrderCannotBeCompleted = "Não é possível finalizar o pedido. Para finalizar, o pedido precisa estar com o status 'Separado'.";

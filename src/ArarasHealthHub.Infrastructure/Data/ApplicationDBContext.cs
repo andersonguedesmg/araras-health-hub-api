@@ -36,6 +36,7 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<StockAdjustment> StockAdjustments { get; set; }
         public DbSet<StockAdjustmentItem> StockAdjustmentItem { get; set; }
         public DbSet<StockLot> StockLots { get; set; }
+        public DbSet<StockCost> StockCosts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -177,6 +178,20 @@ namespace ArarasHealthHub.Infrastructure.Data
                     .HasForeignKey(sl => sl.ReceivedItemId)
                     .IsRequired(false)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<StockCost>(entity =>
+            {
+                entity.Property(e => e.AverageUnitCost)
+                    .HasPrecision(18, 4);
+
+                entity.Property(e => e.CurrentTotalCost)
+                    .HasPrecision(18, 2);
+
+                entity.HasOne(sc => sc.Stock)
+                      .WithOne()
+                      .HasForeignKey<StockCost>(sc => sc.StockId)
+                      .IsRequired();
             });
 
             builder.Entity<ReceivedItem>(entity =>

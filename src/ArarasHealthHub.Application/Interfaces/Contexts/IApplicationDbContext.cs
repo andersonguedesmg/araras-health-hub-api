@@ -28,6 +28,7 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
         DbSet<StockAdjustment> StockAdjustments { get; set; }
         DbSet<StockAdjustmentItem> StockAdjustmentItem { get; set; }
         DbSet<StockLot> StockLots { get; set; }
+        DbSet<StockCost> StockCosts { get; set; }
 
         DbSet<TEntity> Set<TEntity>() where TEntity : class;
 
