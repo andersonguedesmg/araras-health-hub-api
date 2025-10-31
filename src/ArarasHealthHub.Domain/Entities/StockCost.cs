@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ArarasHealthHub.Domain.Entities
 {
     [Comment("Armazena o custo médio unitário e o custo total atual do estoque consolidado.")]
+    [Index(nameof(StockId), IsUnique = true)]
     public class StockCost : BaseEntity
     {
         [Required]

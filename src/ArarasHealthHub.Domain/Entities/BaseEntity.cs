@@ -39,13 +39,5 @@ namespace ArarasHealthHub.Domain.Entities
             IsActive = false;
             SetUpdatedOn();
         }
-
-        public void SetId(int id)
-        {
-            if (Id == 0)
-            {
-                Id = id;
-            }
-        }
     }
 }
