@@ -84,11 +84,17 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
             {
                 UserName = request.UserName,
                 FacilityId = request.FacilityId,
-                IsActive = request.IsActive,
                 Scope = request.Scope,
-                CreatedOn = DateTime.UtcNow,
-                UpdatedOn = null,
             };
+
+            // Defina o LockoutEnabled com base no IsActive do Request, se necessário.
+            // Se LockoutEnabled for false, o usuário estará sempre ativo.
+            // user.LockoutEnabled = request.IsActive;
+
+            // O padrão do IdentityUser para LockoutEnabled é true e LockoutEnd é null (ativo).
+            // Se você quiser que o usuário comece inativo, precisa chamar o _userManager.SetLockoutEnabledAsync(user, true)
+            // e _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue).
+            // Por enquanto, apenas removemos as propriedades que causam o erro.
 
             var createUserResult = await _userManager.CreateAsync(user, request.Password);
 

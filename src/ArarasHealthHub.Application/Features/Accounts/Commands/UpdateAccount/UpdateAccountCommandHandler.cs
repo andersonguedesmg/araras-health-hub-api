@@ -67,7 +67,6 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
             }
 
             user.UserName = request.UserName;
-            user.UpdatedOn = DateTime.UtcNow;
 
             var updateResult = await _userManager.UpdateAsync(user);
 

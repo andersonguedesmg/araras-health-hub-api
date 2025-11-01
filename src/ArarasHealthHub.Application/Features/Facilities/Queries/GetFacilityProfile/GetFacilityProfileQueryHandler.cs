@@ -64,14 +64,15 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityPro
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
+
+                var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+
                 accountDetailsList.Add(new AccountDetailsDto
                 {
                     UserId = user.Id,
                     UserName = user.UserName!,
-                    IsActive = user.IsActive,
+                    IsActive = isUserActive,
                     Scope = user.Scope,
-                    CreatedOn = user.CreatedOn,
-                    UpdatedOn = user.UpdatedOn,
                     Roles = roles.ToList()
                 });
             }

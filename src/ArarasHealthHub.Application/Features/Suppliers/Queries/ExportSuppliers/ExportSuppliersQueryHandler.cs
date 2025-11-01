@@ -32,19 +32,19 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers
                     p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Cnpj.ToLower().Contains(searchTermLower) ||
-                    p.Address.ToLower().Contains(searchTermLower) ||
-                    p.Number.ToLower().Contains(searchTermLower) ||
-                    p.Neighborhood.ToLower().Contains(searchTermLower) ||
-                    p.City.ToLower().Contains(searchTermLower) ||
-                    p.State.ToLower().Contains(searchTermLower) ||
-                    p.Cep.ToLower().Contains(searchTermLower) ||
-                    p.Email.ToLower().Contains(searchTermLower) ||
-                    p.Phone.ToLower().Contains(searchTermLower) ||
+                    p.Address.Street.ToLower().Contains(searchTermLower) ||
+                    p.Address.Number.ToLower().Contains(searchTermLower) ||
+                    p.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
+                    p.Address.City.ToLower().Contains(searchTermLower) ||
+                    p.Address.State.ToLower().Contains(searchTermLower) ||
+                    p.Address.Cep.ToLower().Contains(searchTermLower) ||
+                    p.Contact.Email.ToLower().Contains(searchTermLower) ||
+                    p.Contact.Phone.ToLower().Contains(searchTermLower) ||
                     p.IsActive.ToString().ToLower().Contains(searchTermLower)
                 );
             }
 
-            var allFilteredSuppliers= await suppliersQuery.ToListAsync(cancellationToken);
+            var allFilteredSuppliers = await suppliersQuery.ToListAsync(cancellationToken);
             var supplierDtos = _mapper.Map<IEnumerable<SupplierDto>>(allFilteredSuppliers);
 
             return supplierDtos;

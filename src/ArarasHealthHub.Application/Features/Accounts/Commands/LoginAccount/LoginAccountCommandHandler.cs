@@ -35,14 +35,16 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
 
         public async Task<ApiResponse<NewAccountDto>> Handle(LoginAccountCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName, cancellationToken);
 
             if (user == null)
             {
                 return new ApiResponse<NewAccountDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
             }
 
-            if (!user.IsActive)
+            var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+
+            if (!isUserActive)
             {
                 return new ApiResponse<NewAccountDto>(StatusCodes.Status403Forbidden, ApiMessages.AccountDisabled, false);
             }
@@ -72,7 +74,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
             {
                 UserId = user.Id,
                 UserName = user.UserName!,
-                IsActive = user.IsActive,
+                IsActive = isUserActive,
                 FacilityId = user.FacilityId,
                 Token = token,
                 Scope = user.Scope,

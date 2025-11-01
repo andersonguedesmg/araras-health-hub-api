@@ -48,8 +48,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
             }
 
             IQueryable<ApplicationUser> query = _dbContext.Users
-                                                          .Include(u => u.Facility)
-                                                          .AsQueryable();
+                                                        .Include(u => u.Facility)
+                                                        .AsQueryable();
 
             if (currentUser.Scope == UserScopeEnum.Operational)
             {
@@ -65,14 +65,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
                     u.UserName!.ToLower().Contains(searchTermLower) ||
                     u.FacilityId.ToString().Contains(searchTermLower) ||
                     (u.Facility != null && u.Facility.Name.ToLower().Contains(searchTermLower)) ||
-                    u.IsActive.ToString().ToLower().Contains(searchTermLower) ||
                     u.Scope.ToString().ToLower().Contains(searchTermLower)
                 );
             }
 
             var allFilteredUsers = await query
-                                           .OrderBy(u => u.Id)
-                                           .ToListAsync(cancellationToken);
+                                        .OrderBy(u => u.Id)
+                                        .ToListAsync(cancellationToken);
 
             if (!allFilteredUsers.Any())
             {
@@ -84,14 +83,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
             {
                 var roles = await _userManager.GetRolesAsync(user);
 
+                var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+
                 var accountDto = _mapper.Map<AccountDetailsDto>(user);
+
                 accountDto.Roles = roles.ToList();
                 accountDto.Scope = user.Scope;
-
-                if (user.Facility != null)
-                {
-                    accountDto.Facility = _mapper.Map<FacilityDetailsDto>(user.Facility);
-                }
+                accountDto.IsActive = isUserActive;
 
                 accountDetailsList.Add(accountDto);
             }

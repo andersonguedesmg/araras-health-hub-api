@@ -63,14 +63,14 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
             {
                 var roles = await _userManager.GetRolesAsync(user);
 
+                var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+
                 var accountDto = new AccountDetailsDto
                 {
                     UserId = user.Id,
                     UserName = user.UserName!,
-                    IsActive = user.IsActive,
+                    IsActive = isUserActive,
                     Scope = user.Scope,
-                    CreatedOn = user.CreatedOn,
-                    UpdatedOn = user.UpdatedOn,
                     Roles = roles.ToList()
                 };
 
@@ -80,12 +80,12 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
                     {
                         Id = user.Facility.Id,
                         Name = user.Facility.Name,
-                        Address = user.Facility.Address,
-                        Number = user.Facility.Number,
-                        Neighborhood = user.Facility.Neighborhood,
-                        Cep = user.Facility.Cep,
-                        Email = user.Facility.Email,
-                        Phone = user.Facility.Phone
+                        Address = user.Facility.Address.Street,
+                        Number = user.Facility.Address.Number,
+                        Neighborhood = user.Facility.Address.Neighborhood,
+                        Cep = user.Facility.Address.Cep,
+                        Email = user.Facility.Contact.Email,
+                        Phone = user.Facility.Contact.Phone
                     };
                 }
 

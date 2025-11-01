@@ -53,6 +53,18 @@ namespace ArarasHealthHub.Infrastructure.Data
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Facility>().OwnsOne(f => f.Address);
+            builder.Entity<Facility>().OwnsOne(f => f.Contact);
+
+            builder.Entity<Supplier>().OwnsOne(f => f.Address);
+            builder.Entity<Supplier>().OwnsOne(f => f.Contact);
+
+            builder.Entity<Receiving>().Property(r => r.Id).UseIdentityColumn();
+
+            builder.Entity<Employee>()
+                .HasIndex(e => e.Cpf)
+                .IsUnique();
+
             // --- Seed das Funções ---
             int roleMasterId = 1;
             int roleAdminId = 2;
@@ -86,22 +98,39 @@ namespace ArarasHealthHub.Infrastructure.Data
 
             // --- Seed da Unidade Principal ---
             int facilityPrincipalId = 1;
+            builder.Entity<Facility>(entity =>
+            {
+                entity.OwnsOne(f => f.Address).HasData(
+                    new
+                    {
+                        FacilityId = 1,
+                        Cep = "13601-111",
+                        Street = "Rua Campos Sales",
+                        Number = "33",
+                        Neighborhood = "Jardim Belvedere",
+                        City = "Araras",
+                        State = "SP"
+                    }
+                );
+
+                entity.OwnsOne(f => f.Contact).HasData(
+                    new
+                    {
+                        FacilityId = 1,
+                        Email = "sms@araras.sp.gov.br",
+                        Phone = "(19) 3543-1522"
+                    }
+                );
+            });
+
             builder.Entity<Facility>().HasData(
-                new Facility(
-                    id: facilityPrincipalId,
-                    name: "Secretaria Municipal da Saúde",
-                    address: "Rua Campos Sales",
-                    number: "33",
-                    neighborhood: "Jardim Belvedere",
-                    city: "Araras",
-                    state: "SP",
-                    cep: "13.601-111",
-                    email: "sms@araras.sp.gov.br",
-                    phone: "(19) 3543-1522",
-                    createdOn: DateTime.SpecifyKind(new DateTime(2023, 1, 1), DateTimeKind.Utc),
-                    updatedOn: null,
-                    isActive: true
-                )
+                new
+                {
+                    Id = 1,
+                    Name = "Secretaria Municipal da Saúde",
+                    CreatedOn = new DateTime(2024, 01, 01),
+                    IsActive = true
+                }
             );
 
             // --- Seed do Usuário Principal ---
@@ -110,9 +139,10 @@ namespace ArarasHealthHub.Infrastructure.Data
                 Id = 1,
                 UserName = "sms_master",
                 NormalizedUserName = "SMS_MASTER",
-                CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 1, 1), DateTimeKind.Utc),
-                UpdatedOn = null,
-                IsActive = true,
+
+                EmailConfirmed = true,
+                LockoutEnabled = true,
+
                 FacilityId = facilityPrincipalId,
                 Scope = UserScopeEnum.Management,
                 SecurityStamp = Guid.Empty.ToString(),
@@ -120,6 +150,7 @@ namespace ArarasHealthHub.Infrastructure.Data
                 PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
             };
             builder.Entity<ApplicationUser>().HasData(userMaster);
+
 
             // --- Associar Usuário Principal à Função Master ---
             IdentityUserRole<int> userMasterRole = new()
@@ -139,7 +170,7 @@ namespace ArarasHealthHub.Infrastructure.Data
             };
             builder.Entity<OrderStatus>().HasData(orderStatus);
 
-            // --- Configurações de precisão (Existentes) ---
+            // --- Configurações de precisão ---
             builder.Entity<Stock>(entity =>
             {
                 entity.Property(e => e.CurrentQuantity)

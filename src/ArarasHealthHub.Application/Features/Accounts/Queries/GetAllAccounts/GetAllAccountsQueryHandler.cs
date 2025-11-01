@@ -55,8 +55,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
             }
 
             IQueryable<ApplicationUser> query = _dbContext.Users
-                                                .Include(u => u.Facility)
-                                                .AsQueryable();
+                .Include(u => u.Facility)
+                .AsQueryable();
 
             if (currentUser.Scope == UserScopeEnum.Operational)
             {
@@ -71,7 +71,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                     u.Id.ToString().Contains(searchTermLower) ||
                     u.UserName!.ToLower().Contains(searchTermLower) ||
                     u.FacilityId.ToString().Contains(searchTermLower) ||
-                    (u.Facility != null && u.Facility.Name.ToLower().Contains(searchTermLower)) || u.IsActive.ToString().ToLower().Contains(searchTermLower) ||
+                    (u.Facility != null && u.Facility.Name.ToLower().Contains(searchTermLower)) ||
+                    (!u.LockoutEnd.HasValue || u.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow).ToString().ToLower().Contains(searchTermLower) ||
                     u.Scope.ToString().ToLower().Contains(searchTermLower)
                 );
             }
@@ -85,16 +86,6 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                                 query.OrderByDescending(u => u.UserName) :
                                 query.OrderBy(u => u.UserName);
                     break;
-                case "createdon":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                                query.OrderByDescending(u => u.CreatedOn) :
-                                query.OrderBy(u => u.CreatedOn);
-                    break;
-                case "isactive":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                                query.OrderByDescending(u => u.IsActive) :
-                                query.OrderBy(u => u.IsActive);
-                    break;
                 case "id":
                 default:
                     query = request.SortOrder?.ToLower() == "desc" ?
@@ -104,9 +95,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
             }
 
             var pagedUsers = await query
-                                .Skip((request.PageNumber - 1) * request.PageSize)
-                                .Take(request.PageSize)
-                                .ToListAsync(cancellationToken);
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
+
             if (!pagedUsers.Any())
             {
                 return new PagedResponse<AccountDetailsDto>(

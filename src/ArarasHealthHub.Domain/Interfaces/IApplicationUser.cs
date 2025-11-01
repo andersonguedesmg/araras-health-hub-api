@@ -9,17 +9,8 @@ namespace ArarasHealthHub.Domain.Interfaces
     public interface IApplicationUser
     {
         int Id { get; set; }
-
         string? UserName { get; set; }
-
-        DateTime CreatedOn { get; set; }
-
-        DateTime? UpdatedOn { get; set; }
-
-        bool IsActive { get; set; }
-
         int FacilityId { get; set; }
-
         public UserScopeEnum Scope { get; set; }
     }
 }

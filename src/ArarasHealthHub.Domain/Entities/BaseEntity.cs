@@ -9,13 +9,13 @@ namespace ArarasHealthHub.Domain.Entities
     public abstract class BaseEntity
     {
         [Key]
-        public int Id { get; protected internal set; }
+        public int Id { get; private set; }
 
-        public DateTime CreatedOn { get; protected internal set; }
+        public DateTime CreatedOn { get; private set; }
 
-        public DateTime? UpdatedOn { get; protected internal set; }
+        public DateTime? UpdatedOn { get; private set; }
 
-        public bool IsActive { get; protected internal set; }
+        public bool IsActive { get; private set; }
 
         protected BaseEntity()
         {

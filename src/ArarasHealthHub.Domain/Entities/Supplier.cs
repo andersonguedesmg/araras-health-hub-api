@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa um fornecedor de produtos.")]
+    [Comment("Representa um fornecedor.")]
     public class Supplier : BaseEntity
     {
         [Required]
@@ -19,35 +20,9 @@ namespace ArarasHealthHub.Domain.Entities
         public string Cnpj { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(200)]
-        public string Address { get; set; } = string.Empty;
+        public Address Address { get; set; } = new Address();
 
         [Required]
-        [MaxLength(20)]
-        public string Number { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(100)]
-        public string Neighborhood { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(100)]
-        public string City { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(2)]
-        public string State { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(10)]
-        public string Cep { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(100)]
-        public string Email { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(20)]
-        public string Phone { get; set; } = string.Empty;
+        public Contact Contact { get; set; } = new Contact();
     }
 }

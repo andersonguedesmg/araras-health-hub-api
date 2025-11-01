@@ -57,16 +57,30 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
                 return new ApiResponse<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
-            if (user.IsActive == request.IsActive)
+            var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+            if (isUserActive == request.IsActive)
             {
                 var statusText = request.IsActive ? "ativada" : "desativada";
                 return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.AccountStatusAlreadyAsDesired(statusText), true);
             }
 
-            user.IsActive = request.IsActive;
-            user.UpdatedOn = DateTime.UtcNow;
-
-            var updateResult = await _userManager.UpdateAsync(user);
+            IdentityResult updateResult;
+            if (request.IsActive)
+            {
+                updateResult = await _userManager.SetLockoutEnabledAsync(user, false);
+                if (updateResult.Succeeded)
+                {
+                    updateResult = await _userManager.SetLockoutEndDateAsync(user, null);
+                }
+            }
+            else
+            {
+                updateResult = await _userManager.SetLockoutEnabledAsync(user, true);
+                if (updateResult.Succeeded)
+                {
+                    updateResult = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                }
+            }
 
             if (!updateResult.Succeeded)
             {
