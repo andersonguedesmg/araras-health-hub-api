@@ -84,11 +84,9 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
 
             foreach (var user in users)
             {
-                var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
-
                 var accountDto = _mapper.Map<AccountDetailsDto>(user);
                 accountDto.Roles = rolesLookup.GetValueOrDefault(user.Id, new List<string>());
-                accountDto.IsActive = isUserActive;
+                accountDto.IsActive = user.IsActive;
 
                 if (user.Facility != null)
                 {

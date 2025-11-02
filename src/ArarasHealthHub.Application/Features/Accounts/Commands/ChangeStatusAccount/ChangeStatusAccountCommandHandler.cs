@@ -57,28 +57,33 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
                 return new ApiResponse<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
-            var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
-            if (isUserActive == request.IsActive)
+            if (user.IsActive == request.IsActive)
             {
                 var statusText = request.IsActive ? "ativada" : "desativada";
                 return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.AccountStatusAlreadyAsDesired(statusText), true);
             }
 
-            IdentityResult updateResult;
-            if (request.IsActive)
+            user.IsActive = request.IsActive;
+            user.UpdatedOn = DateTime.UtcNow;
+
+            IdentityResult updateResult = await _userManager.UpdateAsync(user);
+            if (updateResult.Succeeded)
             {
-                updateResult = await _userManager.SetLockoutEnabledAsync(user, false);
-                if (updateResult.Succeeded)
+                if (request.IsActive)
                 {
-                    updateResult = await _userManager.SetLockoutEndDateAsync(user, null);
+                    updateResult = await _userManager.SetLockoutEnabledAsync(user, false);
+                    if (updateResult.Succeeded)
+                    {
+                        updateResult = await _userManager.SetLockoutEndDateAsync(user, null);
+                    }
                 }
-            }
-            else
-            {
-                updateResult = await _userManager.SetLockoutEnabledAsync(user, true);
-                if (updateResult.Succeeded)
+                else
                 {
-                    updateResult = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                    updateResult = await _userManager.SetLockoutEnabledAsync(user, true);
+                    if (updateResult.Succeeded)
+                    {
+                        updateResult = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                    }
                 }
             }
 

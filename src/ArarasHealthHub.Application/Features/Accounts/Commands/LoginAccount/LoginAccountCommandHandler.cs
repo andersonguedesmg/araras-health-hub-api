@@ -42,9 +42,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
                 return new ApiResponse<LoginResponseDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
             }
 
-            var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+            var isAccountAdministrativelyActive = user.IsActive;
+            var isAccountNotLockedOut = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
 
-            if (!isUserActive)
+            if (!isAccountAdministrativelyActive || !isAccountNotLockedOut)
             {
                 return new ApiResponse<LoginResponseDto>(StatusCodes.Status403Forbidden, ApiMessages.AccountDisabled, false);
             }
@@ -69,7 +70,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
             {
                 UserId = user.Id,
                 UserName = user.UserName!,
-                IsActive = isUserActive,
+                IsActive = user.IsActive,
                 FacilityId = user.FacilityId,
                 Token = token,
                 Scope = user.Scope,

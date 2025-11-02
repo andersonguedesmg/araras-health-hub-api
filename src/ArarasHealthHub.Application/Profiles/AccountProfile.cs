@@ -15,7 +15,6 @@ namespace ArarasHealthHub.Application.Profiles
         {
             CreateMap<ApplicationUser, AccountDetailsDto>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => !src.LockoutEnd.HasValue || src.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow))
                 .ForMember(dest => dest.Roles, opt => opt.Ignore())
                 .ForMember(dest => dest.Facility, opt => opt.Ignore());
 

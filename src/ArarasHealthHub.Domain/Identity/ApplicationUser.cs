@@ -16,5 +16,11 @@ namespace ArarasHealthHub.Domain.Identity
         public Facility? Facility { get; set; }
 
         public UserScopeEnum Scope { get; set; } = UserScopeEnum.Unassigned;
+
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedOn { get; set; }
+
+        public bool IsActive { get; set; } = true;
     }
 }

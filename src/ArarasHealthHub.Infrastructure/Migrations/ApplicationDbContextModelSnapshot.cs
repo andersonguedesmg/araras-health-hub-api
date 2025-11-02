@@ -780,6 +780,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -789,6 +792,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<int>("FacilityId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -822,6 +828,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -846,9 +855,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "00000000-0000-0000-0000-000000000000",
-                            EmailConfirmed = true,
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EmailConfirmed = false,
                             FacilityId = 1,
-                            LockoutEnabled = true,
+                            IsActive = true,
+                            LockoutEnabled = false,
                             NormalizedUserName = "SMS_MASTER",
                             PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
                             PhoneNumberConfirmed = false,
@@ -1076,6 +1087,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                                     FacilityId = 1,
                                     Cep = "13601-111",
                                     City = "Araras",
+                                    Complement = "",
                                     Neighborhood = "Jardim Belvedere",
                                     Number = "33",
                                     State = "SP",

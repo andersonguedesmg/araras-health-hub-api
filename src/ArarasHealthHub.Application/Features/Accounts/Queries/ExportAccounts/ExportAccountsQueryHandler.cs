@@ -100,13 +100,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
             var accountDetailsList = new List<AccountDetailsDto>();
             foreach (var user in allFilteredUsers)
             {
-                var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
-
                 var accountDto = _mapper.Map<AccountDetailsDto>(user);
                 accountDto.Roles = rolesLookup.GetValueOrDefault(user.Id, new List<string>());
                 accountDto.Scope = user.Scope;
-                accountDto.IsActive = isUserActive;
-
+                accountDto.IsActive = user.IsActive;
                 accountDetailsList.Add(accountDto);
             }
 

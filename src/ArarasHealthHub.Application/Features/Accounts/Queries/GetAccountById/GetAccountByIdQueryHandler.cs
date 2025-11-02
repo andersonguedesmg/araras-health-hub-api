@@ -60,7 +60,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
 
             var accountDto = _mapper.Map<AccountDetailsDto>(user);
             accountDto.Roles = roles.ToList();
-            accountDto.IsActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+            accountDto.IsActive = user.IsActive;
 
             if (user.Facility != null)
             {

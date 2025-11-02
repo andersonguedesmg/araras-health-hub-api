@@ -108,6 +108,7 @@ namespace ArarasHealthHub.Infrastructure.Data
                         FacilityId = 1,
                         Cep = "13601-111",
                         Street = "Rua Campos Sales",
+                        Complement = "",
                         Number = "33",
                         Neighborhood = "Jardim Belvedere",
                         City = "Araras",
@@ -141,10 +142,9 @@ namespace ArarasHealthHub.Infrastructure.Data
                 Id = 1,
                 UserName = "sms_master",
                 NormalizedUserName = "SMS_MASTER",
-
-                EmailConfirmed = true,
-                LockoutEnabled = true,
-
+                CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 1, 1), DateTimeKind.Utc),
+                UpdatedOn = null,
+                IsActive = true,
                 FacilityId = facilityPrincipalId,
                 Scope = UserScopeEnum.Management,
                 SecurityStamp = Guid.Empty.ToString(),
