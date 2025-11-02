@@ -6,15 +6,20 @@ using ArarasHealthHub.Domain.Enums;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Dtos
 {
-    public class AccountDetailsDto
+    public class LoginResponseDto
     {
         public int UserId { get; set; }
         public string UserName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
+        public int FacilityId { get; set; }
         public UserScopeEnum Scope { get; set; }
-        public List<string> Roles { get; set; } = new List<string>();
-        public DateTime CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
-        public FacilityDetailsDto? Facility { get; set; }
+        public string Token { get; set; } = string.Empty;
+        public List<UserRoleDto> Roles { get; set; } = new();
+    }
+
+    public class UserRoleDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

@@ -35,13 +35,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
 
         public async Task<IEnumerable<AccountDetailsDto>> Handle(ExportAccountsQuery request, CancellationToken cancellationToken)
         {
-            var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
-            if (string.IsNullOrEmpty(userId))
+            var userIdString = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out _))
             {
                 return Enumerable.Empty<AccountDetailsDto>();
             }
 
-            var currentUser = await _userManager.FindByIdAsync(userId);
+            var currentUser = await _userManager.FindByIdAsync(userIdString);
             if (currentUser == null)
             {
                 return Enumerable.Empty<AccountDetailsDto>();
@@ -49,7 +49,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
 
             IQueryable<ApplicationUser> query = _dbContext.Users
                                                         .Include(u => u.Facility)
-                                                        .AsQueryable();
+                                                        .AsNoTracking();
 
             if (currentUser.Scope == UserScopeEnum.Operational)
             {
@@ -78,16 +78,32 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
                 return Enumerable.Empty<AccountDetailsDto>();
             }
 
+            var userIds = allFilteredUsers.Select(u => u.Id).ToList();
+
+            var userRolesLinks = await _dbContext.UserRoles
+                .Where(ur => userIds.Contains(ur.UserId))
+                .ToListAsync(cancellationToken);
+
+            var roleIds = userRolesLinks.Select(ur => ur.RoleId).Distinct().ToList();
+            var roles = await _dbContext.Roles
+                .Where(r => roleIds.Contains(r.Id))
+                .Select(r => new { r.Id, r.Name })
+                .ToDictionaryAsync(r => r.Id, r => r.Name!, cancellationToken);
+
+            var rolesLookup = userRolesLinks
+                .GroupBy(ur => ur.UserId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(ur => roles[ur.RoleId]).ToList()
+                );
+
             var accountDetailsList = new List<AccountDetailsDto>();
             foreach (var user in allFilteredUsers)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-
                 var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
 
                 var accountDto = _mapper.Map<AccountDetailsDto>(user);
-
-                accountDto.Roles = roles.ToList();
+                accountDto.Roles = rolesLookup.GetValueOrDefault(user.Id, new List<string>());
                 accountDto.Scope = user.Scope;
                 accountDto.IsActive = isUserActive;
 

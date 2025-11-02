@@ -7,6 +7,7 @@ using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,19 +20,22 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
-        public GetAccountByIdQueryHandler(UserManager<ApplicationUser> userManager, IApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        public GetAccountByIdQueryHandler(UserManager<ApplicationUser> userManager, IApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _userManager = userManager;
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
 
         public async Task<ApiResponse<AccountDetailsDto>> Handle(GetAccountByIdQuery request, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
-                                        .Include(u => u.Facility)
-                                        .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+                .Include(u => u.Facility)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
             if (user == null)
             {
@@ -54,28 +58,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            var accountDto = new AccountDetailsDto
-            {
-                UserId = user.Id,
-                UserName = user.UserName!,
-                IsActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow,
-                Scope = user.Scope,
-                Roles = roles.ToList()
-            };
+            var accountDto = _mapper.Map<AccountDetailsDto>(user);
+            accountDto.Roles = roles.ToList();
+            accountDto.IsActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
 
             if (user.Facility != null)
             {
-                accountDto.Facility = new FacilityDetailsDto
-                {
-                    Id = user.Facility.Id,
-                    Name = user.Facility.Name,
-                    Address = user.Facility.Address.Street,
-                    Number = user.Facility.Address.Number,
-                    Neighborhood = user.Facility.Address.Neighborhood,
-                    Cep = user.Facility.Address.Cep,
-                    Email = user.Facility.Contact.Email,
-                    Phone = user.Facility.Contact.Phone
-                };
+                accountDto.Facility = _mapper.Map<FacilityDetailsDto>(user.Facility);
             }
 
             return new ApiResponse<AccountDetailsDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Conta"), accountDto);

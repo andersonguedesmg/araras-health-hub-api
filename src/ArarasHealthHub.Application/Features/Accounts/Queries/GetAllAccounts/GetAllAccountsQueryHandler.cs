@@ -32,8 +32,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 
         public async Task<PagedResponse<AccountDetailsDto>> Handle(GetAllAccountsQuery request, CancellationToken cancellationToken)
         {
-            var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
-            if (string.IsNullOrEmpty(userId))
+            var userIdString = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out _))
             {
                 return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
                 {
@@ -43,7 +43,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                 };
             }
 
-            var currentUser = await _userManager.FindByIdAsync(userId);
+            var currentUser = await _userManager.FindByIdAsync(userIdString);
             if (currentUser == null)
             {
                 return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
@@ -56,6 +56,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 
             IQueryable<ApplicationUser> query = _dbContext.Users
                 .Include(u => u.Facility)
+                .AsNoTracking()
                 .AsQueryable();
 
             if (currentUser.Scope == UserScopeEnum.Operational)
@@ -72,7 +73,6 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                     u.UserName!.ToLower().Contains(searchTermLower) ||
                     u.FacilityId.ToString().Contains(searchTermLower) ||
                     (u.Facility != null && u.Facility.Name.ToLower().Contains(searchTermLower)) ||
-                    (!u.LockoutEnd.HasValue || u.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow).ToString().ToLower().Contains(searchTermLower) ||
                     u.Scope.ToString().ToLower().Contains(searchTermLower)
                 );
             }
@@ -109,13 +109,34 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                 );
             }
 
+            var userIds = pagedUsers.Select(u => u.Id).ToList();
+
+            var userRolesLinks = await _dbContext.UserRoles
+                .Where(ur => userIds.Contains(ur.UserId))
+                .ToListAsync(cancellationToken);
+
+            var roleIds = userRolesLinks.Select(ur => ur.RoleId).Distinct().ToList();
+            var roles = await _dbContext.Roles
+                .Where(r => roleIds.Contains(r.Id))
+                .Select(r => r.Name!)
+                .ToListAsync(cancellationToken);
+
+            var rolesLookup = userRolesLinks
+                .Join(_dbContext.Roles,
+                      ur => ur.RoleId,
+                      r => r.Id,
+                      (ur, r) => new { ur.UserId, RoleName = r.Name! })
+                .GroupBy(a => a.UserId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(a => a.RoleName).ToList()
+                );
+
             var accountDetailsList = new List<AccountDetailsDto>();
             foreach (var user in pagedUsers)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-
                 var accountDto = _mapper.Map<AccountDetailsDto>(user);
-                accountDto.Roles = roles.ToList();
+                accountDto.Roles = rolesLookup.GetValueOrDefault(user.Id, new List<string>());
                 accountDto.Scope = user.Scope;
 
                 if (user.Facility != null)

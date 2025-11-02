@@ -8,7 +8,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
 {
-    public class LoginAccountCommand : IRequest<ApiResponse<NewAccountDto>>
+    public class LoginAccountCommand : IRequest<ApiResponse<LoginResponseDto>>
     {
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

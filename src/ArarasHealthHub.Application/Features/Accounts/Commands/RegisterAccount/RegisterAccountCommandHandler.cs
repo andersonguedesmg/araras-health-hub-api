@@ -58,27 +58,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
                 return new ApiResponse<AccountCreatedDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
-            var facilityExists = await _facilityRepo.FacilityExists(request.FacilityId);
-            if (!facilityExists)
-            {
-                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.FacilityDoesNotExist, false);
-            }
-
             if (await _userManager.FindByNameAsync(request.UserName) != null)
             {
                 return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
             }
-
-            if (request.Role == "MASTER" && request.Scope != UserScopeEnum.Management)
-            {
-                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.MasterRoleExclusiveToManagement, false);
-            }
-
-            if (request.Scope == UserScopeEnum.Operational && request.Role == "MASTER")
-            {
-                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.OperationalScopeForbidsMasterRole, false);
-            }
-
 
             var user = new ApplicationUser
             {
@@ -86,15 +69,6 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
                 FacilityId = request.FacilityId,
                 Scope = request.Scope,
             };
-
-            // Defina o LockoutEnabled com base no IsActive do Request, se necessário.
-            // Se LockoutEnabled for false, o usuário estará sempre ativo.
-            // user.LockoutEnabled = request.IsActive;
-
-            // O padrão do IdentityUser para LockoutEnabled é true e LockoutEnd é null (ativo).
-            // Se você quiser que o usuário comece inativo, precisa chamar o _userManager.SetLockoutEnabledAsync(user, true)
-            // e _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue).
-            // Por enquanto, apenas removemos as propriedades que causam o erro.
 
             var createUserResult = await _userManager.CreateAsync(user, request.Password);
 
@@ -105,12 +79,15 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
                 return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.FailedToCreateAccount, errorsDict, false);
             }
 
-            if (!await _roleManager.RoleExistsAsync(request.Role))
+            var requestedRole = request.Role.ToUpper();
+
+            if (!await _roleManager.RoleExistsAsync(requestedRole))
             {
-                await _roleManager.CreateAsync(new IdentityRole<int>(request.Role));
+                await _userManager.DeleteAsync(user);
+                return new ApiResponse<AccountCreatedDto>(StatusCodes.Status400BadRequest, ApiMessages.RoleDoesNotExist, false);
             }
 
-            var addRoleResult = await _userManager.AddToRoleAsync(user, request.Role);
+            var addRoleResult = await _userManager.AddToRoleAsync(user, requestedRole);
 
             if (!addRoleResult.Succeeded)
             {
@@ -124,7 +101,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount
             {
                 UserId = user.Id,
                 UserName = user.UserName!,
-                Role = request.Role,
+                Role = requestedRole,
                 Scope = user.Scope,
                 FacilityId = user.FacilityId
             };

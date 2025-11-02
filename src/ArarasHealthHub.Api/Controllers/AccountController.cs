@@ -31,11 +31,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPost("register")]
-        [AuthorizeAccountManagement(typeof(RegisterDto))]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> Register([FromBody] RegisterDto request)
+        [AuthorizeAccountManagement(typeof(RegisterRequestDto))]
+        [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.Forbidden)]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
         {
             var command = new RegisterAccountCommand
             {
@@ -53,10 +53,10 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<NewAccountDto>), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.Forbidden)]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             var command = new LoginAccountCommand { UserName = request.UserName, Password = request.Password };
@@ -114,19 +114,14 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpPut("update")]
-        [AuthorizeAccountManagement(typeof(UpdateAccountDto))]
+        [AuthorizeAccountManagement(typeof(UpdateAccountCommand))]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDto request)
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountCommand command)
         {
-            var command = new UpdateAccountCommand(
-                request.UserId,
-                request.UserName
-            );
-
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
         }

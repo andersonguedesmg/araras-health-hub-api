@@ -19,7 +19,7 @@ namespace ArarasHealthHub.Application.Profiles
             CreateMap<Employee, EmployeeNameDto>();
             CreateMap<Facility, FacilityNameDto>();
 
-            CreateMap<ApplicationUser, AccountNameDto>();
+            CreateMap<ApplicationUser, AccountMinimalDto>();
 
             CreateMap<OrderStatus, OrderStatusDto>();
 

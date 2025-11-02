@@ -23,7 +23,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Dtos
 
         public SupplierDto? Supplier { get; set; }
         public EmployeeDto? Responsible { get; set; }
-        public AccountDto? Account { get; set; }
+        public AccountMinimalDto? Account { get; set; }
 
         public List<ReceivedItemDto> ReceivedItem { get; set; } = new();
 

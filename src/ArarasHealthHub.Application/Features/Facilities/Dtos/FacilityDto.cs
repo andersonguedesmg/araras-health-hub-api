@@ -16,6 +16,6 @@ namespace ArarasHealthHub.Application.Features.Facilities.Dtos
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public bool IsActive { get; set; } = true;
-        public List<AccountDto> Accounts { get; set; } = new List<AccountDto>();
+        public List<AccountMinimalDto> Accounts { get; set; } = new List<AccountMinimalDto>();
     }
 }

@@ -35,6 +35,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string PasswordResetSuccessfully = "Senha redefinida com sucesso.";
         public const string FailedToCreateAccount = "Falha ao criar a conta.";
         public const string FailedToAssignRoleToAccount = "Falha ao atribuir a função a conta.";
+        public const string RoleDoesNotExist = "A função informada não existe.";
         public const string FailedToUpdateAccount = "Falha ao atualizar a conta.";
         public const string FailedToChangeAccountStatus = "Falha ao alterar o status da conta.";
         public const string FacilityAlreadyExists = "Unidade já registrada.";

@@ -14,13 +14,13 @@ namespace ArarasHealthHub.Application.Features.Orders.Dtos
         public OrderStatusDto? OrderStatus { get; set; }
 
         public EmployeeNameDto? CreatedByEmployee { get; set; }
-        public AccountNameDto? CreatedByAccount { get; set; }
+        public AccountMinimalDto? CreatedByAccount { get; set; }
         public EmployeeNameDto? ApprovedByEmployee { get; set; }
-        public AccountNameDto? ApprovedByAccount { get; set; }
+        public AccountMinimalDto? ApprovedByAccount { get; set; }
         public EmployeeNameDto? SeparatedByEmployee { get; set; }
-        public AccountNameDto? SeparatedByAccount { get; set; }
+        public AccountMinimalDto? SeparatedByAccount { get; set; }
         public EmployeeNameDto? FinalizedByEmployee { get; set; }
-        public AccountNameDto? FinalizedByAccount { get; set; }
+        public AccountMinimalDto? FinalizedByAccount { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime? ApprovedAt { get; set; }
