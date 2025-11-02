@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Common.Validation;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using FluentValidation;
@@ -27,40 +28,12 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Validation
                 .MustAsync(BeUniqueCnpj).WithMessage("Já existe outro fornecedor cadastrado com este CNPJ.");
 
             RuleFor(command => command.Address)
-                .NotEmpty().WithMessage("O endereço do fornecedor é obrigatório.")
-                .MaximumLength(200).WithMessage("O endereço do fornecedor não pode exceder 200 caracteres.");
+                .NotNull().WithMessage("O objeto de endereço é obrigatório.")
+                .SetValidator(new AddressDtoValidator());
 
-            RuleFor(command => command.Number)
-                .NotEmpty().WithMessage("O número do endereço do fornecedor é obrigatório.")
-                .MaximumLength(20).WithMessage("O número do endereço do fornecedor não pode exceder 20 caracteres.");
-
-            RuleFor(command => command.Neighborhood)
-                .NotEmpty().WithMessage("O bairro do fornecedor é obrigatório.")
-                .MaximumLength(100).WithMessage("O bairro do fornecedor não pode exceder 100 caracteres.");
-
-            RuleFor(command => command.City)
-                .NotEmpty().WithMessage("A cidade do fornecedor é obrigatória.")
-                .MaximumLength(100).WithMessage("A cidade do fornecedor não pode exceder 100 caracteres.");
-
-            RuleFor(command => command.State)
-                .NotEmpty().WithMessage("O estado do fornecedor é obrigatório.")
-                .Length(2).WithMessage("O estado do fornecedor deve conter 2 caracteres (UF).")
-                .Matches(@"^[A-Z]{2}$").WithMessage("O estado do fornecedor deve conter 2 letras maiúsculas (UF).");
-
-            RuleFor(command => command.Cep)
-                .NotEmpty().WithMessage("O CEP do fornecedor é obrigatório.")
-                .Length(9).WithMessage("O CEP do fornecedor deve conter 9 dígitos.")
-                .Matches(@"^\d{5}-\d{3}$").WithMessage("O CEP do fornecedor deve estar no formato 'XXXXX-XXX'.");
-
-            RuleFor(command => command.Email)
-                .NotEmpty().WithMessage("O email do fornecedor é obrigatório.")
-                .EmailAddress().WithMessage("O formato do email do fornecedor é inválido.")
-                .MaximumLength(100).WithMessage("O email do fornecedor não pode exceder 100 caracteres.");
-
-            RuleFor(command => command.Phone)
-                .NotEmpty().WithMessage("O telefone do fornecedor é obrigatório.")
-                .MaximumLength(20).WithMessage("O telefone do fornecedor não pode exceder 20 caracteres.")
-                .Matches(@"^\d{10,11}$|^(\+\d{1,3}\s?)?(\(?\d{2}\)?\s?\d{4,5}-?\d{4})$").WithMessage("O formato do telefone do fornecedor é inválido.");
+            RuleFor(command => command.Contact)
+                .NotNull().WithMessage("O objeto de contato é obrigatório.")
+                .SetValidator(new ContactDtoValidator());
         }
 
         private async Task<bool> BeUniqueCnpj(string cnpj, CancellationToken cancellationToken)

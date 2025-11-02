@@ -31,7 +31,6 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 suppliersQuery = suppliersQuery.Where(p =>
-                    p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Cnpj.ToLower().Contains(searchTermLower) ||
                     p.Address.Street.ToLower().Contains(searchTermLower) ||
@@ -41,12 +40,11 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
                     p.Address.State.ToLower().Contains(searchTermLower) ||
                     p.Address.Cep.ToLower().Contains(searchTermLower) ||
                     p.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Phone.ToLower().Contains(searchTermLower) ||
-                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                    p.Contact.Phone.ToLower().Contains(searchTermLower)
                 );
             }
 
-            var totalCount = suppliersQuery.Count();
+            var totalCount = await suppliersQuery.CountAsync(cancellationToken);
 
             IQueryable<Supplier> orderedSuppliers;
             switch (request.OrderBy.ToLower())

@@ -130,11 +130,26 @@ namespace ArarasHealthHub.Api.Controllers
             var supplierDtos = await _mediator.Send(new ExportSuppliersQuery { SearchTerm = searchTerm });
 
             var sb = new StringBuilder();
-            sb.AppendLine("ID,NOME,CNPJ,ENDEREÇO,NÚMERO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
+
+            sb.AppendLine("ID,NOME,CNPJ,RUA,NÚMERO,COMPLEMENTO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
 
             foreach (var supplierDto in supplierDtos)
             {
-                sb.Append($"{supplierDto.Id},{supplierDto.Name},{supplierDto.Cnpj},{supplierDto.Address},{supplierDto.Number},{supplierDto.Neighborhood},{supplierDto.City},{supplierDto.State},{supplierDto.Cep},{supplierDto.Email},{supplierDto.Phone},{(supplierDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+                sb.Append(
+                    $"{supplierDto.Id}," +
+                    $"{supplierDto.Name}," +
+                    $"{supplierDto.Cnpj}," +
+                    $"{supplierDto.Address.Street}," +
+                    $"{supplierDto.Address.Number}," +
+                    $"{supplierDto.Address.Complement}," +
+                    $"{supplierDto.Address.Neighborhood}," +
+                    $"{supplierDto.Address.City}," +
+                    $"{supplierDto.Address.State}," +
+                    $"{supplierDto.Address.Cep}," +
+                    $"{supplierDto.Contact.Email}," +
+                    $"{supplierDto.Contact.Phone}," +
+                    $"{(supplierDto.IsActive ? "Ativo" : "Inativo")}\r\n"
+                );
             }
 
             var fileName = $"fornecedor_{DateTime.Now:yyyyMMddHHmmss}.csv";

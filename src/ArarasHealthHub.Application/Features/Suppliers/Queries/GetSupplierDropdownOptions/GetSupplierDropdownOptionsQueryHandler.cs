@@ -25,15 +25,18 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
 
         public async Task<ApiResponse<List<SupplierNameDto>>> Handle(GetSupplierDropdownOptionsQuery request, CancellationToken cancellationToken)
         {
-            var query = _supplierRepository.AsQueryable();
+            var query = _supplierRepository.GetQueryable();
+            query = query
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Name);
 
-            query = query.Where(s => s.IsActive);
-
-            query = query.OrderBy(s => s.Name);
-
-            var activeSuppliers = await query.ToListAsync(cancellationToken);
-
-            var dropdownOptions = _mapper.Map<List<SupplierNameDto>>(activeSuppliers);
+            var dropdownOptions = await query
+                .Select(s => new SupplierNameDto
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                })
+                .ToListAsync(cancellationToken);
 
             return new ApiResponse<List<SupplierNameDto>>(
                 StatusCodes.Status200OK,
