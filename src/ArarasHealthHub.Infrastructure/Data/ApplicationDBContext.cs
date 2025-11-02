@@ -22,6 +22,8 @@ namespace ArarasHealthHub.Infrastructure.Data
 
         public new DatabaseFacade Database => base.Database;
 
+        public new DbSet<IdentityUserRole<int>> UserRoles { get; set; } = default!;
+        public new DbSet<IdentityRole<int>> Roles { get; set; } = default!;
         public DbSet<Facility> Facilities { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Employee> Employees { get; set; }

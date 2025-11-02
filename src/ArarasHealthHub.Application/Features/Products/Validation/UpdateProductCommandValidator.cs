@@ -16,10 +16,14 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
         {
             _productRepository = productRepository;
 
+            RuleFor(command => command.Id)
+                .GreaterThan(0).WithMessage("ID do produto inválido.")
+                .MustAsync(ProductMustExist).WithMessage("Produto não encontrado.");
+
             RuleFor(command => command.Name)
                 .NotEmpty().WithMessage("O nome do produto é obrigatório.")
-                .MaximumLength(100).WithMessage("O nome do produto não pode exceder 150 caracteres.")
-                .MustAsync(BeUniqueProduct).WithMessage("Já existe um produto cadastrado com este Nome.");
+                .MaximumLength(150).WithMessage("O nome do produto não pode exceder 150 caracteres.")
+                .MustAsync(BeUniqueProductNameOnUpdate).WithMessage("Já existe um produto cadastrado com este Nome.");
 
             RuleFor(command => command.Description)
                 .NotEmpty().WithMessage("A descrição do produto é obrigatória.")
@@ -38,10 +42,14 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
                 .MaximumLength(100).WithMessage("A forma de apresentação do produto não pode exceder 100 caracteres.");
         }
 
-        private async Task<bool> BeUniqueProduct(string cnpj, CancellationToken cancellationToken)
+        private async Task<bool> ProductMustExist(int id, CancellationToken cancellationToken)
         {
-            var existingProduct = await _productRepository.GetByProductNameAsync(cnpj);
-            return existingProduct == null;
+            return await _productRepository.ProductExists(id);
+        }
+
+        private async Task<bool> BeUniqueProductNameOnUpdate(UpdateProductCommand command, string name, CancellationToken cancellationToken)
+        {
+            return await _productRepository.HasProductNameUnique(name, command.Id, cancellationToken);
         }
     }
 }

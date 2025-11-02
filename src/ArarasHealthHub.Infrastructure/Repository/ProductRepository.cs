@@ -20,12 +20,12 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<bool> HasProductNameUnique(string name, int productId, CancellationToken cancellationToken)
         {
-            return !await _dbContext.Products.AnyAsync(p => p.Name == name && p.Id != productId, cancellationToken);
+            return !await _dbContext.Products.AnyAsync(p => p.Name.ToLower() == name.ToLower() && p.Id != productId, cancellationToken);
         }
 
         public async Task<Product?> GetByProductNameAsync(string name)
         {
-            return await _dbSet.FirstOrDefaultAsync(s => s.Name == name);
+            return await _dbSet.FirstOrDefaultAsync(s => s.Name.ToLower() == name.ToLower());
         }
 
         public async Task<bool> ProductExists(int id)
@@ -37,12 +37,13 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             return await _dbContext.Products
                 .Include(p => p.Stock)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public IQueryable<Product> GetQueryable()
         {
-            return _dbContext.Set<Product>();
+            return _dbContext.Set<Product>().AsNoTracking();
         }
     }
 }

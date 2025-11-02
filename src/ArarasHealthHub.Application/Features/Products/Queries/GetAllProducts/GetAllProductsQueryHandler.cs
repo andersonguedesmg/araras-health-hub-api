@@ -31,17 +31,15 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 productsQuery = productsQuery.Where(p =>
-                    p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Description.ToLower().Contains(searchTermLower) ||
                     p.MainCategory.ToLower().Contains(searchTermLower) ||
                     p.SubCategory.ToLower().Contains(searchTermLower) ||
-                    p.PresentationForm.ToLower().Contains(searchTermLower) ||
-                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                    p.PresentationForm.ToLower().Contains(searchTermLower)
                 );
             }
 
-            var totalCount = productsQuery.Count();
+            var totalCount = await productsQuery.CountAsync(cancellationToken);
 
             IQueryable<Product> orderedProducts;
             switch (request.OrderBy?.ToLower())

@@ -18,8 +18,8 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
 
             RuleFor(command => command.Name)
                 .NotEmpty().WithMessage("O nome do produto é obrigatório.")
-                .MaximumLength(100).WithMessage("O nome do produto não pode exceder 150 caracteres.")
-                .MustAsync(BeUniqueProduct).WithMessage("Já existe um produto cadastrado com este Nome.");
+                .MaximumLength(150).WithMessage("O nome do produto não pode exceder 150 caracteres.")
+                .MustAsync(BeUniqueProductName).WithMessage("Já existe um produto cadastrado com este nome.");
 
             RuleFor(command => command.Description)
                 .NotEmpty().WithMessage("A descrição do produto é obrigatória.")
@@ -38,9 +38,9 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
                 .MaximumLength(100).WithMessage("A forma de apresentação do produto não pode exceder 100 caracteres.");
         }
 
-        private async Task<bool> BeUniqueProduct(string cnpj, CancellationToken cancellationToken)
+        private async Task<bool> BeUniqueProductName(string name, CancellationToken cancellationToken)
         {
-            var existingProduct = await _productRepository.GetByProductNameAsync(cnpj);
+            var existingProduct = await _productRepository.GetByProductNameAsync(name);
             return existingProduct == null;
         }
     }

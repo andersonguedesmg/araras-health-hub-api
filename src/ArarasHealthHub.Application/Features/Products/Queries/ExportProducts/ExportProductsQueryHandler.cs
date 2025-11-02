@@ -29,13 +29,11 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.ExportProducts
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 productsQuery = productsQuery.Where(p =>
-                    p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Description.ToLower().Contains(searchTermLower) ||
                     p.MainCategory.ToLower().Contains(searchTermLower) ||
                     p.SubCategory.ToLower().Contains(searchTermLower) ||
-                    p.PresentationForm.ToLower().Contains(searchTermLower) ||
-                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                    p.PresentationForm.ToLower().Contains(searchTermLower)
                 );
             }
 

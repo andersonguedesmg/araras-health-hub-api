@@ -25,15 +25,18 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdo
 
         public async Task<ApiResponse<List<ProductNameDto>>> Handle(GetProductDropdownOptionsQuery request, CancellationToken cancellationToken)
         {
-            var query = _productRepository.AsQueryable();
+            var query = _productRepository.GetQueryable();
+            query = query
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Name);
 
-            query = query.Where(s => s.IsActive);
-
-            query = query.OrderBy(s => s.Name);
-
-            var activeProducts = await query.ToListAsync(cancellationToken);
-
-            var dropdownOptions = _mapper.Map<List<ProductNameDto>>(activeProducts);
+            var dropdownOptions = await query
+                .Select(s => new ProductNameDto
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                })
+                .ToListAsync(cancellationToken);
 
             return new ApiResponse<List<ProductNameDto>>(
                 StatusCodes.Status200OK,
