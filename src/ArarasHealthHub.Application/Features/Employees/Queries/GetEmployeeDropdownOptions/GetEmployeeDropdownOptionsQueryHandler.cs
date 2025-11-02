@@ -25,15 +25,18 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDrop
 
         public async Task<ApiResponse<List<EmployeeNameDto>>> Handle(GetEmployeeDropdownOptionsQuery request, CancellationToken cancellationToken)
         {
-            var query = _employeeRepository.AsQueryable();
+            var query = _employeeRepository.GetQueryable();
+            query = query
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Name);
 
-            query = query.Where(s => s.IsActive);
-
-            query = query.OrderBy(s => s.Name);
-
-            var activeEmployees = await query.ToListAsync(cancellationToken);
-
-            var dropdownOptions = _mapper.Map<List<EmployeeNameDto>>(activeEmployees);
+            var dropdownOptions = await query
+                .Select(s => new EmployeeNameDto
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                })
+                .ToListAsync(cancellationToken);
 
             return new ApiResponse<List<EmployeeNameDto>>(
                 StatusCodes.Status200OK,

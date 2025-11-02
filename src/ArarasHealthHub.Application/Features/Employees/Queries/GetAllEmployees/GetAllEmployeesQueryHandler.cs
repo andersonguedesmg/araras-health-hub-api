@@ -31,16 +31,14 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 employeesQuery = employeesQuery.Where(p =>
-                    p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Cpf.ToLower().Contains(searchTermLower) ||
                     p.Function.ToLower().Contains(searchTermLower) ||
-                    p.Phone.ToLower().Contains(searchTermLower) ||
-                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                    p.Phone.ToLower().Contains(searchTermLower)
                 );
             }
 
-            var totalCount = employeesQuery.Count();
+            var totalCount = await employeesQuery.CountAsync(cancellationToken);
 
             IQueryable<Employee> orderedEmployees;
             switch (request.OrderBy.ToLower())
