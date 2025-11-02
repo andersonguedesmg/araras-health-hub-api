@@ -25,15 +25,18 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDro
 
         public async Task<ApiResponse<List<FacilityNameDto>>> Handle(GetFacilityDropdownOptionsQuery request, CancellationToken cancellationToken)
         {
-            var query = _facilityRepository.AsQueryable();
+            var query = _facilityRepository.GetQueryable();
+            query = query
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Name);
 
-            query = query.Where(s => s.IsActive);
-
-            query = query.OrderBy(s => s.Name);
-
-            var activeFacilitys = await query.ToListAsync(cancellationToken);
-
-            var dropdownOptions = _mapper.Map<List<FacilityNameDto>>(activeFacilitys);
+            var dropdownOptions = await query
+                .Select(s => new FacilityNameDto
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                })
+                .ToListAsync(cancellationToken);
 
             return new ApiResponse<List<FacilityNameDto>>(
                 StatusCodes.Status200OK,

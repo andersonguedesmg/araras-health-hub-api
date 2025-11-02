@@ -32,7 +32,6 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 facilitiesQuery = facilitiesQuery.Where(p =>
-                    p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Address.Street.ToLower().Contains(searchTermLower) ||
                     p.Address.Number.ToLower().Contains(searchTermLower) ||
@@ -41,12 +40,11 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
                     p.Address.State.ToLower().Contains(searchTermLower) ||
                     p.Address.Cep.ToLower().Contains(searchTermLower) ||
                     p.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Phone.ToLower().Contains(searchTermLower) ||
-                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                    p.Contact.Phone.ToLower().Contains(searchTermLower)
                 );
             }
 
-            var totalCount = facilitiesQuery.Count();
+            var totalCount = await facilitiesQuery.CountAsync(cancellationToken);
 
             IQueryable<Facility> orderedFacilities;
             switch (request.OrderBy.ToLower())

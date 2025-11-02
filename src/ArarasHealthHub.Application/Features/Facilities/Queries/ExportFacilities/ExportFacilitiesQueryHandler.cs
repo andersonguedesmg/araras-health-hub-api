@@ -29,7 +29,6 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.ExportFaciliti
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 facilitiesQuery = facilitiesQuery.Where(p =>
-                    p.Id.ToString().Contains(searchTermLower) ||
                     p.Name.ToLower().Contains(searchTermLower) ||
                     p.Address.Street.ToLower().Contains(searchTermLower) ||
                     p.Address.Number.ToLower().Contains(searchTermLower) ||
@@ -38,8 +37,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.ExportFaciliti
                     p.Address.State.ToLower().Contains(searchTermLower) ||
                     p.Address.Cep.ToLower().Contains(searchTermLower) ||
                     p.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Phone.ToLower().Contains(searchTermLower) ||
-                    p.IsActive.ToString().ToLower().Contains(searchTermLower)
+                    p.Contact.Phone.ToLower().Contains(searchTermLower)
                 );
             }
 

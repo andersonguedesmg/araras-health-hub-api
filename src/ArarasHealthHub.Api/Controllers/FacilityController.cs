@@ -131,11 +131,24 @@ namespace ArarasHealthHub.Api.Controllers
             var facilityDtos = await _mediator.Send(new ExportFacilitiesQuery { SearchTerm = searchTerm });
 
             var sb = new StringBuilder();
-            sb.AppendLine("ID,NOME,ENDEREÇO,NÚMERO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
+            sb.AppendLine("ID,NOME,RUA,NÚMERO,COMPLEMENTO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
 
             foreach (var facilityDto in facilityDtos)
             {
-                sb.Append($"{facilityDto.Id},{facilityDto.Name},{facilityDto.Address},{facilityDto.Number},{facilityDto.Neighborhood},{facilityDto.City},{facilityDto.State},{facilityDto.Cep},{facilityDto.Email},{facilityDto.Phone},{(facilityDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+                sb.Append(
+                    $"{facilityDto.Id}," +
+                    $"{facilityDto.Name}," +
+                    $"{facilityDto.Address.Street}," +
+                    $"{facilityDto.Address.Number}," +
+                    $"{facilityDto.Address.Complement}," +
+                    $"{facilityDto.Address.Neighborhood}," +
+                    $"{facilityDto.Address.City}," +
+                    $"{facilityDto.Address.State}," +
+                    $"{facilityDto.Address.Cep}," +
+                    $"{facilityDto.Contact.Email}," +
+                    $"{facilityDto.Contact.Phone}," +
+                    $"{(facilityDto.IsActive ? "Ativo" : "Inativo")}\r\n"
+                );
             }
 
             var fileName = $"unidade_{DateTime.Now:yyyyMMddHHmmss}.csv";
