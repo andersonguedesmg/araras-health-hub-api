@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost;
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
+using ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockMovement;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
-using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
@@ -17,35 +17,26 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
 {
     public class CreateStockAdjustmentCommandHandler : IRequestHandler<CreateStockAdjustmentCommand, ApiResponse<int>>
     {
-        private readonly IProductRepository _productRepo;
         private readonly IEmployeeRepository _employeeRepo;
-        private readonly IStockMovementRepository _stockMovementRepo;
         private readonly IStockAdjustmentRepository _stockAdjustmentRepo;
         private readonly IStockRepository _stockRepo;
         private readonly IStockLotRepository _stockLotRepo;
         private readonly IStockCostRepository _stockCostRepository;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
 
         public CreateStockAdjustmentCommandHandler(
-            IProductRepository productRepo,
             IEmployeeRepository employeeRepo,
-            IStockMovementRepository stockMovementRepo,
             IStockAdjustmentRepository stockAdjustmentRepo,
             IStockRepository stockRepo,
             IStockLotRepository stockLotRepo,
             IStockCostRepository stockCostRepository,
-            IUnitOfWork unitOfWork,
             IMediator mediator)
         {
-            _productRepo = productRepo;
             _employeeRepo = employeeRepo;
-            _stockMovementRepo = stockMovementRepo;
             _stockAdjustmentRepo = stockAdjustmentRepo;
             _stockRepo = stockRepo;
             _stockLotRepo = stockLotRepo;
             _stockCostRepository = stockCostRepository;
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
         }
 
@@ -67,61 +58,68 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                 AccountId = request.AccountId,
             };
 
-            await _stockAdjustmentRepo.AddAsync(adjustment);
-            await _unitOfWork.CommitAsync();
+            await _stockAdjustmentRepo.AddWithoutSavingAsync(adjustment);
 
-            var newMovements = new List<StockMovement>();
             var isNegativeAdjustment = request.Type == StockAdjustmentType.Negative;
 
             foreach (var itemCommand in request.AdjustmentItems)
             {
-                var product = await _productRepo.GetByIdAsync(itemCommand.ProductId);
-                if (product == null)
-                {
-                    return new ApiResponse<int>(StatusCodes.Status404NotFound, ApiMessages.NotFound($"Produto com ID {itemCommand.ProductId}"), 0);
-                }
-
                 var stock = await _stockRepo.GetByProductIdAsync(itemCommand.ProductId);
+
                 if (stock == null)
                 {
                     if (isNegativeAdjustment)
-                        return new ApiResponse<int>(StatusCodes.Status404NotFound, ApiMessages.NotFound($"Estoque consolidado para o Produto {itemCommand.ProductId}"), 0);
+                        throw new ApplicationException($"Estoque consolidado para o Produto {itemCommand.ProductId} não encontrado para ajuste de saída.");
 
-                    stock = new Stock { ProductId = itemCommand.ProductId, CurrentQuantity = 0, MinQuantity = 0 };
-                    await _stockRepo.AddAsync(stock);
+                    var newStockCommand = new UpdateProductStockCommand(
+                        ProductId: itemCommand.ProductId,
+                        Quantity: 0,
+                        OperationType: StockOperationTypeEnum.Adjustment
+                    );
+                    var stockResult = await _mediator.Send(newStockCommand, cancellationToken);
+                    if (!stockResult.Success) throw new ApplicationException(stockResult.Message);
+                    stock = stockResult.Data;
                 }
 
-                int stockLotId;
                 var movementQuantity = Math.Abs(itemCommand.Quantity);
-                decimal movementCost = 0M;
-                decimal averageUnitCost = 0M;
+                decimal movementCost;
+                int stockLotId;
+                decimal unitValue;
 
                 var adjustmentItem = new StockAdjustmentItem
                 {
                     StockAdjustmentId = adjustment.Id,
                     ProductId = itemCommand.ProductId,
-                    Quantity = itemCommand.Quantity,
+                    Quantity = isNegativeAdjustment ? -movementQuantity : movementQuantity,
                     Batch = itemCommand.Batch,
                     ExpiryDate = itemCommand.ExpiryDate,
                 };
 
-                var stockCost = await _stockCostRepository.GetByStockIdAsync(stock.Id);
-                averageUnitCost = stockCost?.AverageUnitCost ?? 0M;
-
                 if (isNegativeAdjustment)
                 {
-                    if (!itemCommand.StockLotId.HasValue)
+                    if (string.IsNullOrWhiteSpace(itemCommand.Batch))
                     {
-                        throw new ArgumentException("Ajustes negativos exigem a especificação do Lote (StockLotId) para dar baixa.");
-                    }
-                    stockLotId = itemCommand.StockLotId.Value;
-
-                    var lot = await _stockLotRepo.GetByIdAsync(stockLotId);
-                    if (lot == null || lot.AvailableQuantity < movementQuantity)
-                    {
-                        throw new ApplicationException($"Lote {stockLotId} insuficiente ou não encontrado para o ajuste de saída.");
+                        throw new ArgumentException("Ajustes negativos exigem o número do Lote (Batch) para dar baixa.");
                     }
 
+                    var lot = await _stockLotRepo.GetByStockIdAndBatchAsync(stock!.Id, itemCommand.Batch!);
+
+                    if (lot == null)
+                    {
+                        throw new ApplicationException($"Lote {itemCommand.Batch} não encontrado para o Produto {itemCommand.ProductId} para o ajuste de saída.");
+                    }
+
+                    if (lot.AvailableQuantity < movementQuantity)
+                    {
+                        throw new ApplicationException($"Lote {itemCommand.Batch} (ID: {lot.Id}) possui saldo insuficiente ({lot.AvailableQuantity}) para o ajuste de saída de {movementQuantity}.");
+                    }
+
+                    stockLotId = lot.Id;
+
+                    var stockCost = await _stockCostRepository.GetByStockIdAsync(stock.Id);
+                    decimal averageUnitCost = stockCost?.AverageUnitCost ?? 0M;
+
+                    unitValue = lot.UnitValue;
                     movementCost = movementQuantity * averageUnitCost;
 
                     lot.RemoveQuantity(movementQuantity);
@@ -136,19 +134,24 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     adjustmentItem.UnitValue = lot.UnitValue;
                     adjustmentItem.Batch = lot.Batch;
                     adjustmentItem.ExpiryDate = lot.ExpiryDate;
+
+                    var updateStockCommand = new UpdateProductStockCommand(
+                        itemCommand.ProductId,
+                        -movementQuantity,
+                        StockOperationTypeEnum.Adjustment
+                    );
+                    await _mediator.Send(updateStockCommand, cancellationToken);
                 }
                 else
                 {
                     if (string.IsNullOrWhiteSpace(itemCommand.Batch) || !itemCommand.ExpiryDate.HasValue || !itemCommand.UnitValue.HasValue)
-                    {
                         throw new ArgumentException("Ajustes positivos exigem Lote, Data de Validade e Valor Unitário.");
-                    }
 
-                    decimal unitValue = itemCommand.UnitValue.Value;
+                    unitValue = itemCommand.UnitValue.Value;
                     movementCost = movementQuantity * unitValue;
 
                     var updateLotCommand = new UpdateStockLotCommand(
-                        StockId: stock.Id,
+                        StockId: stock!.Id,
                         Quantity: movementQuantity,
                         Batch: itemCommand.Batch!,
                         UnitValue: unitValue,
@@ -157,17 +160,23 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                         SourceDocumentType: nameof(StockAdjustment)
                     );
                     var lotResult = await _mediator.Send(updateLotCommand, cancellationToken);
-                    if (!lotResult.Success)
-                    {
-                        return new ApiResponse<int>(StatusCodes.Status500InternalServerError, lotResult.Message, 0);
-                    }
+                    if (!lotResult.Success) throw new ApplicationException(lotResult.Message);
                     stockLotId = lotResult.Data!.Id;
 
+                    var updateStockBeforeCostCommand = new UpdateProductStockCommand(
+                        itemCommand.ProductId,
+                        movementQuantity,
+                        StockOperationTypeEnum.Adjustment
+                    );
+                    var stockUpdateResult = await _mediator.Send(updateStockBeforeCostCommand, cancellationToken);
+                    if (!stockUpdateResult.Success) throw new ApplicationException(stockUpdateResult.Message);
+                    var updatedStock = stockUpdateResult.Data;
+
                     var updateCostCommand = new UpdateStockAverageCostCommand(
-                        StockId: stock.Id,
+                        StockId: updatedStock!.Id,
                         EntryQuantity: movementQuantity,
                         EntryUnitValue: unitValue,
-                        UpdatedStockQuantity: stock.CurrentQuantity
+                        UpdatedStockQuantity: updatedStock.CurrentQuantity
                     );
                     await _mediator.Send(updateCostCommand, cancellationToken);
 
@@ -176,33 +185,23 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     adjustmentItem.ExpiryDate = itemCommand.ExpiryDate;
                 }
 
+                adjustmentItem.TotalValue = movementQuantity * adjustmentItem.UnitValue!.Value;
                 adjustmentItem.StockLotId = stockLotId;
                 adjustment.AdjustmentItems.Add(adjustmentItem);
 
-                var quantityChange = isNegativeAdjustment ? -movementQuantity : movementQuantity;
-                newMovements.Add(new StockMovement
-                {
-                    StockLotId = stockLotId,
-                    Quantity = quantityChange,
-                    Type = isNegativeAdjustment ? MovementTypeEnum.Exit : MovementTypeEnum.Entry,
-                    SourceDocumentId = adjustment.Id,
-                    SourceDocumentType = nameof(StockAdjustment),
-                    ResponsibleId = request.ResponsibleId,
-                    MovementCost = movementCost
-                });
-
-                var updateStockCommand = new UpdateProductStockCommand(
-                    itemCommand.ProductId,
-                    quantityChange,
-                    StockOperationTypeEnum.Adjustment
+                var movementType = isNegativeAdjustment ? MovementTypeEnum.Exit : MovementTypeEnum.Entry;
+                var createMovementCommand = new CreateStockMovementCommand(
+                    ProductId: itemCommand.ProductId,
+                    Quantity: isNegativeAdjustment ? -movementQuantity : movementQuantity,
+                    StockLotId: stockLotId,
+                    SourceDocumentId: adjustment.Id,
+                    SourceDocumentType: nameof(StockAdjustment),
+                    ResponsibleId: request.ResponsibleId,
+                    MovementType: movementType,
+                    MovementCost: movementCost
                 );
-                await _mediator.Send(updateStockCommand, cancellationToken);
+                await _mediator.Send(createMovementCommand, cancellationToken);
             }
-
-            _stockAdjustmentRepo.UpdateWithoutSaving(adjustment);
-            await _stockMovementRepo.AddRangeAsync(newMovements);
-
-            await _unitOfWork.CommitAsync();
 
             return new ApiResponse<int>(StatusCodes.Status200OK, ApiMessages.StockAdjustmentCompletedSuccessfully, adjustment.Id);
         }

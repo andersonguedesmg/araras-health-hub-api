@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
 using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost;
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
-using ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockEntry;
+using ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockMovement;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
@@ -126,13 +126,15 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                     throw new InvalidOperationException($"Falha ao recalcular o CMP para o produto {item.ProductId}. Erro: {costResult.Message}");
                 }
 
-                var createMovementCommand = new CreateStockEntryCommand(
+                var createMovementCommand = new CreateStockMovementCommand(
                     ProductId: item.ProductId,
                     Quantity: item.Quantity,
                     StockLotId: stockLot.Id,
                     SourceDocumentId: receiving.Id,
                     SourceDocumentType: "Receiving",
-                    ResponsibleId: receiving.ResponsibleId
+                    ResponsibleId: receiving.ResponsibleId,
+                    MovementType: MovementTypeEnum.Entry,
+                    MovementCost: item.UnitValue * item.Quantity
                 );
                 await _mediator.Send(createMovementCommand, cancellationToken);
             }

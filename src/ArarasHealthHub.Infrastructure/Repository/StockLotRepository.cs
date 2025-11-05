@@ -16,6 +16,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
         public async Task<StockLot?> GetByStockIdAndBatchAsync(int stockId, string batch)
         {
             return await _dbSet
+                .AsNoTracking()
                 .FirstOrDefaultAsync(sl => sl.StockId == stockId && sl.Batch == batch);
         }
     }

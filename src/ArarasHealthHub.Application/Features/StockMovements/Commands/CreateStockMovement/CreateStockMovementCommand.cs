@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.StockMovements.Dtos;
+using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockEntry
+namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockMovement
 {
-    public record CreateStockEntryCommand(
+    public record CreateStockMovementCommand(
         int ProductId,
         decimal Quantity,
         int StockLotId,
         int SourceDocumentId,
         string SourceDocumentType,
-        int ResponsibleId
+        int ResponsibleId,
+        MovementTypeEnum MovementType,
+        decimal MovementCost
     ) : IRequest<ApiResponse<StockMovementDto>>;
 }

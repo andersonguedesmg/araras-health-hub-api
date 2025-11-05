@@ -11,14 +11,14 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockEntry
+namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockMovement
 {
-    public class CreateStockEntryCommandHandler : IRequestHandler<CreateStockEntryCommand, ApiResponse<StockMovementDto>>
+    public class CreateStockMovementCommandHandler : IRequestHandler<CreateStockMovementCommand, ApiResponse<StockMovementDto>>
     {
         private readonly IStockMovementRepository _stockMovementRepository;
         private readonly IMapper _mapper;
 
-        public CreateStockEntryCommandHandler(
+        public CreateStockMovementCommandHandler(
             IStockMovementRepository stockMovementRepository,
             IMapper mapper
         )
@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<StockMovementDto>> Handle(CreateStockEntryCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<StockMovementDto>> Handle(CreateStockMovementCommand request, CancellationToken cancellationToken)
         {
             var stockMovement = new StockMovement
             {
