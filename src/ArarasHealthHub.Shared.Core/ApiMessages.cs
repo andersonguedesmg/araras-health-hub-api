@@ -50,6 +50,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string StockAdjustmentCompletedSuccessfully = "Ajuste de estoque realizado com sucesso.";
         public const string StockSearchByIdSuccessful = "Busca de estoque por ID de produto realizada com sucesso.";
         public const string NoLowStockProductsFound = "Nenhum produto com estoque baixo encontrado.";
+        public const string StockBatchUpdatedSuccessfully = "Lote de estoque atualizado com sucesso.";
         public const string LowStockProductsFoundSuccessfully = "Lista de produtos com estoque baixo retornada com sucesso.";
         public const string CostOfInventoryInitializedAndSavedSuccessfully = "Custo do estoque inicializado e salvo com sucesso.";
         public const string TheQuantityMustBeGreaterThanZero = "A quantidade de entrada deve ser maior que zero.";

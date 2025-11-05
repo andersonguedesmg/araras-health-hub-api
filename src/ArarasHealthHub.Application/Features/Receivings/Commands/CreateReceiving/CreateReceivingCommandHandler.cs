@@ -14,7 +14,6 @@ using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceiving
 {
@@ -79,7 +78,6 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             receiving.TotalValue = totalCalculatedValue;
 
             await _dbContext.Receivings.AddAsync(receiving, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             foreach (var item in receiving.ReceivedItem)
             {
@@ -118,7 +116,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                 var updateCostCommand = new UpdateStockAverageCostCommand(
                     StockId: updatedStock.Id,
                     EntryQuantity: item.Quantity,
-                    EntryUnitValue: item.UnitValue
+                    EntryUnitValue: item.UnitValue,
+                    UpdatedStockQuantity: updatedStock.CurrentQuantity
                 );
                 var costResult = await _mediator.Send(updateCostCommand, cancellationToken);
 
@@ -139,6 +138,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             }
 
             var receivingDto = _mapper.Map<ReceivingDto>(receiving);
+
             return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.ReceivingAndStockMovementsCreatedSuccessfully, receivingDto);
         }
     }

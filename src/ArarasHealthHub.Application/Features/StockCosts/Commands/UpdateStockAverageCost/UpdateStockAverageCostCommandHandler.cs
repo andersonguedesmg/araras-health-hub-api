@@ -8,7 +8,6 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost
 {
@@ -35,13 +34,7 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
                 return new ApiResponse<StockCost>(StatusCodes.Status400BadRequest, ApiMessages.TheUnitValueCannotBeNegative, false);
             }
 
-            var stock = await _dbContext.Stocks
-                .FirstOrDefaultAsync(s => s.Id == request.StockId, cancellationToken);
-
-            if (stock == null)
-            {
-                return new ApiResponse<StockCost>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque", request.StockId), false);
-            }
+            var currentStockQuantity = request.UpdatedStockQuantity;
 
             var stockCost = await _stockCostRepository.GetByStockIdAsync(request.StockId);
 
@@ -54,13 +47,12 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
                     CurrentTotalCost = request.EntryQuantity * request.EntryUnitValue
                 };
 
-                await _stockCostRepository.AddAsync(stockCost);
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.StockCosts.AddAsync(stockCost, cancellationToken);
 
                 return new ApiResponse<StockCost>(StatusCodes.Status200OK, ApiMessages.CostOfInventoryInitializedAndSavedSuccessfully, stockCost);
             }
 
-            var oldQuantity = stock.CurrentQuantity - request.EntryQuantity;
+            var oldQuantity = currentStockQuantity - request.EntryQuantity;
 
             if (oldQuantity <= 0)
             {
@@ -72,14 +64,13 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
                 var oldTotalCost = stockCost.CurrentTotalCost;
                 var entryTotalCost = request.EntryQuantity * request.EntryUnitValue;
                 var newTotalCost = oldTotalCost + entryTotalCost;
-                var newQuantity = stock.CurrentQuantity;
+                var newQuantity = currentStockQuantity;
 
                 stockCost.AverageUnitCost = newTotalCost / newQuantity;
                 stockCost.CurrentTotalCost = newTotalCost;
             }
 
             _stockCostRepository.UpdateWithoutSaving(stockCost);
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ApiResponse<StockCost>(StatusCodes.Status200OK, ApiMessages.WeightedAverageCostSuccessfullyUpdated, stockCost);
         }

@@ -6,7 +6,6 @@ using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverag
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
 using ArarasHealthHub.Application.Interfaces;
-using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
@@ -26,7 +25,6 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
         private readonly IStockLotRepository _stockLotRepo;
         private readonly IStockCostRepository _stockCostRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IApplicationDbContext _dbContext;
         private readonly IMediator _mediator;
 
         public CreateStockAdjustmentCommandHandler(
@@ -38,7 +36,6 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
             IStockLotRepository stockLotRepo,
             IStockCostRepository stockCostRepository,
             IUnitOfWork unitOfWork,
-            IApplicationDbContext dbContext,
             IMediator mediator)
         {
             _productRepo = productRepo;
@@ -49,7 +46,6 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
             _stockLotRepo = stockLotRepo;
             _stockCostRepository = stockCostRepository;
             _unitOfWork = unitOfWork;
-            _dbContext = dbContext;
             _mediator = mediator;
         }
 
@@ -170,7 +166,8 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     var updateCostCommand = new UpdateStockAverageCostCommand(
                         StockId: stock.Id,
                         EntryQuantity: movementQuantity,
-                        EntryUnitValue: unitValue
+                        EntryUnitValue: unitValue,
+                        UpdatedStockQuantity: stock.CurrentQuantity
                     );
                     await _mediator.Send(updateCostCommand, cancellationToken);
 

@@ -26,12 +26,16 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
             var stock = await _dbContext.Stocks
                 .FirstOrDefaultAsync(s => s.ProductId == request.ProductId, cancellationToken);
 
-            if (stock == null)
+            bool isNewStock = (stock == null);
+
+            if (isNewStock)
             {
                 if (request.OperationType == StockOperationTypeEnum.Receipt || request.OperationType == StockOperationTypeEnum.Adjustment)
                 {
                     stock = new Stock { ProductId = request.ProductId, CurrentQuantity = 0, MinQuantity = 0 };
                     _dbContext.Stocks.Add(stock);
+
+                    await _dbContext.SaveChangesAsync(cancellationToken);
                 }
                 else
                 {
@@ -43,10 +47,10 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
             {
                 case StockOperationTypeEnum.Receipt:
                 case StockOperationTypeEnum.Adjustment:
-                    stock.CurrentQuantity += request.Quantity;
+                    stock!.CurrentQuantity += request.Quantity;
                     break;
                 case StockOperationTypeEnum.Dispatch:
-                    if (stock.CurrentQuantity < request.Quantity)
+                    if (stock!.CurrentQuantity < request.Quantity)
                     {
                         throw new ApplicationException($"Estoque insuficiente para o produto {request.ProductId}.");
                     }

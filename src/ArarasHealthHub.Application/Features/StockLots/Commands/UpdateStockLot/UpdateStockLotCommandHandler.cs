@@ -40,6 +40,8 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
                     AvailableQuantity = request.Quantity,
                 };
                 await _dbContext.StockLots.AddAsync(stockLot, cancellationToken);
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
             else
             {
@@ -47,9 +49,7 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
                 _dbContext.StockLots.Update(stockLot);
             }
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            return new ApiResponse<StockLot>(StatusCodes.Status200OK, "Lote de estoque atualizado com sucesso.", stockLot);
+            return new ApiResponse<StockLot>(StatusCodes.Status200OK, ApiMessages.StockBatchUpdatedSuccessfully, stockLot);
         }
     }
 }

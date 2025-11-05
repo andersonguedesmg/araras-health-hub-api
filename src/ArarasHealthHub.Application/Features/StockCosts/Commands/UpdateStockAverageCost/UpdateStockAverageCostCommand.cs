@@ -11,6 +11,7 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
     public record UpdateStockAverageCostCommand(
         int StockId,
         decimal EntryQuantity,
-        decimal EntryUnitValue
+        decimal EntryUnitValue,
+        decimal UpdatedStockQuantity
     ) : IRequest<ApiResponse<StockCost>>;
 }
