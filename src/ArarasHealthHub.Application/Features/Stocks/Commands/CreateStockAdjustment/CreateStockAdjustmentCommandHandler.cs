@@ -82,9 +82,9 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                 }
 
                 var movementQuantity = Math.Abs(itemCommand.Quantity);
-                decimal movementCost;
+                decimal movementCost = 0M;
                 int stockLotId;
-                decimal unitValue;
+                decimal unitValue = 0M;
 
                 var adjustmentItem = new StockAdjustmentItem
                 {
