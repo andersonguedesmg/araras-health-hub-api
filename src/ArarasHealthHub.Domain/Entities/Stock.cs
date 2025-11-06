@@ -23,6 +23,16 @@ namespace ArarasHealthHub.Domain.Entities
         public decimal CurrentQuantity { get; set; }
 
         [Required]
+        [Column(TypeName = "decimal(18,3)")]
+        [Comment("Quantidade que está reservada para pedidos pendentes/aprovados.")]
+        public decimal ReservedQuantity { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(18,3)")]
+        [Comment("Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity).")]
+        public decimal AvailableQuantity { get; set; }
+
+        [Required]
         public decimal MinQuantity { get; set; }
 
         public ICollection<StockLot> Lots { get; set; } = new List<StockLot>();

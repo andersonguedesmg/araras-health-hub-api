@@ -17,20 +17,17 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IEmployeeRepository _employeeRepo;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public FinalizeOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
-            IUnitOfWork unitOfWork,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
-            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -38,6 +35,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
         public async Task<ApiResponse<OrderDto>> Handle(FinalizeOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
+
             if (order == null)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
@@ -46,6 +44,12 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
             if (order.OrderStatusId != (int)OrderStatusEnum.Separated)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeCompleted, false);
+            }
+
+            var responsible = await _employeeRepo.GetByIdAsync(request.FinalizedByEmployeeId);
+            if (responsible == null)
+            {
+                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
             }
 
             var currentUser = _httpContextAccessor.HttpContext?.User;
@@ -61,21 +65,13 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
                 return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.OperationRestrictedToFacility, false);
             }
 
-            var responsible = await _employeeRepo.GetByIdAsync(request.FinalizedByEmployeeId);
-            if (responsible == null)
-            {
-                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
-            }
-
             order.OrderStatusId = (int)OrderStatusEnum.Finalized;
             order.FinalizedByEmployeeId = request.FinalizedByEmployeeId;
             order.FinalizedByAccountId = request.FinalizedByAccountId;
             order.FinalizedAt = DateTime.UtcNow;
             order.SetUpdatedOn();
 
-            await _orderRepo.UpdateAsync(order);
-            await _unitOfWork.CommitAsync();
-
+            _orderRepo.UpdateWithoutSaving(order);
             var orderDto = _mapper.Map<OrderDto>(order);
 
             return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("finalizado"), orderDto);

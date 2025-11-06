@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace ArarasHealthHub.Application.Features.Orders.Dtos
 {
-    public record SeparateOrderItemDto(
-        int OrderItemId,
-        int ActualQuantity,
-        List<SeparatedLotDto> SeparatedLots
+    public record DispenseReturnItemDto(
+        int ProductId,
+        decimal Quantity,
+        string Batch,
+        decimal UnitValue
     );
 }

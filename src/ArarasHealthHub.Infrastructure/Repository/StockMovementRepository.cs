@@ -62,5 +62,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             await _dbContext.Set<StockMovement>().AddRangeAsync(entities);
         }
+
+        public void AddRangeWithoutSaving(IEnumerable<StockMovement> entities)
+        {
+            _dbSet.AddRange(entities);
+        }
     }
 }

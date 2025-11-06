@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
+using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReservation;
 using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
@@ -20,29 +22,20 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IEmployeeRepository _employeeRepo;
-        private readonly IStockRepository _stockRepo;
-        private readonly IStockMovementRepository _stockMovementRepo;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IStockLotRepository _stockLotRepo;
+        private readonly IStockAllocationService _stockAllocationService;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         public SeparateOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
-            IStockRepository stockRepo,
-            IStockMovementRepository stockMovementRepo,
-            IUnitOfWork unitOfWork,
-            IStockLotRepository stockLotRepo,
+            IStockAllocationService stockAllocationService,
             IMediator mediator,
             IMapper mapper)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
-            _stockRepo = stockRepo;
-            _stockMovementRepo = stockMovementRepo;
-            _unitOfWork = unitOfWork;
-            _stockLotRepo = stockLotRepo;
+            _stockAllocationService = stockAllocationService;
             _mediator = mediator;
             _mapper = mapper;
         }
@@ -50,6 +43,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
         public async Task<ApiResponse<OrderDto>> Handle(SeparateOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
+
             if (order == null)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
@@ -68,84 +62,55 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
 
             foreach (var item in request.OrderItems)
             {
-                var orderItem = order.OrderItems.FirstOrDefault(oi => oi.Id == item.OrderItemId);
-                if (orderItem == null)
+                var orderItemToUpdate = order.OrderItems.FirstOrDefault(oi => oi.Id == item.OrderItemId);
+
+                if (orderItemToUpdate == null)
                 {
                     return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.ItemNotFoundInOrder(item.OrderItemId!), false);
                 }
 
-                var stockToVerify = await _stockRepo.GetByProductIdAsync(orderItem.ProductId);
-                if (stockToVerify == null || stockToVerify.CurrentQuantity < item.ActualQuantity)
-                {
-                    return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.InsufficientStock(stockToVerify?.Product?.Name ?? "produto desconhecido"), false);
-                }
-            }
-
-            order.OrderStatusId = (int)OrderStatusEnum.Separated;
-            order.SeparatedByEmployeeId = request.SeparatedByEmployeeId;
-            order.SeparatedByAccountId = request.SeparatedByAccountId;
-            order.SeparatedAt = DateTime.UtcNow;
-            order.SetUpdatedOn();
-
-            var stockMovements = new List<StockMovement>();
-
-            foreach (var item in request.OrderItems)
-            {
-                var orderItem = order.OrderItems.FirstOrDefault(oi => oi.Id == item.OrderItemId);
-                var stockToVerify = await _stockRepo.GetByProductIdAsync(orderItem!.ProductId);
-                if (stockToVerify == null || stockToVerify.CurrentQuantity < item.ActualQuantity)
-                {
-                    return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.InsufficientStock(stockToVerify?.Product?.Name ?? "produto desconhecido"), false);
-                }
-            }
-
-            foreach (var item in request.OrderItems)
-            {
-                var orderItemToUpdate = order.OrderItems.First(oi => oi.Id == item.OrderItemId);
                 var quantityToSeparate = item.ActualQuantity;
-                var availableLots = await _stockLotRepo.AsQueryable()
-                    .Include(sl => sl.Stock)
-                    .Where(sl => sl.Stock.ProductId == orderItemToUpdate.ProductId && sl.AvailableQuantity > 0)
-                    .OrderBy(sl => sl.CreatedOn) // FIFO
-                    .ToListAsync(cancellationToken);
+                var reservedQuantity = orderItemToUpdate.ReservedQuantity;
 
-                decimal remainingQuantity = quantityToSeparate;
-
-                foreach (var lot in availableLots)
+                if (quantityToSeparate > reservedQuantity)
                 {
-                    if (remainingQuantity <= 0) break;
-
-                    decimal quantityFromThisLot = Math.Min(remainingQuantity, lot.AvailableQuantity);
-
-                    lot.RemoveQuantity(quantityFromThisLot);
-                    _stockLotRepo.UpdateWithoutSaving(lot);
-
-                    stockMovements.Add(new StockMovement
-                    {
-                        StockLotId = lot.Id,
-                        Quantity = quantityFromThisLot,
-                        Type = MovementTypeEnum.Exit,
-                        SourceDocumentId = order.Id,
-                        SourceDocumentType = nameof(Order),
-                        ResponsibleId = request.SeparatedByEmployeeId
-                    });
-
-                    var updateStockCommand = new UpdateProductStockCommand(
-                        orderItemToUpdate.ProductId,
-                        quantityFromThisLot,
-                        StockOperationTypeEnum.Dispatch
+                    return new ApiResponse<OrderDto>(
+                        StatusCodes.Status400BadRequest,
+                        $"A quantidade separada ({quantityToSeparate}) para o item {item.OrderItemId} excede a quantidade reservada ({reservedQuantity}).",
+                        false
                     );
-                    await _mediator.Send(updateStockCommand, cancellationToken);
-
-                    remainingQuantity -= quantityFromThisLot;
                 }
 
-                orderItemToUpdate.ActualQuantity = item.ActualQuantity;
+                var allocationResultResponse = await _stockAllocationService.AllocateFeFo(orderItemToUpdate.ProductId, quantityToSeparate);
 
-                if (remainingQuantity > 0)
+                if (!allocationResultResponse.Success)
                 {
-                    throw new ApplicationException($"Falha crítica na separação de pedido: Lotes insuficientes para o Produto {orderItemToUpdate.ProductId}.");
+                    return new ApiResponse<OrderDto>(
+                        StatusCodes.Status400BadRequest,
+                        $"Falha na alocação FEFO para o Produto {orderItemToUpdate.ProductId}: {allocationResultResponse.Message}",
+                        false
+                    );
                 }
+
+                await _stockAllocationService.PerformStockExit(
+                    allocationResultResponse.Data!,
+                    request.SeparatedByEmployeeId,
+                    order.Id,
+                    nameof(Order)
+                );
+
+                var releaseResult = await _mediator.Send(
+                    new UpdateStockReservationCommand(orderItemToUpdate.ProductId, -reservedQuantity),
+                    cancellationToken
+                );
+
+                if (!releaseResult.Success)
+                {
+                    return new ApiResponse<OrderDto>(releaseResult.StatusCode, releaseResult.Message, false);
+                }
+
+                orderItemToUpdate.ActualQuantity = quantityToSeparate;
+                orderItemToUpdate.ReservedQuantity = 0;
             }
 
             order.OrderStatusId = (int)OrderStatusEnum.Separated;
@@ -154,11 +119,9 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
             order.SeparatedAt = DateTime.UtcNow;
             order.SetUpdatedOn();
 
-            await _orderRepo.UpdateAsync(order);
-            await _stockMovementRepo.AddRangeAsync(stockMovements);
-            await _unitOfWork.CommitAsync();
-
+            _orderRepo.UpdateWithoutSaving(order);
             var orderDto = _mapper.Map<OrderDto>(order);
+
             return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("separado"), orderDto);
         }
     }

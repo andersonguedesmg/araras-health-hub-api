@@ -39,6 +39,7 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<StockAdjustmentItem> StockAdjustmentItem { get; set; }
         public DbSet<StockLot> StockLots { get; set; }
         public DbSet<StockCost> StockCosts { get; set; }
+        public DbSet<OrderItemLot> OrderItemLots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

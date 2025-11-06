@@ -16,6 +16,8 @@ namespace ArarasHealthHub.Domain.Entities
 
         public int ApprovedQuantity { get; set; }
 
+        public int ReservedQuantity { get; set; }
+
         public int ActualQuantity { get; set; }
 
         [Required]
@@ -27,5 +29,7 @@ namespace ArarasHealthHub.Domain.Entities
         [ForeignKey("Order")]
         public int OrderId { get; set; }
         public Order? Order { get; set; }
+
+        public List<OrderItemLot> OrderItemLots { get; set; } = new();
     }
 }

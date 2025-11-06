@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace ArarasHealthHub.Application.Features.Orders.Dtos
 {
-    public record SeparateOrderItemDto(
-        int OrderItemId,
-        int ActualQuantity,
-        List<SeparatedLotDto> SeparatedLots
+    public record SeparatedLotDto(
+        int StockLotId,
+        decimal Quantity
     );
 }

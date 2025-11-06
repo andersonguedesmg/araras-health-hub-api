@@ -202,6 +202,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     CurrentQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade total disponível de todas as validades e lotes."),
+                    ReservedQuantity = table.Column<decimal>(type: "decimal(18,3)", nullable: false, comment: "Quantidade que está reservada para pedidos pendentes/aprovados."),
+                    AvailableQuantity = table.Column<decimal>(type: "decimal(18,3)", nullable: false, comment: "Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity)."),
                     MinQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -491,6 +493,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RequestedQuantity = table.Column<int>(type: "int", nullable: false),
                     ApprovedQuantity = table.Column<int>(type: "int", nullable: false),
+                    ReservedQuantity = table.Column<int>(type: "int", nullable: false),
                     ActualQuantity = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false)
@@ -580,6 +583,36 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 },
                 comment: "Representa o estoque detalhado de um produto por lote, valor e validade.");
+
+            migrationBuilder.CreateTable(
+                name: "OrderItemLots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderItemId = table.Column<int>(type: "int", nullable: false),
+                    StockLotId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,3)", nullable: false, comment: "Quantidade real baixada deste lote para atender o pedido."),
+                    UnitValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false, comment: "Valor unitário do produto no momento da baixa, herdado do StockLot."),
+                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false, comment: "Custo total do item (Quantity * UnitValue) para fins de relatório.")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItemLots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderItemLots_OrderItems_OrderItemId",
+                        column: x => x.OrderItemId,
+                        principalTable: "OrderItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderItemLots_StockLots_StockLotId",
+                        column: x => x.StockLotId,
+                        principalTable: "StockLots",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Registra os lotes específicos usados para atender um item de pedido durante a separação.");
 
             migrationBuilder.CreateTable(
                 name: "StockAdjustmentItem",
@@ -743,6 +776,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderItemLots_OrderItemId",
+                table: "OrderItemLots",
+                column: "OrderItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItemLots_StockLotId",
+                table: "OrderItemLots",
+                column: "StockLotId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
                 table: "OrderItems",
                 column: "OrderId");
@@ -900,7 +943,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "OrderItems");
+                name: "OrderItemLots");
 
             migrationBuilder.DropTable(
                 name: "StockAdjustmentItem");
@@ -915,7 +958,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "OrderItems");
 
             migrationBuilder.DropTable(
                 name: "StockAdjustments");
@@ -924,13 +967,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "StockLots");
 
             migrationBuilder.DropTable(
-                name: "OrderStatuses");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "ReceivedItems");
 
             migrationBuilder.DropTable(
                 name: "Stocks");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatuses");
 
             migrationBuilder.DropTable(
                 name: "Receivings");

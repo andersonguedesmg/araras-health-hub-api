@@ -32,15 +32,8 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Create([FromBody] CreateOrderDto orderDto)
+        public async Task<IActionResult> Create([FromBody] CreateOrderCommand command)
         {
-            var command = new CreateOrderCommand(
-                orderDto.Observation,
-                orderDto.CreatedByEmployeeId,
-                orderDto.CreatedByAccountId,
-                orderDto.OrderItems
-            );
-
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
         }
@@ -75,17 +68,9 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Approve([FromBody] ApproveOrderDto orderDto)
+        public async Task<IActionResult> Approve([FromBody] ApproveOrderCommand command)
         {
-            var command = new ApproveOrderCommand(
-                orderDto.OrderId,
-                orderDto.ApprovedByEmployeeId,
-                orderDto.ApprovedByAccountId,
-                orderDto.OrderItems
-            );
-
             var result = await _mediator.Send(command);
-
             return StatusCode(result.StatusCode, result);
         }
 
@@ -96,17 +81,9 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Separate([FromBody] SeparateOrderDto orderDto)
+        public async Task<IActionResult> Separate([FromBody] SeparateOrderCommand command)
         {
-            var command = new SeparateOrderCommand(
-                orderDto.OrderId,
-                orderDto.SeparatedByEmployeeId,
-                orderDto.SeparatedByAccountId,
-                orderDto.OrderItems
-            );
-
             var result = await _mediator.Send(command);
-
             return StatusCode(result.StatusCode, result);
         }
 
@@ -116,16 +93,9 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Finalize([FromBody] FinalizeOrderDto orderDto)
+        public async Task<IActionResult> Finalize([FromBody] FinalizeOrderCommand command)
         {
-            var command = new FinalizeOrderCommand(
-                orderDto.OrderId,
-                orderDto.FinalizedByEmployeeId,
-                orderDto.FinalizedByAccountId
-            );
-
             var result = await _mediator.Send(command);
-
             return StatusCode(result.StatusCode, result);
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
-using ArarasHealthHub.Application.Interfaces;
+using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReservation;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
@@ -17,18 +17,21 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IEmployeeRepository _employeeRepo;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IStockRepository _stockRepo;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         public ApproveOrderCommandHandler(
             IOrderRepository orderRepo,
             IEmployeeRepository employeeRepo,
-            IUnitOfWork unitOfWork,
+            IStockRepository stockRepo,
+            IMediator mediator,
             IMapper mapper)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;
-            _unitOfWork = unitOfWork;
+            _stockRepo = stockRepo;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
@@ -50,27 +53,64 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Funcionário de aprovação"), false);
             }
 
+            var itemsToReserve = new List<(int ProductId, int Quantity)>();
+
+            foreach (var item in request.OrderItems)
+            {
+                var orderItemToUpdate = order.OrderItems.FirstOrDefault(oi => oi.Id == item.OrderItemId);
+
+                if (orderItemToUpdate == null) continue;
+
+                var quantityToApprove = item.ApprovedQuantity;
+
+                if (quantityToApprove > orderItemToUpdate.RequestedQuantity)
+                {
+                    return new ApiResponse<OrderDto>(
+                       StatusCodes.Status400BadRequest,
+                       $"A quantidade aprovada ({quantityToApprove}) para o item {item.OrderItemId} não pode exceder a solicitada ({orderItemToUpdate.RequestedQuantity}).",
+                       false
+                   );
+                }
+
+                var stock = await _stockRepo.GetByProductIdAsync(orderItemToUpdate.ProductId);
+
+                var availableForReservation = stock?.CurrentQuantity - stock?.ReservedQuantity ?? 0;
+
+                if (quantityToApprove > availableForReservation)
+                {
+                    return new ApiResponse<OrderDto>(
+                        StatusCodes.Status400BadRequest,
+                        $"Saldo insuficiente para o Produto {orderItemToUpdate.ProductId}. Aprovado: {quantityToApprove}. Disponível: {availableForReservation}.",
+                        false
+                    );
+                }
+
+                itemsToReserve.Add((orderItemToUpdate.ProductId, quantityToApprove));
+
+                orderItemToUpdate.ApprovedQuantity = quantityToApprove;
+                orderItemToUpdate.ReservedQuantity = quantityToApprove;
+            }
+
+            foreach (var (productId, quantity) in itemsToReserve)
+            {
+                var reserveResult = await _mediator.Send(new UpdateStockReservationCommand(productId, quantity), cancellationToken);
+                if (!reserveResult.Success)
+                {
+                    return new ApiResponse<OrderDto>(reserveResult.StatusCode, reserveResult.Message, false);
+                }
+            }
+
             order.OrderStatusId = (int)OrderStatusEnum.Approved;
             order.ApprovedByEmployeeId = request.ApprovedByEmployeeId;
             order.ApprovedByAccountId = request.ApprovedByAccountId;
             order.ApprovedAt = DateTime.UtcNow;
             order.SetUpdatedOn();
 
-            foreach (var item in request.OrderItems)
-            {
-                var orderItemToUpdate = order.OrderItems.FirstOrDefault(oi => oi.Id == item.OrderItemId);
-                if (orderItemToUpdate != null)
-                {
-                    orderItemToUpdate.ApprovedQuantity = item.ApprovedQuantity;
-                }
-            }
-
-            await _orderRepo.UpdateAsync(order);
-            await _unitOfWork.CommitAsync();
+            _orderRepo.UpdateWithoutSaving(order);
 
             var orderDto = _mapper.Map<OrderDto>(order);
 
-            return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("aprovado"), orderDto);
+            return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("aprovado e reservado"), orderDto);
         }
     }
 }

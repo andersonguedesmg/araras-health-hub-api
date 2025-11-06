@@ -218,6 +218,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<int>("RequestedQuantity")
                         .HasColumnType("int");
 
+                    b.Property<int>("ReservedQuantity")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
@@ -225,6 +228,44 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItemLot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,3)")
+                        .HasComment("Quantidade real baixada deste lote para atender o pedido.");
+
+                    b.Property<int>("StockLotId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalValue")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("Custo total do item (Quantity * UnitValue) para fins de relatório.");
+
+                    b.Property<decimal>("UnitValue")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("Valor unitário do produto no momento da baixa, herdado do StockLot.");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderItemId");
+
+                    b.HasIndex("StockLotId");
+
+                    b.ToTable("OrderItemLots", t =>
+                        {
+                            t.HasComment("Registra os lotes específicos usados para atender um item de pedido durante a separação.");
+                        });
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderStatus", b =>
@@ -441,6 +482,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("AvailableQuantity")
+                        .HasColumnType("decimal(18,3)")
+                        .HasComment("Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity).");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -458,6 +503,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("ReservedQuantity")
+                        .HasColumnType("decimal(18,3)")
+                        .HasComment("Quantidade que está reservada para pedidos pendentes/aprovados.");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
@@ -1215,6 +1264,25 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItemLot", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.OrderItem", "OrderItem")
+                        .WithMany("OrderItemLots")
+                        .HasForeignKey("OrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
+                        .WithMany()
+                        .HasForeignKey("StockLotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderItem");
+
+                    b.Navigation("StockLot");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.ReceivedItem", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
@@ -1512,6 +1580,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItem", b =>
+                {
+                    b.Navigation("OrderItemLots");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Product", b =>
