@@ -10,7 +10,7 @@ using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantiti
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
-using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -32,11 +32,11 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpGet("getAll")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<StockOverviewDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponse<StockGeneralOverviewDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetAll([FromQuery] GetStockOverviewQuery query)
+        public async Task<IActionResult> GetAll([FromQuery] GetStockGeneralOverviewQuery query)
         {
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);

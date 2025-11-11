@@ -189,9 +189,9 @@ namespace ArarasHealthHub.Infrastructure.Data
                     .HasPrecision(18, 3);
 
                 entity.HasOne(sm => sm.StockLot)
-                .WithMany()
-                .HasForeignKey(sm => sm.StockLotId)
-                .OnDelete(DeleteBehavior.Restrict);
+                    .WithMany()
+                    .HasForeignKey(sm => sm.StockLotId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<StockLot>(entity =>
@@ -223,9 +223,9 @@ namespace ArarasHealthHub.Infrastructure.Data
                     .HasPrecision(18, 2);
 
                 entity.HasOne(sc => sc.Stock)
-                      .WithOne()
-                      .HasForeignKey<StockCost>(sc => sc.StockId)
-                      .IsRequired();
+                    .WithOne(s => s.StockCost)
+                    .HasForeignKey<StockCost>(sc => sc.StockId)
+                    .IsRequired();
             });
 
             builder.Entity<ReceivedItem>(entity =>

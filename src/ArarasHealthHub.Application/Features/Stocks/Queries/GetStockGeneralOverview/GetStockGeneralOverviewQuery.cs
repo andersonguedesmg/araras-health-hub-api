@@ -6,9 +6,9 @@ using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
+namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview
 {
-    public class GetStockOverviewQuery : PagedRequest, IRequest<PagedResponse<StockOverviewDto>>
+    public class GetStockGeneralOverviewQuery : PagedRequest, IRequest<PagedResponse<StockGeneralOverviewDto>>
     {
         public string? SearchTerm { get; set; }
     }

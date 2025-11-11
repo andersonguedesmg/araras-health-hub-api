@@ -1387,7 +1387,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockCost", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.Stock", "Stock")
-                        .WithOne()
+                        .WithOne("StockCost")
                         .HasForeignKey("ArarasHealthHub.Domain.Entities.StockCost", "StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1600,6 +1600,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Stock", b =>
                 {
                     b.Navigation("Lots");
+
+                    b.Navigation("StockCost");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>

@@ -35,6 +35,8 @@ namespace ArarasHealthHub.Domain.Entities
         [Required]
         public decimal MinQuantity { get; set; }
 
+        public StockCost? StockCost { get; set; }
+
         public ICollection<StockLot> Lots { get; set; } = new List<StockLot>();
     }
 }

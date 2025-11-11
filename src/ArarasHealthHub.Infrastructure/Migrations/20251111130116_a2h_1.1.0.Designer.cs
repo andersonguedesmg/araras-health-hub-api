@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251106191847_a2h_1.1.0")]
+    [Migration("20251111130116_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -1390,7 +1390,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockCost", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.Stock", "Stock")
-                        .WithOne()
+                        .WithOne("StockCost")
                         .HasForeignKey("ArarasHealthHub.Domain.Entities.StockCost", "StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1603,6 +1603,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Stock", b =>
                 {
                     b.Navigation("Lots");
+
+                    b.Navigation("StockCost");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>
