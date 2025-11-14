@@ -1190,6 +1190,10 @@ GO
 --   ];
 -- }
 
+-- 22, 23, 46, 85, 86, 87, 106, 116, 129, 135, 151, 155, 167, 172, 174, 182, 183, 189, 190, 191, 192, 193, 194, 196, 197, 198, 199,
+-- 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 230, 246, 247, 257, 258,
+-- 259, 260, 269, 270, 278, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 307, 310, 313, 317, 318, 319, 320, 326, 327, 330,
+
 -- ----------------------------------------------------------------------------------------------------------------------------------
 -- /api/account/login
 -- "accountId": 4,
@@ -1213,7 +1217,7 @@ GO
     { "quantity": 500, "unitValue": 2.50, "batch": "LOTR8S9T0U1", "expiryDate": "2027-04-02", "productId": 335 },
     { "quantity": 200, "unitValue": 4.80, "batch": "LOTV2W3X4Y5", "expiryDate": "2026-10-10", "productId": 65 },
     { "quantity": 40, "unitValue": 18.25, "batch": "LOTZ6A7B8C9", "expiryDate": "2030-08-08", "productId": 111 },
-    { "quantity": 850, "unitValue": 0.70, "batch": "LOTD0E1F2G3", "expiryDate": "2028-09-03", "productId": 220 },
+    { "quantity": 850, "unitValue": 0.70, "batch": "LOTD0E1F2G3", "expiryDate": "2028-09-03", "productId": 222 },
     { "quantity": 1600, "unitValue": 0.20, "batch": "LOTH4I5J6K7", "expiryDate": "2029-06-21", "productId": 298 },
     { "quantity": 10, "unitValue": 75.00, "batch": "LOTL8M9N0O1", "expiryDate": "2027-01-26", "productId": 10 }
   ]
@@ -1256,7 +1260,7 @@ GO
     { "quantity": 300, "unitValue": 4.50, "batch": "LOTR0S1T2U3", "expiryDate": "2026-01-01", "productId": 6 },
     { "quantity": 800, "unitValue": 1.20, "batch": "LOTV4W5X6Y7", "expiryDate": "2030-04-24", "productId": 140 },
     { "quantity": 150, "unitValue": 6.80, "batch": "LOTZ8A9B0C1", "expiryDate": "2027-07-17", "productId": 30 },
-    { "quantity": 500, "unitValue": 2.00, "batch": "LOTD2E3F4G5", "expiryDate": "2028-06-01", "productId": 215 },
+    { "quantity": 500, "unitValue": 2.00, "batch": "LOTD2E3F4G5", "expiryDate": "2028-06-01", "productId": 15 },
     { "quantity": 10, "unitValue": 80.00, "batch": "LOTH6I7J8K9", "expiryDate": "2029-03-03", "productId": 44 },
     { "quantity": 900, "unitValue": 0.90, "batch": "LOTL0M1N2O3", "expiryDate": "2026-05-20", "productId": 177 },
     { "quantity": 1600, "unitValue": 0.25, "batch": "LOTP4Q5R6S7", "expiryDate": "2028-01-30", "productId": 280 }
@@ -1274,7 +1278,7 @@ GO
   "receivedItems": [
     { "quantity": 100, "unitValue": 15.00, "batch": "LOTL5M6N7O", "expiryDate": "2026-03-01", "productId": 33 },
     { "quantity": 400, "unitValue": 8.75, "batch": "LOTV8W9X0Y", "expiryDate": "2028-04-16", "productId": 178 },
-    { "quantity": 2000, "unitValue": 0.55, "batch": "LOTB1C2D3E", "expiryDate": "2029-07-29", "productId": 220 },
+    { "quantity": 2000, "unitValue": 0.55, "batch": "LOTB1C2D3E", "expiryDate": "2029-07-29", "productId": 222 },
     { "quantity": 150, "unitValue": 12.30, "batch": "LOTF4G5H6J", "expiryDate": "2027-01-05", "productId": 88 },
     { "quantity": 1200, "unitValue": 1.75, "batch": "LOTK7L8M9N", "expiryDate": "2030-01-21", "productId": 299 },
     { "quantity": 900, "unitValue": 2.45, "batch": "LOTP0Q1R2S", "expiryDate": "2028-11-14", "productId": 5 }
@@ -1307,9 +1311,9 @@ GO
   "accountId": 4,
   "receivedItems": [
     { "quantity": 300, "unitValue": 8.00, "batch": "LOTC2D3E4F", "expiryDate": "2029-06-14", "productId": 60 },
-    { "quantity": 1000, "unitValue": 1.05, "batch": "LOTG5H6J7K", "expiryDate": "2027-09-01", "productId": 200 },
+    { "quantity": 1000, "unitValue": 1.05, "batch": "LOTG5H6J7K", "expiryDate": "2027-09-01", "productId": 300 },
     { "quantity": 150, "unitValue": 18.50, "batch": "LOTL8M9N0P", "expiryDate": "2030-02-28", "productId": 99 },
-    { "quantity": 2200, "unitValue": 0.28, "batch": "LOTQ1R2S3T", "expiryDate": "2028-04-03", "productId": 310 },
+    { "quantity": 2200, "unitValue": 0.28, "batch": "LOTQ1R2S3T", "expiryDate": "2028-04-03", "productId": 311 },
     { "quantity": 500, "unitValue": 5.10, "batch": "LOTU4V5W6X", "expiryDate": "2026-05-20", "productId": 185 },
     { "quantity": 1300, "unitValue": 0.79, "batch": "LOTY7Z8A9B", "expiryDate": "2029-12-10", "productId": 245 },
     { "quantity": 100, "unitValue": 14.30, "batch": "LOTC0D1E2F", "expiryDate": "2027-10-30", "productId": 25 },
@@ -1371,7 +1375,7 @@ GO
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1300, "unitValue": 0.88, "batch": "LOT2D5F9A4B", "expiryDate": "2029-05-20", "productId": 123 },
-    { "quantity": 1700, "unitValue": 1.05, "batch": "LOT4A0B7C3E", "expiryDate": "2028-06-07", "productId": 330 },
+    { "quantity": 1700, "unitValue": 1.05, "batch": "LOT4A0B7C3E", "expiryDate": "2028-06-07", "productId": 329 },
     { "quantity": 1400, "unitValue": 0.33, "batch": "LOT7E9C1D5F", "expiryDate": "2027-09-09", "productId": 65 },
     { "quantity": 1800, "unitValue": 1.80, "batch": "LOT3B6A8D2C", "expiryDate": "2030-01-01", "productId": 245 },
     { "quantity": 1100, "unitValue": 0.60, "batch": "LOT6C2E4F0A", "expiryDate": "2026-08-22", "productId": 77 },
@@ -1390,7 +1394,7 @@ GO
   "accountId": 5,
   "receivedItems": [
     { "quantity": 700, "unitValue": 1.15, "batch": "LOTA5F4B3C2", "expiryDate": "2029-04-12", "productId": 133 },
-    { "quantity": 1300, "unitValue": 0.55, "batch": "LOTD6E7F8G9", "expiryDate": "2027-08-29", "productId": 215 },
+    { "quantity": 1300, "unitValue": 0.55, "batch": "LOTD6E7F8G9", "expiryDate": "2027-08-29", "productId": 15 },
     { "quantity": 10, "unitValue": 65.00, "batch": "LOTH0I1J2K3", "expiryDate": "2030-11-20", "productId": 55 },
     { "quantity": 950, "unitValue": 1.80, "batch": "LOTL4M5N6O7", "expiryDate": "2026-07-28", "productId": 266 },
     { "quantity": 1700, "unitValue": 0.30, "batch": "LOTP8Q9R0S1", "expiryDate": "2028-12-05", "productId": 3 },
@@ -1411,7 +1415,7 @@ GO
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 0.45, "batch": "LOTH4I5J6K7", "expiryDate": "2029-08-31", "productId": 17 },
-    { "quantity": 800, "unitValue": 1.30, "batch": "LOTL8M9N0O1", "expiryDate": "2027-10-05", "productId": 200 },
+    { "quantity": 800, "unitValue": 1.30, "batch": "LOTL8M9N0O1", "expiryDate": "2027-10-05", "productId": 300 },
     { "quantity": 250, "unitValue": 5.50, "batch": "LOTP2Q3R4S5", "expiryDate": "2028-11-14", "productId": 333 },
     { "quantity": 10, "unitValue": 45.00, "batch": "LOTT6U7V8W9", "expiryDate": "2030-02-28", "productId": 7 },
     { "quantity": 1500, "unitValue": 0.70, "batch": "LOTX0Y1Z2A3", "expiryDate": "2026-04-19", "productId": 19 },
@@ -1429,7 +1433,7 @@ GO
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 0.55, "batch": "LOTB38F7A1C", "expiryDate": "2027-04-10", "productId": 105 },
-    { "quantity": 1850, "unitValue": 1.15, "batch": "LOTC1D89E4F", "expiryDate": "2028-12-01", "productId": 288 },
+    { "quantity": 1850, "unitValue": 1.15, "batch": "LOTC1D89E4F", "expiryDate": "2028-12-01", "productId": 280 },
     { "quantity": 900, "unitValue": 2.30, "batch": "LOT07A5F44D", "expiryDate": "2026-06-19", "productId": 14 }
   ]
 }
@@ -1446,8 +1450,8 @@ GO
   "receivedItems": [
     { "quantity": 15, "unitValue": 25.40, "batch": "LOTJ8K9L0M1", "expiryDate": "2029-12-12", "productId": 87 },
     { "quantity": 5, "unitValue": 15.40, "batch": "LOTN2O3P4Q5", "expiryDate": "2027-10-30", "productId": 199 },
-    { "quantity": 250, "unitValue": 53.00, "batch": "LOTR6S7T8U9", "expiryDate": "2028-08-22", "productId": 317 },
-    { "quantity": 10, "unitValue": 124.00, "batch": "LOTV0W1X2Y3", "expiryDate": "2026-09-16", "productId": 326 },
+    { "quantity": 250, "unitValue": 53.00, "batch": "LOTR6S7T8U9", "expiryDate": "2028-08-22", "productId": 316 },
+    { "quantity": 10, "unitValue": 124.00, "batch": "LOTV0W1X2Y3", "expiryDate": "2026-09-16", "productId": 325 },
     { "quantity": 1200, "unitValue": 22.50, "batch": "LOTZ4A5B6C7", "expiryDate": "2030-03-01", "productId": 260 },
     { "quantity": 1200, "unitValue": 40.65, "batch": "LOTD8E9F0G1", "expiryDate": "2027-05-07", "productId": 208 },
     { "quantity": 15, "unitValue": 34.50, "batch": "LOTH2I3J4K5", "expiryDate": "2028-01-20", "productId": 85 },
@@ -1471,8 +1475,27 @@ GO
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 0.85, "batch": "LOTJ3K7L8P", "expiryDate": "2027-04-20", "productId": 105 },
-    { "quantity": 850, "unitValue": 2.15, "batch": "LOTS9A2B6R", "expiryDate": "2029-01-15", "productId": 288 },
+    { "quantity": 850, "unitValue": 2.15, "batch": "LOTS9A2B6R", "expiryDate": "2029-01-15", "productId": 280 },
     { "quantity": 2500, "unitValue": 0.33, "batch": "LOTD4F5G6H", "expiryDate": "2026-11-01", "productId": 19 }
+  ]
+}
+
+{
+  "invoiceNumber": "321987",
+  "supplyAuthorization": "AF 2024/004004",
+  "observation": "",
+  "receivingDate": "2024-05-15T09:28:16.000Z",
+  "supplierId": 67,
+  "responsibleId": 6,
+  "accountId": 5,
+  "receivedItems": [
+    { "quantity": 80, "unitValue": 15.75, "batch": "LOTF1G2H3I4", "expiryDate": "2028-01-05", "productId": 54 },
+    { "quantity": 1600, "unitValue": 0.40, "batch": "LOTJ5K6L7M8", "expiryDate": "2026-04-29", "productId": 234 },
+    { "quantity": 900, "unitValue": 2.00, "batch": "LOTN9O0P1Q2", "expiryDate": "2027-09-11", "productId": 33 },
+    { "quantity": 2200, "unitValue": 0.22, "batch": "LOTR3S4T5U6", "expiryDate": "2029-02-19", "productId": 280 },
+    { "quantity": 1400, "unitValue": 1.35, "batch": "LOTV7W8X9Y0", "expiryDate": "2030-11-25", "productId": 110 },
+    { "quantity": 1700, "unitValue": 0.60, "batch": "LOTZ1A2B3C4", "expiryDate": "2026-10-04", "productId": 88 },
+    { "quantity": 1050, "unitValue": 0.95, "batch": "LOTD5E6F7G8", "expiryDate": "2028-06-13", "productId": 159 }
   ]
 }
 
@@ -1510,6 +1533,21 @@ GO
 }
 
 {
+  "invoiceNumber": "654321",
+  "supplyAuthorization": "AF 2024/002002",
+  "observation": "",
+  "receivingDate": "2024-08-23T14:45:35.000Z",
+  "supplierId": 14,
+  "responsibleId": 8,
+  "accountId": 5,
+  "receivedItems": [
+    { "quantity": 3000, "unitValue": 0.15, "batch": "LOT7D6E5F4A", "expiryDate": "2028-04-10", "productId": 65 },
+    { "quantity": 1500, "unitValue": 0.90, "batch": "LOT3C2B1A09", "expiryDate": "2027-01-30", "productId": 178 },
+    { "quantity": 400, "unitValue": 3.45, "batch": "LOT8F9E0D1C", "expiryDate": "2026-11-14", "productId": 300 }
+  ]
+}
+
+{
   "invoiceNumber": "605483",
   "supplyAuthorization": "AF 2024/998123",
   "observation": "Conferência completa e sem divergências.",
@@ -1521,10 +1559,10 @@ GO
     { "quantity": 10, "unitValue": 50.00, "batch": "LOTI7J8K9L", "expiryDate": "2029-08-01", "productId": 3 },
     { "quantity": 5, "unitValue": 120.00, "batch": "LOTM0N1P2Q", "expiryDate": "2028-05-19", "productId": 333 },
     { "quantity": 50, "unitValue": 10.50, "batch": "LOTR3S4T5U", "expiryDate": "2026-12-07", "productId": 88 },
-    { "quantity": 20, "unitValue": 45.99, "batch": "LOTV6W7X8Y", "expiryDate": "2030-06-25", "productId": 191 },
+    { "quantity": 20, "unitValue": 45.99, "batch": "LOTV6W7X8Y", "expiryDate": "2030-06-25", "productId": 241 },
     { "quantity": 30, "unitValue": 22.10, "batch": "LOTZ9A0B1C", "expiryDate": "2027-02-14", "productId": 250 },
     { "quantity": 100, "unitValue": 8.75, "batch": "LOTD2E3F4G", "expiryDate": "2028-11-04", "productId": 110 },
-    { "quantity": 150, "unitValue": 6.30, "batch": "LOTH5I6J7K", "expiryDate": "2029-04-16", "productId": 201 }
+    { "quantity": 150, "unitValue": 6.30, "batch": "LOTH5I6J7K", "expiryDate": "2029-04-16", "productId": 301 }
   ]
 }
 
@@ -1539,7 +1577,7 @@ GO
   "receivedItems": [
     { "quantity": 2000, "unitValue": 0.40, "batch": "LOTI2J3K4L", "expiryDate": "2027-05-08", "productId": 18 },
     { "quantity": 1800, "unitValue": 0.65, "batch": "LOTM5N6P7Q", "expiryDate": "2028-10-02", "productId": 140 },
-    { "quantity": 1500, "unitValue": 0.90, "batch": "LOTR8S9T0U", "expiryDate": "2029-05-15", "productId": 200 },
+    { "quantity": 1500, "unitValue": 0.90, "batch": "LOTR8S9T0U", "expiryDate": "2029-05-15", "productId": 300 },
     { "quantity": 1200, "unitValue": 1.50, "batch": "LOTV1W2X3Y", "expiryDate": "2026-11-29", "productId": 68 },
     { "quantity": 1000, "unitValue": 2.50, "batch": "LOTZ4A5B6C", "expiryDate": "2030-03-22", "productId": 225 },
     { "quantity": 800, "unitValue": 3.00, "batch": "LOTD7E8F9G", "expiryDate": "2027-01-15", "productId": 15 },
@@ -1547,8 +1585,8 @@ GO
     { "quantity": 400, "unitValue": 6.75, "batch": "LOTL3M4N5P", "expiryDate": "2029-02-18", "productId": 25 },
     { "quantity": 200, "unitValue": 9.00, "batch": "LOTQ6R7S8T", "expiryDate": "2027-11-01", "productId": 170 },
     { "quantity": 100, "unitValue": 15.00, "batch": "LOTU9V0W1X", "expiryDate": "2030-04-10", "productId": 95 },
-    { "quantity": 50, "unitValue": 25.00, "batch": "LOTY2Z3A4B", "expiryDate": "2028-02-28", "productId": 320 },
-    { "quantity": 20, "unitValue": 40.00, "batch": "LOTC5D6E7F", "expiryDate": "2029-10-07", "productId": 155 },
+    { "quantity": 50, "unitValue": 25.00, "batch": "LOTY2Z3A4B", "expiryDate": "2028-02-28", "productId": 321 },
+    { "quantity": 20, "unitValue": 40.00, "batch": "LOTC5D6E7F", "expiryDate": "2029-10-07", "productId": 255 },
     { "quantity": 10, "unitValue": 60.00, "batch": "LOTG8H9I0J", "expiryDate": "2026-07-20", "productId": 20 }
   ]
 }
@@ -1562,7 +1600,7 @@ GO
   "responsibleId": 7,
   "accountId": 5,
   "receivedItems": [
-    { "quantity": 1000, "unitValue": 1.50, "batch": "LOTI7J8K9L", "expiryDate": "2028-09-05", "productId": 258 },
+    { "quantity": 1000, "unitValue": 1.50, "batch": "LOTI7J8K9L", "expiryDate": "2028-09-05", "productId": 252 },
     { "quantity": 1500, "unitValue": 0.80, "batch": "LOTM0N1P2Q", "expiryDate": "2027-03-09", "productId": 30 },
     { "quantity": 2000, "unitValue": 0.30, "batch": "LOTR3S4T5U", "expiryDate": "2029-12-12", "productId": 102 }
   ]
@@ -1596,14 +1634,55 @@ GO
   "responsibleId": 8,
   "accountId": 5,
   "receivedItems": [
-    { "quantity": 1500, "unitValue": 1.75, "batch": "LOTR4T6Y8U0", "expiryDate": "2028-10-10", "productId": 22 },
+    { "quantity": 1500, "unitValue": 1.75, "batch": "LOTR4T6Y8U0", "expiryDate": "2028-10-10", "productId": 21 },
     { "quantity": 1300, "unitValue": 1.95, "batch": "LOTF3G5H7J9", "expiryDate": "2029-06-02", "productId": 89 },
     { "quantity": 1100, "unitValue": 2.15, "batch": "LOTL2M4N6P8", "expiryDate": "2027-07-28", "productId": 133 },
-    { "quantity": 900, "unitValue": 2.35, "batch": "LOTV1W3X5Z7", "expiryDate": "2030-04-15", "productId": 278 },
+    { "quantity": 900, "unitValue": 2.35, "batch": "LOTV1W3X5Z7", "expiryDate": "2030-04-15", "productId": 277 },
     { "quantity": 700, "unitValue": 2.55, "batch": "LOTB0C2D4E6", "expiryDate": "2026-01-31", "productId": 315 },
     { "quantity": 500, "unitValue": 2.75, "batch": "LOTS9A1Q3B5", "expiryDate": "2028-12-07", "productId": 55 },
-    { "quantity": 300, "unitValue": 2.95, "batch": "LOTJ8K0L2M4", "expiryDate": "2027-05-09", "productId": 198 },
+    { "quantity": 300, "unitValue": 2.95, "batch": "LOTJ8K0L2M4", "expiryDate": "2027-05-09", "productId": 188 },
     { "quantity": 100, "unitValue": 3.15, "batch": "LOT7P9R1S3T", "expiryDate": "2029-09-29", "productId": 244 }
+  ]
+}
+
+{
+  "invoiceNumber": "901234",
+  "supplyAuthorization": "AF 2025/006006",
+  "observation": "",
+  "receivingDate": "2025-02-28T13:10:47.000Z",
+  "supplierId": 24,
+  "responsibleId": 7,
+  "accountId": 5,
+  "receivedItems": [
+    { "quantity": 1500, "unitValue": 0.70, "batch": "LOTX5Y6Z7A8", "expiryDate": "2028-05-18", "productId": 2 },
+    { "quantity": 2000, "unitValue": 0.35, "batch": "LOTB9C0D1E2", "expiryDate": "2026-06-06", "productId": 250 },
+    { "quantity": 1300, "unitValue": 1.20, "batch": "LOTF3G4H5I6", "expiryDate": "2029-04-14", "productId": 30 },
+    { "quantity": 1150, "unitValue": 0.48, "batch": "LOTJ7K8L9M0", "expiryDate": "2027-10-27", "productId": 101 },
+    { "quantity": 1850, "unitValue": 0.88, "batch": "LOTN1O2P3Q4", "expiryDate": "2030-01-09", "productId": 235 },
+    { "quantity": 600, "unitValue": 2.30, "batch": "LOTR5S6T7U8", "expiryDate": "2028-07-03", "productId": 125 },
+    { "quantity": 30, "unitValue": 18.50, "batch": "LOTV9W0X1Y2", "expiryDate": "2029-12-05", "productId": 5 }
+  ]
+}
+
+{
+  "invoiceNumber": "802468",
+  "supplyAuthorization": "AF 2025/010010",
+  "observation": "",
+  "receivingDate": "2025-03-05T12:38:14.000Z",
+  "supplierId": 25,
+  "responsibleId": 9,
+  "accountId": 5,
+  "receivedItems": [
+    { "quantity": 500, "unitValue": 3.80, "batch": "LOTR9S0T1U2", "expiryDate": "2026-11-03", "productId": 27 },
+    { "quantity": 1200, "unitValue": 1.25, "batch": "LOTV3W4X5Y6", "expiryDate": "2027-12-12", "productId": 133 },
+    { "quantity": 1900, "unitValue": 0.50, "batch": "LOTZ7A8B9C0", "expiryDate": "2028-06-21", "productId": 285 },
+    { "quantity": 800, "unitValue": 2.10, "batch": "LOTD1E2F3G4", "expiryDate": "2029-01-17", "productId": 41 },
+    { "quantity": 1400, "unitValue": 0.90, "batch": "LOTH5I6J7K8", "expiryDate": "2030-04-28", "productId": 225 },
+    { "quantity": 2300, "unitValue": 0.15, "batch": "LOTL9M0N1O2", "expiryDate": "2027-03-24", "productId": 336 },
+    { "quantity": 600, "unitValue": 4.50, "batch": "LOTP3Q4R5S6", "expiryDate": "2028-10-06", "productId": 6 },
+    { "quantity": 1050, "unitValue": 0.60, "batch": "LOTT7U8V9W0", "expiryDate": "2026-08-05", "productId": 245 },
+    { "quantity": 1700, "unitValue": 0.75, "batch": "LOTX1Y2Z3A4", "expiryDate": "2029-02-09", "productId": 115 },
+    { "quantity": 1150, "unitValue": 1.05, "batch": "LOTB5C6D7E8", "expiryDate": "2030-11-19", "productId": 177 }
   ]
 }
 
@@ -1619,12 +1698,12 @@ GO
     { "quantity": 10, "unitValue": 55.00, "batch": "LOTU2V3W4X", "expiryDate": "2029-04-10", "productId": 7 },
     { "quantity": 50, "unitValue": 28.75, "batch": "LOTY5Z6A7B", "expiryDate": "2027-03-27", "productId": 122 },
     { "quantity": 100, "unitValue": 17.10, "batch": "LOTC8D9E0F", "expiryDate": "2030-01-01", "productId": 30 },
-    { "quantity": 500, "unitValue": 3.60, "batch": "LOTG1H2J3K", "expiryDate": "2028-05-13", "productId": 155 },
+    { "quantity": 500, "unitValue": 3.60, "batch": "LOTG1H2J3K", "expiryDate": "2028-05-13", "productId": 255 },
     { "quantity": 1800, "unitValue": 0.58, "batch": "LOTL4M5N6P", "expiryDate": "2026-07-29", "productId": 222 },
     { "quantity": 900, "unitValue": 2.01, "batch": "LOTQ7R8S9T", "expiryDate": "2029-08-08", "productId": 84 },
     { "quantity": 300, "unitValue": 9.99, "batch": "LOTU0V1W2X", "expiryDate": "2027-11-03", "productId": 130 },
     { "quantity": 2000, "unitValue": 0.35, "batch": "LOTY3Z4A5B", "expiryDate": "2028-02-01", "productId": 315 },
-    { "quantity": 1100, "unitValue": 1.44, "batch": "LOTC6D7E8F", "expiryDate": "2030-11-25", "productId": 190 },
+    { "quantity": 1100, "unitValue": 1.44, "batch": "LOTC6D7E8F", "expiryDate": "2030-11-25", "productId": 241 },
     { "quantity": 700, "unitValue": 4.25, "batch": "LOTG9H0J1K", "expiryDate": "2026-09-17", "productId": 44 },
     { "quantity": 1400, "unitValue": 0.90, "batch": "LOTL2M3N4P", "expiryDate": "2029-03-01", "productId": 265 },
     { "quantity": 400, "unitValue": 6.70, "batch": "LOTQ5R6S7T", "expiryDate": "2028-10-04", "productId": 66 },
@@ -1643,8 +1722,28 @@ GO
   "receivedItems": [
     { "quantity": 500, "unitValue": 1.55, "batch": "LOTC8A2F9B1", "expiryDate": "2027-01-20", "productId": 105 },
     { "quantity": 1200, "unitValue": 0.78, "batch": "LOT4E781C3D", "expiryDate": "2029-05-15", "productId": 331 },
-    { "quantity": 350, "unitValue": 3.10, "batch": "LOTB5D90A6F", "expiryDate": "2026-03-01", "productId": 22 },
+    { "quantity": 350, "unitValue": 3.10, "batch": "LOTB5D90A6F", "expiryDate": "2026-03-01", "productId": 21 },
     { "quantity": 800, "unitValue": 0.50, "batch": "LOT9F4E3C1B", "expiryDate": "2028-11-20", "productId": 188 }
+  ]
+}
+
+{
+  "invoiceNumber": "543210",
+  "supplyAuthorization": "AF 2025/008008",
+  "observation": "",
+  "receivingDate": "2025-06-17T15:30:41.000Z",
+  "supplierId": 18,
+  "responsibleId": 5,
+  "accountId": 5,
+  "receivedItems": [
+    { "quantity": 1800, "unitValue": 0.99, "batch": "LOTB1C2D3E4", "expiryDate": "2029-11-06", "productId": 90 },
+    { "quantity": 250, "unitValue": 6.80, "batch": "LOTF5G6H7I8", "expiryDate": "2026-02-14", "productId": 55 },
+    { "quantity": 1300, "unitValue": 1.45, "batch": "LOTJ9K0L1M2", "expiryDate": "2028-01-26", "productId": 128 },
+    { "quantity": 900, "unitValue": 2.75, "batch": "LOTN3O4P5Q6", "expiryDate": "2027-06-08", "productId": 150 },
+    { "quantity": 1600, "unitValue": 0.38, "batch": "LOTR7S8T9U0", "expiryDate": "2030-09-30", "productId": 275 },
+    { "quantity": 400, "unitValue": 4.10, "batch": "LOTV1W2X3Y4", "expiryDate": "2028-12-15", "productId": 45 },
+    { "quantity": 2100, "unitValue": 0.18, "batch": "LOTZ5A6B7C8", "expiryDate": "2029-05-23", "productId": 325 },
+    { "quantity": 100, "unitValue": 12.00, "batch": "LOTD9E0F1G2", "expiryDate": "2026-03-11", "productId": 78 }
   ]
 }
 
@@ -1683,10 +1782,10 @@ GO
     { "quantity": 800, "unitValue": 1.10, "batch": "LOT5Q6R7S8T", "expiryDate": "2030-01-05", "productId": 210 },
     { "quantity": 100, "unitValue": 7.00, "batch": "LOT9U0V1W2X", "expiryDate": "2028-07-14", "productId": 122 },
     { "quantity": 1000, "unitValue": 0.75, "batch": "LOT3Y4Z5A6B", "expiryDate": "2027-01-08", "productId": 15 },
-    { "quantity": 200, "unitValue": 4.00, "batch": "LOT7C8D9E0F", "expiryDate": "2029-11-25", "productId": 320 },
+    { "quantity": 200, "unitValue": 4.00, "batch": "LOT7C8D9E0F", "expiryDate": "2029-11-25", "productId": 321 },
     { "quantity": 60, "unitValue": 15.50, "batch": "LOT1G2H3I4J", "expiryDate": "2026-10-30", "productId": 55 },
     { "quantity": 400, "unitValue": 2.20, "batch": "LOT5K6L7M8N", "expiryDate": "2028-04-11", "productId": 240 },
-    { "quantity": 90, "unitValue": 8.50, "batch": "LOT9O0P1Q2R", "expiryDate": "2027-09-03", "productId": 330 },
+    { "quantity": 90, "unitValue": 8.50, "batch": "LOT9O0P1Q2R", "expiryDate": "2027-09-03", "productId": 329 },
     { "quantity": 1200, "unitValue": 0.30, "batch": "LOT3S4T5U6V", "expiryDate": "2030-02-18", "productId": 80 },
     { "quantity": 180, "unitValue": 3.10, "batch": "LOT7W8X9Y0Z", "expiryDate": "2029-06-07", "productId": 195 }
   ]
@@ -1719,8 +1818,8 @@ GO
   "accountId": 5,
   "receivedItems": [
     { "quantity": 500, "unitValue": 5.99, "batch": "LOTX1D8F4A", "expiryDate": "2028-04-20", "productId": 105 },
-    { "quantity": 1200, "unitValue": 1.45, "batch": "LOTC8E7536", "expiryDate": "2027-11-15", "productId": 288 },
-    { "quantity": 300, "unitValue": 12.00, "batch": "LOT95F4D7B", "expiryDate": "2029-01-01", "productId": 330 },
+    { "quantity": 1200, "unitValue": 1.45, "batch": "LOTC8E7536", "expiryDate": "2027-11-15", "productId": 280 },
+    { "quantity": 300, "unitValue": 12.00, "batch": "LOT95F4D7B", "expiryDate": "2029-01-01", "productId": 329 },
     { "quantity": 850, "unitValue": 0.75, "batch": "LOT3ACEE2D", "expiryDate": "2026-06-06", "productId": 17 }
   ]
 }
@@ -1766,10 +1865,46 @@ GO
   "accountId": 6,
   "receivedItems": [
     { "quantity": 500, "unitValue": 1.50, "batch": "LOTB5F1G2H3", "expiryDate": "2028-04-20", "productId": 105 },
-    { "quantity": 1200, "unitValue": 0.85, "batch": "LOTC6D4E7F8", "expiryDate": "2027-09-01", "productId": 288 },
+    { "quantity": 1200, "unitValue": 0.85, "batch": "LOTC6D4E7F8", "expiryDate": "2027-09-01", "productId": 280 },
     { "quantity": 300, "unitValue": 5.25, "batch": "LOTG9H0I1J2", "expiryDate": "2029-01-15", "productId": 12 },
-    { "quantity": 800, "unitValue": 0.33, "batch": "LOTK3L4M5N6", "expiryDate": "2026-11-23", "productId": 310 },
-    { "quantity": 150, "unitValue": 12.99, "batch": "LOTP7Q8R9S0", "expiryDate": "2030-05-05", "productId": 201 }
+    { "quantity": 800, "unitValue": 0.33, "batch": "LOTK3L4M5N6", "expiryDate": "2026-11-23", "productId": 311 },
+    { "quantity": 150, "unitValue": 12.99, "batch": "LOTP7Q8R9S0", "expiryDate": "2030-05-05", "productId": 301 }
+  ]
+}
+
+{
+  "invoiceNumber": "123456",
+  "supplyAuthorization": "AF 2024/001001",
+  "observation": "",
+  "receivingDate": "2024-03-12T10:30:58.000Z",
+  "supplierId": 46,
+  "responsibleId": 5,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 1200, "unitValue": 1.50, "batch": "LOTB4E7C1F2", "expiryDate": "2026-05-20", "productId": 10 },
+    { "quantity": 950, "unitValue": 0.75, "batch": "LOT9A2D0F83", "expiryDate": "2027-12-18", "productId": 145 },
+    { "quantity": 2100, "unitValue": 0.30, "batch": "LOTC8F1E5B4", "expiryDate": "2028-09-01", "productId": 331 },
+    { "quantity": 150, "unitValue": 5.20, "batch": "LOT12D34E56", "expiryDate": "2029-01-25", "productId": 28 },
+    { "quantity": 800, "unitValue": 2.15, "batch": "LOTF6A7B8C9", "expiryDate": "2030-03-05", "productId": 315 }
+  ]
+}
+
+{
+  "invoiceNumber": "789012",
+  "supplyAuthorization": "AF 2024/007007",
+  "observation": "",
+  "receivingDate": "2024-04-01T11:12:13.000Z",
+  "supplierId": 33,
+  "responsibleId": 9,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 300, "unitValue": 5.00, "batch": "LOTZ3A4B5C6", "expiryDate": "2027-04-04", "productId": 16 },
+    { "quantity": 2000, "unitValue": 0.20, "batch": "LOTD7E8F9G0", "expiryDate": "2028-03-29", "productId": 314 },
+    { "quantity": 10, "unitValue": 45.00, "batch": "LOTH1I2J3K4", "expiryDate": "2030-05-02", "productId": 40 },
+    { "quantity": 1700, "unitValue": 0.65, "batch": "LOTL5M6N7O8", "expiryDate": "2026-09-17", "productId": 240 },
+    { "quantity": 1400, "unitValue": 1.05, "batch": "LOTP9Q0R1S2", "expiryDate": "2029-08-11", "productId": 170 },
+    { "quantity": 1100, "unitValue": 0.50, "batch": "LOTT3U4V5W6", "expiryDate": "2028-11-20", "productId": 333 },
+    { "quantity": 500, "unitValue": 3.10, "batch": "LOTX7Y8Z9A0", "expiryDate": "2027-02-08", "productId": 13 }
   ]
 }
 
@@ -1817,8 +1952,8 @@ GO
   "receivedItems": [
     { "quantity": 2500, "unitValue": 0.15, "batch": "LOTB3A5C7E9", "expiryDate": "2030-09-09", "productId": 36 },
     { "quantity": 1800, "unitValue": 0.49, "batch": "LOT4E6D8F0A", "expiryDate": "2027-05-12", "productId": 115 },
-    { "quantity": 900, "unitValue": 1.25, "batch": "LOT5C9A1B3D", "expiryDate": "2028-02-29", "productId": 230 },
-    { "quantity": 1400, "unitValue": 0.72, "batch": "LOTD0B2F4E6", "expiryDate": "2029-01-27", "productId": 190 },
+    { "quantity": 900, "unitValue": 1.25, "batch": "LOT5C9A1B3D", "expiryDate": "2028-02-29", "productId": 231 },
+    { "quantity": 1400, "unitValue": 0.72, "batch": "LOTD0B2F4E6", "expiryDate": "2029-01-27", "productId": 241 },
     { "quantity": 300, "unitValue": 3.15, "batch": "LOT7A3C5B9D", "expiryDate": "2026-06-01", "productId": 285 },
     { "quantity": 200, "unitValue": 5.05, "batch": "LOT9F1D3E7G", "expiryDate": "2028-11-18", "productId": 315 },
     { "quantity": 400, "unitValue": 2.50, "batch": "LOT6B8A0C2D", "expiryDate": "2027-04-04", "productId": 60 }
@@ -1835,7 +1970,7 @@ GO
   "accountId": 6,
   "receivedItems": [
     { "quantity": 150, "unitValue": 7.20, "batch": "LOTN4O5P6Q7", "expiryDate": "2026-12-01", "productId": 103 },
-    { "quantity": 300, "unitValue": 2.15, "batch": "LOTR8S9T0U1", "expiryDate": "2029-06-15", "productId": 294 },
+    { "quantity": 300, "unitValue": 2.15, "batch": "LOTR8S9T0U1", "expiryDate": "2029-06-15", "productId": 248 },
     { "quantity": 500, "unitValue": 1.50, "batch": "LOTV2W3X4Y5", "expiryDate": "2028-04-18", "productId": 248 },
     { "quantity": 1000, "unitValue": 0.80, "batch": "LOTZ6A7B8C9", "expiryDate": "2027-03-27", "productId": 125 },
     { "quantity": 50, "unitValue": 15.00, "batch": "LOTD0E1F2G3", "expiryDate": "2030-07-04", "productId": 50 }
@@ -1847,20 +1982,42 @@ GO
   "supplyAuthorization": "AF 2024/304567",
   "observation": "",
   "receivingDate": "2024-10-14T11:12:13.000Z",
-  "supplierId": 7,
+  "supplierId": 60,
+  -- Escritório
   "responsibleId": 8,
   "accountId": 6,
   "receivedItems": [
-    { "quantity": 300, "unitValue": 7.50, "batch": "LOTV6W7X8Y", "expiryDate": "2026-06-19", "productId": 204 },
-    { "quantity": 450, "unitValue": 4.99, "batch": "LOTZ9A0B1C", "expiryDate": "2027-09-28", "productId": 115 },
-    { "quantity": 600, "unitValue": 3.25, "batch": "LOTD2E3F4G", "expiryDate": "2028-12-30", "productId": 290 },
-    { "quantity": 750, "unitValue": 1.70, "batch": "LOTH5I6J7K", "expiryDate": "2029-04-03", "productId": 6 },
-    { "quantity": 900, "unitValue": 0.99, "batch": "LOTL8M9N0P", "expiryDate": "2030-05-11", "productId": 177 },
-    { "quantity": 1050, "unitValue": 0.50, "batch": "LOTQ1R2S3T", "expiryDate": "2026-12-24", "productId": 331 },
-    { "quantity": 1200, "unitValue": 0.20, "batch": "LOTU4V5W6X", "expiryDate": "2027-02-06", "productId": 23 },
-    { "quantity": 1350, "unitValue": 0.80, "batch": "LOTY7Z8A9B", "expiryDate": "2028-03-21", "productId": 159 },
-    { "quantity": 1500, "unitValue": 1.10, "batch": "LOTC0D1E2F", "expiryDate": "2029-10-01", "productId": 298 },
-    { "quantity": 1650, "unitValue": 0.40, "batch": "LOTG3H4I5J", "expiryDate": "2030-04-29", "productId": 7 }
+    { "quantity": 300, "unitValue": 25.50, "batch": "LOTV6W7X8Y", "expiryDate": "2026-06-19", "productId": 198 },
+    { "quantity": 450, "unitValue": 2.75, "batch": "LOTZ9A0B1C", "expiryDate": "2027-09-28", "productId": 294 },
+    { "quantity": 850, "unitValue": 0.85, "batch": "LOTD2E3F4G", "expiryDate": "2028-12-30", "productId": 212 },
+    { "quantity": 750, "unitValue": 4.70, "batch": "LOTH5I6J7K", "expiryDate": "2029-04-03", "productId": 217 },
+    { "quantity": 850, "unitValue": 0.83, "batch": "LOTL8M9N0P", "expiryDate": "2030-05-11", "productId": 213 },
+    { "quantity": 5, "unitValue": 15.50, "batch": "LOTQ1R2S3T", "expiryDate": "2026-12-24", "productId": 135 },
+    { "quantity": 1200, "unitValue": 4.20, "batch": "LOTU4V5W6X", "expiryDate": "2027-02-06", "productId": 23 },
+    { "quantity": 850, "unitValue": 0.80, "batch": "LOTY7Z8A9B", "expiryDate": "2028-03-21", "productId": 211 },
+    { "quantity": 650, "unitValue": 2.10, "batch": "LOTC0D1E2F", "expiryDate": "2029-10-01", "productId": 215 },
+    { "quantity": 1000, "unitValue": 3.45, "batch": "LOTG3H4I5J", "expiryDate": "2030-04-29", "productId": 190 }
+  ]
+}
+
+{
+  "invoiceNumber": "246802",
+  "supplyAuthorization": "AF 2024/009009",
+  "observation": "",
+  "receivingDate": "2024-10-21T08:42:12.000Z",
+  "supplierId": 60,
+  "responsibleId": 6,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 1000, "unitValue": 2.20, "batch": "LOTH3I4J5K6", "expiryDate": "2027-08-01", "productId": 8 },
+    { "quantity": 1500, "unitValue": 1.65, "batch": "LOTL7M8N9O0", "expiryDate": "2028-09-09", "productId": 15 },
+    { "quantity": 2200, "unitValue": 0.42, "batch": "LOTP1Q2R3S4", "expiryDate": "2029-07-27", "productId": 233 },
+    { "quantity": 700, "unitValue": 3.50, "batch": "LOTT5U6V7W8", "expiryDate": "2026-01-20", "productId": 305 },
+    { "quantity": 1900, "unitValue": 0.78, "batch": "LOTX9Y0Z1A2", "expiryDate": "2030-02-16", "productId": 11 },
+    { "quantity": 1350, "unitValue": 1.15, "batch": "LOTB3C4D5E6", "expiryDate": "2028-04-24", "productId": 175 },
+    { "quantity": 50, "unitValue": 25.00, "batch": "LOTF7G8H9I0", "expiryDate": "2029-10-01", "productId": 61 },
+    { "quantity": 1100, "unitValue": 0.30, "batch": "LOTJ1K2L3M4", "expiryDate": "2027-05-13", "productId": 256 },
+    { "quantity": 1800, "unitValue": 0.80, "batch": "LOTN5O6P7Q8", "expiryDate": "2028-02-29", "productId": 277 }
   ]
 }
 
@@ -1894,15 +2051,15 @@ GO
     { "quantity": 50, "unitValue": 40.00, "batch": "LOTY1Z2A3B", "expiryDate": "2028-09-01", "productId": 8 },
     { "quantity": 300, "unitValue": 7.50, "batch": "LOTC4D5E6F", "expiryDate": "2026-02-14", "productId": 119 },
     { "quantity": 1000, "unitValue": 1.15, "batch": "LOTG7H8J9K", "expiryDate": "2029-05-05", "productId": 290 },
-    { "quantity": 1500, "unitValue": 0.65, "batch": "LOTL0M1N2P", "expiryDate": "2030-12-31", "productId": 215 },
+    { "quantity": 1500, "unitValue": 0.65, "batch": "LOTL0M1N2P", "expiryDate": "2030-12-31", "productId": 15 },
     { "quantity": 400, "unitValue": 5.80, "batch": "LOTQ3R4S5T", "expiryDate": "2027-04-04", "productId": 10 },
     { "quantity": 800, "unitValue": 2.50, "batch": "LOTU6V7W8X", "expiryDate": "2028-11-09", "productId": 165 },
     { "quantity": 250, "unitValue": 10.99, "batch": "LOTY9Z0A1B", "expiryDate": "2026-06-06", "productId": 55 },
     { "quantity": 1200, "unitValue": 0.92, "batch": "LOTC2D3E4F", "expiryDate": "2029-07-20", "productId": 280 },
     { "quantity": 100, "unitValue": 19.40, "batch": "LOTG5H6J7K", "expiryDate": "2027-10-10", "productId": 15 },
     { "quantity": 2000, "unitValue": 0.30, "batch": "LOTL8M9N0P", "expiryDate": "2030-03-15", "productId": 325 },
-    { "quantity": 600, "unitValue": 4.75, "batch": "LOTQ1R2S3T", "expiryDate": "2028-01-25", "productId": 135 },
-    { "quantity": 1800, "unitValue": 0.40, "batch": "LOTU4V5W6X", "expiryDate": "2029-10-01", "productId": 258 },
+    { "quantity": 600, "unitValue": 4.75, "batch": "LOTQ1R2S3T", "expiryDate": "2028-01-25", "productId": 136 },
+    { "quantity": 1800, "unitValue": 0.40, "batch": "LOTU4V5W6X", "expiryDate": "2029-10-01", "productId": 252 },
     { "quantity": 100, "unitValue": 16.00, "batch": "LOTY7Z8A9B", "expiryDate": "2027-01-20", "productId": 20 },
     { "quantity": 500, "unitValue": 5.50, "batch": "LOTC0D1E2F", "expiryDate": "2028-04-20", "productId": 95 },
     { "quantity": 700, "unitValue": 2.00, "batch": "LOTG3H4J5K", "expiryDate": "2026-12-05", "productId": 17 }
@@ -1974,7 +2131,7 @@ GO
   "receivedItems": [
     { "quantity": 10, "unitValue": 50.00, "batch": "LOTZ0X9W8V7", "expiryDate": "2029-03-09", "productId": 336 },
     { "quantity": 25, "unitValue": 45.00, "batch": "LOTG5A6B7C8", "expiryDate": "2027-12-24", "productId": 1 },
-    { "quantity": 40, "unitValue": 38.00, "batch": "LOTE2D3F4G5", "expiryDate": "2026-06-16", "productId": 200 }
+    { "quantity": 40, "unitValue": 38.00, "batch": "LOTE2D3F4G5", "expiryDate": "2026-06-16", "productId": 300 }
   ]
 }
 
@@ -1991,7 +2148,7 @@ GO
     { "quantity": 900, "unitValue": 0.55, "batch": "LOTK6J8H0G2", "expiryDate": "2028-02-17", "productId": 10 },
     { "quantity": 1000, "unitValue": 0.60, "batch": "LOTI5L7N9K1", "expiryDate": "2029-01-02", "productId": 44 },
     { "quantity": 1100, "unitValue": 0.65, "batch": "LOTG4F6E8D0", "expiryDate": "2026-12-19", "productId": 170 },
-    { "quantity": 1200, "unitValue": 0.70, "batch": "LOTE3D5C7B9", "expiryDate": "2030-03-28", "productId": 220 },
+    { "quantity": 1200, "unitValue": 0.70, "batch": "LOTE3D5C7B9", "expiryDate": "2030-03-28", "productId": 222 },
     { "quantity": 1300, "unitValue": 0.75, "batch": "LOTC2B4A6Z8", "expiryDate": "2027-10-14", "productId": 290 },
     { "quantity": 1400, "unitValue": 0.80, "batch": "LOTY1Z3X5W7", "expiryDate": "2028-11-06", "productId": 60 },
     { "quantity": 1500, "unitValue": 0.85, "batch": "LOTW0V2U4T6", "expiryDate": "2029-12-01", "productId": 333 },
@@ -2000,7 +2157,7 @@ GO
     { "quantity": 1800, "unitValue": 1.00, "batch": "LOTO7L9K1J3", "expiryDate": "2027-04-09", "productId": 249 },
     { "quantity": 1900, "unitValue": 1.05, "batch": "LOTM6N8P0Q2", "expiryDate": "2030-01-13", "productId": 305 },
     { "quantity": 2000, "unitValue": 1.10, "batch": "LOTL5K7J9H1", "expiryDate": "2028-10-30", "productId": 99 },
-    { "quantity": 2100, "unitValue": 1.15, "batch": "LOTJ4I6G8F0", "expiryDate": "2029-06-22", "productId": 155 },
+    { "quantity": 2100, "unitValue": 1.15, "batch": "LOTJ4I6G8F0", "expiryDate": "2029-06-22", "productId": 255 },
     { "quantity": 2200, "unitValue": 1.20, "batch": "LOTI3H5G7F9", "expiryDate": "2026-08-08", "productId": 280 }
   ]
 }
@@ -2016,7 +2173,7 @@ GO
   "receivedItems": [
     { "quantity": 300, "unitValue": 10.00, "batch": "LOTC8Z0Y2X4", "expiryDate": "2027-02-05", "productId": 11 },
     { "quantity": 250, "unitValue": 11.50, "batch": "LOTA7B9C1D3", "expiryDate": "2029-05-19", "productId": 122 },
-    { "quantity": 200, "unitValue": 13.00, "batch": "LOTZ6Y8X0W2", "expiryDate": "2028-03-01", "productId": 211 },
+    { "quantity": 200, "unitValue": 13.00, "batch": "LOTZ6Y8X0W2", "expiryDate": "2028-03-01", "productId": 210 },
     { "quantity": 150, "unitValue": 14.50, "batch": "LOTY5X7W9V1", "expiryDate": "2026-10-26", "productId": 304 },
     { "quantity": 100, "unitValue": 16.00, "batch": "LOTW4V6U8T0", "expiryDate": "2030-08-01", "productId": 48 }
   ]
@@ -2053,8 +2210,26 @@ GO
     { "quantity": 1800, "unitValue": 0.95, "batch": "LOTN2P3Q4R", "expiryDate": "2028-10-30", "productId": 142 },
     { "quantity": 1500, "unitValue": 0.40, "batch": "LOTS5T6U7V", "expiryDate": "2029-05-03", "productId": 299 },
     { "quantity": 1200, "unitValue": 1.15, "batch": "LOTW8X9Y0Z", "expiryDate": "2026-11-21", "productId": 65 },
-    { "quantity": 1000, "unitValue": 2.20, "batch": "LOTA1B2C3D", "expiryDate": "2030-03-17", "productId": 220 },
+    { "quantity": 1000, "unitValue": 2.20, "batch": "LOTA1B2C3D", "expiryDate": "2030-03-17", "productId": 222 },
     { "quantity": 800, "unitValue": 3.50, "batch": "LOTE4F5G6H", "expiryDate": "2027-01-08", "productId": 13 }
+  ]
+}
+
+{
+  "invoiceNumber": "987654",
+  "supplyAuthorization": "AF 2025/003003",
+  "observation": "",
+  "receivingDate": "2025-08-02T11:05:11.000Z",
+  "supplierId": 3,
+  "responsibleId": 4,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 1000, "unitValue": 2.50, "batch": "LOT5G4H3I2J", "expiryDate": "2029-06-03", "productId": 25 },
+    { "quantity": 1800, "unitValue": 1.10, "batch": "LOTK1L0M9N8", "expiryDate": "2030-08-21", "productId": 77 },
+    { "quantity": 500, "unitValue": 4.00, "batch": "LOTP7Q6R5S4", "expiryDate": "2027-03-09", "productId": 130 },
+    { "quantity": 2500, "unitValue": 0.55, "batch": "LOTT3U2V1W0", "expiryDate": "2028-12-07", "productId": 298 },
+    { "quantity": 750, "unitValue": 1.70, "batch": "LOTX9Y8Z7A6", "expiryDate": "2026-07-16", "productId": 328 },
+    { "quantity": 1100, "unitValue": 0.85, "batch": "LOTB5C4D3E2", "expiryDate": "2029-10-10", "productId": 99 }
   ]
 }
 
@@ -2068,11 +2243,11 @@ GO
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1700, "unitValue": 0.80, "batch": "LOT709B3D5E", "expiryDate": "2028-05-17", "productId": 150 },
-    { "quantity": 1300, "unitValue": 1.60, "batch": "LOT81A4E6F0", "expiryDate": "2029-02-09", "productId": 151 },
+    { "quantity": 1300, "unitValue": 1.60, "batch": "LOT81A4E6F0", "expiryDate": "2029-02-09", "productId": 251 },
     { "quantity": 1900, "unitValue": 0.48, "batch": "LOT92B5F70A", "expiryDate": "2027-11-22", "productId": 152 },
     { "quantity": 1100, "unitValue": 1.35, "batch": "LOTA3C6081B", "expiryDate": "2030-08-08", "productId": 153 },
     { "quantity": 1550, "unitValue": 0.65, "batch": "LOTB4D7192C", "expiryDate": "2026-12-05", "productId": 154 },
-    { "quantity": 1850, "unitValue": 2.00, "batch": "LOTC5E82A3D", "expiryDate": "2028-01-30", "productId": 155 },
+    { "quantity": 1850, "unitValue": 2.00, "batch": "LOTC5E82A3D", "expiryDate": "2028-01-30", "productId": 255 },
     { "quantity": 1450, "unitValue": 0.90, "batch": "LOTD6F93B4E", "expiryDate": "2029-07-16", "productId": 156 },
     { "quantity": 1250, "unitValue": 0.52, "batch": "LOTE70A4C5F", "expiryDate": "2027-04-25", "productId": 157 },
     { "quantity": 1600, "unitValue": 1.11, "batch": "LOTF81B5D60", "expiryDate": "2030-05-10", "productId": 158 },
@@ -2099,7 +2274,7 @@ GO
     { "quantity": 1900, "unitValue": 0.70, "batch": "LOTY1Z2A3B", "expiryDate": "2030-05-01", "productId": 233 },
     { "quantity": 600, "unitValue": 4.10, "batch": "LOTC4D5E6F", "expiryDate": "2027-08-15", "productId": 80 },
     { "quantity": 180, "unitValue": 11.20, "batch": "LOTG7H8J9K", "expiryDate": "2029-01-28", "productId": 40 },
-    { "quantity": 1400, "unitValue": 0.50, "batch": "LOTL0M1N2P", "expiryDate": "2028-12-06", "productId": 320 },
+    { "quantity": 1400, "unitValue": 0.50, "batch": "LOTL0M1N2P", "expiryDate": "2028-12-06", "productId": 321 },
     { "quantity": 750, "unitValue": 3.80, "batch": "LOTQ3R4S5T", "expiryDate": "2026-04-10", "productId": 115 },
     { "quantity": 2500, "unitValue": 0.15, "batch": "LOTU6V7W8X", "expiryDate": "2029-10-25", "productId": 250 },
     { "quantity": 50, "unitValue": 25.00, "batch": "LOTY9Z0A1B", "expiryDate": "2027-07-07", "productId": 28 }
@@ -2157,13 +2332,17 @@ GO
   "supplyAuthorization": "AF 2025/000210",
   "observation": "Urgente",
   "receivingDate": "2025-11-04T08:26:17.000Z",
-  "supplierId": 79,
+  "supplierId": 63,
+  -- Escritório
   "responsibleId": 10,
   "accountId": 6,
   "receivedItems": [
-    { "quantity": 100, "unitValue": 5.75, "batch": "LOT1A7B3E9C", "expiryDate": "2028-05-30", "productId": 200 },
-    { "quantity": 4000, "unitValue": 0.10, "batch": "LOTF8D2C0A4", "expiryDate": "2029-10-01", "productId": 336 },
-    { "quantity": 950, "unitValue": 1.99, "batch": "LOT3E5B7C9D", "expiryDate": "2027-04-18", "productId": 77 }
+    { "quantity": 300, "unitValue": 27.80, "batch": "LOT1A7B3E9C", "expiryDate": "2027-02-19", "productId": 198 },
+    { "quantity": 450, "unitValue": 2.95, "batch": "LOTZ9A0B1C", "expiryDate": "2027-09-28", "productId": 294 },
+    { "quantity": 850, "unitValue": 0.75, "batch": "LOTF8D2C0A4", "expiryDate": "2029-11-30", "productId": 212 },
+    { "quantity": 750, "unitValue": 4.50, "batch": "LOT3E5B7C9D", "expiryDate": "2028-08-03", "productId": 217 },
+    { "quantity": 650, "unitValue": 2.00, "batch": "LOTC0D1E2F", "expiryDate": "2029-10-01", "productId": 215 },
+    { "quantity": 850, "unitValue": 3.65, "batch": "LOTH3H8I5J", "expiryDate": "2030-04-29", "productId": 22 }
   ]
 }
 
@@ -2176,7 +2355,7 @@ GO
   "responsibleId": 10,
   "accountId": 6,
   "receivedItems": [
-    { "quantity": 1550, "unitValue": 0.95, "batch": "LOTD8A1B5F3", "expiryDate": "2027-01-08", "productId": 22 },
+    { "quantity": 1550, "unitValue": 0.95, "batch": "LOTD8A1B5F3", "expiryDate": "2027-01-08", "productId": 21 },
     { "quantity": 1700, "unitValue": 0.75, "batch": "LOTC7E3A9D1", "expiryDate": "2028-10-30", "productId": 333 },
     { "quantity": 1200, "unitValue": 2.50, "batch": "LOTB5F1D7C9", "expiryDate": "2029-03-24", "productId": 160 },
     { "quantity": 1850, "unitValue": 0.50, "batch": "LOT3A9D1C5E", "expiryDate": "2026-05-18", "productId": 44 },
@@ -2184,6 +2363,22 @@ GO
     { "quantity": 1650, "unitValue": 0.35, "batch": "LOT0E2A4F6B", "expiryDate": "2027-12-12", "productId": 111 },
     { "quantity": 1350, "unitValue": 1.40, "batch": "LOT9D1C5E7A", "expiryDate": "2028-02-06", "productId": 88 },
     { "quantity": 1900, "unitValue": 0.65, "batch": "LOT6A8C0E2D", "expiryDate": "2029-08-01", "productId": 133 }
+  ]
+}
+
+{
+  "invoiceNumber": "456789",
+  "supplyAuthorization": "AF 2025/005005",
+  "observation": "",
+  "receivingDate": "2025-11-07T15:52:26.000Z",
+  "supplierId": 79,
+  "responsibleId": 10,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 50, "unitValue": 30.00, "batch": "LOTH9I0J1K2", "expiryDate": "2029-03-28", "productId": 12 },
+    { "quantity": 2500, "unitValue": 0.10, "batch": "LOTL3M4N5O6", "expiryDate": "2027-07-22", "productId": 335 },
+    { "quantity": 180, "unitValue": 8.50, "batch": "LOTP7Q8R9S0", "expiryDate": "2028-10-31", "productId": 100 },
+    { "quantity": 1250, "unitValue": 1.90, "batch": "LOTT1U2V3W4", "expiryDate": "2026-12-01", "productId": 20 }
   ]
 }
 
@@ -2214,7 +2409,7 @@ GO
     { "quantity": 300, "unitValue": 2.15, "batch": "LOTC1B9A7D5", "expiryDate": "2026-02-09", "productId": 277 },
     { "quantity": 190, "unitValue": 6.80, "batch": "LOTF8D6C4B2", "expiryDate": "2029-07-28", "productId": 140 },
     { "quantity": 5000, "unitValue": 0.08, "batch": "LOT3A5C7E9B", "expiryDate": "2027-10-10", "productId": 88 },
-    { "quantity": 110, "unitValue": 9.20, "batch": "LOTD0B2F4E6", "expiryDate": "2028-06-03", "productId": 310 },
+    { "quantity": 110, "unitValue": 9.20, "batch": "LOTD0B2F4E6", "expiryDate": "2028-06-03", "productId": 311 },
     { "quantity": 700, "unitValue": 1.50, "batch": "LOT7C9A1D3F", "expiryDate": "2030-03-21", "productId": 29 },
     { "quantity": 1200, "unitValue": 0.55, "batch": "LOT8E6D4F2C", "expiryDate": "2029-04-16", "productId": 175 },
     { "quantity": 900, "unitValue": 1.05, "batch": "LOT1A3B5C7D", "expiryDate": "2027-07-19", "productId": 99 },
@@ -2259,7 +2454,7 @@ GO
   "accountId": 7,
   "receivedItems": [
     { "quantity": 5, "unitValue": 25.00, "batch": "LOTF1A2B3C4", "expiryDate": "2029-03-01", "productId": 133 },
-    { "quantity": 10, "unitValue": 15.00, "batch": "LOTD5E6F7G8", "expiryDate": "2028-10-20", "productId": 215 },
+    { "quantity": 10, "unitValue": 15.00, "batch": "LOTD5E6F7G8", "expiryDate": "2028-10-20", "productId": 15 },
     { "quantity": 3, "unitValue": 75.00, "batch": "LOTC9H0I1J2", "expiryDate": "2026-04-14", "productId": 2 }
   ]
 }
@@ -2274,10 +2469,10 @@ GO
   "accountId": 7,
   "receivedItems": [
     { "quantity": 2500, "unitValue": 0.15, "batch": "LOT1A2B3C4D", "expiryDate": "2027-03-10", "productId": 76 },
-    { "quantity": 100, "unitValue": 15.75, "batch": "LOT5E6F7G8H", "expiryDate": "2029-10-28", "productId": 330 },
+    { "quantity": 100, "unitValue": 15.75, "batch": "LOT5E6F7G8H", "expiryDate": "2029-10-28", "productId": 329 },
     { "quantity": 900, "unitValue": 2.40, "batch": "LOT9I0J1K2L", "expiryDate": "2028-06-18", "productId": 45 },
     { "quantity": 1100, "unitValue": 0.90, "batch": "LOT3M4N5O6P", "expiryDate": "2026-02-05", "productId": 274 },
-    { "quantity": 60, "unitValue": 50.00, "batch": "LOT7Q8R9S0T", "expiryDate": "2030-12-01", "productId": 22 },
+    { "quantity": 60, "unitValue": 50.00, "batch": "LOT7Q8R9S0T", "expiryDate": "2030-12-01", "productId": 21 },
     { "quantity": 1800, "unitValue": 0.60, "batch": "LOTU1V2W3X4", "expiryDate": "2027-07-04", "productId": 175 },
     { "quantity": 450, "unitValue": 3.10, "batch": "LOTY5Z6A7B8", "expiryDate": "2029-05-19", "productId": 98 }
   ]
@@ -2308,7 +2503,7 @@ GO
   "responsibleId": 4,
   "accountId": 7,
   "receivedItems": [
-    { "quantity": 3000, "unitValue": 0.05, "batch": "LOT8L3K7F5G", "expiryDate": "2030-05-01", "productId": 330 },
+    { "quantity": 3000, "unitValue": 0.05, "batch": "LOT8L3K7F5G", "expiryDate": "2030-05-01", "productId": 329 },
     { "quantity": 2800, "unitValue": 0.10, "batch": "LOTE9C2V4X1", "expiryDate": "2029-01-08", "productId": 285 },
     { "quantity": 2500, "unitValue": 0.12, "batch": "LOT7Y0Z6S3D", "expiryDate": "2028-07-29", "productId": 301 },
     { "quantity": 2200, "unitValue": 0.18, "batch": "LOTF1A5B8N6", "expiryDate": "2027-04-12", "productId": 111 },
@@ -2329,14 +2524,14 @@ GO
   "receivedItems": [
     { "quantity": 10, "unitValue": 100.00, "batch": "LOTU9V1W3X5", "expiryDate": "2029-02-01", "productId": 29 },
     { "quantity": 15, "unitValue": 95.00, "batch": "LOTS7R5Q3P1", "expiryDate": "2028-08-05", "productId": 125 },
-    { "quantity": 20, "unitValue": 90.00, "batch": "LOTK6J8H0G2", "expiryDate": "2027-01-27", "productId": 205 },
-    { "quantity": 25, "unitValue": 85.00, "batch": "LOTE4D2C0B9", "expiryDate": "2030-06-14", "productId": 310 },
+    { "quantity": 20, "unitValue": 90.00, "batch": "LOTK6J8H0G2", "expiryDate": "2027-01-27", "productId": 305 },
+    { "quantity": 25, "unitValue": 85.00, "batch": "LOTE4D2C0B9", "expiryDate": "2030-06-14", "productId": 311 },
     { "quantity": 30, "unitValue": 80.00, "batch": "LOTC2A0Z8Y6", "expiryDate": "2026-11-29", "productId": 50 },
     { "quantity": 35, "unitValue": 75.00, "batch": "LOTN1M9L7K5", "expiryDate": "2028-04-20", "productId": 142 },
     { "quantity": 40, "unitValue": 70.00, "batch": "LOTH0G8F6E4", "expiryDate": "2027-09-03", "productId": 263 },
     { "quantity": 45, "unitValue": 65.00, "batch": "LOTZ7Y5X3W1", "expiryDate": "2029-11-12", "productId": 35 },
     { "quantity": 50, "unitValue": 60.00, "batch": "LOTB6A4Z2Y0", "expiryDate": "2026-04-25", "productId": 180 },
-    { "quantity": 55, "unitValue": 55.00, "batch": "LOTD5C3B1A9", "expiryDate": "2028-01-15", "productId": 230 }
+    { "quantity": 55, "unitValue": 55.00, "batch": "LOTD5C3B1A9", "expiryDate": "2028-01-15", "productId": 231 }
   ]
 }
 
@@ -2349,9 +2544,9 @@ GO
   "responsibleId": 10,
   "accountId": 7,
   "receivedItems": [
-    { "quantity": 500, "unitValue": 5.40, "batch": "LOTW1X2Y3Z", "expiryDate": "2028-06-05", "productId": 330 },
+    { "quantity": 500, "unitValue": 5.40, "batch": "LOTW1X2Y3Z", "expiryDate": "2028-06-05", "productId": 329 },
     { "quantity": 1800, "unitValue": 0.77, "batch": "LOTM4N5O6P", "expiryDate": "2030-03-25", "productId": 45 },
-    { "quantity": 950, "unitValue": 1.50, "batch": "LOTQ7R8S9T", "expiryDate": "2027-09-10", "productId": 201 },
+    { "quantity": 950, "unitValue": 1.50, "batch": "LOTQ7R8S9T", "expiryDate": "2027-09-10", "productId": 301 },
     { "quantity": 3000, "unitValue": 0.22, "batch": "LOTC1D2E3F", "expiryDate": "2029-12-30", "productId": 11 }
   ]
 }
@@ -2420,7 +2615,7 @@ GO
   "accountId": 7,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 0.70, "batch": "LOTL8M9N0P", "expiryDate": "2027-10-09", "productId": 91 },
-    { "quantity": 1600, "unitValue": 0.52, "batch": "LOTQ1R2S3T", "expiryDate": "2028-09-22", "productId": 182 },
+    { "quantity": 1600, "unitValue": 0.52, "batch": "LOTQ1R2S3T", "expiryDate": "2028-09-22", "productId": 181 },
     { "quantity": 1300, "unitValue": 1.10, "batch": "LOTU4V5W6X", "expiryDate": "2026-08-05", "productId": 33 },
     { "quantity": 1800, "unitValue": 0.28, "batch": "LOTY7Z8A9B", "expiryDate": "2029-07-28", "productId": 255 },
     { "quantity": 1700, "unitValue": 0.85, "batch": "LOTC0D1E2F", "expiryDate": "2028-03-01", "productId": 40 },
@@ -2447,7 +2642,7 @@ GO
     { "quantity": 100, "unitValue": 30.00, "batch": "LOTN2P3Q4R", "expiryDate": "2028-05-09", "productId": 271 },
     { "quantity": 150, "unitValue": 20.00, "batch": "LOTS5T6U7V", "expiryDate": "2029-01-30", "productId": 80 },
     { "quantity": 200, "unitValue": 12.00, "batch": "LOTW8X9Y0Z", "expiryDate": "2027-10-17", "productId": 160 },
-    { "quantity": 300, "unitValue": 8.00, "batch": "LOTA1B2C3D", "expiryDate": "2028-11-14", "productId": 215 },
+    { "quantity": 300, "unitValue": 8.00, "batch": "LOTA1B2C3D", "expiryDate": "2028-11-14", "productId": 15 },
     { "quantity": 400, "unitValue": 4.50, "batch": "LOTE4F5G6H", "expiryDate": "2029-08-21", "productId": 50 }
   ]
 }
