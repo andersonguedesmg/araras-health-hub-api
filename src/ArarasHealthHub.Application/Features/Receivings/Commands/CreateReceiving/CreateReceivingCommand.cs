@@ -24,6 +24,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
         int Quantity,
         decimal UnitValue,
         string Batch,
+        string Brand,
         DateTime ExpiryDate,
         int ProductId
     );

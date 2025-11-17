@@ -93,6 +93,10 @@ namespace ArarasHealthHub.Application.Features.Receivings.Validation
                 .NotEmpty().WithMessage("O lote do item é obrigatório.")
                 .MaximumLength(50).WithMessage("O lote do item não pode exceder 50 caracteres.");
 
+            RuleFor(item => item.Brand)
+                .NotEmpty().WithMessage("A marca do item é obrigatório.")
+                .MaximumLength(50).WithMessage("A marca do item não pode exceder 100 caracteres.");
+
             RuleFor(item => item.ExpiryDate)
                 .NotEmpty().WithMessage("A data de validade do item é obrigatória.")
                 .GreaterThan(DateTime.UtcNow).WithMessage("A data de validade do item deve ser futura.");

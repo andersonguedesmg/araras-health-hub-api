@@ -92,6 +92,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                     ProductId = itemCommand.ProductId,
                     Quantity = isNegativeAdjustment ? -movementQuantity : movementQuantity,
                     Batch = itemCommand.Batch,
+                    Brand = itemCommand.Brand,
                     ExpiryDate = itemCommand.ExpiryDate,
                 };
 
@@ -102,11 +103,11 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                         throw new ArgumentException("Ajustes negativos exigem o número do Lote (Batch) para dar baixa.");
                     }
 
-                    var lot = await _stockLotRepo.GetByStockIdAndBatchAsync(stock!.Id, itemCommand.Batch!);
+                    var lot = await _stockLotRepo.GetByStockIdAndBatchAndBrandAsync(stock!.Id, itemCommand.Batch!, itemCommand.Brand!);
 
                     if (lot == null)
                     {
-                        throw new ApplicationException($"Lote {itemCommand.Batch} não encontrado para o Produto {itemCommand.ProductId} para o ajuste de saída.");
+                        throw new ApplicationException($"Lote {itemCommand.Batch} não encontrado para o Produto {itemCommand.ProductId} da marca {itemCommand.Brand} para o ajuste de saída.");
                     }
 
                     if (lot.AvailableQuantity < movementQuantity)
@@ -133,6 +134,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
 
                     adjustmentItem.UnitValue = lot.UnitValue;
                     adjustmentItem.Batch = lot.Batch;
+                    adjustmentItem.Brand = lot.Brand;
                     adjustmentItem.ExpiryDate = lot.ExpiryDate;
 
                     var updateStockCommand = new UpdateProductStockCommand(
@@ -154,6 +156,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                         StockId: stock!.Id,
                         Quantity: movementQuantity,
                         Batch: itemCommand.Batch!,
+                        Brand: itemCommand.Brand!,
                         UnitValue: unitValue,
                         ExpiryDate: itemCommand.ExpiryDate.Value,
                         SourceDocumentId: adjustment.Id,
@@ -182,6 +185,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
 
                     adjustmentItem.UnitValue = unitValue;
                     adjustmentItem.Batch = itemCommand.Batch;
+                    adjustmentItem.Brand = itemCommand.Brand;
                     adjustmentItem.ExpiryDate = itemCommand.ExpiryDate;
                 }
 

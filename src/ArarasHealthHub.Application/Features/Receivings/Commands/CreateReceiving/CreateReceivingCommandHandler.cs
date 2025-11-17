@@ -99,6 +99,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                     StockId: updatedStock.Id,
                     Quantity: item.Quantity,
                     Batch: item.Batch,
+                    Brand: item.Brand,
                     UnitValue: item.UnitValue,
                     ExpiryDate: item.ExpiryDate,
                     SourceDocumentId: receiving.Id,

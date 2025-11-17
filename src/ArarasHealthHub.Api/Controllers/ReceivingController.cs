@@ -76,7 +76,7 @@ namespace ArarasHealthHub.Api.Controllers
             var sb = new StringBuilder();
 
             sb.AppendLine("ID,NF,AF,DATA,FORNECEDOR,RESPONSÁVEL,OBSERVAÇÃO" +
-                          "PRODUTO,LOTE,VALIDADE,QUANTIDADE,VALOR UNITÁRIO,VALOR TOTAL");
+                          "PRODUTO,LOTE,MARCA,VALIDADE,QUANTIDADE,VALOR UNITÁRIO,VALOR TOTAL");
 
             var culture = CultureInfo.InvariantCulture;
 
@@ -92,6 +92,7 @@ namespace ArarasHealthHub.Api.Controllers
                     $"{detail.Observation}," +
                     $"{detail.ProductName}," +
                     $"{detail.Batch}," +
+                    $"{detail.Brand}," +
                     $"{detail.ExpiryDate:dd/MM/yyyy}," +
                     $"{detail.QuantityReceived.ToString("F3", culture)}," +
                     $"{detail.UnitValue.ToString("F2", culture)}," +

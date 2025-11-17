@@ -12,6 +12,7 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
         int StockId,
         decimal Quantity,
         string Batch,
+        string Brand,
         decimal UnitValue,
         DateTime ExpiryDate,
         int SourceDocumentId,

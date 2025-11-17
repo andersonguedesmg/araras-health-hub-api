@@ -17,6 +17,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Dtos
 
         public string? ProductName { get; set; }
         public string? Batch { get; set; }
+        public string? Brand { get; set; }
         public DateTime ExpiryDate { get; set; }
         public decimal QuantityReceived { get; set; }
         public decimal UnitValue { get; set; }

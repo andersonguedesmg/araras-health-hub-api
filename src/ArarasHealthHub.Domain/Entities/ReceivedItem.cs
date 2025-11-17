@@ -27,6 +27,10 @@ namespace ArarasHealthHub.Domain.Entities
         public string Batch { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(100)]
+        public string Brand { get; set; } = string.Empty;
+
+        [Required]
         public DateTime ExpiryDate { get; set; }
 
         [Required]

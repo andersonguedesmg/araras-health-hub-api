@@ -13,11 +13,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
     {
         public StockLotRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<StockLot?> GetByStockIdAndBatchAsync(int stockId, string batch)
+        public async Task<StockLot?> GetByStockIdAndBatchAndBrandAsync(int stockId, string batch, string brand)
         {
             return await _dbSet
                 .AsNoTracking()
-                .FirstOrDefaultAsync(sl => sl.StockId == stockId && sl.Batch == batch);
+                .FirstOrDefaultAsync(sl => sl.StockId == stockId && sl.Batch == batch && sl.Brand == brand);
         }
     }
 }

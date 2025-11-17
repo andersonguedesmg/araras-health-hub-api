@@ -34,6 +34,8 @@ namespace ArarasHealthHub.Domain.Entities
 
         public string? Batch { get; set; }
 
+        public string? Brand { get; set; }
+
         public DateTime? ExpiryDate { get; set; }
     }
 }

@@ -25,7 +25,8 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
             var stockLot = await _dbContext.StockLots
                 .FirstOrDefaultAsync(sl =>
                     sl.StockId == request.StockId &&
-                    sl.Batch == request.Batch,
+                    sl.Batch == request.Batch &&
+                    sl.Brand == request.Brand,
                     cancellationToken
                 );
 
@@ -35,6 +36,7 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
                 {
                     StockId = request.StockId,
                     Batch = request.Batch,
+                    Brand = request.Brand,
                     UnitValue = request.UnitValue,
                     ExpiryDate = request.ExpiryDate,
                     AvailableQuantity = request.Quantity,

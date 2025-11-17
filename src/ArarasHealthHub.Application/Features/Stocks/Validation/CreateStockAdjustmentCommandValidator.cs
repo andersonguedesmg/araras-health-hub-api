@@ -84,7 +84,8 @@ namespace ArarasHealthHub.Application.Features.Stocks.Validation
 
             RuleFor(i => i.Quantity)
                 .NotEqual(0).WithMessage("A quantidade ajustada do item deve ser maior que zero.")
-                .GreaterThanOrEqualTo(0).When(i => i.Quantity < 0, ApplyConditionTo.AllValidators).WithMessage("A quantidade do ajuste deve ser positiva. O tipo de ajuste (entrada/saída) deve definir a direção da mudança.");
+                .GreaterThanOrEqualTo(0).When(i => i.Quantity < 0, ApplyConditionTo.AllValidators)
+                .WithMessage("A quantidade do ajuste deve ser positiva. O tipo de ajuste (entrada/saída) deve definir a direção da mudança.");
 
             RuleFor(i => i.UnitValue)
                 .GreaterThanOrEqualTo(0).WithMessage("O valor unitário do item não pode ser negativo.");
@@ -92,6 +93,10 @@ namespace ArarasHealthHub.Application.Features.Stocks.Validation
             RuleFor(i => i.Batch)
                 .NotEmpty().WithMessage("O lote do item é obrigatório.")
                 .MaximumLength(50).WithMessage("O lote do item não pode exceder 50 caracteres.");
+
+            RuleFor(i => i.Brand)
+                .NotEmpty().WithMessage("A marca do item é obrigatório.")
+                .MaximumLength(100).WithMessage("A marca do item não pode exceder 100 caracteres.");
         }
 
         private async Task<bool> ProductExists(int productId, CancellationToken cancellationToken)

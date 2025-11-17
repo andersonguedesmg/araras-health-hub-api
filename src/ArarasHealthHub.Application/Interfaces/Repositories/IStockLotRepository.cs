@@ -8,6 +8,6 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
 {
     public interface IStockLotRepository : IBaseRepository<StockLot>
     {
-        Task<StockLot?> GetByStockIdAndBatchAsync(int stockId, string batch);
+        Task<StockLot?> GetByStockIdAndBatchAndBrandAsync(int stockId, string batch, string brand);
     }
 }

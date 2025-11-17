@@ -374,6 +374,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -583,6 +588,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<string>("Batch")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Brand")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -682,6 +690,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasComment("Número/Código do lote do produto.");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Marca/Fabricante deste lote específico.");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");

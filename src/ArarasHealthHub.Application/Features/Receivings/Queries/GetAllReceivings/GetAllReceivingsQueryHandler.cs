@@ -51,6 +51,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
 
                     r.ReceivedItem.Any(ri =>
                         ri.Batch.ToLower().Contains(searchTermLower) ||
+                        ri.Brand.ToLower().Contains(searchTermLower) ||
                         ri.Product.Name.ToLower().Contains(searchTermLower)
                     )
                 );

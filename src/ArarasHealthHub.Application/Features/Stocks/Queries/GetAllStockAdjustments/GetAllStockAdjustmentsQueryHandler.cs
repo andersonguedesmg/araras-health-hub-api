@@ -53,6 +53,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustm
                     // Busca nos itens de ajuste (Batch ou Nome do Produto)
                     a.AdjustmentItems.Any(ai =>
                         (ai.Batch != null && ai.Batch.ToLower().Contains(searchTermLower)) ||
+                        (ai.Brand != null && ai.Brand.ToLower().Contains(searchTermLower)) ||
                         ai.Product.Name.ToLower().Contains(searchTermLower)
                     )
                 );

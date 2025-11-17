@@ -25,6 +25,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
         decimal Quantity,
         decimal? UnitValue,
         string? Batch,
+        string? Brand,
         DateTime? ExpiryDate
     );
 }

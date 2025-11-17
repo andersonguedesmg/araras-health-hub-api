@@ -45,6 +45,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivin
 
                     r.ReceivedItem.Any(ri =>
                         ri.Batch.ToLower().Contains(searchTermLower) ||
+                        ri.Brand.ToLower().Contains(searchTermLower) ||
                         ri.Product.Name.ToLower().Contains(searchTermLower)
                     )
                 );
@@ -62,6 +63,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivin
                     Observation = r.Observation,
                     ProductName = ri.Product.Name,
                     Batch = ri.Batch,
+                    Brand = ri.Brand,
                     ExpiryDate = ri.ExpiryDate,
                     QuantityReceived = ri.Quantity,
                     UnitValue = ri.UnitValue,

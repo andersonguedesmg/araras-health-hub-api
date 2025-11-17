@@ -27,6 +27,11 @@ namespace ArarasHealthHub.Domain.Entities
         public string Batch { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(100)]
+        [Comment("Marca/Fabricante deste lote específico.")]
+        public string Brand { get; set; } = string.Empty;
+
+        [Required]
         [Column(TypeName = "decimal(18,2)")]
         [Comment("Custo unitário deste lote (custo de entrada).")]
         public decimal UnitValue { get; set; }

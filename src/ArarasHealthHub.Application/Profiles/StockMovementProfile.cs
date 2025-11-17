@@ -21,6 +21,10 @@ namespace ArarasHealthHub.Application.Profiles
 
                 .ForMember(dest => dest.Batch,
                            opt => opt.MapFrom(src => src.StockLot.Batch))
+
+                .ForMember(dest => dest.Brand,
+                           opt => opt.MapFrom(src => src.StockLot.Brand))
+
                 .ForMember(dest => dest.ExpiryDate,
                            opt => opt.MapFrom(src => src.StockLot.ExpiryDate))
 
