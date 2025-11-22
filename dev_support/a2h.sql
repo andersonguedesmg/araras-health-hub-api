@@ -1322,6 +1322,21 @@ GO
 }
 
 {
+  "invoiceNumber": "489201",
+  "supplyAuthorization": "AF 2024/001358",
+  "observation": "",
+  "receivingDate": "2024-01-12T10:32:45.000Z",
+  "supplierId": 7,
+  "responsibleId": 9,
+  "accountId": 5,
+  "receivedItems": [
+    { "quantity": 1200, "unitValue": 0.45, "batch": "LOTX1D8E7C", "brand": "Medley", "expiryDate": "2025-12-20", "productId": 1 },
+    { "quantity": 2500, "unitValue": 1.10, "batch": "LOT9F4AC3B2", "brand": "EMS", "expiryDate": "2025-12-15", "productId": 4 },
+    { "quantity": 800, "unitValue": 0.75, "batch": "LOTB785A4D1", "brand": "Ache", "expiryDate": "2026-01-07", "productId": 10 }
+  ]
+}
+
+{
   "invoiceNumber": "100000",
   "supplyAuthorization": "AF 2024/000001",
   "observation": "",

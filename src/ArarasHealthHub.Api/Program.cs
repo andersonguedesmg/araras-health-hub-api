@@ -3,6 +3,7 @@ using System.Text.Json;
 using araras_health_hub_api.Authorization;
 using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
+using ArarasHealthHub.Application.Common.Interfaces;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
@@ -258,8 +259,11 @@ builder.Services.AddScoped<IStockAdjustmentRepository, StockAdjustmentRepository
 builder.Services.AddScoped<IStockAdjustmentItemRepository, StockAdjustmentItemRepository>();
 builder.Services.AddScoped<IStockLotRepository, StockLotRepository>();
 builder.Services.AddScoped<IStockCostRepository, StockCostRepository>();
+
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IStockAllocationService, StockAllocationService>();
+
+builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 
 // Registra os Authorization Handlers
 builder.Services.AddScoped<IAuthorizationHandler, AccountManagementAuthorizationHandler>();

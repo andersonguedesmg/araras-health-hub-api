@@ -8,10 +8,12 @@ using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStockOverview;
+using ArarasHealthHub.Application.Features.Stocks.Queries.ExportNearExpiryLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockGeneralOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantities;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetCriticalStockOverview;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview;
@@ -133,12 +135,23 @@ namespace ArarasHealthHub.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet("export")]
+        [HttpGet("near-expiry")]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(ApiResponse<List<StockLotNearExpiryDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetNearExpiryLots([FromQuery] GetNearExpiryLotsQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("export-general")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Export([FromQuery] string? searchTerm)
+        public async Task<IActionResult> ExportGeneral([FromQuery] string? searchTerm)
         {
             var stockDtos = await _mediator.Send(new ExportStockGeneralOverviewQuery { SearchTerm = searchTerm });
 
@@ -213,6 +226,42 @@ namespace ArarasHealthHub.Api.Controllers
             }
 
             var fileName = $"estoque_critico_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
+        }
+
+        [HttpGet("export-near-expiry")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> ExportNearExpiryLots([FromQuery] string? searchTerm)
+        {
+            var lotDtos = await _mediator.Send(new ExportNearExpiryLotsQuery { SearchTerm = searchTerm });
+
+            var sb = new StringBuilder();
+            var culture = CultureInfo.InvariantCulture;
+
+            sb.AppendLine("PRODUTO,DESCRIÇÃO,APRESENTACAO,LOTE,MARCA,QTD_DISPONIVEL,DATA_VENCIMENTO,DIAS_RESTANTES");
+
+            foreach (var lot in lotDtos)
+            {
+                sb.Append(
+                    $"{lot.Product.Name.Replace(",", "")}," +
+                    $"{lot.Product.Description.Replace(",", "")}," +
+                    $"{lot.Product.PresentationForm}," +
+                    $"{lot.Batch}," +
+                    $"{lot.Brand.Replace(",", "")}," +
+                    $"{lot.AvailableQuantity.ToString("F3", culture)}," +
+                    $"{lot.ExpiryDate:dd/MM/yyyy}," +
+                    $"{lot.DaysRemaining}" +
+                    "\r\n"
+                );
+            }
+
+            var fileName = $"lotes_proximos_vencimento_{DateTime.Now:yyyyMMddHHmmss}.csv";
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());
 
