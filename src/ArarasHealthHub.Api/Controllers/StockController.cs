@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
+using ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStockOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockGeneralOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantities;
-using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetCriticalStockOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview;
@@ -58,12 +59,12 @@ namespace ArarasHealthHub.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet("low-stock")]
+        [HttpGet("critical")]
         [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<List<StockDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetLowStockAlerts([FromQuery] GetLowStockAlertsQuery query)
+        public async Task<IActionResult> GetCriticalStockOverview([FromQuery] GetCriticalStockOverviewQuery query)
         {
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
@@ -169,6 +170,49 @@ namespace ArarasHealthHub.Api.Controllers
             }
 
             var fileName = $"estoque_geral_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
+        }
+
+        [HttpGet("export-critical")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> ExportCritical([FromQuery] string? searchTerm)
+        {
+            var stockDtos = await _mediator.Send(new ExportCriticalStockOverviewQuery { SearchTerm = searchTerm });
+
+            var sb = new StringBuilder();
+            var culture = CultureInfo.InvariantCulture;
+
+            sb.AppendLine("ID_PRODUTO,PRODUTO,CATEGORIA_PRINCIPAL,SUBCATEGORIA,APRESENTACAO," +
+                          "QTD_ATUAL,QTD_RESERVADA,QTD_DISPONIVEL,QTD_MINIMA,CUSTO_MEDIO_UNITARIO," +
+                          "STATUS_CRITICO,DATA_CRIACAO,DATA_ATUALIZACAO");
+
+            foreach (var stock in stockDtos)
+            {
+                sb.Append(
+                    $"{stock.ProductId}," +
+                    $"{stock.ProductName.Replace(",", "")}," +
+                    $"{stock.MainCategory}," +
+                    $"{stock.SubCategory}," +
+                    $"{stock.PresentationForm}," +
+                    $"{stock.CurrentQuantity.ToString("F3", culture)}," +
+                    $"{stock.ReservedQuantity.ToString("F3", culture)}," +
+                    $"{stock.AvailableQuantity.ToString("F3", culture)}," +
+                    $"{stock.MinQuantity.ToString("F3", culture)}," +
+                    $"{stock.AverageCost.ToString("F4", culture)}," +
+                    $"{stock.CriticalStatus}," +
+                    $"{stock.CreatedOn:dd/MM/yyyy HH:mm:ss}," +
+                    $"{stock.UpdatedOn?.ToString("dd/MM/yyyy HH:mm:ss")}" +
+                    "\r\n"
+                );
+            }
+
+            var fileName = $"estoque_critico_{DateTime.Now:yyyyMMddHHmmss}.csv";
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());
 
