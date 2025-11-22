@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
+using ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockGeneralOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantities;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetLowStockAlerts;
@@ -127,6 +130,49 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("export")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Export([FromQuery] string? searchTerm)
+        {
+            var stockDtos = await _mediator.Send(new ExportStockGeneralOverviewQuery { SearchTerm = searchTerm });
+
+            var sb = new StringBuilder();
+            var culture = CultureInfo.InvariantCulture;
+
+            sb.AppendLine("ID_PRODUTO,PRODUTO,CATEGORIA_PRINCIPAL,SUBCATEGORIA,APRESENTACAO," +
+                          "QTD_ATUAL,QTD_RESERVADA,QTD_DISPONIVEL,QTD_MINIMA,CUSTO_MEDIO_UNITARIO," +
+                          "STATUS_CRITICO,DATA_CRIACAO,DATA_ATUALIZACAO");
+
+            foreach (var stock in stockDtos)
+            {
+                sb.Append(
+                    $"{stock.ProductId}," +
+                    $"{stock.ProductName.Replace(",", "")}," +
+                    $"{stock.MainCategory}," +
+                    $"{stock.SubCategory}," +
+                    $"{stock.PresentationForm}," +
+                    $"{stock.CurrentQuantity.ToString("F3", culture)}," +
+                    $"{stock.ReservedQuantity.ToString("F3", culture)}," +
+                    $"{stock.AvailableQuantity.ToString("F3", culture)}," +
+                    $"{stock.MinQuantity.ToString("F3", culture)}," +
+                    $"{stock.AverageCost.ToString("F4", culture)}," +
+                    $"{stock.CriticalStatus}," +
+                    $"{stock.CreatedOn:dd/MM/yyyy HH:mm:ss}," +
+                    $"{stock.UpdatedOn?.ToString("dd/MM/yyyy HH:mm:ss")}" +
+                    "\r\n"
+                );
+            }
+
+            var fileName = $"estoque_geral_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
         }
     }
 }
