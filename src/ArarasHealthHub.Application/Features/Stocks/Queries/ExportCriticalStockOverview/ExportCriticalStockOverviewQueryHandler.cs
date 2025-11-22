@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStockOverview
 {
-    public class ExportCriticalStockOverviewQueryHandler : IRequestHandler<ExportCriticalStockOverviewQuery, IEnumerable<StockGeneralExportDto>>
+    public class ExportCriticalStockOverviewQueryHandler : IRequestHandler<ExportCriticalStockOverviewQuery, IEnumerable<StockExportDto>>
     {
         private readonly IStockRepository _stockRepository;
 
@@ -18,7 +18,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStoc
             _stockRepository = stockRepository;
         }
 
-        public async Task<IEnumerable<StockGeneralExportDto>> Handle(ExportCriticalStockOverviewQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<StockExportDto>> Handle(ExportCriticalStockOverviewQuery request, CancellationToken cancellationToken)
         {
             var stockQuery = _stockRepository.GetLowStockQueryable()
                 .AsNoTracking()
@@ -44,7 +44,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStoc
 
             var exportList = await stockQuery
                 .OrderBy(s => s.Product.Name)
-                .Select(s => new StockGeneralExportDto
+                .Select(s => new StockExportDto
                 {
                     ProductId = s.ProductId,
                     ProductName = s.Product.Name,

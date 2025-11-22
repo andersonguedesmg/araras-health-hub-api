@@ -7,7 +7,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStockOverview
 {
-    public class ExportCriticalStockOverviewQuery : IRequest<IEnumerable<StockGeneralExportDto>>
+    public class ExportCriticalStockOverviewQuery : IRequest<IEnumerable<StockExportDto>>
     {
         public string? SearchTerm { get; set; }
     }

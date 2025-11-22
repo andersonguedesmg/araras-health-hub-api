@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
 {
-    public class GetStockGeneralOverviewQueryHandler : IRequestHandler<GetStockGeneralOverviewQuery, PagedResponse<StockGeneralOverviewDto>>
+    public class GetStockGeneralOverviewQueryHandler : IRequestHandler<GetStockGeneralOverviewQuery, PagedResponse<StockOverviewDto>>
     {
         private readonly IStockRepository _stockRepository;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<StockGeneralOverviewDto>> Handle(GetStockGeneralOverviewQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponse<StockOverviewDto>> Handle(GetStockGeneralOverviewQuery request, CancellationToken cancellationToken)
         {
             var stockQuery = _stockRepository.GetQueryable()
                             .AsNoTracking()
@@ -75,7 +75,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
             var pagedStocks = await orderedStock
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(s => new StockGeneralOverviewDto
+                .Select(s => new StockOverviewDto
                 {
                     Id = s.Id,
                     ProductId = s.ProductId,
@@ -89,7 +89,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
                 })
                 .ToListAsync(cancellationToken);
 
-            return new PagedResponse<StockGeneralOverviewDto>(
+            return new PagedResponse<StockOverviewDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

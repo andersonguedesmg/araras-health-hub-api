@@ -34,13 +34,13 @@ namespace ArarasHealthHub.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("getAll")]
+        [HttpGet("general")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<StockGeneralOverviewDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponse<StockOverviewDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetAll([FromQuery] GetStockGeneralOverviewQuery query)
+        public async Task<IActionResult> GetGeneralStockOverview([FromQuery] GetStockGeneralOverviewQuery query)
         {
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);

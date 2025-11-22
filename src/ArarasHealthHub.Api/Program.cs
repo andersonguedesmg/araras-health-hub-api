@@ -9,6 +9,7 @@ using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetCriticalStockOverview;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
@@ -302,6 +303,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(GetAllProductsQuery).Assembly)
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllFacilitiesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllReceivingsQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllAccountsQuery).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(GetStockGeneralOverviewQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetCriticalStockOverviewQuery).Assembly);
 
 

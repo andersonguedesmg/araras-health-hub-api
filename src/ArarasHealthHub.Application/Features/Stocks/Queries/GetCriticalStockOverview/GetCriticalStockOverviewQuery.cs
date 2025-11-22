@@ -8,7 +8,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetCriticalStockOverview
 {
-    public class GetCriticalStockOverviewQuery : PagedRequest, IRequest<PagedResponse<StockGeneralOverviewDto>>
+    public class GetCriticalStockOverviewQuery : PagedRequest, IRequest<PagedResponse<StockOverviewDto>>
     {
         public string? SearchTerm { get; set; }
     }
