@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
+using ArarasHealthHub.Application.Features.Stocks.Queries.ExportActiveStockLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStockOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportNearExpiryLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockGeneralOverview;
+using ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantities;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetCriticalStockOverview;
@@ -146,6 +148,17 @@ namespace ArarasHealthHub.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
+        [HttpGet("active-lots")]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(ApiResponse<List<StockLotNearExpiryDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetActiveLots([FromQuery] GetActiveStockLotsQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
         [HttpGet("export-general")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
@@ -262,6 +275,38 @@ namespace ArarasHealthHub.Api.Controllers
             }
 
             var fileName = $"lotes_proximos_vencimento_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
+        }
+
+        [HttpGet("export-active-lots")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ExportActiveStockLots([FromQuery] ExportActiveStockLotsQuery query)
+        {
+            var lotDtos = await _mediator.Send(query);
+
+            var sb = new StringBuilder();
+            var culture = CultureInfo.InvariantCulture;
+
+            sb.AppendLine("ID_LOTE,LOTE,PRODUTO,MARCA,QTD_DISPONIVEL,DATA_VENCIMENTO");
+
+            foreach (var lot in lotDtos)
+            {
+                sb.Append(
+                    $"{lot.StockLotId}," +
+                    $"{lot.Batch}," +
+                    $"{lot.Product.Name.Replace(",", "")}," +
+                    $"{lot.Brand.Replace(",", "")}," +
+                    $"{lot.AvailableQuantity.ToString("F3", culture)}," +
+                    $"{lot.ExpiryDate:dd/MM/yyyy}" +
+                    "\r\n"
+                );
+            }
+
+            var fileName = $"lotes_ativos_{DateTime.Now:yyyyMMddHHmmss}.csv";
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());
 
