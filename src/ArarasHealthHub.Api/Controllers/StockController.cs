@@ -10,6 +10,7 @@ using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportActiveStockLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStockOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportNearExpiryLots;
+using ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockAdjustments;
 using ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockGeneralOverview;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments;
@@ -307,6 +308,80 @@ namespace ArarasHealthHub.Api.Controllers
             }
 
             var fileName = $"lotes_ativos_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
+        }
+
+        [HttpGet("export-adjustment")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ExportAdjustments([FromQuery] ExportStockAdjustmentsQuery query)
+        {
+            var adjustmentDtos = await _mediator.Send(query);
+
+            var sb = new StringBuilder();
+            var culture = CultureInfo.InvariantCulture;
+
+            sb.AppendLine("ID_AJUSTE,DATA_AJUSTE,TIPO,RAZÃO,RESPONSÁVEL,OBSERVAÇÃO,ITEM_ID,PRODUTO,LOTE,MARCA,VALIDADE,QUANTIDADE,VALOR_UNITARIO,VALOR_TOTAL");
+
+            foreach (var adjustment in adjustmentDtos)
+            {
+                if (!adjustment.AdjustmentItems.Any())
+                {
+                    sb.Append(
+                        $"{adjustment.Id}," +
+                        $"{adjustment.AdjustmentDate:dd/MM/yyyy HH:mm:ss}," +
+                        $"{adjustment.Type}," +
+                        $"{adjustment.Reason.Replace(",", "")}," +
+                        $"{adjustment.ResponsibleName.Replace(",", "")}," +
+                        $"{adjustment.Observation?.Replace(",", "") ?? ""}," +
+                        ",,,,,," +
+                        "\r\n"
+                    );
+                    continue;
+                }
+
+                bool isFirstItem = true;
+                foreach (var item in adjustment.AdjustmentItems)
+                {
+                    if (isFirstItem)
+                    {
+                        sb.Append(
+                            $"{adjustment.Id}," +
+                            $"{adjustment.AdjustmentDate:dd/MM/yyyy HH:mm:ss}," +
+                            $"{adjustment.Type}," +
+                            $"{adjustment.Reason.Replace(",", "")}," +
+                            $"{adjustment.ResponsibleName.Replace(",", "")}," +
+                            $"{adjustment.Observation?.Replace(",", "") ?? ""},"
+                        );
+                        isFirstItem = false;
+                    }
+                    else
+                    {
+                        sb.Append(
+                            $"{adjustment.Id}," +
+                            ",,,,," +
+                            ","
+                        );
+                    }
+
+                    sb.Append(
+                        $"{item.Id}," +
+                        $"{item.Product.Name.Replace(",", "")}," +
+                        $"{item.Batch?.Replace(",", "") ?? ""}," +
+                        $"{item.Brand?.Replace(",", "") ?? ""}," +
+                        $"{item.ExpiryDate?.ToString("dd/MM/yyyy") ?? ""}," +
+                        $"{item.Quantity.ToString("F3", culture)}," +
+                        $"{item.UnitValue?.ToString("F4", culture) ?? ""}," +
+                        $"{item.TotalValue?.ToString("F4", culture) ?? ""}" +
+                        "\r\n"
+                    );
+                }
+            }
+
+            var fileName = $"ajustes_manuais_{DateTime.Now:yyyyMMddHHmmss}.csv";
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());
 

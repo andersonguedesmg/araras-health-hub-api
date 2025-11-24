@@ -665,6 +665,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
+                    MovementDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data em que a movimentação de estoque ocorreu."),
                     SourceDocumentId = table.Column<int>(type: "int", nullable: false, comment: "ID do documento de origem (ex: OrderId, ReceivingId)."),
                     SourceDocumentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, comment: "Tipo do documento de origem (ex: 'Order', 'Receiving')."),
                     ResponsibleId = table.Column<int>(type: "int", nullable: false),

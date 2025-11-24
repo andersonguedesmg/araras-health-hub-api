@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.StockMovements.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
@@ -32,11 +31,13 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
             var stockMovement = new StockMovement
             {
                 Quantity = request.Quantity,
-                Type = MovementTypeEnum.Entry,
+                Type = request.MovementType,
                 StockLotId = request.StockLotId,
                 SourceDocumentId = request.SourceDocumentId,
                 SourceDocumentType = request.SourceDocumentType,
-                ResponsibleId = request.ResponsibleId
+                ResponsibleId = request.ResponsibleId,
+                MovementCost = request.MovementCost,
+                MovementDate = request.MovementDate,
             };
 
             await _stockMovementRepository.AddWithoutSavingAsync(stockMovement);

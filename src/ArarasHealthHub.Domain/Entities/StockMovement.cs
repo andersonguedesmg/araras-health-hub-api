@@ -20,6 +20,10 @@ namespace ArarasHealthHub.Domain.Entities
         public MovementTypeEnum Type { get; set; }
 
         [Required]
+        [Comment("Data em que a movimentação de estoque ocorreu.")]
+        public DateTime MovementDate { get; set; }
+
+        [Required]
         [Comment("ID do documento de origem (ex: OrderId, ReceivingId).")]
         public int SourceDocumentId { get; set; }
 

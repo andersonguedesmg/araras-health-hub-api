@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251117143328_a2h_1.1.0")]
+    [Migration("20251124193130_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -756,6 +756,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<decimal>("MovementCost")
                         .HasColumnType("decimal(18,2)")
                         .HasComment("O custo financeiro da quantidade movimentada.");
+
+                    b.Property<DateTime>("MovementDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data em que a movimentação de estoque ocorreu.");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)

@@ -754,6 +754,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasComment("O custo financeiro da quantidade movimentada.");
 
+                    b.Property<DateTime>("MovementDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data em que a movimentação de estoque ocorreu.");
+
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");

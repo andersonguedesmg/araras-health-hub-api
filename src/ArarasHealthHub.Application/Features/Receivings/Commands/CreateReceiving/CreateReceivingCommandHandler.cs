@@ -132,10 +132,11 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                     Quantity: item.Quantity,
                     StockLotId: stockLot.Id,
                     SourceDocumentId: receiving.Id,
-                    SourceDocumentType: "Receiving",
+                    SourceDocumentType: nameof(Receiving),
                     ResponsibleId: receiving.ResponsibleId,
                     MovementType: MovementTypeEnum.Entry,
-                    MovementCost: item.UnitValue * item.Quantity
+                    MovementCost: item.UnitValue * item.Quantity,
+                    MovementDate: receiving.ReceivingDate
                 );
                 await _mediator.Send(createMovementCommand, cancellationToken);
             }

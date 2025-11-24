@@ -47,6 +47,8 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
             }
             else
             {
+                stockLot.UnitValue = request.UnitValue;
+                stockLot.ExpiryDate = request.ExpiryDate;
                 stockLot.AddQuantity(request.Quantity);
                 _dbContext.StockLots.Update(stockLot);
             }

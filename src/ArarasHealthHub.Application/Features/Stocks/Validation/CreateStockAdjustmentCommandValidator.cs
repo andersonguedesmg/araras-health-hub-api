@@ -46,16 +46,13 @@ namespace ArarasHealthHub.Application.Features.Stocks.Validation
                 .MustAsync(EmployeeExists).WithMessage("Responsável não encontrado.");
 
             RuleFor(c => c.AccountId)
-                .NotEmpty().WithMessage(ApiMessages.NotFound("ID da conta de usuário"));
-
-            RuleFor(c => c.AccountId)
                 .NotEmpty().WithMessage("O ID da conta é obrigatório.")
                 .MustAsync(AccountExists).WithMessage("Conta não encontrada.");
 
             RuleFor(c => c.AdjustmentItems)
                 .NotEmpty().WithMessage("É necessário informar pelo menos um item para o ajuste de estoque.")
-                .Must(items => items.Any()).WithMessage("É necessário informar pelo menos um item para o ajuste de estoque.")
-                .ForEach(item => item.SetValidator(new AdjustmentItemCommandValidator(_productRepository)));
+                .Must(items => items != null && items.Any()).WithMessage("É necessário informar pelo menos um item para o ajuste de estoque.")
+                .ForEach(item => item.SetValidator(new CreateStockAdjustmentItemCommandValidator(_productRepository)));
         }
 
         private async Task<bool> EmployeeExists(int employeeId, CancellationToken cancellationToken)
@@ -70,11 +67,11 @@ namespace ArarasHealthHub.Application.Features.Stocks.Validation
         }
     }
 
-    public class AdjustmentItemCommandValidator : AbstractValidator<AdjustmentItemCommand>
+    public class CreateStockAdjustmentItemCommandValidator : AbstractValidator<CreateStockAdjustmentItemCommand>
     {
         private readonly IProductRepository _productRepository;
 
-        public AdjustmentItemCommandValidator(IProductRepository productRepository)
+        public CreateStockAdjustmentItemCommandValidator(IProductRepository productRepository)
         {
             _productRepository = productRepository;
 
@@ -84,18 +81,21 @@ namespace ArarasHealthHub.Application.Features.Stocks.Validation
 
             RuleFor(i => i.Quantity)
                 .NotEqual(0).WithMessage("A quantidade ajustada do item deve ser maior que zero.")
-                .GreaterThanOrEqualTo(0).When(i => i.Quantity < 0, ApplyConditionTo.AllValidators)
-                .WithMessage("A quantidade do ajuste deve ser positiva. O tipo de ajuste (entrada/saída) deve definir a direção da mudança.");
+                .GreaterThan(0).WithMessage("A quantidade deve ser um valor positivo. O tipo de ajuste define a direção (Entrada/Saída).");
 
             RuleFor(i => i.UnitValue)
-                .GreaterThanOrEqualTo(0).WithMessage("O valor unitário do item não pode ser negativo.");
+                .NotNull().When(i => i.Quantity > 0, ApplyConditionTo.CurrentValidator).WithMessage("O valor unitário é obrigatório para ajustes de entrada (positivos).")
+                .GreaterThanOrEqualTo(0).When(i => i.UnitValue.HasValue).WithMessage("O valor unitário do item não pode ser negativo.");
+
+            RuleFor(i => i.ExpiryDate)
+                .NotNull().When(i => i.Quantity > 0, ApplyConditionTo.CurrentValidator).WithMessage("A data de validade é obrigatória para ajustes de entrada (positivos).");
 
             RuleFor(i => i.Batch)
                 .NotEmpty().WithMessage("O lote do item é obrigatório.")
                 .MaximumLength(50).WithMessage("O lote do item não pode exceder 50 caracteres.");
 
             RuleFor(i => i.Brand)
-                .NotEmpty().WithMessage("A marca do item é obrigatório.")
+                .NotEmpty().WithMessage("A marca do item é obrigatória.")
                 .MaximumLength(100).WithMessage("A marca do item não pode exceder 100 caracteres.");
         }
 

@@ -10,22 +10,21 @@ using MediatR;
 namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment
 {
     public record CreateStockAdjustmentCommand(
-            StockAdjustmentType Type,
-            string Reason,
-            string? Observation,
-            DateTime AdjustmentDate,
-            int ResponsibleId,
-            int AccountId,
-            ICollection<AdjustmentItemCommand> AdjustmentItems
-        ) : IRequest<ApiResponse<int>>, ITransactionalRequest;
+        StockAdjustmentType Type,
+        string Reason,
+        string? Observation,
+        DateTime AdjustmentDate,
+        int ResponsibleId,
+        int AccountId,
+        List<CreateStockAdjustmentItemCommand> AdjustmentItems
+    ) : IRequest<ApiResponse<int>>, ITransactionalRequest;
 
-    public record AdjustmentItemCommand(
+    public record CreateStockAdjustmentItemCommand(
         int ProductId,
-        int? StockLotId,
         decimal Quantity,
-        decimal? UnitValue,
-        string? Batch,
-        string? Brand,
-        DateTime? ExpiryDate
+        string Batch,
+        string Brand,
+        DateTime? ExpiryDate,
+        decimal? UnitValue
     );
 }

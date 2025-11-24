@@ -8,6 +8,7 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost
 {
@@ -36,7 +37,8 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
 
             var currentStockQuantity = request.UpdatedStockQuantity;
 
-            var stockCost = await _stockCostRepository.GetByStockIdAsync(request.StockId);
+            var stockCost = await _dbContext.StockCosts
+                .FirstOrDefaultAsync(sc => sc.StockId == request.StockId, cancellationToken);
 
             if (stockCost == null)
             {
@@ -49,8 +51,12 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
 
                 await _dbContext.StockCosts.AddAsync(stockCost, cancellationToken);
 
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
                 return new ApiResponse<StockCost>(StatusCodes.Status200OK, ApiMessages.CostOfInventoryInitializedAndSavedSuccessfully, stockCost);
             }
+
+            stockCost.Stock = null!;
 
             var oldQuantity = currentStockQuantity - request.EntryQuantity;
 
@@ -70,7 +76,9 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
                 stockCost.CurrentTotalCost = newTotalCost;
             }
 
-            _stockCostRepository.UpdateWithoutSaving(stockCost);
+            _dbContext.StockCosts.Update(stockCost);
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ApiResponse<StockCost>(StatusCodes.Status200OK, ApiMessages.WeightedAverageCostSuccessfullyUpdated, stockCost);
         }

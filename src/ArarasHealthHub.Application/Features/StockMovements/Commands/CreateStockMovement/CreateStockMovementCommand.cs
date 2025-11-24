@@ -17,6 +17,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
         string SourceDocumentType,
         int ResponsibleId,
         MovementTypeEnum MovementType,
-        decimal MovementCost
+        decimal MovementCost,
+        DateTime MovementDate
     ) : IRequest<ApiResponse<StockMovementDto>>;
 }

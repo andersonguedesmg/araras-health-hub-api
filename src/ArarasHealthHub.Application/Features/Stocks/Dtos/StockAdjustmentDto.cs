@@ -13,6 +13,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Dtos
         public string? Observation { get; set; }
         public DateTime AdjustmentDate { get; set; }
         public string ResponsibleName { get; set; } = string.Empty;
+        public string AccountUserName { get; set; } = string.Empty;
         public ICollection<StockAdjustmentItemDto> AdjustmentItems { get; set; } = new List<StockAdjustmentItemDto>();
     }
 }
