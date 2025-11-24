@@ -79,12 +79,14 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                 };
 
                 newAdjustmentItems.Add(adjustmentItem);
+
                 totalAdjustmentValue += adjustmentItem.TotalValue ?? 0M;
             }
 
             adjustment.AdjustmentItems = newAdjustmentItems;
 
             await _dbContext.StockAdjustments.AddAsync(adjustment, cancellationToken);
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             foreach (var item in adjustment.AdjustmentItems)
@@ -164,14 +166,21 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
 
                     if (stockCost == null)
                     {
-                        throw new ApplicationException($"Custo de estoque não encontrado para o Produto {item.ProductId}. Impossível calcular custo de saída.");
+                        stockCost = new StockCost
+                        {
+                            StockId = updatedStock.Id,
+                            AverageUnitCost = 0M,
+                            CurrentTotalCost = 0M
+                        };
+                        _dbContext.StockCosts.Add(stockCost);
+
+                        await _dbContext.SaveChangesAsync(cancellationToken);
                     }
 
                     decimal averageUnitCost = stockCost.AverageUnitCost;
                     finalMovementCost = quantityChange * averageUnitCost;
 
                     stockLot.RemoveQuantity(quantityChange);
-                    stockLot.Stock = null!;
                     _dbContext.StockLots.Update(stockLot);
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -186,7 +195,6 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                         stockCost.AverageUnitCost = 0M;
                     }
 
-                    stockCost.Stock = null!;
                     _dbContext.StockCosts.Update(stockCost);
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
