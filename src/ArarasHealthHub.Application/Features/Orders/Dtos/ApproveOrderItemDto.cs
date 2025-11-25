@@ -7,6 +7,6 @@ namespace ArarasHealthHub.Application.Features.Orders.Dtos
 {
     public record ApproveOrderItemDto(
         int OrderItemId,
-        int ApprovedQuantity
+        decimal ApprovedQuantity
     );
 }

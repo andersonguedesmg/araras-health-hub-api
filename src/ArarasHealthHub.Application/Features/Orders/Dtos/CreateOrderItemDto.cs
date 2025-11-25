@@ -8,6 +8,6 @@ namespace ArarasHealthHub.Application.Features.Orders.Dtos
     public class CreateOrderItemDto
     {
         public int ProductId { get; set; }
-        public int RequestedQuantity { get; set; }
+        public decimal RequestedQuantity { get; set; }
     }
 }

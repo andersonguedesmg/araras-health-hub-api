@@ -93,7 +93,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
                 CreatedAt = DateTime.UtcNow,
                 CreatedByEmployeeId = request.CreatedByEmployeeId,
                 CreatedByAccountId = request.CreatedByAccountId,
-                OrderStatusId = (int)OrderStatusEnum.Pending,
+                OrderStatusId = (int)OrderStatusEnum.PendingApproval,
                 OrderFacilityId = facilityId,
                 OrderItems = orderItems
             };

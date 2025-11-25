@@ -42,7 +42,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
             }
-            if (order.OrderStatusId != (int)OrderStatusEnum.Pending)
+            if (order.OrderStatusId != (int)OrderStatusEnum.PendingApproval)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeApproved, false);
             }
@@ -53,7 +53,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Funcionário de aprovação"), false);
             }
 
-            var itemsToReserve = new List<(int ProductId, int Quantity)>();
+            var itemsToReserve = new List<(int ProductId, decimal Quantity)>();
 
             foreach (var item in request.OrderItems)
             {
@@ -100,7 +100,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
                 }
             }
 
-            order.OrderStatusId = (int)OrderStatusEnum.Approved;
+            order.OrderStatusId = (int)OrderStatusEnum.ReadyForPicking;
             order.ApprovedByEmployeeId = request.ApprovedByEmployeeId;
             order.ApprovedByAccountId = request.ApprovedByAccountId;
             order.ApprovedAt = DateTime.UtcNow;

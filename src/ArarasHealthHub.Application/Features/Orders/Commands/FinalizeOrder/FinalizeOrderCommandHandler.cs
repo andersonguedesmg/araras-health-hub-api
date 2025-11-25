@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
-using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
@@ -41,7 +40,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
             }
 
-            if (order.OrderStatusId != (int)OrderStatusEnum.Separated)
+            if (order.OrderStatusId != (int)OrderStatusEnum.ReadyForFinalization)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeCompleted, false);
             }
@@ -65,7 +64,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
                 return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.OperationRestrictedToFacility, false);
             }
 
-            order.OrderStatusId = (int)OrderStatusEnum.Finalized;
+            order.OrderStatusId = (int)OrderStatusEnum.Completed;
             order.FinalizedByEmployeeId = request.FinalizedByEmployeeId;
             order.FinalizedByAccountId = request.FinalizedByAccountId;
             order.FinalizedAt = DateTime.UtcNow;

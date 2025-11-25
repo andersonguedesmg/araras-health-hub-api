@@ -12,13 +12,17 @@ namespace ArarasHealthHub.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        public int RequestedQuantity { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal RequestedQuantity { get; set; }
 
-        public int ApprovedQuantity { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ApprovedQuantity { get; set; }
 
-        public int ReservedQuantity { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ReservedQuantity { get; set; }
 
-        public int ActualQuantity { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ActualQuantity { get; set; }
 
         [Required]
         [ForeignKey("Product")]

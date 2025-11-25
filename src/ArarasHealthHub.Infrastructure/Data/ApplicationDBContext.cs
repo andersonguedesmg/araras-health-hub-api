@@ -239,6 +239,21 @@ namespace ArarasHealthHub.Infrastructure.Data
                 entity.Property(e => e.Quantity)
                     .HasPrecision(18, 6);
             });
+
+            builder.Entity<OrderItem>(entity =>
+            {
+                entity.Property(e => e.RequestedQuantity)
+                    .HasPrecision(18, 2);
+
+                entity.Property(e => e.ApprovedQuantity)
+                    .HasPrecision(18, 2);
+
+                entity.Property(e => e.ReservedQuantity)
+                    .HasPrecision(18, 2);
+
+                entity.Property(e => e.ActualQuantity)
+                    .HasPrecision(18, 2);
+            });
         }
     }
 }

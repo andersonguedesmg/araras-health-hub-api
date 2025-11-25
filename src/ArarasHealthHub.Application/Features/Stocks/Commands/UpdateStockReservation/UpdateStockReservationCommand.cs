@@ -9,6 +9,6 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReserv
 {
     public record UpdateStockReservationCommand(
         int ProductId,
-        int QuantityToReserve
+        decimal QuantityToReserve
     ) : IRequest<ApiResponse<bool>>;
 }

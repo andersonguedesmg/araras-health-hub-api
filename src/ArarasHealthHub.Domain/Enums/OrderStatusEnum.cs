@@ -1,10 +1,25 @@
+using System.ComponentModel;
+
 namespace ArarasHealthHub.Domain.Enums
 {
     public enum OrderStatusEnum
     {
-        Pending = 1,
-        Approved = 2,
-        Separated = 3,
-        Finalized = 4
+        [Description("Pendente de Aprovação")]
+        PendingApproval = 1,
+
+        [Description("Pronto para Separação")]
+        ReadyForPicking = 2,
+
+        [Description("Em Separação")]
+        PickingInProgress = 3,
+
+        [Description("Pronto para Envio/Finalização")]
+        ReadyForFinalization = 4,
+
+        [Description("Finalizado")]
+        Completed = 5,
+
+        [Description("Cancelado")]
+        Cancelled = 6
     }
 }
