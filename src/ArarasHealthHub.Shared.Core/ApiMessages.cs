@@ -20,6 +20,7 @@ namespace ArarasHealthHub.Shared.Core
         public static string InsufficientStock(string productName) => $"Estoque insuficiente para o produto '{productName}'.";
         public static string ItemNotFoundInOrder(int orderItemId) => $"O item de pedido com ID {orderItemId} não foi encontrado no pedido.";
         public static string OrderSuccessfully(string status) => $"Pedido {status} com sucesso.";
+        public static string CannotCancelOrderInStatus(string status) => $"Não é possível cancelar o pedido com status {status}.";
 
         public const string OperationSuccessful = "Operação concluída com sucesso.";
         public const string InternalServerError = "Ocorreu um erro interno no servidor.";
@@ -59,6 +60,9 @@ namespace ArarasHealthHub.Shared.Core
         public const string OrderCannotBeApproved = "Não é possível aprovar o pedido. A aprovação só pode ser feita em pedidos com status 'Pendente'.";
         public const string OrderCannotBeSeparated = "Não é possível separar o pedido. O status atual é 'Pendente', e a separação só pode ser feita em pedidos com status 'Aprovado'.";
         public const string OrderCannotBeCompleted = "Não é possível finalizar o pedido. Para finalizar, o pedido precisa estar com o status 'Separado'.";
+        public const string OrderCancelledSuccessfully = "Pedido cancelado com sucesso.";
+        public const string StockReleaseFailed = "A liberação de estoque falhou.";
+        public const string OrderAlreadyCancelled = "Pedido já cancelado.";
         public const string MasterRoleExclusiveToManagement = "A função MASTER só pode ser atribuída no escopo de GERENCIAMENTO.";
         public const string OperationalScopeForbidsMasterRole = "A função MASTER não é permitida no escopo OPERACIONAL.";
         public const string AccessDenied = "Acesso negado.";

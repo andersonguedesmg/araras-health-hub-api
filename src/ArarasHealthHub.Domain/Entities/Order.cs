@@ -75,5 +75,21 @@ namespace ArarasHealthHub.Domain.Entities
         public int? FinalizedByAccountId { get; set; }
 
         public ApplicationUser? FinalizedByAccount { get; set; }
+
+
+        public DateTime? CanceledAt { get; set; }
+
+        [ForeignKey("CanceledByEmployee")]
+        public int? CanceledByEmployeeId { get; set; }
+
+        public Employee? CanceledByEmployee { get; set; }
+
+        [ForeignKey("CanceledByAccount")]
+        public int? CanceledByAccountId { get; set; }
+
+        public ApplicationUser? CanceledByAccount { get; set; }
+
+        [MaxLength(500)]
+        public string? CancellationReason { get; set; }
     }
 }
