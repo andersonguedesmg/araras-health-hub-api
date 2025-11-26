@@ -9,6 +9,8 @@ namespace ArarasHealthHub.Application.Features.Orders.Dtos
         int ProductId,
         decimal Quantity,
         string Batch,
+        string Brand,
+        DateTime ExpiryDate,
         decimal UnitValue
     );
 }

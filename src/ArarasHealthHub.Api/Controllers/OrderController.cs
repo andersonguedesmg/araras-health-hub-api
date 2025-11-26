@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder;
+using ArarasHealthHub.Application.Features.Orders.Commands.CreateDispenseReturn;
 using ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder;
@@ -109,6 +110,20 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Cancel([FromBody] CancelOrderCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut("return")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Return([FromBody] CreateDispenseReturnCommand command)
         {
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);

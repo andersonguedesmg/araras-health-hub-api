@@ -5,6 +5,7 @@ namespace ArarasHealthHub.Domain.Enums
         None = 0,
         Receipt = 1,
         Dispatch = 2,
-        Adjustment = 3
+        Adjustment = 3,
+        Return = 4
     }
 }

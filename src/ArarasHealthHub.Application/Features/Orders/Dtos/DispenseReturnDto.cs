@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ArarasHealthHub.Application.Features.Orders.Dtos
 {
-    public class CreateDispenseReturnDto
+    public class DispenseReturnDto
     {
         public int OriginalOrderId { get; set; }
         public int ReturnedByEmployeeId { get; set; }

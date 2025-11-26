@@ -21,6 +21,7 @@ namespace ArarasHealthHub.Shared.Core
         public static string ItemNotFoundInOrder(int orderItemId) => $"O item de pedido com ID {orderItemId} não foi encontrado no pedido.";
         public static string OrderSuccessfully(string status) => $"Pedido {status} com sucesso.";
         public static string CannotCancelOrderInStatus(string status) => $"Não é possível cancelar o pedido com status {status}.";
+        public static string CannotReturnFromOrderInStatus(string status) => $"Não é possível retornar do pedido com status {status}.";
 
         public const string OperationSuccessful = "Operação concluída com sucesso.";
         public const string InternalServerError = "Ocorreu um erro interno no servidor.";
@@ -63,6 +64,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string OrderCancelledSuccessfully = "Pedido cancelado com sucesso.";
         public const string StockReleaseFailed = "A liberação de estoque falhou.";
         public const string OrderAlreadyCancelled = "Pedido já cancelado.";
+        public const string DispenseReturnRecordedSuccessfully = "Estorno dos itens do pedido realizado com sucesso.";
         public const string MasterRoleExclusiveToManagement = "A função MASTER só pode ser atribuída no escopo de GERENCIAMENTO.";
         public const string OperationalScopeForbidsMasterRole = "A função MASTER não é permitida no escopo OPERACIONAL.";
         public const string AccessDenied = "Acesso negado.";

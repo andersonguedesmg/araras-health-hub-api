@@ -31,6 +31,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(o => o.FinalizedByEmployee)
                 .Include(o => o.FinalizedByAccount)
                     .ThenInclude(a => a!.Facility)
+                .Include(o => o.CanceledByEmployee)
+                .Include(o => o.CanceledByAccount)
+                    .ThenInclude(a => a!.Facility)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
@@ -63,6 +66,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
                     .ThenInclude(a => a!.Facility)
                 .Include(o => o.FinalizedByEmployee)
                 .Include(o => o.FinalizedByAccount)
+                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.CanceledByEmployee)
+                .Include(o => o.CanceledByAccount)
                     .ThenInclude(a => a!.Facility)
                 .AsQueryable();
 
