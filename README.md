@@ -2,9 +2,11 @@
 
 ### Descrição
 
-O **Araras Health Hub API** é a base para uma plataforma de gestão de estoque e distribuição de medicamentos para unidades de saúde. A API oferece um conjunto de endpoints para gerenciar unidades de saúde, contas de usuário e o fluxo de estoque de medicamentos.
+O **Araras Health Hub API** é o core de um sistema robusto e crucial para a gestão da cadeia de suprimentos e distribuição de medicamentos e insumos para as unidades de saúde municipais. A plataforma foi projetada para otimizar e controlar rigorosamente o estoque, o rastreamento de lotes e validades, o controle de custos e todo o fluxo de pedidos, desde a criação até a dispensação final e estorno.
 
-O projeto foi construído seguindo uma arquitetura limpa (Clean Architecture), com a separação clara de responsabilidades entre as camadas de domínio, aplicação, infraestrutura e apresentação. Ele utiliza o padrão CQRS (Command Query Responsibility Segregation) com a biblioteca MediatR, além de seguir os princípios de SOLID, para garantir um código escalável, manutenível e fácil de testar.
+### Arquitetura
+
+O projeto adota a Arquitetura Limpa (Clean Architecture), garantindo a independência das regras de negócio em relação à infraestrutura. Utiliza o padrão CQRS (Command Query Responsibility Segregation) com MediatR para separar as responsabilidades de leitura e escrita, resultando em endpoints de alta performance e um código altamente escalável, testável e aderente aos princípios SOLID.
 
 ### Tecnologias
 
@@ -58,42 +60,47 @@ Acesse a documentação da API no navegador
 http://localhost:5288
 ```
 
-### Features
+### Funcionalidades Desenvolvidas
 
-Gerenciamento de Unidades de Saúde:
-- [x]  Cadastro de Unidade
-- [x]  Edição de Unidade
-- [x]  Exclusão de Unidade (Lógica)
-- [x]  Listagem de Unidades
-- [x]  Busca de Unidade por ID
+#### Cadastro Base (Entidades Primárias)
+| Status | Funcionalidade | Descrição |
+|:------:|----------------|-------------|
+| ✅ | Gerenciamento de Contas | Cadastro completo de contas (`AspNetUsers`), incluindo perfis e escopos de acesso. |
+| ✅ | Autenticação e Autorização (JWT) | Login para autenticação por usuário/senha e geração de JSON Web Token. |
+| ✅ | Gerenciamento de Funcionários | CRUD (Cadastro, Leitura, Atualização, Deleção Lógica) dos dados pessoais dos colaboradores (`Employees`). |
+| ✅ | Gerenciamento de Unidades | CRUD de unidades (`Facilities`), gerenciando endereços e contatos. |
+| ✅ | Gerenciamento de Fornecedores | CRUD completo para cadastro e manutenção de fornecedores (`Suppliers`) de insumos e medicamentos. |
+| ✅ | Gerenciamento de Produtos | CRUD de produtos (`Products`) com informações essenciais. |
+| ❌ | Gerenciamento de Permissões | Configuração e gestão de perfis e suas respectivas permissões. |
 
-Gerenciamento de Contas:
-- [x]  Cadastro de Contas
-- [x]  Login e Geração de JWT
-- [x]  Busca de Conta por ID
-- [x]  Edição de Contas
-- [x]  Exclusão de Contas (Lógica)
-- [x]  Listagem de Contas
+#### Fluxo de Estoque, Recebimento e Custo
+| Status | Funcionalidade | Descrição |
+|:------:|----------------|-----------|
+| ✅ | Recebimento de Produtos | Registro de entradas (`Receivings`) no estoque, associando a nota fiscal, fornecedor e itens recebidos. |
+| ✅ | Controle de Estoque e Lotes | Visão consolidada do estoque (`Stocks`), gestão de quantidades mínimas e rastreamento detalhado por lote (`StockLots`), incluindo data de validade.. |
+| ✅ | Controle de Custo Médio | Cálculo e atualização do custo médio unitário (`StockCosts`) dos produtos em tempo real com base nos recebimentos. |
+| ✅ | Ajuste Manual de Estoque | Funcionalidade para ajustes de inventário (perdas, ganhos, quebras) por meio de um registro justificado (`StockAdjustments`). |
+| ✅ | Estorno de Dispensação | Processamento de devoluções de itens dispensados para o estoque, revertendo a saída e atualizando o custo (`DispenseReturns`). |
+| ❌ | Sistema de Alertas e Notificações | Geração e gerenciamento de alertas operacionais (Estoque Mínimo, Validade Próxima). |
 
-Gerenciamento de Fornecedores:
-- [x]  Cadastro de Fornecedor
-- [x]  Edição de Fornecedor
-- [x]  Exclusão de Fornecedor (Lógica)
-- [x]  Listagem de Fornecedores
-- [x]  Busca de Fornecedor por ID
+#### Fluxo de Pedido e Dispensação
+| Status | Funcionalidade | Descrição |
+|:------:|:---------------|:----------|
+| ✅ | Criação e Gestão de Pedidos | Criação de pedidos de unidades com fluxo de aprovação e rastreamento de status (`Orders` e `OrderStatuses`). |
+| ✅ | Separação e Reserva FEFO/FIFO | Reserva automática de lotes (`OrderItemLots`) com base na validade/ordem de chegada, atualização do status de estoque e rastreabilidade da separação. |
+| ✅ | Dispensação/Saída | Finalização do pedido, registrando a saída efetiva dos itens do estoque e a respectiva baixa em lote (`OrderItemLots`). |
 
-Gerenciamento de Estoque e Produtos:
-- [x]  Cadastro de Produto
-- [x]  Edição de Produto
-- [x]  Exclusão de Produto (Lógica)
-- [x]  Listagem de Produtos
-- [x]  Busca de Produto por ID
-- [x]  Recebimento de Produtos
-- [x]  Saída de Produtos
-- [ ]  Inventário de Estoque
+#### Rastreabilidade e Auditoria
+| Status | Funcionalidade | Descrição |
+|:------:|:---------------|:----------|
+| ✅ | Movimentação de Estoque | Registro detalhado de todas as entradas, saídas e ajustes de produtos (`StockMovements`), garantindo a rastreabilidade completa e o histórico de transações por lote. |
+| ✅ | Auditoria de Entidade | Implementação de campos de auditoria (CreatedOn, UpdatedOn) e deleção lógica (IsActive) em todas as entidades do sistema. |
+| ❌ | Logs de Auditoria | Gravação detalhada de todas as alterações em campos específicos (quem, o que, quando e o valor antigo/novo) em entidades críticas. |
+| ❌ | Módulo de Relatórios | Endpoints otimizados para extração de dados gerenciais e operacionais. |
 
-Gerenciamento de Pedidos:
-- [x]  Cadastro de Pedido
-- [x]  Aprovação de Pedido
-- [x]  Separação de Pedido
-- [x]  Finalização de Pedido
+#### Legenda de Status
+| Símbolo | Significado |
+|:-------:|:------------|
+| ✅ | Implementado: A funcionalidade está completa e operacional. |
+| 🚧 | Em Progresso: A funcionalidade está em desenvolvimento ativo. |
+| ❌ | Pendente: A funcionalidade ainda não foi iniciada ou está suspensa. |
