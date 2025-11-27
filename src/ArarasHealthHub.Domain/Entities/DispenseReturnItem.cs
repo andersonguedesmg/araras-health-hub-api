@@ -25,6 +25,7 @@ namespace ArarasHealthHub.Domain.Entities
         public StockLot StockLot { get; set; } = null!;
 
         [Required]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal Quantity { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]

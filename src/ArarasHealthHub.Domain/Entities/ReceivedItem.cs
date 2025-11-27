@@ -12,7 +12,8 @@ namespace ArarasHealthHub.Domain.Entities
     public class ReceivedItem : BaseEntity
     {
         [Required]
-        public int Quantity { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
+        public decimal Quantity { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]

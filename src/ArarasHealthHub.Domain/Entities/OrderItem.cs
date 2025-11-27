@@ -12,16 +12,16 @@ namespace ArarasHealthHub.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal RequestedQuantity { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal ApprovedQuantity { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal ReservedQuantity { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal ActualQuantity { get; set; }
 
         [Required]

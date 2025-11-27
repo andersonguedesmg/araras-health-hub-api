@@ -33,6 +33,7 @@ namespace ArarasHealthHub.Domain.Entities
         public decimal AvailableQuantity { get; set; }
 
         [Required]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal MinQuantity { get; set; }
 
         public StockCost? StockCost { get; set; }

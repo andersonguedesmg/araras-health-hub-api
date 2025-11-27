@@ -22,6 +22,120 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OriginalOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReturnedByAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReturnedByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalReturnedValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OriginalOrderId");
+
+                    b.HasIndex("ReturnedByAccountId");
+
+                    b.HasIndex("ReturnedByEmployeeId");
+
+                    b.ToTable("DispenseReturns", t =>
+                        {
+                            t.HasComment("Representa uma devolução de itens dispensados de um pedido ao estoque.");
+                        });
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturnItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Batch")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DispenseReturnId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("StockLotId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DispenseReturnId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StockLotId");
+
+                    b.ToTable("DispenseReturnItem");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -126,6 +240,19 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<int?>("ApprovedByEmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("CanceledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CanceledByAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CanceledByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -178,6 +305,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("ApprovedByEmployeeId");
 
+                    b.HasIndex("CanceledByAccountId");
+
+                    b.HasIndex("CanceledByEmployeeId");
+
                     b.HasIndex("CreatedByAccountId");
 
                     b.HasIndex("CreatedByEmployeeId");
@@ -203,11 +334,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ActualQuantity")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ActualQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
-                    b.Property<int>("ApprovedQuantity")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ApprovedQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -215,11 +348,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequestedQuantity")
-                        .HasColumnType("int");
+                    b.Property<decimal>("RequestedQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
-                    b.Property<int>("ReservedQuantity")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ReservedQuantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
                     b.HasKey("Id");
 
@@ -242,6 +377,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
                         .HasComment("Quantidade real baixada deste lote para atender o pedido.");
 
@@ -249,10 +385,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasComment("Custo total do item (Quantity * UnitValue) para fins de relatório.");
 
                     b.Property<decimal>("UnitValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasComment("Valor unitário do produto no momento da baixa, herdado do StockLot.");
 
@@ -292,22 +430,32 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Pendente"
+                            Description = "Pendente de Aprovação"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Aprovado"
+                            Description = "Pronto para Separação"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Separado"
+                            Description = "Em Separação"
                         },
                         new
                         {
                             Id = 4,
+                            Description = "Pronto para Envio/Finalização"
+                        },
+                        new
+                        {
+                            Id = 5,
                             Description = "Finalizado"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Cancelado"
                         });
                 });
 
@@ -391,17 +539,19 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("ReceivingId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("UnitValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -460,6 +610,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("TotalValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -488,6 +639,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AvailableQuantity")
+                        .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
                         .HasComment("Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity).");
 
@@ -510,6 +662,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("ReservedQuantity")
+                        .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
                         .HasComment("Quantidade que está reservada para pedidos pendentes/aprovados.");
 
@@ -604,8 +757,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("StockAdjustmentId")
                         .HasColumnType("int");
@@ -614,9 +767,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("TotalValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("UnitValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -751,6 +906,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("MovementCost")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasComment("O custo financeiro da quantidade movimentada.");
 
@@ -1100,6 +1256,60 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturn", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Order", "OriginalOrder")
+                        .WithMany()
+                        .HasForeignKey("OriginalOrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "ReturnedByAccount")
+                        .WithMany()
+                        .HasForeignKey("ReturnedByAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "ReturnedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("ReturnedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("OriginalOrder");
+
+                    b.Navigation("ReturnedByAccount");
+
+                    b.Navigation("ReturnedByEmployee");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturnItem", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.DispenseReturn", "DispenseReturn")
+                        .WithMany("ReturnItems")
+                        .HasForeignKey("DispenseReturnId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
+                        .WithMany()
+                        .HasForeignKey("StockLotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DispenseReturn");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("StockLot");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Facility", b =>
                 {
                     b.OwnsOne("ArarasHealthHub.Domain.ValueObjects.Address", "Address", b1 =>
@@ -1210,6 +1420,14 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ApprovedByEmployeeId");
 
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "CanceledByAccount")
+                        .WithMany()
+                        .HasForeignKey("CanceledByAccountId");
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "CanceledByEmployee")
+                        .WithMany()
+                        .HasForeignKey("CanceledByEmployeeId");
+
                     b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "CreatedByAccount")
                         .WithMany()
                         .HasForeignKey("CreatedByAccountId")
@@ -1247,6 +1465,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("ApprovedByAccount");
 
                     b.Navigation("ApprovedByEmployee");
+
+                    b.Navigation("CanceledByAccount");
+
+                    b.Navigation("CanceledByEmployee");
 
                     b.Navigation("CreatedByAccount");
 
@@ -1588,6 +1810,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturn", b =>
+                {
+                    b.Navigation("ReturnItems");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Facility", b =>

@@ -168,17 +168,29 @@ namespace ArarasHealthHub.Infrastructure.Data
             // --- Seed de Status de Pedido ---
             List<OrderStatus> orderStatus = new List<OrderStatus>
             {
-                new OrderStatus { Id = 1, Description = "Pendente" },
-                new OrderStatus { Id = 2, Description = "Aprovado" },
-                new OrderStatus { Id = 3, Description = "Separado" },
-                new OrderStatus { Id = 4, Description = "Finalizado" },
+                new OrderStatus { Id = 1, Description = "Pendente de Aprovação" },
+                new OrderStatus { Id = 2, Description = "Pronto para Separação" },
+                new OrderStatus { Id = 3, Description = "Em Separação" },
+                new OrderStatus { Id = 4, Description = "Pronto para Envio/Finalização" },
+                new OrderStatus { Id = 5, Description = "Finalizado" },
+                new OrderStatus { Id = 6, Description = "Cancelado" },
             };
             builder.Entity<OrderStatus>().HasData(orderStatus);
 
-            // --- Configurações de precisão ---
+            // --- Configurações de Precisão ---
+            // --- Regras de Padronização:
+            // --- - Quantidades: decimal(18, 3).
+            // --- - Valores Monetários: decimal(18, 2).
+            // --- - Alta Precisão: decimal(18, 4).
             builder.Entity<Stock>(entity =>
             {
                 entity.Property(e => e.CurrentQuantity)
+                    .HasPrecision(18, 3);
+
+                entity.Property(e => e.ReservedQuantity)
+                    .HasPrecision(18, 3);
+
+                entity.Property(e => e.AvailableQuantity)
                     .HasPrecision(18, 3);
 
                 entity.Property(e => e.MinQuantity)
@@ -189,6 +201,9 @@ namespace ArarasHealthHub.Infrastructure.Data
             {
                 entity.Property(e => e.Quantity)
                     .HasPrecision(18, 3);
+
+                entity.Property(e => e.MovementCost)
+                    .HasPrecision(18, 2);
 
                 entity.HasOne(sm => sm.StockLot)
                     .WithMany()
@@ -234,26 +249,95 @@ namespace ArarasHealthHub.Infrastructure.Data
             {
                 entity.Property(e => e.Quantity)
                     .HasPrecision(18, 3);
+
+                entity.Property(e => e.UnitValue)
+                    .HasPrecision(18, 2);
+
+                entity.Property(e => e.TotalValue)
+                    .HasPrecision(18, 2);
             });
 
             builder.Entity<StockAdjustmentItem>(entity =>
             {
                 entity.Property(e => e.Quantity)
-                    .HasPrecision(18, 6);
+                    .HasPrecision(18, 3);
+
+                entity.Property(e => e.UnitValue)
+                    .HasPrecision(18, 2);
+
+                entity.Property(e => e.TotalValue)
+                    .HasPrecision(18, 2);
             });
 
             builder.Entity<OrderItem>(entity =>
             {
                 entity.Property(e => e.RequestedQuantity)
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 3);
 
                 entity.Property(e => e.ApprovedQuantity)
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 3);
 
                 entity.Property(e => e.ReservedQuantity)
-                    .HasPrecision(18, 2);
+                    .HasPrecision(18, 3);
 
                 entity.Property(e => e.ActualQuantity)
+                    .HasPrecision(18, 3);
+            });
+
+            builder.Entity<DispenseReturnItem>(entity =>
+            {
+                entity.Property(e => e.Quantity)
+                    .HasPrecision(18, 3);
+
+                entity.Property(e => e.UnitValue)
+                    .HasPrecision(18, 2);
+
+                entity.Property(e => e.TotalValue)
+                    .HasPrecision(18, 2);
+            });
+
+            builder.Entity<DispenseReturn>(entity =>
+            {
+                entity.Property(e => e.TotalReturnedValue)
+                    .HasPrecision(18, 2);
+            });
+
+            builder.Entity<DispenseReturn>(entity =>
+            {
+                entity.Property(e => e.TotalReturnedValue)
+                    .HasPrecision(18, 2);
+
+                entity.HasOne(dr => dr.OriginalOrder)
+                    .WithMany()
+                    .HasForeignKey(dr => dr.OriginalOrderId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(dr => dr.ReturnedByEmployee)
+                    .WithMany()
+                    .HasForeignKey(dr => dr.ReturnedByEmployeeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(dr => dr.ReturnedByAccount)
+                    .WithMany()
+                    .HasForeignKey(dr => dr.ReturnedByAccountId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<OrderItemLot>(entity =>
+            {
+                entity.Property(e => e.Quantity)
+                    .HasPrecision(18, 3);
+
+                entity.Property(e => e.UnitValue)
+                    .HasPrecision(18, 2);
+
+                entity.Property(e => e.TotalValue)
+                    .HasPrecision(18, 2);
+            });
+
+            builder.Entity<Receiving>(entity =>
+            {
+                entity.Property(e => e.TotalValue)
                     .HasPrecision(18, 2);
             });
         }
