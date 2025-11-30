@@ -1232,21 +1232,6 @@ INSERT INTO [dbo].[AspNetUserRoles]
 GO
 
 -- ==================================================================================================================================
--- /api/receiving/create
--- {
---   "invoiceNumber": "string",
---   "supplyAuthorization": "string",
---   "observation": "string",
---   "receivingDate": "2025-11-11T13:18:52.763Z",
---   "supplierId": 0,
---   "responsibleId": 0,
---   "accountId": 0,
---   "receivedItems": [
---     { "quantity": 0, "unitValue": 0, "batch": "string", "brand": "string", "expiryDate": "2025-11-11", "productId": 0 },
---     { "quantity": 0, "unitValue": 0, "batch": "string", "brand": "string", "expiryDate": "2025-11-11", "productId": 0 }
---   ];
--- }
-
 -- Material de Apoio e Administrativo
 -- 22, 23, 129, 135, 172, 190, 198, 211, 212, 213, 214, 215, 216, 217, 218, 219, 234, 292, 293, 294, 295, 320, 379, 385, 393,
 
@@ -1315,24 +1300,9 @@ GO
     { "quantity": 800, "unitValue": 1.95, "batch": "LOTQ7R8S9T0U", "brand": "Germed", "expiryDate": "2028-03-01", "productId": 223 },
     { "quantity": 1200, "unitValue": 0.40, "batch": "LOTV1W2X3Y4Z", "brand": "Neo Química", "expiryDate": "2029-01-14", "productId": 10 },
     { "quantity": 1700, "unitValue": 0.55, "batch": "LOTA5B6C7D8E", "brand": "Sanofi", "expiryDate": "2030-05-09", "productId": 79 },
-    { "quantity": 900, "unitValue": 2.20, "batch": "LOTF9G0H1I2J", "brand": "Eurofarma", "expiryDate": "2026-10-27", "productId": 55 },
-    { "quantity": 400, "unitValue": 5.10, "batch": "LOTB5C6D7E8F", "brand": "EMS", "expiryDate": "2029-08-22", "productId": 11 },
-    { "quantity": 2500, "unitValue": 0.15, "batch": "LOTK3L4M5N6O", "brand": "Medley", "expiryDate": "2027-01-07", "productId": 107 }
-  ]
-}
-
-{
-  "invoiceNumber": "489201",
-  "supplyAuthorization": "AF 2024/001358",
-  "observation": "",
-  "receivingDate": "2024-01-12T10:32:45.000Z",
-  "supplierId": 7,
-  "responsibleId": 9,
-  "accountId": 5,
-  "receivedItems": [
-    { "quantity": 1200, "unitValue": 0.45, "batch": "LOTX1D8E7C", "brand": "Medley", "expiryDate": "2025-12-20", "productId": 1 },
-    { "quantity": 2500, "unitValue": 1.10, "batch": "LOT9F4AC3B2", "brand": "EMS", "expiryDate": "2025-12-15", "productId": 4 },
-    { "quantity": 800, "unitValue": 0.75, "batch": "LOTB785A4D1", "brand": "Ache", "expiryDate": "2026-01-07", "productId": 10 }
+    { "quantity": 900, "unitValue": 2.20, "batch": "LOTF9S5H2I2L", "brand": "Eurofarma", "expiryDate": "2026-10-27", "productId": 55 },
+    { "quantity": 1100, "unitValue": 0.72, "batch": "LOTE3F2G1H0I", "brand": "Sanofi", "expiryDate": "2030-01-25", "productId": 2 },
+    { "quantity": 2500, "unitValue": 0.15, "batch": "LOTK7L1M9S6O", "brand": "Medley", "expiryDate": "2027-01-07", "productId": 107 }
   ]
 }
 
@@ -1342,19 +1312,34 @@ GO
   "observation": "",
   "receivingDate": "2024-01-08T09:18:52.763Z",
   "supplierId": 51,
-  "responsibleId": 7,
+  "responsibleId": 9,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1300, "unitValue": 0.58, "batch": "LOTC5D6E7F8G", "brand": "Cristália", "expiryDate": "2026-08-07", "productId": 227 },
     { "quantity": 950, "unitValue": 1.80, "batch": "LOTI9J0K1L2M", "brand": "União Química", "expiryDate": "2027-02-02", "productId": 131 },
     { "quantity": 1750, "unitValue": 0.33, "batch": "LOTN3O4P5Q6R", "brand": "Eurofarma", "expiryDate": "2028-07-29", "productId": 255 },
-    { "quantity": 1100, "unitValue": 1.40, "batch": "LOTS7T8U9V0W", "brand": "Neo Química", "expiryDate": "2029-03-18", "productId": 140 },
+    { "quantity": 1100, "unitValue": 1.40, "batch": "LOTV7T8F9V0X", "brand": "Neo Química", "expiryDate": "2029-03-18", "productId": 140 },
     { "quantity": 600, "unitValue": 0.70, "batch": "LOTX1Y2Z3A4B", "brand": "Cimed", "expiryDate": "2030-04-24", "productId": 91 },
-    { "quantity": 2000, "unitValue": 0.20, "batch": "LOTC5D6E7F8G", "brand": "Medley", "expiryDate": "2026-11-17", "productId": 104 },
-    { "quantity": 500, "unitValue": 2.60, "batch": "LOTI9J0K1L2M", "brand": "Pfizer", "expiryDate": "2027-10-06", "productId": 89 },
-    { "quantity": 300, "unitValue": 1.10, "batch": "LOTN3O4P5Q6R", "brand": "AstraZeneca", "expiryDate": "2028-01-26", "productId": 136 },
+    { "quantity": 2000, "unitValue": 0.20, "batch": "LOTU0D6E3S8G", "brand": "Medley", "expiryDate": "2026-11-17", "productId": 104 },
+    { "quantity": 500, "unitValue": 2.60, "batch": "LOTI7F0C1L8M", "brand": "Pfizer", "expiryDate": "2027-10-06", "productId": 89 },
+    { "quantity": 300, "unitValue": 1.10, "batch": "LOTS3T4P2Q6R", "brand": "AstraZeneca", "expiryDate": "2028-01-26", "productId": 136 },
     { "quantity": 400, "unitValue": 5.00, "batch": "LOTS7T8U9V0W", "brand": "Roche", "expiryDate": "2029-09-13", "productId": 18 },
-    { "quantity": 1500, "unitValue": 0.12, "batch": "LOTX1Y2Z3A4B", "brand": "Sanofi", "expiryDate": "2030-01-05", "productId": 21 }
+    { "quantity": 1500, "unitValue": 0.12, "batch": "LOTV2D2Z8A1B", "brand": "Sanofi", "expiryDate": "2030-01-05", "productId": 21 }
+  ]
+}
+
+{
+  "invoiceNumber": "489201",
+  "supplyAuthorization": "AF 2024/001358",
+  "observation": "",
+  "receivingDate": "2024-01-12T10:32:45.000Z",
+  "supplierId": 7,
+  "responsibleId": 8,
+  "accountId": 5,
+  "receivedItems": [
+    { "quantity": 1200, "unitValue": 0.45, "batch": "LOTX1D8E7C", "brand": "Medley", "expiryDate": "2025-12-20", "productId": 1 },
+    { "quantity": 2500, "unitValue": 1.10, "batch": "LOT9F4AC3B2", "brand": "EMS", "expiryDate": "2025-12-15", "productId": 4 },
+    { "quantity": 800, "unitValue": 0.75, "batch": "LOTB785A4D1", "brand": "Ache", "expiryDate": "2026-01-07", "productId": 10 }
   ]
 }
 
@@ -1365,7 +1350,7 @@ GO
   "receivingDate": "2024-01-29T10:13:21.000Z",
   "supplierId": 1,
   "responsibleId": 4,
-  "accountId": 5,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 5, "unitValue": 215.77, "batch": "LOTAA1BB2C3", "brand": "Mikatos", "expiryDate": "2028-01-01", "productId": 277 },
     { "quantity": 15, "unitValue": 43.99, "batch": "LOTDD4EE5F6", "brand": "G-Tech", "expiryDate": "2027-12-31", "productId": 272 },
@@ -1381,10 +1366,10 @@ GO
   "supplierId": 9,
   -- Material de Limpeza
   "responsibleId": 4,
-  "accountId": 5,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 400, "unitValue": 55.00, "batch": "LOT1A8F3D7C", "brand": "Diversey", "expiryDate": "2028-04-05", "productId": 194 },
-    { "quantity": 600, "unitValue": 7.90, "batch": "LOT2C7E9A6B", "brand": "Bralimpia", "expiryDate": "2027-02-28", "productId": 201 },
+    { "quantity": 5, "unitValue": 7.90, "batch": "LOT2C7E9A6B", "brand": "Bralimpia", "expiryDate": "2027-02-28", "productId": 201 },
     { "quantity": 250, "unitValue": 85.50, "batch": "LOT3B6D8C5A", "brand": "Kimberly-Clark", "expiryDate": "2026-11-17", "productId": 205 },
     { "quantity": 1500, "unitValue": 1.50, "batch": "LOT4A5C7B4D", "brand": "Tork", "expiryDate": "2029-09-08", "productId": 207 },
     { "quantity": 800, "unitValue": 32.80, "batch": "LOT5D4B6A3C", "brand": "Omo", "expiryDate": "2030-01-01", "productId": 317 },
@@ -1399,7 +1384,7 @@ GO
   "observation": "",
   "receivingDate": "2024-02-07T09:31:47.000Z",
   "supplierId": 22,
-  "responsibleId": 6,
+  "responsibleId": 7,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1000, "unitValue": 0.50, "batch": "LOTA9B8C7D", "brand": "Missner", "expiryDate": "2026-09-01", "productId": 164 },
@@ -1420,15 +1405,29 @@ GO
   "observation": "Conferido e OK",
   "receivingDate": "2024-02-16T15:05:53.000Z",
   "supplierId": 67,
-  "responsibleId": 8,
+  "responsibleId": 9,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 1600, "unitValue": 0.60, "batch": "LOTP5Q6R7S8T", "brand": "EMS", "expiryDate": "2026-01-20", "productId": 222 },
     { "quantity": 1400, "unitValue": 1.10, "batch": "LOTU9V0W1X2Y", "brand": "Sanofi", "expiryDate": "2027-06-16", "productId": 120 },
-    { "quantity": 850, "unitValue": 2.50, "batch": "LOTA5B6C7D8E", "brand": "Libbs", "expiryDate": "2028-04-04", "productId": 114 },
+    { "quantity": 1200, "unitValue": 0.72, "batch": "LOTG9H0I1J2K", "brand": "Cimed", "expiryDate": "2026-04-12", "productId": 38 },
     { "quantity": 1000, "unitValue": 0.99, "batch": "LOTF9G0H1I2J", "brand": "Aché", "expiryDate": "2029-11-20", "productId": 3 },
     { "quantity": 750, "unitValue": 1.65, "batch": "LOTK3L4M5N6O", "brand": "Novartis", "expiryDate": "2030-03-03", "productId": 121 },
-    { "quantity": 500, "unitValue": 4.20, "batch": "LOTX1Y2Z3A4B", "brand": "Bayer", "expiryDate": "2026-12-12", "productId": 14 }
+    { "quantity": 500, "unitValue": 4.20, "batch": "LOTX3Y6Z3V4B", "brand": "Bayer", "expiryDate": "2026-12-12", "productId": 14 }
+  ]
+}
+
+{
+  -- /api/stock/create-adjustment
+  "type": 1,
+  "reason": "Doação",
+  "observation": "",
+  "adjustmentDate": "2024-03-04T14:25:16.000Z",
+  "responsibleId": 5,
+  "accountId": 5,
+  "adjustmentItems": [
+    { "productId": 373, "quantity": 100, "batch": "LOTT7S2S5G0U", "brand": "Elgin", "expiryDate": "2026-10-25", "unitValue": 5.25 },
+    { "productId": 372, "quantity": 95, "batch": "LOTW7R5S1T0U", "brand": "Panasonic", "expiryDate": "2026-12-15", "unitValue": 29.99 }
   ]
 }
 
@@ -1445,7 +1444,7 @@ GO
     { "quantity": 950, "unitValue": 1.15, "batch": "LOTP5Q4R3S2T", "brand": "Eurofarma", "expiryDate": "2027-03-21", "productId": 70 },
     { "quantity": 1800, "unitValue": 0.48, "batch": "LOTU1V0W9X8Y", "brand": "Neo Química", "expiryDate": "2028-06-03", "productId": 103 },
     { "quantity": 400, "unitValue": 2.75, "batch": "LOTZ7A6B5C4D", "brand": "Roche", "expiryDate": "2029-12-19", "productId": 127 },
-    { "quantity": 1100, "unitValue": 0.77, "batch": "LOTE3F2G1H0I", "brand": "Sanofi", "expiryDate": "2030-01-25", "productId": 2 }
+    { "quantity": 1100, "unitValue": 0.77, "batch": "LOTF6F2G1B0I", "brand": "Sanofi", "expiryDate": "2030-01-25", "productId": 2 }
   ]
 }
 
@@ -1455,7 +1454,7 @@ GO
   "observation": "",
   "receivingDate": "2024-03-12T15:30:58.000Z",
   "supplierId": 46,
-  "responsibleId": 5,
+  "responsibleId": 10,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 0.85, "batch": "LOTX3K9Q1A", "brand": "3M", "expiryDate": "2027-05-20", "productId": 145 },
@@ -1474,7 +1473,7 @@ GO
   "receivingDate": "2024-03-13T14:03:45.000Z",
   "supplierId": 57,
   "responsibleId": 4,
-  "accountId": 5,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 2500, "unitValue": 0.28, "batch": "LOTX1D2T6Y7", "brand": "Descarpack", "expiryDate": "2026-05-20", "productId": 144 },
     { "quantity": 1800, "unitValue": 0.35, "batch": "LOTR0Q3A5Z9", "brand": "Supermax", "expiryDate": "2026-05-20", "productId": 145 },
@@ -1485,17 +1484,30 @@ GO
 }
 
 {
+  -- /api/stock/create-adjustment
+  "type": 2,
+  "reason": "Quebra",
+  "observation": "",
+  "adjustmentDate": "2024-03-13T15:26:37.000Z",
+  "responsibleId": 8,
+  "accountId": 5,
+  "adjustmentItems": [
+    { "productId": 18,  "quantity": 5, "batch": "LOTS7T8U9V0W",  "brand": "Roche", "expiryDate": "2029-09-13", "unitValue": 5.00 }
+  ]
+}
+
+{
   "invoiceNumber": "213894",
   "supplyAuthorization": "AF 2024/001478",
   "observation": "",
   "receivingDate": "2024-03-25T10:38:52.000Z",
   "supplierId": 46,
   "responsibleId": 9,
-  "accountId": 5,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 50, "unitValue": 120.00, "batch": "LOTR7S8T9U0V", "brand": "GSK", "expiryDate": "2026-09-01", "productId": 34 },
     { "quantity": 80, "unitValue": 85.00, "batch": "LOTW1X2Y3Z4A", "brand": "Butantan", "expiryDate": "2027-04-18", "productId": 33 },
-    { "quantity": 1500, "unitValue": 0.70, "batch": "LOTB5C6D7E8F", "brand": "Aché", "expiryDate": "2028-08-30", "productId": 42 }
+    { "quantity": 1500, "unitValue": 0.70, "batch": "LOTM5C6M7E8F", "brand": "Aché", "expiryDate": "2028-08-30", "productId": 42 }
   ]
 }
 
@@ -1508,13 +1520,13 @@ GO
   "responsibleId": 9,
   "accountId": 6,
   "receivedItems": [
-    { "quantity": 500, "unitValue": 15.70, "batch": "LOTP9O8I7U", "brand": "BD", "expiryDate": "2028-12-01", "productId": 74 },
+    { "quantity": 500, "unitValue": 15.70, "batch": "LOTN915I1U", "brand": "BD", "expiryDate": "2028-12-01", "productId": 74 },
     { "quantity": 500, "unitValue": 15.70, "batch": "LOTP9O8I7Z", "brand": "BD", "expiryDate": "2028-12-01", "productId": 75 },
     { "quantity": 100, "unitValue": 25.00, "batch": "LOTV4N2M1K", "brand": "Uniqmed", "expiryDate": "2029-04-10", "productId": 275 },
     { "quantity": 300, "unitValue": 1.80, "batch": "LOTE9D4F6A", "brand": "CRAL", "expiryDate": "2027-08-05", "productId": 347 },
     { "quantity": 250, "unitValue": 4.50, "batch": "LOTL2P3Z4X", "brand": "Descarpack", "expiryDate": "2026-03-17", "productId": 152 },
     { "quantity": 150, "unitValue": 3.20, "batch": "LOTQ7W6E5R", "brand": "Descarpack", "expiryDate": "2028-01-22", "productId": 162 },
-    { "quantity": 100, "unitValue": 6.80, "batch": "LOTH4J5K6L", "brand": "Portex", "expiryDate": "2030-01-01", "productId": 390 }
+    { "quantity": 100, "unitValue": 6.80, "batch": "LOTH6J5K2L", "brand": "Portex", "expiryDate": "2030-01-01", "productId": 390 }
   ]
 }
 
@@ -1539,10 +1551,87 @@ GO
 }
 
 {
+  "invoiceNumber": "504030",
+  "supplyAuthorization": "AF 2024/003344",
+  "observation": "",
+  "receivingDate": "2024-04-22T16:12:20.000Z",
+  "supplierId": 9,
+  -- Material de Limpeza
+  "responsibleId": 4,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 15, "unitValue": 25.40, "batch": "LOTB8K9R0M1", "brand": "Tuff", "expiryDate": "2029-12-12", "productId": 87 },
+    { "quantity": 5, "unitValue": 15.40, "batch": "LOTN2O3P4Q5", "brand": "Flash Limp", "expiryDate": "2027-10-30", "productId": 199 },
+    { "quantity": 7, "unitValue": 223.00, "batch": "LOTR6S7T8U9", "brand": "AurosQuímica", "expiryDate": "2028-08-22", "productId": 317 },
+    { "quantity": 5, "unitValue": 124.00, "batch": "LOTV0W1X2Y3", "brand": "Sandet", "expiryDate": "2026-09-16", "productId": 326 },
+    { "quantity": 650, "unitValue": 22.50, "batch": "LOTZ4A5B6C7", "brand": "Salix", "expiryDate": "2030-03-01", "productId": 260 },
+    { "quantity": 650, "unitValue": 40.65, "batch": "LOTD8E9F0G1", "brand": "Descarbox", "expiryDate": "2027-05-07", "productId": 208 },
+    { "quantity": 15, "unitValue": 34.50, "batch": "LOTH2I3J4K5", "brand": "Limpol", "expiryDate": "2028-01-20", "productId": 85 },
+    { "quantity": 150, "unitValue": 7.20, "batch": "LOTL6M7N8O9", "brand": "Vabene", "expiryDate": "2029-07-17", "productId": 259 },
+    { "quantity": 25, "unitValue": 35.28, "batch": "LOTP0Q1R2S3", "brand": "Lamare", "expiryDate": "2026-11-04", "productId": 291 },
+    { "quantity": 15, "unitValue": 38.92, "batch": "LOTT4U5V6W7", "brand": "Suprema", "expiryDate": "2030-05-18", "productId": 296 },
+    { "quantity": 115, "unitValue": 21.15, "batch": "LOTX8Y9Z0A1", "brand": "Nobre", "expiryDate": "2027-04-14", "productId": 189 },
+    { "quantity": 10, "unitValue": 73.55, "batch": "LOTB2C3D4E5", "brand": "START Sauce", "expiryDate": "2028-03-06", "productId": 86 },
+    { "quantity": 5, "unitValue": 110.75, "batch": "LOTF6G7H8I9", "brand": "Plasutil", "expiryDate": "2029-01-05", "productId": 202 },
+    { "quantity": 115, "unitValue": 21.15, "batch": "LOTJ0K1L2M3", "brand": "Nobre", "expiryDate": "2026-10-23", "productId": 197 }
+  ]
+}
+
+{
+  -- /api/stock/create-adjustment
+  "type": 2,
+  "reason": "Perda",
+  "observation": "",
+  "adjustmentDate": "2024-05-02T10:27:36.000Z",
+  "responsibleId": 8,
+  "accountId": 5,
+  "adjustmentItems": [
+    { "productId": 95, "quantity": 30, "batch": "LOT2B3C4D5", "brand": "BD", "expiryDate": "2029-01-15", "unitValue": 1.50 }
+  ]
+}
+
+{
+  "invoiceNumber": "452791",
+  "supplyAuthorization": "AF 2024/110543",
+  "observation": "Entrega parcial concluída.",
+  "receivingDate": "2024-05-03T14:38:53.000Z",
+  "supplierId": 4,
+  "responsibleId": 9,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 400, "unitValue": 4.10, "batch": "LOTO0P1A2Z3", "brand": "Portex", "expiryDate": "2029-06-11", "productId": 256 },
+    { "quantity": 500, "unitValue": 3.90, "batch": "LOTV4B5N6M7", "brand": "BD", "expiryDate": "2029-07-15", "productId": 389 },
+    { "quantity": 500, "unitValue": 4.00, "batch": "LOTC8X9Z0Q1", "brand": "Sol-Millennium", "expiryDate": "2029-08-28", "productId": 390 },
+    { "quantity": 600, "unitValue": 2.50, "batch": "LOTW2E3R4T5", "brand": "Embramed", "expiryDate": "2028-03-05", "productId": 354 },
+    { "quantity": 700, "unitValue": 2.20, "batch": "LOTY6U7I8O9", "brand": "Descarpack", "expiryDate": "2028-04-10", "productId": 321 }
+  ]
+}
+
+{
+  "invoiceNumber": "321987",
+  "supplyAuthorization": "AF 2024/004004",
+  "observation": "",
+  "receivingDate": "2024-05-15T09:28:16.000Z",
+  "supplierId": 67,
+  -- Material de Apoio e Administrativo
+  "responsibleId": 6,
+  "accountId": 6,
+  "receivedItems": [
+    { "quantity": 10, "unitValue": 22.90, "batch": "LOTG2J7V3X0", "brand": "Bioland", "expiryDate": "2028-03-29", "productId": 379 },
+    { "quantity": 100, "unitValue": 1.45, "batch": "LOTN9W5Y4Z1", "brand": "3M", "expiryDate": "2029-05-11", "productId": 129 },
+    { "quantity": 1500, "unitValue": 0.04, "batch": "LOTR3A6B8C2", "brand": "Spiral", "expiryDate": "2027-09-08", "productId": 218 },
+    { "quantity": 40, "unitValue": 3.80, "batch": "LOTL4D9E0F5", "brand": "Duracell", "expiryDate": "2027-11-25", "productId": 23 },
+    { "quantity": 250, "unitValue": 0.90, "batch": "LOTV1H7J6K3", "brand": "Pentel", "expiryDate": "2026-07-19", "productId": 215 },
+    { "quantity": 15, "unitValue": 4.50, "batch": "LOTP0Q2S8T4", "brand": "Staples", "expiryDate": "2030-01-07", "productId": 216 },
+    { "quantity": 5, "unitValue": 35.00, "batch": "LOTZ6M1N9A7", "brand": "Tilibra", "expiryDate": "2028-10-04", "productId": 320 }
+  ]
+}
+
+{
   "invoiceNumber": "178234",
   "supplyAuthorization": "AF 2024/009900",
   "observation": "",
-  "receivingDate": "2024-04-18T09:33:52.000Z",
+  "receivingDate": "2024-06-18T09:33:52.000Z",
   "supplierId": 79,
   "responsibleId": 2,
   "accountId": 4,
@@ -1561,77 +1650,13 @@ GO
 }
 
 {
-  "invoiceNumber": "504030",
-  "supplyAuthorization": "AF 2024/003344",
-  "observation": "",
-  "receivingDate": "2024-04-22T16:12:20.000Z",
-  "supplierId": 9,
-  -- Material de Limpeza
-  "responsibleId": 5,
-  "accountId": 5,
-  "receivedItems": [
-    { "quantity": 15, "unitValue": 25.40, "batch": "LOTJ8K9L0M1", "brand": "Tuff", "expiryDate": "2029-12-12", "productId": 87 },
-    { "quantity": 5, "unitValue": 15.40, "batch": "LOTN2O3P4Q5", "brand": "Flash Limp", "expiryDate": "2027-10-30", "productId": 199 },
-    { "quantity": 7, "unitValue": 223.00, "batch": "LOTR6S7T8U9", "brand": "AurosQuímica", "expiryDate": "2028-08-22", "productId": 317 },
-    { "quantity": 5, "unitValue": 124.00, "batch": "LOTV0W1X2Y3", "brand": "Sandet", "expiryDate": "2026-09-16", "productId": 326 },
-    { "quantity": 650, "unitValue": 22.50, "batch": "LOTZ4A5B6C7", "brand": "Salix", "expiryDate": "2030-03-01", "productId": 260 },
-    { "quantity": 650, "unitValue": 40.65, "batch": "LOTD8E9F0G1", "brand": "Descarbox", "expiryDate": "2027-05-07", "productId": 208 },
-    { "quantity": 15, "unitValue": 34.50, "batch": "LOTH2I3J4K5", "brand": "Limpol", "expiryDate": "2028-01-20", "productId": 85 },
-    { "quantity": 150, "unitValue": 7.20, "batch": "LOTL6M7N8O9", "brand": "Vabene", "expiryDate": "2029-07-17", "productId": 259 },
-    { "quantity": 25, "unitValue": 35.28, "batch": "LOTP0Q1R2S3", "brand": "Lamare", "expiryDate": "2026-11-04", "productId": 291 },
-    { "quantity": 15, "unitValue": 38.92, "batch": "LOTT4U5V6W7", "brand": "Suprema", "expiryDate": "2030-05-18", "productId": 296 },
-    { "quantity": 115, "unitValue": 21.15, "batch": "LOTX8Y9Z0A1", "brand": "Nobre", "expiryDate": "2027-04-14", "productId": 189 },
-    { "quantity": 10, "unitValue": 73.55, "batch": "LOTB2C3D4E5", "brand": "START Sauce", "expiryDate": "2028-03-06", "productId": 86 },
-    { "quantity": 5, "unitValue": 110.75, "batch": "LOTF6G7H8I9", "brand": "Plasutil", "expiryDate": "2029-01-05", "productId": 202 },
-    { "quantity": 115, "unitValue": 21.15, "batch": "LOTJ0K1L2M3", "brand": "Nobre", "expiryDate": "2026-10-23", "productId": 197 }
-  ]
-}
-
-{
-  "invoiceNumber": "452791",
-  "supplyAuthorization": "AF 2024/110543",
-  "observation": "Entrega parcial concluída.",
-  "receivingDate": "2024-05-03T14:38:53.000Z",
-  "supplierId": 4,
-  "responsibleId": 9,
-  "accountId": 5,
-  "receivedItems": [
-    { "quantity": 400, "unitValue": 4.10, "batch": "LOTO0P1A2Z3", "brand": "Portex", "expiryDate": "2029-06-11", "productId": 256 },
-    { "quantity": 500, "unitValue": 3.90, "batch": "LOTV4B5N6M7", "brand": "BD", "expiryDate": "2029-07-15", "productId": 389 },
-    { "quantity": 500, "unitValue": 4.00, "batch": "LOTC8X9Z0Q1", "brand": "Sol-Millennium", "expiryDate": "2029-08-28", "productId": 390 },
-    { "quantity": 600, "unitValue": 2.50, "batch": "LOTW2E3R4T5", "brand": "Embramed", "expiryDate": "2028-03-05", "productId": 354 },
-    { "quantity": 700, "unitValue": 2.20, "batch": "LOTY6U7I8O9", "brand": "Descarpack", "expiryDate": "2028-04-10", "productId": 321 }
-  ]
-}
-
-{
-  "invoiceNumber": "321987",
-  "supplyAuthorization": "AF 2024/004004",
-  "observation": "",
-  "receivingDate": "2024-05-15T09:28:16.000Z",
-  "supplierId": 67,
-  -- Material de Apoio e Administrativo
-  "responsibleId": 6,
-  "accountId": 5,
-  "receivedItems": [
-    { "quantity": 10, "unitValue": 22.90, "batch": "LOTG2J7V3X0", "brand": "Bioland", "expiryDate": "2028-03-29", "productId": 379 },
-    { "quantity": 100, "unitValue": 1.45, "batch": "LOTN9W5Y4Z1", "brand": "3M", "expiryDate": "2029-05-11", "productId": 129 },
-    { "quantity": 1500, "unitValue": 0.04, "batch": "LOTR3A6B8C2", "brand": "Spiral", "expiryDate": "2027-09-08", "productId": 218 },
-    { "quantity": 40, "unitValue": 3.80, "batch": "LOTL4D9E0F5", "brand": "Duracell", "expiryDate": "2027-11-25", "productId": 23 },
-    { "quantity": 250, "unitValue": 0.90, "batch": "LOTV1H7J6K3", "brand": "Pentel", "expiryDate": "2026-07-19", "productId": 215 },
-    { "quantity": 15, "unitValue": 4.50, "batch": "LOTP0Q2S8T4", "brand": "Staples", "expiryDate": "2030-01-07", "productId": 216 },
-    { "quantity": 5, "unitValue": 35.00, "batch": "LOTZ6M1N9A7", "brand": "Tilibra", "expiryDate": "2028-10-04", "productId": 320 }
-  ]
-}
-
-{
   "invoiceNumber": "190765",
   "supplyAuthorization": "AF 2024/334455",
   "observation": "",
   "receivingDate": "2024-07-03T09:38:12.000Z",
   "supplierId": 3,
   "responsibleId": 4,
-  "accountId": 6,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 120, "unitValue": 0.85, "batch": "LOTD2S3A4P5", "brand": "Accu-Chek", "expiryDate": "2026-03-15", "productId": 142 },
     { "quantity": 1500, "unitValue": 0.14, "batch": "LOTF6G7H8J9", "brand": "NovoFine", "expiryDate": "2027-04-04", "productId": 275 },
@@ -1648,7 +1673,7 @@ GO
   "receivingDate": "2024-07-22T10:35:10.000Z",
   "supplierId": 24,
   "responsibleId": 6,
-  "accountId": 5,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 500, "unitValue": 1.45, "batch": "LOTH3G4F5D6", "brand": "Johnson & Johnson", "expiryDate": "2028-11-10", "productId": 65 },
     { "quantity": 500, "unitValue": 1.55, "batch": "LOTS7A8D9F0", "brand": "BD", "expiryDate": "2028-11-10", "productId": 66 },
@@ -1681,8 +1706,8 @@ GO
   "observation": "",
   "receivingDate": "2024-07-29T13:15:00.000Z",
   "supplierId": 33,
-  "responsibleId": 7,
-  "accountId": 5,
+  "responsibleId": 10,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 200, "unitValue": 0.80, "batch": "LOTE1D2F3G", "brand": "BD", "expiryDate": "2028-03-03", "productId": 157 },
     { "quantity": 200, "unitValue": 0.90, "batch": "LOTH4J5K6L", "brand": "BD", "expiryDate": "2028-03-03", "productId": 96 },
@@ -1699,7 +1724,7 @@ GO
   "observation": "",
   "receivingDate": "2024-07-30T14:41:32.000Z",
   "supplierId": 25,
-  "responsibleId": 1,
+  "responsibleId": 10,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 50, "unitValue": 6.00, "batch": "LOTZ9X8C7V", "brand": "Ethicon", "expiryDate": "2027-04-01", "productId": 261 },
@@ -1718,8 +1743,8 @@ GO
   "observation": "",
   "receivingDate": "2024-08-02T11:30:02.000Z",
   "supplierId": 3,
-  "responsibleId": 2,
-  "accountId": 4,
+  "responsibleId": 9,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 2000, "unitValue": 0.05, "batch": "LOT8F7G6H5", "brand": "Descarpack", "expiryDate": "2028-05-15", "productId": 334 },
     { "quantity": 500, "unitValue": 0.30, "batch": "LOT4J3K2L1", "brand": "Descarpack", "expiryDate": "2027-01-30", "productId": 341 },
@@ -1742,7 +1767,7 @@ GO
   "observation": "",
   "receivingDate": "2024-08-05T14:31:14.000Z",
   "supplierId": 7,
-  "responsibleId": 5,
+  "responsibleId": 6,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 800, "unitValue": 2.15, "batch": "LOTC2V3B4N5", "brand": "DeltaPlus", "expiryDate": "2027-10-01", "productId": 8 },
@@ -1761,8 +1786,8 @@ GO
   "observation": "",
   "receivingDate": "2024-08-23T14:45:35.000Z",
   "supplierId": 14,
-  "responsibleId": 8,
-  "accountId": 5,
+  "responsibleId": 9,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 0.85, "batch": "LOT6A5B4C3D", "brand": "Wyeth", "expiryDate": "2028-11-07", "productId": 4 },
     { "quantity": 1800, "unitValue": 1.05, "batch": "LOT8E7F6A5B", "brand": "Bristol-Myers Squibb", "expiryDate": "2027-02-02", "productId": 236 },
@@ -1776,7 +1801,7 @@ GO
   "observation": "",
   "receivingDate": "2024-09-17T08:45:10.000Z",
   "supplierId": 23,
-  "responsibleId": 5,
+  "responsibleId": 4,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 950, "unitValue": 1.45, "batch": "LOTB71C0A9A", "brand": "Novartis", "expiryDate": "2028-05-20", "productId": 110 },
@@ -1811,7 +1836,7 @@ GO
   "observation": "Entrega antecipada",
   "receivingDate": "2024-09-19T13:16:48.000Z",
   "supplierId": 49,
-  "responsibleId": 8,
+  "responsibleId": 6,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 1.90, "batch": "LOTP3Q7R0S4", "brand": "Supermax", "expiryDate": "2027-12-01", "productId": 367 },
@@ -1828,7 +1853,7 @@ GO
   "receivingDate": "2024-10-09T15:30:02.000Z",
   "supplierId": 63,
   "responsibleId": 4,
-  "accountId": 5,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 1000, "unitValue": 0.20, "batch": "LOTJ6K0L4M8", "brand": "Descarpack", "expiryDate": "2027-09-06", "productId": 166 },
     { "quantity": 500, "unitValue": 0.45, "batch": "LOTN2O6P0Q4", "brand": "Descarpack", "expiryDate": "2026-10-23", "productId": 168 },
@@ -1853,7 +1878,7 @@ GO
   "receivingDate": "2024-10-14T11:12:13.000Z",
   "supplierId": 60,
   -- Material de Apoio e Administrativo
-  "responsibleId": 8,
+  "responsibleId": 10,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 10, "unitValue": 297.50, "batch": "LOTV6W7X8Y", "brand": "Chamex", "expiryDate": "2028-06-19", "productId": 198 },
@@ -1918,7 +1943,7 @@ GO
   "observation": "",
   "receivingDate": "2024-11-25T14:42:01.000Z",
   "supplierId": 4,
-  "responsibleId": 1,
+  "responsibleId": 6,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1100, "unitValue": 0.95, "batch": "LOT2D5F0E4B", "brand": "Neo Química", "expiryDate": "2027-03-18", "productId": 222 },
@@ -1936,8 +1961,8 @@ GO
   "observation": "",
   "receivingDate": "2024-11-26T10:14:26.000Z",
   "supplierId": 14,
-  "responsibleId": 2,
-  "accountId": 4,
+  "responsibleId": 10,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 2500, "unitValue": 0.18, "batch": "LOTP2Q7S3W", "brand": "Cimed", "expiryDate": "2028-04-18", "productId": 97 },
     { "quantity": 1800, "unitValue": 0.55, "batch": "LOTJ5T8U1I", "brand": "Medley", "expiryDate": "2027-08-30", "productId": 38 },
@@ -1954,8 +1979,8 @@ GO
   "observation": "",
   "receivingDate": "2024-11-27T08:32:15.000Z",
   "supplierId": 4,
-  "responsibleId": 7,
-  "accountId": 5,
+  "responsibleId": 9,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 1300, "unitValue": 2.30, "batch": "LOTF0E9D8C7", "brand": "Roche", "expiryDate": "2026-04-03", "productId": 131 },
     { "quantity": 1700, "unitValue": 0.45, "batch": "LOTA1B2C3D4", "brand": "Herz", "expiryDate": "2028-12-30", "productId": 92 },
@@ -1972,11 +1997,11 @@ GO
   "observation": "",
   "receivingDate": "2025-01-06T12:03:51.000Z",
   "supplierId": 57,
-  "responsibleId": 2,
+  "responsibleId": 4,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1550, "unitValue": 1.10, "batch": "LOT8D7C6B5A", "brand": "Cristália", "expiryDate": "2027-08-01", "productId": 6 },
-    { "quantity": 1900, "unitValue": 0.60, "batch": "LOT2B3C4D5E", "brand": "Glenmark", "expiryDate": "2028-05-04", "productId": 248 },
+    { "quantity": 1900, "unitValue": 0.60, "batch": "LOT5B3H4D5E", "brand": "Glenmark", "expiryDate": "2028-05-04", "productId": 248 },
     { "quantity": 1250, "unitValue": 0.95, "batch": "LOT6A7B8C9D", "brand": "Brainfarma", "expiryDate": "2029-01-20", "productId": 5 },
     { "quantity": 1750, "unitValue": 0.35, "batch": "LOT0F1E2D3C", "brand": "Torrent", "expiryDate": "2026-11-16", "productId": 30 },
     { "quantity": 1400, "unitValue": 1.50, "batch": "LOT4B5C6D7E", "brand": "Germed", "expiryDate": "2028-03-27", "productId": 16 },
@@ -1989,7 +2014,7 @@ GO
     { "quantity": 1200, "unitValue": 1.20, "batch": "LOTC1D2E3F4", "brand": "Cimed", "expiryDate": "2029-03-24", "productId": 121 },
     { "quantity": 1700, "unitValue": 0.65, "batch": "LOT5F6A7B8C", "brand": "AstraZeneca", "expiryDate": "2028-07-07", "productId": 56 },
     { "quantity": 2150, "unitValue": 0.15, "batch": "LOT9D8C7B6A", "brand": "Teva", "expiryDate": "2027-04-19", "productId": 82 },
-    { "quantity": 1300, "unitValue": 0.75, "batch": "LOT2B3C4D5E", "brand": "Novamed", "expiryDate": "2029-12-01", "productId": 114 }
+    { "quantity": 1300, "unitValue": 0.75, "batch": "LOT6B9E4D5G", "brand": "Novamed", "expiryDate": "2029-12-01", "productId": 114 }
   ]
 }
 
@@ -1999,7 +2024,7 @@ GO
   "observation": "Prioridade de armazenamento.",
   "receivingDate": "2025-01-09T13:15:42.000Z",
   "supplierId": 3,
-  "responsibleId": 6,
+  "responsibleId": 7,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 2100, "unitValue": 0.70, "batch": "LOT1E2F3A4B", "brand": "Hypera Pharma", "expiryDate": "2028-02-19", "productId": 3 },
@@ -2010,7 +2035,7 @@ GO
     { "quantity": 1600, "unitValue": 0.45, "batch": "LOTF1A2B3C4", "brand": "Bayer", "expiryDate": "2028-04-28", "productId": 113 },
     { "quantity": 1000, "unitValue": 1.35, "batch": "LOT6E7F8A9B", "brand": "Libbs", "expiryDate": "2027-01-08", "productId": 94 },
     { "quantity": 1850, "unitValue": 0.52, "batch": "LOT0C1D2E3F", "brand": "Novartis", "expiryDate": "2029-10-23", "productId": 72 },
-    { "quantity": 2200, "unitValue": 0.25, "batch": "LOT4A5B6C7D", "brand": "Takeda", "expiryDate": "2026-12-10", "productId": 12 }
+    { "quantity": 2200, "unitValue": 0.25, "batch": "LOT4G5B6C8D", "brand": "Takeda", "expiryDate": "2026-12-10", "productId": 12 }
   ]
 }
 
@@ -2035,7 +2060,7 @@ GO
   "observation": "Itens frágeis, armazenar com cuidado.",
   "receivingDate": "2025-01-27T10:41:14.000Z",
   "supplierId": 1,
-  "responsibleId": 2,
+  "responsibleId": 6,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 3000, "unitValue": 0.18, "batch": "LOTX6Y0Z4A8", "brand": "Descarpack", "expiryDate": "2028-02-05", "productId": 171 },
@@ -2116,7 +2141,7 @@ GO
     { "quantity": 2300, "unitValue": 0.28, "batch": "LOT1A2B3C4D", "brand": "Novamed", "expiryDate": "2028-10-01", "productId": 30 },
     { "quantity": 1600, "unitValue": 0.99, "batch": "LOT4E5F6A7B", "brand": "Lundbeck", "expiryDate": "2026-07-27", "productId": 140 },
     { "quantity": 1050, "unitValue": 3.75, "batch": "LOT8C9D0E1F", "brand": "Janssen", "expiryDate": "2030-03-09", "productId": 134 },
-    { "quantity": 1550, "unitValue": 0.60, "batch": "LOT2B3C4D5E", "brand": "Alcon", "expiryDate": "2027-09-17", "productId": 105 },
+    { "quantity": 1550, "unitValue": 0.60, "batch": "LOT7B3C4G5E", "brand": "Alcon", "expiryDate": "2027-09-17", "productId": 105 },
     { "quantity": 2050, "unitValue": 0.10, "batch": "LOT6A7B8C9D", "brand": "Biosintética", "expiryDate": "2028-01-05", "productId": 39 },
     { "quantity": 1850, "unitValue": 0.50, "batch": "LOT0F1A2B3C", "brand": "Multilab", "expiryDate": "2029-06-16", "productId": 7 }
   ]
@@ -2128,7 +2153,7 @@ GO
   "observation": "",
   "receivingDate": "2025-02-14T15:37:26.000Z",
   "supplierId": 22,
-  "responsibleId": 7,
+  "responsibleId": 9,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 1.55, "batch": "LOTX1G7F2Z5", "brand": "3M", "expiryDate": "2028-05-21", "productId": 145 },
@@ -2148,7 +2173,7 @@ GO
   "observation": "Entrega de emergência.",
   "receivingDate": "2025-02-18T15:12:35.000Z",
   "supplierId": 3,
-  "responsibleId": 7,
+  "responsibleId": 9,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 500, "unitValue": 3.75, "batch": "LOTF6D9C0B3", "brand": "Cirúrgica", "expiryDate": "2026-10-10", "productId": 150 },
@@ -2205,7 +2230,7 @@ GO
   "observation": "",
   "receivingDate": "2025-03-05T12:38:14.000Z",
   "supplierId": 25,
-  "responsibleId": 9,
+  "responsibleId": 7,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 250, "unitValue": 18.00, "batch": "LOTR7H5X4C2", "brand": "Medical", "expiryDate": "2027-04-05", "productId": 277 },
@@ -2227,7 +2252,7 @@ GO
   "observation": "",
   "receivingDate": "2025-04-14T11:45:20.000Z",
   "supplierId": 25,
-  "responsibleId": 5,
+  "responsibleId": 4,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 0.68, "batch": "LOTU3V6W9X1", "brand": "3M", "expiryDate": "2028-02-04", "productId": 144 },
@@ -2254,7 +2279,7 @@ GO
   "observation": "Itens frágeis, manuseio cuidadoso.",
   "receivingDate": "2025-04-25T14:36:07.000Z",
   "supplierId": 24,
-  "responsibleId": 1,
+  "responsibleId": 8,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 100, "unitValue": 3.50, "batch": "LOTX9Y1Z3A5", "brand": "MedSonda", "expiryDate": "2028-04-01", "productId": 147 },
@@ -2279,7 +2304,7 @@ GO
   "observation": "",
   "receivingDate": "2025-05-09T11:41:36.000Z",
   "supplierId": 3,
-  "responsibleId": 5,
+  "responsibleId": 6,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 150, "unitValue": 15.00, "batch": "LOT9M0N1P2", "brand": "Eli Lilly", "expiryDate": "2029-09-07", "productId": 12 },
@@ -2296,7 +2321,7 @@ GO
   "observation": "Entrega parcial",
   "receivingDate": "2025-05-14T11:24:32.000Z",
   "supplierId": 46,
-  "responsibleId": 9,
+  "responsibleId": 5,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1150, "unitValue": 2.80, "batch": "LOT3L1M9N7", "brand": "Merck", "expiryDate": "2028-03-05", "productId": 56 },
@@ -2408,7 +2433,7 @@ GO
   "observation": "",
   "receivingDate": "2025-07-01T08:18:28.000Z",
   "supplierId": 33,
-  "responsibleId": 8,
+  "responsibleId": 9,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1700, "unitValue": 0.90, "batch": "LOTR7S0T3U5", "brand": "Cremer", "expiryDate": "2027-04-20", "productId": 74 },
@@ -2426,7 +2451,7 @@ GO
   "observation": "",
   "receivingDate": "2025-07-29T13:15:30.000Z",
   "supplierId": 25,
-  "responsibleId": 7,
+  "responsibleId": 9,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 200, "unitValue": 1.10, "batch": "LOTR4S8T2U5", "brand": "Kolplast", "expiryDate": "2028-02-09", "productId": 377 },
@@ -2467,7 +2492,7 @@ GO
   "observation": "",
   "receivingDate": "2025-08-20T11:55:21.000Z",
   "supplierId": 14,
-  "responsibleId": 4,
+  "responsibleId": 7,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 150, "unitValue": 12.00, "batch": "LOTV3W7X1Y5", "brand": "Techline", "expiryDate": "2027-01-28", "productId": 187 },
@@ -2487,7 +2512,7 @@ GO
   "observation": "",
   "receivingDate": "2025-08-20T14:57:18.000Z",
   "supplierId": 24,
-  "responsibleId": 8,
+  "responsibleId": 4,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 2000, "unitValue": 0.15, "batch": "LOTP3Q7R1S5", "brand": "Cimed", "expiryDate": "2026-05-10", "productId": 38 },
@@ -2517,7 +2542,7 @@ GO
   "observation": "Entrega grande",
   "receivingDate": "2025-09-01T13:17:21.000Z",
   "supplierId": 26,
-  "responsibleId": 6,
+  "responsibleId": 8,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 50, "unitValue": 45.00, "batch": "LOTD8E2F6G0", "brand": "Opti", "expiryDate": "2028-06-01", "productId": 277 },
@@ -2542,7 +2567,7 @@ GO
   "observation": "Reabastecimento urgente de estoque.",
   "receivingDate": "2025-09-04T09:54:56.000Z",
   "supplierId": 49,
-  "responsibleId": 8,
+  "responsibleId": 10,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1900, "unitValue": 0.70, "batch": "LOTQ7K2L8M4", "brand": "Eurofarma", "expiryDate": "2028-03-02", "productId": 227 },
@@ -2603,7 +2628,7 @@ GO
   "observation": "",
   "receivingDate": "2025-09-17T13:26:39.000Z",
   "supplierId": 25,
-  "responsibleId": 8,
+  "responsibleId": 9,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1100, "unitValue": 0.90, "batch": "LOTK8L7M3N9", "brand": "Cristália", "expiryDate": "2026-01-18", "productId": 29 },
@@ -2627,7 +2652,7 @@ GO
   "observation": "Revisar lote",
   "receivingDate": "2025-10-14T14:01:51.000Z",
   "supplierId": 33,
-  "responsibleId": 10,
+  "responsibleId": 7,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 2000, "unitValue": 0.15, "batch": "LOT8W6X4Y2", "brand": "Hipolabor", "expiryDate": "2030-08-08", "productId": 20 },
@@ -2723,7 +2748,7 @@ GO
   "receivingDate": "2025-11-12T10:43:31.000Z",
   "supplierId": 50,
   -- Material de Limpeza
-  "responsibleId": 9,
+  "responsibleId": 5,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 12.50, "batch": "LOTB9F3A1C8", "brand": "Ecolab", "expiryDate": "2027-05-20", "productId": 192 },
@@ -2757,7 +2782,7 @@ GO
   "observation": "",
   "receivingDate": "2025-12-10T09:45:41.000Z",
   "supplierId": 24,
-  "responsibleId": 7,
+  "responsibleId": 4,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1000, "unitValue": 1.55, "batch": "LOTX1D8E7H6", "brand": "3M", "expiryDate": "2027-05-20", "productId": 8 },
