@@ -25,56 +25,77 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
             END AS UpdatedOn
       FROM (
             VALUES
-               -- ('Name',               'Cpf',            'Function',                'Phone',           'IsActive')
-                  ('Jed Bartlet',        '053.487.653-29', 'Coordenador',             '(19) 98564-1205',  1),
-                  ('Matt Santos',        '428.196.772-00', 'Coordenador',             '(19) 98812-7589',  1),
-                  ('Leo McGarry',        '619.043.208-87', 'Auxiliar Administrativo', '(19) 97345-6402',  0),
-                  ('Donna Moss',         '814.391.135-95', 'Farmacêutico',            '(19) 99985-3021',  1),
-                  ('Josh Lyman',         '387.904.053-48', 'Enfermeiro',              '(19) 99123-8527',  1),
-                  ('Kate Harper',        '248.601.734-51', 'Auxiliar Administrativo', '(19) 98257-8901',  1),
-                  ('Toby Ziegler',       '109.526.476-05', 'Auxiliar Administrativo', '(19) 99765-4203',  1),
-                  ('Sam Seaborn',        '145.733.927-46', 'Enfermeiro',              '(19) 99123-5080',  1),
-                  ('Will Bailey',        '932.164.780-15', 'Auxiliar Administrativo', '(19) 98230-4462',  1),
-                  ('Ainsley Hayes',      '540.832.179-05', 'Enfermeiro',              '(19) 98734-7605',  1),
-                  ('Chandler Bing',      '356.918.420-56', 'Coordenador',             '(19) 99564-7832',  0),
-                  ('Joey Tribbiani',     '183.076.495-21', 'Auxiliar Administrativo', '(19) 99642-1198',  1),
-                  ('Rachel Green',       '401.597.332-68', 'Farmacêutico',            '(19) 98451-2389',  1),
-                  ('Monica Geller',      '578.223.149-10', 'Enfermeiro',              '(19) 98745-1023',  1),
-                  ('Ross Geller',        '901.884.750-77', 'Auxiliar Administrativo', '(19) 98123-7654',  1),
-                  ('Phoebe Buffay',      '290.415.867-04', 'Farmacêutico',            '(19) 98325-4432',  1),
-                  ('Gregory House',      '642.378.910-63', 'Enfermeiro',              '(19) 98976-2154',  1),
-                  ('Matt Albie',         '174.053.820-00', 'Agente de Endemias',      '(19) 98333-3030',  0),
-                  ('Danny Tripp',        '836.290.110-54', 'Farmacêutico',            '(19) 98484-8484',  1),
-                  ('Jordan McDeere',     '285.741.056-11', 'Coordenador',             '(19) 98686-1212',  1),
-                  ('Natalie Hurley',     '068.591.309-47', 'Auxiliar Administrativo', '(19) 98484-8485',  1),
-                  ('Alan Shore',         '318.490.572-00', 'Farmacêutico',            '(19) 98401-1234',  1),
-                  ('Adrian Monk',        '713.849.520-22', 'Agente de Endemias',      '(19) 99811-2374',  1),
-                  ('Michael Scofield',   '134.607.892-05', 'Auxiliar Administrativo', '(19) 98560-4032',  1),
-                  ('Tony Soprano',       '591.028.347-79', 'Farmacêutico',            '(19) 97987-1204',  0),
-                  ('Ally McBeal',        '645.713.980-00', 'Auxiliar Administrativo', '(19) 98543-6578',  1),
-                  ('Frank Underwood',    '892.406.115-43', 'Auxiliar Administrativo', '(19) 98439-1052',  1),
-                  ('Sloan Sabbith',      '610.975.324-12', 'Auxiliar Administrativo', '(19) 98244-3150',  1),
-                  ('Don Keefer',         '789.201.463-55', 'Enfermeiro',              '(19) 98899-2340',  1),
-                  ('Mark Greene',        '930.417.586-77', 'Auxiliar Administrativo', '(19) 98123-4770',  1),
-                  ('John Carter',        '587.146.903-88', 'Farmacêutico',            '(19) 98123-4567',  1),
-                  ('Abby Lockhart',      '169.324.570-90', 'Agente de Endemias',      '(19) 98045-6651',  1),
-                  ('Neela Rasgotra',     '758.219.043-42', 'Coordenador',             '(19) 98076-1194',  1),
-                  ('Carol Hathaway',     '012.345.678-90', 'Enfermeiro',              '(19) 98895-2291',  1),
-                  ('Dexter Morgan',      '734.012.986-53', 'Enfermeiro',              '(19) 99384-2911',  1),
-                  ('Jack Bauer',         '085.346.917-82', 'Agente de Endemias',      '(19) 99930-6871',  1),
-                  ('Michelle Dessler',   '968.402.751-32', 'Farmacêutico',            '(19) 99653-2270',  1),
-                  ('Chloe OBrian',       '370.158.496-03', 'Auxiliar Administrativo', '(19) 99128-4009',  1),
-                  ('Jake Peralta',       '415.937.608-20', 'Auxiliar Administrativo', '(19) 99831-7192',  1),
-                  ('Rosa Diaz',          '286.049.713-35', 'Auxiliar Administrativo', '(19) 99475-3301',  1),
-                  ('Amy Santiago',       '540.721.398-67', 'Enfermeiro',              '(19) 99213-6644',  1),
-                  ('Raymond Holt',       '924.630.157-89', 'Coordenador',             '(19) 99915-8720',  0),
-                  ('Richard Castle',     '187.593.240-66', 'Farmacêutico',            '(19) 99548-7299',  1),
-                  ('Kate Beckett',       '043.167.892-05', 'Auxiliar Administrativo', '(19) 98993-4108',  1),
-                  ('Robin Scherbatsky',  '778.901.234-56', 'Auxiliar Administrativo', '(19) 99166-2930',  1),
-                  ('Barney Stinson',     '889.012.345-67', 'Auxiliar Administrativo', '(19) 98743-7099',  1),
-                  ('Harvey Specter',     '434.567.890-12', 'Auxiliar Administrativo', '(19) 98712-4350',  1),
-                  ('Donna Paulsen',      '545.678.901-23', 'Farmacêutico',            '(19) 98413-6572',  1),
-                  ('Louis Litt',         '656.789.012-34', 'Coordenador',             '(19) 98642-3033',  1)
+               -- ('Name',                'Cpf',            'Function',                 'Phone',           'IsActive')
+                  ('Jed Bartlet',         '053.487.653-29', 'Coordenador',              '(19) 98564-1205',  1),
+                  ('Matt Santos',         '428.196.772-00', 'Coordenador',              '(19) 98812-7589',  1),
+                  ('Leo McGarry',         '619.043.208-87', 'Auxiliar Administrativo',  '(19) 97345-6402',  0),
+                  ('Josh Lyman',          '387.904.053-48', 'Auxiliar Administrativo',  '(19) 99123-8527',  1),
+                  ('Toby Ziegler',        '109.526.476-05', 'Auxiliar Administrativo',  '(19) 99765-4203',  1),
+                  ('C. J. Cregg',         '975.614.608-72', 'Farmacêutico',             '(19) 98142-6349',  1),
+                  ('Sam Seaborn',         '145.733.927-46', 'Auxiliar Administrativo',  '(19) 99123-5080',  1),
+                  ('Donna Moss',          '814.391.135-95', 'Auxiliar Administrativo',  '(19) 99985-3021',  1),
+                  ('Charlie Young',       '605.573.148-79', 'Auxiliar Administrativo',  '(19) 97456-3146',  1),
+                  ('Will Bailey',         '932.164.780-15', 'Auxiliar Administrativo',  '(19) 98230-4462',  1),
+                  ('Kate Harper',         '248.601.734-51', 'Auxiliar Administrativo',  '(19) 98257-8901',  1),
+                  ('Ainsley Hayes',       '540.832.179-05', 'Auxiliar Administrativo',  '(19) 98734-7605',  1),
+                  ('Amy Gardner',         '348.174.350-54', 'Farmacêutico',             '(19) 97417-9137',  1),
+                  ('Percy Fitzwallace',   '456.151.820-75', 'Auxiliar Administrativo',  '(19) 98872-3698',  0),
+                  ('Chandler Bing',       '356.918.420-56', 'Agente de Endemias',       '(19) 99564-7832',  0),
+                  ('Joey Tribbiani',      '183.076.495-21', 'Auxiliar Administrativo',  '(19) 99642-1198',  1),
+                  ('Rachel Green',        '401.597.332-68', 'Farmacêutico',             '(19) 98451-2389',  1),
+                  ('Monica Geller',       '578.223.149-10', 'Auxiliar Administrativo',  '(19) 98745-1023',  1),
+                  ('Ross Geller',         '901.884.750-77', 'Auxiliar Administrativo',  '(19) 98123-7654',  1),
+                  ('Phoebe Buffay',       '290.415.867-04', 'Farmacêutico',             '(19) 98325-4432',  1),
+                  ('Gregory House',       '642.378.910-63', 'Enfermeiro',               '(19) 98976-2154',  1),
+                  ('James Wilson',        '321.987.654-99', 'Enfermeiro',               '(19) 99112-9987',  1),
+                  ('Allison Cameron',     '987.321.654-55', 'Enfermeiro',               '(19) 98098-3212',  1),
+                  ('Matt Albie',          '174.053.820-00', 'Agente de Endemias',       '(19) 98333-3030',  0),
+                  ('Danny Tripp',         '836.290.110-54', 'Farmacêutico',             '(19) 98484-8484',  1),
+                  ('Jordan McDeere',      '285.741.056-11', 'Auxiliar Administrativo',  '(19) 98686-1212',  1),
+                  ('Alan Shore',          '318.490.572-00', 'Farmacêutico',             '(19) 98401-1234',  1),
+                  ('Denny Crane',         '365.872.760-20', 'Auxiliar Administrativo',  '(19) 98876-5543',  1),
+                  ('Mark Greene',         '930.417.586-77', 'Enfermeiro',               '(19) 98123-4770',  1),
+                  ('John Carter',         '587.146.903-88', 'Farmacêutico',             '(19) 98123-4567',  1),
+                  ('Abby Lockhart',       '169.324.570-90', 'Agente de Endemias',       '(19) 98045-6651',  1),
+                  ('Neela Rasgotra',      '758.219.043-42', 'Enfermeiro',               '(19) 98076-1194',  1),
+                  ('Lucien Dubenko',      '086.521.740-38', 'Enfermeiro',               '(19) 98760-4392',  1),
+                  ('Carol Hathaway',      '012.345.678-90', 'Enfermeiro',               '(19) 98895-2291',  1),
+                  ('Luka Kovač',          '059.143.700-98', 'Enfermeiro',               '(19) 98328-1147',  1),
+                  ('Adrian Monk',         '713.849.520-22', 'Agente de Endemias',       '(19) 99811-2374',  1),
+                  ('Michael Scofield',    '134.607.892-05', 'Auxiliar Administrativo',  '(19) 98560-4032',  1),
+                  ('Tony Soprano',        '591.028.347-79', 'Farmacêutico',             '(19) 97987-1204',  0),
+                  ('Ally McBeal',         '645.713.980-00', 'Auxiliar Administrativo',  '(19) 98543-6578',  1),
+                  ('Frank Underwood',     '892.406.115-43', 'Coordenador',              '(19) 98439-1052',  1),
+                  ('Sloan Sabbith',       '610.975.324-12', 'Auxiliar Administrativo',  '(19) 98244-3150',  1),
+                  ('Don Keefer',          '789.201.463-55', 'Auxiliar Administrativo',  '(19) 98899-2340',  1),
+                  ('Will McAvoy',         '654.729.330-62', 'Auxiliar Administrativo',  '(19) 98323-4420',  1),
+                  ('Natalie Hurley',      '068.591.309-47', 'Auxiliar Administrativo',  '(19) 98484-8485',  1),
+                  ('Dana Whitaker',       '456.456.123-22', 'Auxiliar Administrativo',  '(19) 98383-8383',  1),
+                  ('Jeremy Goodwin',      '147.258.369-44', 'Auxiliar Administrativo',  '(19) 98585-8586',  1),
+                  ('Lennie Briscoe',      '607.219.860-49', 'Agente de Endemias',       '(19) 99233-0090',  0),
+                  ('Ben Stone',           '305.691.440-30', 'Farmacêutico',             '(19) 99387-4456',  1),
+                  ('Anita Van Buren',     '220.374.830-58', 'Farmacêutico',             '(19) 99012-6172',  1),
+                  ('Adam Schiff',         '418.591.770-85', 'Auxiliar Administrativo',  '(19) 97582-3287',  0),
+                  ('Abbie Carmichael',    '215.501.400-78', 'Auxiliar Administrativo',  '(19) 97483-6479',  1),
+                  ('Connie Rubirosa',     '479.810.430-26', 'Auxiliar Administrativo',  '(19) 98974-3196',  1),
+                  ('Jack McCoy',          '188.967.230-36', 'Auxiliar Administrativo',  '(19) 98490-7633',  1),
+                  ('Dexter Morgan',       '734.012.986-53', 'Auxiliar Administrativo',  '(19) 99384-2911',  1),
+                  ('Jack Bauer',          '085.346.917-82', 'Agente de Endemias',       '(19) 99930-6871',  1),
+                  ('David Palmer',        '482.395.990-58', 'Coordenador',              '(19) 98946-3045',  1),
+                  ('Rosa Diaz',           '286.049.713-35', 'Auxiliar Administrativo',  '(19) 99475-3301',  1),
+                  ('Amy Santiago',        '540.721.398-67', 'Auxiliar Administrativo',  '(19) 99213-6644',  1),
+                  ('Raymond Holt',        '924.630.157-89', 'Auxiliar Administrativo',  '(19) 99915-8720',  0),
+                  ('Terry Jeffords',      '059.310.280-78', 'Auxiliar Administrativo',  '(19) 98702-9186',  1),
+                  ('Lucifer Morningstar', '187.593.240-66', 'Coordenador',              '(19) 99548-7299',  1),
+                  ('Chloe Decker',        '043.167.892-05', 'Auxiliar Administrativo',  '(19) 98993-4108',  1),
+                  ('Robin Scherbatsky',   '778.901.234-56', 'Auxiliar Administrativo',  '(19) 99166-2930',  1),
+                  ('Barney Stinson',      '889.012.345-67', 'Auxiliar Administrativo',  '(19) 98743-7099',  1),
+                  ('Ted Mosby',           '530.149.370-43', 'Farmacêutico',             '(19) 99784-1155',  1),
+                  ('Lorelai Gilmore',     '398.207.610-44', 'Auxiliar Administrativo',  '(19) 99076-3580',  1),
+                  ('Luke Danes',          '738.921.060-22', 'Auxiliar Administrativo',  '(19) 99499-2841',  1),
+                  ('Harvey Specter',      '434.567.890-12', 'Auxiliar Administrativo',  '(19) 98712-4350',  1),
+                  ('Donna Paulsen',       '545.678.901-23', 'Farmacêutico',             '(19) 98413-6572',  1),
+                  ('Louis Litt',          '656.789.012-34', 'Auxiliar Administrativo',  '(19) 98642-3033',  1)
       ) AS T (Name, Cpf, [Function], Phone, IsActive)
 )
 
@@ -1292,8 +1313,8 @@ GO
   "observation": "",
   "receivingDate": "2024-01-05T08:40:08.000Z",
   "supplierId": 14,
-  "responsibleId": 1,
-  "accountId": 4,
+  "responsibleId": 10,
+  "accountId": 6,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 0.72, "batch": "LOTG9H0I1J2K", "brand": "Cimed", "expiryDate": "2026-04-12", "productId": 38 },
     { "quantity": 1000, "unitValue": 1.30, "batch": "LOTL3M4N5O6P", "brand": "Libbs", "expiryDate": "2027-07-28", "productId": 31 },
@@ -1334,7 +1355,7 @@ GO
   "observation": "",
   "receivingDate": "2024-01-12T10:32:45.000Z",
   "supplierId": 7,
-  "responsibleId": 8,
+  "responsibleId": 6,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 0.45, "batch": "LOTX1D8E7C", "brand": "Medley", "expiryDate": "2025-12-20", "productId": 1 },
@@ -1350,7 +1371,7 @@ GO
   "receivingDate": "2024-01-29T10:13:21.000Z",
   "supplierId": 1,
   "responsibleId": 4,
-  "accountId": 6,
+  "accountId": 5,
   "receivedItems": [
     { "quantity": 5, "unitValue": 215.77, "batch": "LOTAA1BB2C3", "brand": "Mikatos", "expiryDate": "2028-01-01", "productId": 277 },
     { "quantity": 15, "unitValue": 43.99, "batch": "LOTDD4EE5F6", "brand": "G-Tech", "expiryDate": "2027-12-31", "productId": 272 },
@@ -1365,7 +1386,7 @@ GO
   "receivingDate": "2024-01-30T08:27:38.000Z",
   "supplierId": 9,
   -- Material de Limpeza
-  "responsibleId": 4,
+  "responsibleId": 11,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 400, "unitValue": 55.00, "batch": "LOT1A8F3D7C", "brand": "Diversey", "expiryDate": "2028-04-05", "productId": 194 },
@@ -1437,7 +1458,7 @@ GO
   "observation": "",
   "receivingDate": "2024-03-12T11:35:13.000Z",
   "supplierId": 4,
-  "responsibleId": 9,
+  "responsibleId": 11,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 300, "unitValue": 35.50, "batch": "LOTK9L8M7N6O", "brand": "Pfizer", "expiryDate": "2026-11-05", "productId": 12 },
@@ -1472,7 +1493,7 @@ GO
   "observation": "Itens frágeis, conferidos com atenção.",
   "receivingDate": "2024-03-13T14:03:45.000Z",
   "supplierId": 57,
-  "responsibleId": 4,
+  "responsibleId": 12,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 2500, "unitValue": 0.28, "batch": "LOTX1D2T6Y7", "brand": "Descarpack", "expiryDate": "2026-05-20", "productId": 144 },
@@ -1490,7 +1511,7 @@ GO
   "observation": "",
   "adjustmentDate": "2024-03-13T15:26:37.000Z",
   "responsibleId": 8,
-  "accountId": 5,
+  "accountId": 6,
   "adjustmentItems": [
     { "productId": 18,  "quantity": 5, "batch": "LOTS7T8U9V0W",  "brand": "Roche", "expiryDate": "2029-09-13", "unitValue": 5.00 }
   ]
@@ -1537,7 +1558,7 @@ GO
   "receivingDate": "2024-04-16T15:42:24.000Z",
   "supplierId": 28,
   "responsibleId": 10,
-  "accountId": 6,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 100, "unitValue": 2.80, "batch": "LOTR7E6W5Q", "brand": "Descarpack", "expiryDate": "2028-01-05", "productId": 153 },
     { "quantity": 100, "unitValue": 2.80, "batch": "LOTP4O3I2U", "brand": "Descarpack", "expiryDate": "2028-01-05", "productId": 154 },
@@ -1557,7 +1578,7 @@ GO
   "receivingDate": "2024-04-22T16:12:20.000Z",
   "supplierId": 9,
   -- Material de Limpeza
-  "responsibleId": 4,
+  "responsibleId": 12,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 15, "unitValue": 25.40, "batch": "LOTB8K9R0M1", "brand": "Tuff", "expiryDate": "2029-12-12", "productId": 87 },
@@ -1584,7 +1605,7 @@ GO
   "observation": "",
   "adjustmentDate": "2024-05-02T10:27:36.000Z",
   "responsibleId": 8,
-  "accountId": 5,
+  "accountId": 6,
   "adjustmentItems": [
     { "productId": 95, "quantity": 30, "batch": "LOT2B3C4D5", "brand": "BD", "expiryDate": "2029-01-15", "unitValue": 1.50 }
   ]
@@ -1596,7 +1617,7 @@ GO
   "observation": "Entrega parcial concluída.",
   "receivingDate": "2024-05-03T14:38:53.000Z",
   "supplierId": 4,
-  "responsibleId": 9,
+  "responsibleId": 12,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 400, "unitValue": 4.10, "batch": "LOTO0P1A2Z3", "brand": "Portex", "expiryDate": "2029-06-11", "productId": 256 },
@@ -1615,7 +1636,7 @@ GO
   "supplierId": 67,
   -- Material de Apoio e Administrativo
   "responsibleId": 6,
-  "accountId": 6,
+  "accountId": 5,
   "receivedItems": [
     { "quantity": 10, "unitValue": 22.90, "batch": "LOTG2J7V3X0", "brand": "Bioland", "expiryDate": "2028-03-29", "productId": 379 },
     { "quantity": 100, "unitValue": 1.45, "batch": "LOTN9W5Y4Z1", "brand": "3M", "expiryDate": "2029-05-11", "productId": 129 },
@@ -1656,7 +1677,7 @@ GO
   "receivingDate": "2024-07-03T09:38:12.000Z",
   "supplierId": 3,
   "responsibleId": 4,
-  "accountId": 7,
+  "accountId": 5,
   "receivedItems": [
     { "quantity": 120, "unitValue": 0.85, "batch": "LOTD2S3A4P5", "brand": "Accu-Chek", "expiryDate": "2026-03-15", "productId": 142 },
     { "quantity": 1500, "unitValue": 0.14, "batch": "LOTF6G7H8J9", "brand": "NovoFine", "expiryDate": "2027-04-04", "productId": 275 },
@@ -1672,7 +1693,7 @@ GO
   "observation": "",
   "receivingDate": "2024-07-22T10:35:10.000Z",
   "supplierId": 24,
-  "responsibleId": 6,
+  "responsibleId": 11,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 500, "unitValue": 1.45, "batch": "LOTH3G4F5D6", "brand": "Johnson & Johnson", "expiryDate": "2028-11-10", "productId": 65 },
@@ -1707,7 +1728,7 @@ GO
   "receivingDate": "2024-07-29T13:15:00.000Z",
   "supplierId": 33,
   "responsibleId": 10,
-  "accountId": 6,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 200, "unitValue": 0.80, "batch": "LOTE1D2F3G", "brand": "BD", "expiryDate": "2028-03-03", "productId": 157 },
     { "quantity": 200, "unitValue": 0.90, "batch": "LOTH4J5K6L", "brand": "BD", "expiryDate": "2028-03-03", "productId": 96 },
@@ -1743,7 +1764,7 @@ GO
   "observation": "",
   "receivingDate": "2024-08-02T11:30:02.000Z",
   "supplierId": 3,
-  "responsibleId": 9,
+  "responsibleId": 12,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 2000, "unitValue": 0.05, "batch": "LOT8F7G6H5", "brand": "Descarpack", "expiryDate": "2028-05-15", "productId": 334 },
@@ -1767,7 +1788,7 @@ GO
   "observation": "",
   "receivingDate": "2024-08-05T14:31:14.000Z",
   "supplierId": 7,
-  "responsibleId": 6,
+  "responsibleId": 10,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 800, "unitValue": 2.15, "batch": "LOTC2V3B4N5", "brand": "DeltaPlus", "expiryDate": "2027-10-01", "productId": 8 },
@@ -1801,8 +1822,8 @@ GO
   "observation": "",
   "receivingDate": "2024-09-17T08:45:10.000Z",
   "supplierId": 23,
-  "responsibleId": 4,
-  "accountId": 6,
+  "responsibleId": 8,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 950, "unitValue": 1.45, "batch": "LOTB71C0A9A", "brand": "Novartis", "expiryDate": "2028-05-20", "productId": 110 },
     { "quantity": 1200, "unitValue": 0.88, "batch": "LOT4E9F23D6", "brand": "EMS", "expiryDate": "2029-01-15", "productId": 123 },
@@ -1818,8 +1839,8 @@ GO
   "observation": "Conferência completa e sem divergências.",
   "receivingDate": "2024-09-17T11:03:50.000Z",
   "supplierId": 14,
-  "responsibleId": 5,
-  "accountId": 5,
+  "responsibleId": 12,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 500, "unitValue": 0.28, "batch": "LOTQ1W2E3R4", "brand": "Cremer", "expiryDate": "2026-07-01", "productId": 164 },
     { "quantity": 800, "unitValue": 0.15, "batch": "LOTT5Y6U7I8", "brand": "Medix", "expiryDate": "2026-08-10", "productId": 165 },
@@ -1837,7 +1858,7 @@ GO
   "receivingDate": "2024-09-19T13:16:48.000Z",
   "supplierId": 49,
   "responsibleId": 6,
-  "accountId": 7,
+  "accountId": 5,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 1.90, "batch": "LOTP3Q7R0S4", "brand": "Supermax", "expiryDate": "2027-12-01", "productId": 367 },
     { "quantity": 1500, "unitValue": 1.95, "batch": "LOTV8W2X6Y9", "brand": "Supermax", "expiryDate": "2027-12-01", "productId": 368 },
@@ -1852,7 +1873,7 @@ GO
   "observation": "",
   "receivingDate": "2024-10-09T15:30:02.000Z",
   "supplierId": 63,
-  "responsibleId": 4,
+  "responsibleId": 11,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1000, "unitValue": 0.20, "batch": "LOTJ6K0L4M8", "brand": "Descarpack", "expiryDate": "2027-09-06", "productId": 166 },
@@ -1900,8 +1921,8 @@ GO
   "observation": "",
   "receivingDate": "2024-10-21T08:42:12.000Z",
   "supplierId": 60,
-  "responsibleId": 6,
-  "accountId": 6,
+  "responsibleId": 12,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 500, "unitValue": 0.10, "batch": "LOTE1R2T3Y4", "brand": "Descarpack", "expiryDate": "2026-09-01", "productId": 341 },
     { "quantity": 800, "unitValue": 0.08, "batch": "LOTU5I6O7P8", "brand": "Medix", "expiryDate": "2027-01-10", "productId": 338 },
@@ -1924,7 +1945,7 @@ GO
   "receivingDate": "2024-11-05T11:20:58.000Z",
   "supplierId": 49,
   "responsibleId": 4,
-  "accountId": 7,
+  "accountId": 5,
   "receivedItems": [
     { "quantity": 100, "unitValue": 0.90, "batch": "LOTX5Z6Q7W8", "brand": "Descarpack", "expiryDate": "2029-09-01", "productId": 175 },
     { "quantity": 500, "unitValue": 0.05, "batch": "LOTE9R0T1Y2", "brand": "Medix", "expiryDate": "2030-04-04", "productId": 334 },
@@ -1943,7 +1964,7 @@ GO
   "observation": "",
   "receivingDate": "2024-11-25T14:42:01.000Z",
   "supplierId": 4,
-  "responsibleId": 6,
+  "responsibleId": 11,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1100, "unitValue": 0.95, "batch": "LOT2D5F0E4B", "brand": "Neo Química", "expiryDate": "2027-03-18", "productId": 222 },
@@ -1979,7 +2000,7 @@ GO
   "observation": "",
   "receivingDate": "2024-11-27T08:32:15.000Z",
   "supplierId": 4,
-  "responsibleId": 9,
+  "responsibleId": 12,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1300, "unitValue": 2.30, "batch": "LOTF0E9D8C7", "brand": "Roche", "expiryDate": "2026-04-03", "productId": 131 },
@@ -1997,8 +2018,8 @@ GO
   "observation": "",
   "receivingDate": "2025-01-06T12:03:51.000Z",
   "supplierId": 57,
-  "responsibleId": 4,
-  "accountId": 6,
+  "responsibleId": 10,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 1550, "unitValue": 1.10, "batch": "LOT8D7C6B5A", "brand": "Cristália", "expiryDate": "2027-08-01", "productId": 6 },
     { "quantity": 1900, "unitValue": 0.60, "batch": "LOT5B3H4D5E", "brand": "Glenmark", "expiryDate": "2028-05-04", "productId": 248 },
@@ -2024,8 +2045,8 @@ GO
   "observation": "Prioridade de armazenamento.",
   "receivingDate": "2025-01-09T13:15:42.000Z",
   "supplierId": 3,
-  "responsibleId": 7,
-  "accountId": 5,
+  "responsibleId": 11,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 2100, "unitValue": 0.70, "batch": "LOT1E2F3A4B", "brand": "Hypera Pharma", "expiryDate": "2028-02-19", "productId": 3 },
     { "quantity": 1400, "unitValue": 1.90, "batch": "LOT5C6D7E8F", "brand": "Medley", "expiryDate": "2029-07-03", "productId": 127 },
@@ -2045,7 +2066,7 @@ GO
   "observation": "",
   "receivingDate": "2025-01-15T10:53:26.000Z",
   "supplierId": 7,
-  "responsibleId": 4,
+  "responsibleId": 10,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 3.40, "batch": "LOT3R1S9T7", "brand": "Cristália", "expiryDate": "2029-10-24", "productId": 19 },
@@ -2060,7 +2081,7 @@ GO
   "observation": "Itens frágeis, armazenar com cuidado.",
   "receivingDate": "2025-01-27T10:41:14.000Z",
   "supplierId": 1,
-  "responsibleId": 6,
+  "responsibleId": 12,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 3000, "unitValue": 0.18, "batch": "LOTX6Y0Z4A8", "brand": "Descarpack", "expiryDate": "2028-02-05", "productId": 171 },
@@ -2098,7 +2119,7 @@ GO
   "observation": "",
   "receivingDate": "2025-01-30T09:46:37.000Z",
   "supplierId": 14,
-  "responsibleId": 1,
+  "responsibleId": 2,
   "accountId": 4,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 0.88, "batch": "LOTD2C4E6F8", "brand": "Labor Import", "expiryDate": "2029-01-25", "productId": 178 },
@@ -2173,7 +2194,7 @@ GO
   "observation": "Entrega de emergência.",
   "receivingDate": "2025-02-18T15:12:35.000Z",
   "supplierId": 3,
-  "responsibleId": 9,
+  "responsibleId": 12,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 500, "unitValue": 3.75, "batch": "LOTF6D9C0B3", "brand": "Cirúrgica", "expiryDate": "2026-10-10", "productId": 150 },
@@ -2189,7 +2210,7 @@ GO
   "observation": "",
   "receivingDate": "2025-02-19T09:35:20.000Z",
   "supplierId": 28,
-  "responsibleId": 8,
+  "responsibleId": 5,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 750, "unitValue": 1.12, "batch": "LOT8A5F2D9C", "brand": "Duflex", "expiryDate": "2029-12-05", "productId": 391 },
@@ -2230,8 +2251,8 @@ GO
   "observation": "",
   "receivingDate": "2025-03-05T12:38:14.000Z",
   "supplierId": 25,
-  "responsibleId": 7,
-  "accountId": 5,
+  "responsibleId": 11,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 250, "unitValue": 18.00, "batch": "LOTR7H5X4C2", "brand": "Medical", "expiryDate": "2027-04-05", "productId": 277 },
     { "quantity": 150, "unitValue": 35.00, "batch": "LOTD1Z9J0P7", "brand": "Medsonda", "expiryDate": "2026-08-28", "productId": 316 },
@@ -2252,7 +2273,7 @@ GO
   "observation": "",
   "receivingDate": "2025-04-14T11:45:20.000Z",
   "supplierId": 25,
-  "responsibleId": 4,
+  "responsibleId": 11,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1500, "unitValue": 0.68, "batch": "LOTU3V6W9X1", "brand": "3M", "expiryDate": "2028-02-04", "productId": 144 },
@@ -2279,7 +2300,7 @@ GO
   "observation": "Itens frágeis, manuseio cuidadoso.",
   "receivingDate": "2025-04-25T14:36:07.000Z",
   "supplierId": 24,
-  "responsibleId": 8,
+  "responsibleId": 5,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 100, "unitValue": 3.50, "batch": "LOTX9Y1Z3A5", "brand": "MedSonda", "expiryDate": "2028-04-01", "productId": 147 },
@@ -2304,7 +2325,7 @@ GO
   "observation": "",
   "receivingDate": "2025-05-09T11:41:36.000Z",
   "supplierId": 3,
-  "responsibleId": 6,
+  "responsibleId": 11,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 150, "unitValue": 15.00, "batch": "LOT9M0N1P2", "brand": "Eli Lilly", "expiryDate": "2029-09-07", "productId": 12 },
@@ -2337,7 +2358,7 @@ GO
   "observation": "Verificar embalagem danificada em 2 itens.",
   "receivingDate": "2025-05-23T14:42:21.000Z",
   "supplierId": 79,
-  "responsibleId": 6,
+  "responsibleId": 10,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 1800, "unitValue": 0.30, "batch": "LOT9Y7Z5A3", "brand": "Novartis", "expiryDate": "2028-10-31", "productId": 255 },
@@ -2395,8 +2416,8 @@ GO
   "observation": "",
   "receivingDate": "2025-06-17T15:30:41.000Z",
   "supplierId": 18,
-  "responsibleId": 5,
-  "accountId": 5,
+  "responsibleId": 10,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 400, "unitValue": 8.00, "batch": "LOTL5M1N6O8", "brand": "Germed", "expiryDate": "2029-02-20", "productId": 236 },
     { "quantity": 2300, "unitValue": 0.33, "batch": "LOTP2Q7R9S4", "brand": "Neo Química", "expiryDate": "2027-04-26", "productId": 47 },
@@ -2416,7 +2437,7 @@ GO
   "receivingDate": "2025-06-26T14:45:35.000Z",
   "supplierId": 43,
   -- Material de Limpeza
-  "responsibleId": 6,
+  "responsibleId": 8,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 200, "unitValue": 30.70, "batch": "LOT9E52C9F8", "brand": "Rioquimica", "expiryDate": "2029-01-25", "productId": 183 },
@@ -2434,7 +2455,7 @@ GO
   "receivingDate": "2025-07-01T08:18:28.000Z",
   "supplierId": 33,
   "responsibleId": 9,
-  "accountId": 6,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 1700, "unitValue": 0.90, "batch": "LOTR7S0T3U5", "brand": "Cremer", "expiryDate": "2027-04-20", "productId": 74 },
     { "quantity": 1400, "unitValue": 0.22, "batch": "LOTE9F2G5H8", "brand": "Descarpack", "expiryDate": "2028-09-07", "productId": 338 },
@@ -2451,7 +2472,7 @@ GO
   "observation": "",
   "receivingDate": "2025-07-29T13:15:30.000Z",
   "supplierId": 25,
-  "responsibleId": 9,
+  "responsibleId": 12,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 200, "unitValue": 1.10, "batch": "LOTR4S8T2U5", "brand": "Kolplast", "expiryDate": "2028-02-09", "productId": 377 },
@@ -2473,7 +2494,7 @@ GO
   "observation": "",
   "receivingDate": "2025-08-02T11:05:11.000Z",
   "supplierId": 3,
-  "responsibleId": 4,
+  "responsibleId": 9,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 2500, "unitValue": 0.15, "batch": "LOTR9A0B1C3", "brand": "Germed", "expiryDate": "2027-12-19", "productId": 97 },
@@ -2492,8 +2513,8 @@ GO
   "observation": "",
   "receivingDate": "2025-08-20T11:55:21.000Z",
   "supplierId": 14,
-  "responsibleId": 7,
-  "accountId": 5,
+  "responsibleId": 12,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 150, "unitValue": 12.00, "batch": "LOTV3W7X1Y5", "brand": "Techline", "expiryDate": "2027-01-28", "productId": 187 },
     { "quantity": 300, "unitValue": 0.65, "batch": "LOTZ8A2B6C0", "brand": "Steri", "expiryDate": "2029-08-03", "productId": 262 },
@@ -2512,7 +2533,7 @@ GO
   "observation": "",
   "receivingDate": "2025-08-20T14:57:18.000Z",
   "supplierId": 24,
-  "responsibleId": 4,
+  "responsibleId": 8,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 2000, "unitValue": 0.15, "batch": "LOTP3Q7R1S5", "brand": "Cimed", "expiryDate": "2026-05-10", "productId": 38 },
@@ -2542,7 +2563,7 @@ GO
   "observation": "Entrega grande",
   "receivingDate": "2025-09-01T13:17:21.000Z",
   "supplierId": 26,
-  "responsibleId": 8,
+  "responsibleId": 5,
   "accountId": 5,
   "receivedItems": [
     { "quantity": 50, "unitValue": 45.00, "batch": "LOTD8E2F6G0", "brand": "Opti", "expiryDate": "2028-06-01", "productId": 277 },
@@ -2568,7 +2589,7 @@ GO
   "receivingDate": "2025-09-04T09:54:56.000Z",
   "supplierId": 49,
   "responsibleId": 10,
-  "accountId": 6,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 1900, "unitValue": 0.70, "batch": "LOTQ7K2L8M4", "brand": "Eurofarma", "expiryDate": "2028-03-02", "productId": 227 },
     { "quantity": 1300, "unitValue": 1.15, "batch": "LOTN0O3P6Q9", "brand": "Ache", "expiryDate": "2027-06-17", "productId": 91 },
@@ -2588,7 +2609,7 @@ GO
   "observation": "Prioridade de armazenamento. Produtos de alto valor.",
   "receivingDate": "2025-09-05T15:41:17.000Z",
   "supplierId": 21,
-  "responsibleId": 6,
+  "responsibleId": 11,
   "accountId": 7,
   "receivedItems": [
     { "quantity": 50, "unitValue": 55.00, "batch": "LOTG2Z5F1C9", "brand": "Vidas", "expiryDate": "2027-09-01", "productId": 256 },
@@ -2628,7 +2649,7 @@ GO
   "observation": "",
   "receivingDate": "2025-09-17T13:26:39.000Z",
   "supplierId": 25,
-  "responsibleId": 9,
+  "responsibleId": 12,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1100, "unitValue": 0.90, "batch": "LOTK8L7M3N9", "brand": "Cristália", "expiryDate": "2026-01-18", "productId": 29 },
@@ -2652,8 +2673,8 @@ GO
   "observation": "Revisar lote",
   "receivingDate": "2025-10-14T14:01:51.000Z",
   "supplierId": 33,
-  "responsibleId": 7,
-  "accountId": 5,
+  "responsibleId": 8,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 2000, "unitValue": 0.15, "batch": "LOT8W6X4Y2", "brand": "Hipolabor", "expiryDate": "2030-08-08", "productId": 20 },
     { "quantity": 3000, "unitValue": 0.08, "batch": "LOT7Z5A3B1", "brand": "Baxter", "expiryDate": "2029-12-12", "productId": 45 },
@@ -2669,8 +2690,8 @@ GO
   "observation": "",
   "receivingDate": "2025-10-25T10:48:57.000Z",
   "supplierId": 60,
-  "responsibleId": 6,
-  "accountId": 6,
+  "responsibleId": 12,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 1200, "unitValue": 1.15, "batch": "LOTX1B7E20A", "brand": "3M", "expiryDate": "2027-05-20", "productId": 144 },
     { "quantity": 2500, "unitValue": 0.55, "batch": "LOTK4F8C1D6", "brand": "Descarpack", "expiryDate": "2028-09-01", "productId": 338 },
@@ -2712,7 +2733,7 @@ GO
   "receivingDate": "2025-11-05T11:22:33.000Z",
   "supplierId": 14,
   "responsibleId": 10,
-  "accountId": 6,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 1900, "unitValue": 0.70, "batch": "LOTQ7K2L8M4", "brand": "Eurofarma", "expiryDate": "2028-03-02", "productId": 227 },
     { "quantity": 1300, "unitValue": 1.15, "batch": "LOTN0O3P6Q9", "brand": "Ache", "expiryDate": "2027-06-17", "productId": 91 },
@@ -2732,7 +2753,7 @@ GO
   "receivingDate": "2025-11-07T15:52:26.000Z",
   "supplierId": 79,
   "responsibleId": 10,
-  "accountId": 6,
+  "accountId": 7,
   "receivedItems": [
     { "quantity": 700, "unitValue": 4.50, "batch": "LOTC1D8F4H", "brand": "Libbs", "expiryDate": "2028-07-16", "productId": 31 },
     { "quantity": 950, "unitValue": 2.10, "batch": "LOTJ3K6L9M", "brand": "Baldacci", "expiryDate": "2029-04-29", "productId": 10 },
@@ -2766,7 +2787,7 @@ GO
   "receivingDate": "2025-11-18T10:42:32.000Z",
   "supplierId": 39,
   -- Material de Apoio e Administrativo
-  "responsibleId": 9,
+  "responsibleId": 11,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 5000, "unitValue": 0.004, "batch": "LOTQ5D2P0J8", "brand": "Bacchi", "expiryDate": "2026-04-18", "productId": 217 },
@@ -2782,7 +2803,7 @@ GO
   "observation": "",
   "receivingDate": "2025-12-10T09:45:41.000Z",
   "supplierId": 24,
-  "responsibleId": 4,
+  "responsibleId": 12,
   "accountId": 6,
   "receivedItems": [
     { "quantity": 1000, "unitValue": 1.55, "batch": "LOTX1D8E7H6", "brand": "3M", "expiryDate": "2027-05-20", "productId": 8 },
