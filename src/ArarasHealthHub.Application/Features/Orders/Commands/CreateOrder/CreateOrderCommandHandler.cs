@@ -22,7 +22,6 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IProductRepository _productRepo;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CreateOrderCommandHandler(
             IOrderRepository orderRepo,
@@ -37,7 +36,6 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
             _userManager = userManager;
             _productRepo = productRepo;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResponse<OrderDto>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -52,6 +50,13 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
             if (account == null)
             {
                 return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+            }
+
+            var facilityId = account.FacilityId;
+
+            if (facilityId <= 0)
+            {
+                return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.UnableToIdentifyFacilityOfTheLoggedAccount, false);
             }
 
             var orderItems = new List<OrderItem>();
@@ -77,14 +82,6 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
                     ActualQuantity = 0
                 };
                 orderItems.Add(orderItem);
-            }
-
-            var currentUser = _httpContextAccessor.HttpContext?.User;
-            var facilityClaim = currentUser?.FindFirst("FacilityId")?.Value;
-
-            if (!int.TryParse(facilityClaim, out int facilityId))
-            {
-                return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.UnableToIdentifyFacilityOfTheLoggedAccount, false);
             }
 
             var order = new Order

@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
 {
@@ -18,24 +21,39 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
         private readonly IOrderRepository _orderRepo;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GetAllOrdersQueryHandler(IOrderRepository orderRepo, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public GetAllOrdersQueryHandler(
+            IOrderRepository orderRepo,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor,
+            UserManager<ApplicationUser> userManager)
         {
             _orderRepo = orderRepo;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         public async Task<PagedResponse<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
             var currentUser = _httpContextAccessor.HttpContext?.User;
-            var scope = currentUser?.FindFirst("Scope")?.Value;
-            var facilityClaim = currentUser?.FindFirst("FacilityId")?.Value;
+            var scopeClaim = currentUser?.FindFirst("Scope")?.Value;
             int? facilityIdToFilter = null;
 
-            if (scope == UserScopeEnum.Operational.ToString() && int.TryParse(facilityClaim, out int facilityId))
+            if (scopeClaim == UserScopeEnum.Operational.ToString())
             {
-                facilityIdToFilter = facilityId;
+                var accountIdClaim = currentUser?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (accountIdClaim != null && int.TryParse(accountIdClaim, out int accountId))
+                {
+                    var account = await _userManager.FindByIdAsync(accountId.ToString());
+
+                    if (account != null)
+                    {
+                        facilityIdToFilter = account.FacilityId;
+                    }
+                }
             }
 
             var allOrders = await _orderRepo.GetAllWithItemsAsync(request.OrderStatusId, facilityIdToFilter);
