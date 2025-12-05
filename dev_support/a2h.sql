@@ -1688,6 +1688,21 @@ GO
 }
 
 {
+  -- /api/stock/create-adjustment
+  "type": 1,
+  "reason": "Doação",
+  "observation": "",
+  "adjustmentDate": "2024-07-04T11:22:33.000Z",
+  "responsibleId": 6,
+  "accountId": 5,
+  "adjustmentItems": [
+    { "productId": 250, "quantity": 90, "batch": "LOTF5D2S6G0D", "brand": "Pfizer", "expiryDate": "2026-09-15", "unitValue": 0.25 },
+    { "productId": 249, "quantity": 180, "batch": "LOTB9A2G7G2U", "brand": "Neo Química", "expiryDate": "2026-11-04", "unitValue": 0.15 },
+    { "productId": 251, "quantity": 30, "batch": "LOTQ7B5Y7T9G", "brand": "Eurofarma", "expiryDate": "2026-12-19", "unitValue": 0.85 }
+  ]
+}
+
+{
   "invoiceNumber": "459021",
   "supplyAuthorization": "AF 2024/005128",
   "observation": "",
@@ -1889,6 +1904,22 @@ GO
     { "quantity": 50, "unitValue": 6.90, "batch": "LOTL5M9N3O7", "brand": "Supermax", "expiryDate": "2029-07-11", "productId": 145 },
     { "quantity": 50, "unitValue": 6.70, "batch": "LOTP1Q5R9S2", "brand": "Supermax", "expiryDate": "2029-07-11", "productId": 144 },
     { "quantity": 100, "unitValue": 0.95, "batch": "LOTT6U0V4W8", "brand": "Uniqmed", "expiryDate": "2028-03-29", "productId": 275 }
+  ]
+}
+
+{
+  -- /api/stock/create-adjustment
+  "type": 2,
+  "reason": "Perda",
+  "observation": "",
+  "adjustmentDate": "2024-10-09T15:45:23.000Z",
+  "responsibleId": 6,
+  "accountId": 5,
+  "adjustmentItems": [
+    { "productId": 175, "quantity": 30, "batch": "LOTY6U7I8O", "brand": "Medfio", "expiryDate": "2028-02-28", "unitValue": 1.50 },
+    { "productId": 232, "quantity": 30, "batch": "LOTP9L8K7J", "brand": "Medix", "expiryDate": "2029-08-08", "unitValue": 3.90 },
+    { "productId": 169, "quantity": 3, "batch": "LOTQ5W6E7R8", "brand": "3M", "expiryDate": "2028-06-05", "unitValue": 0.22 },
+    { "productId": 305, "quantity": 2, "batch": "LOTY9T8R7E6", "brand": "Supermax", "expiryDate": "2027-12-01", "unitValue": 0.60 }
   ]
 }
 
@@ -2221,6 +2252,22 @@ GO
     { "quantity": 1200, "unitValue": 0.22, "batch": "LOT0A7D4C6F", "brand": "Inje", "expiryDate": "2030-01-14", "productId": 163 },
     { "quantity": 400, "unitValue": 4.50, "batch": "LOTC8F3A1D6", "brand": "Portex", "expiryDate": "2027-07-07", "productId": 390 },
     { "quantity": 250, "unitValue": 1.90, "batch": "LOT5B2E9D4A", "brand": "Opti", "expiryDate": "2028-09-08", "productId": 388 }
+  ]
+}
+
+{
+  -- /api/stock/create-adjustment
+  "type": 1,
+  "reason": "Doação",
+  "observation": "",
+  "adjustmentDate": "2025-02-19T15:43:27.000Z",
+  "responsibleId": 6,
+  "accountId": 5,
+  "adjustmentItems": [
+    { "productId": 357, "quantity": 5, "batch": "LOT3FR6TGY7T", "brand": "MedSonda", "expiryDate": "2027-02-15", "unitValue": 2.25 },
+    { "productId": 352, "quantity": 3, "batch": "LOT3W5S6RP8T", "brand": "Embramed", "expiryDate": "2026-05-30", "unitValue": 1.95 },
+    { "productId": 355, "quantity": 7, "batch": "LOT4M4H6GU7I", "brand": "MedSonda", "expiryDate": "2026-09-21", "unitValue": 2.39 },
+    { "productId": 353, "quantity": 2, "batch": "LOT7E5B5GY9S", "brand": "Embramed", "expiryDate": "2026-12-27", "unitValue": 2.99 }
   ]
 }
 
