@@ -66,15 +66,23 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
                 if (quantityToApprove > orderItemToUpdate.RequestedQuantity)
                 {
                     return new ApiResponse<OrderDto>(
-                       StatusCodes.Status400BadRequest,
-                       $"A quantidade aprovada ({quantityToApprove}) para o item {item.OrderItemId} não pode exceder a solicitada ({orderItemToUpdate.RequestedQuantity}).",
-                       false
-                   );
+                        StatusCodes.Status400BadRequest,
+                        $"A quantidade aprovada ({quantityToApprove}) para o item {item.OrderItemId} não pode exceder a solicitada ({orderItemToUpdate.RequestedQuantity}).",
+                        false
+                    );
                 }
 
                 var stock = await _stockRepo.GetByProductIdAsync(orderItemToUpdate.ProductId);
+                if (stock == null)
+                {
+                    return new ApiResponse<OrderDto>(
+                        StatusCodes.Status404NotFound,
+                        $"Estoque não encontrado para o produto {orderItemToUpdate.ProductId}.",
+                        false
+                    );
+                }
 
-                var availableForReservation = stock?.CurrentQuantity - stock?.ReservedQuantity ?? 0;
+                var availableForReservation = stock.CurrentQuantity - stock.ReservedQuantity;
 
                 if (quantityToApprove > availableForReservation)
                 {
@@ -107,6 +115,8 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder
             order.SetUpdatedOn();
 
             _orderRepo.UpdateWithoutSaving(order);
+
+            await _orderRepo.SaveAllAsync(cancellationToken);
 
             var orderDto = _mapper.Map<OrderDto>(order);
 
