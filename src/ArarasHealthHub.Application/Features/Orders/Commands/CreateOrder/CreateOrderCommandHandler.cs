@@ -28,8 +28,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder
             IEmployeeRepository employeeRepo,
             UserManager<ApplicationUser> userManager,
             IProductRepository productRepo,
-            IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IMapper mapper)
         {
             _orderRepo = orderRepo;
             _employeeRepo = employeeRepo;

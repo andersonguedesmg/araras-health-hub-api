@@ -391,6 +391,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalTable: "Employees",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FK_Orders_Facilities_OrderFacilityId",
+                        column: x => x.OrderFacilityId,
+                        principalTable: "Facilities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Orders_OrderStatuses_OrderStatusId",
                         column: x => x.OrderStatusId,
                         principalTable: "OrderStatuses",
@@ -966,6 +972,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "IX_Orders_FinalizedByEmployeeId",
                 table: "Orders",
                 column: "FinalizedByEmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_OrderFacilityId",
+                table: "Orders",
+                column: "OrderFacilityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_OrderStatusId",

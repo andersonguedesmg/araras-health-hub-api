@@ -19,5 +19,14 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .AsNoTracking()
                 .FirstOrDefaultAsync(sl => sl.StockId == stockId && sl.Batch == batch && sl.Brand == brand);
         }
+
+        public async Task<IEnumerable<StockLot>> GetAvailableLotsByProductIdFEFOAsync(int productId)
+        {
+            return await _dbSet
+                .Include(sl => sl.Stock)
+                .Where(sl => sl.Stock.ProductId == productId && sl.AvailableQuantity > 0 && sl.IsActive)
+                .OrderBy(sl => sl.ExpiryDate)
+                .ToListAsync();
+        }
     }
 }

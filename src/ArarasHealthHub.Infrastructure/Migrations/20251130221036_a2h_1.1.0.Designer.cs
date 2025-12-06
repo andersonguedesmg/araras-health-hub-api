@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251127105957_a2h_1.1.0")]
+    [Migration("20251130221036_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -319,6 +319,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasIndex("FinalizedByAccountId");
 
                     b.HasIndex("FinalizedByEmployeeId");
+
+                    b.HasIndex("OrderFacilityId");
 
                     b.HasIndex("OrderStatusId");
 
@@ -1451,6 +1453,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("FinalizedByEmployeeId");
 
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Facility", "OrderFacility")
+                        .WithMany()
+                        .HasForeignKey("OrderFacilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
@@ -1480,6 +1488,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("FinalizedByAccount");
 
                     b.Navigation("FinalizedByEmployee");
+
+                    b.Navigation("OrderFacility");
 
                     b.Navigation("OrderStatus");
 

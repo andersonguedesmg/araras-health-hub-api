@@ -22,7 +22,6 @@ namespace ArarasHealthHub.Infrastructure.Repository
         public async Task<Stock?> GetByProductIdAsync(int productId)
         {
             return await _dbContext.Stocks
-                .Include(s => s.Product)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.ProductId == productId);
         }

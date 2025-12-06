@@ -16,7 +16,10 @@ namespace ArarasHealthHub.Domain.Entities
         public List<OrderItem> OrderItems { get; set; } = new();
 
         [Required]
+        [ForeignKey("OrderFacility")]
         public int OrderFacilityId { get; set; }
+
+        public Facility? OrderFacility { get; set; }
 
         [Required]
         public int OrderStatusId { get; set; }

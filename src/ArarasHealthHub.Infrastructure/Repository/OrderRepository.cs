@@ -19,6 +19,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .Include(o => o.OrderStatus)
+                .Include(o => o.OrderFacility)
                 .Include(o => o.CreatedByEmployee)
                 .Include(o => o.CreatedByAccount)
                     .ThenInclude(a => a!.Facility)
@@ -55,6 +56,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
                     .ThenInclude(oi => oi.Product)
                         .ThenInclude(p => p!.Stock)
                 .Include(o => o.OrderStatus)
+                .Include(o => o.OrderFacility)
                 .Include(o => o.CreatedByEmployee)
                 .Include(o => o.CreatedByAccount)
                     .ThenInclude(a => a!.Facility)
@@ -70,6 +72,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(o => o.CanceledByEmployee)
                 .Include(o => o.CanceledByAccount)
                     .ThenInclude(a => a!.Facility)
+                .AsSplitQuery()
                 .AsQueryable();
 
             if (orderStatusId.HasValue)

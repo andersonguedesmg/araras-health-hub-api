@@ -18,9 +18,7 @@ namespace ArarasHealthHub.Application.Profiles
         {
             CreateMap<Employee, EmployeeNameDto>();
             CreateMap<Facility, FacilityNameDto>();
-
             CreateMap<ApplicationUser, AccountMinimalDto>();
-
             CreateMap<OrderStatus, OrderStatusDto>();
 
             CreateMap<OrderItem, OrderItemDto>()
@@ -29,11 +27,13 @@ namespace ArarasHealthHub.Application.Profiles
                 .ForMember(dest => dest.RequestedQuantity, opt => opt.MapFrom(src => src.RequestedQuantity))
                 .ForMember(dest => dest.ApprovedQuantity, opt => opt.MapFrom(src => src.ApprovedQuantity))
                 .ForMember(dest => dest.ActualQuantity, opt => opt.MapFrom(src => src.ActualQuantity))
-                .ForMember(dest => dest.AvailableQuantity, opt => opt.MapFrom(src => src.Product!.Stock!.CurrentQuantity));
+                .ForMember(dest => dest.AvailableQuantity, opt => opt.MapFrom(src => src.Product!.Stock!.CurrentQuantity))
+                .ForMember(dest => dest.LotsToSeparate, opt => opt.Ignore());
 
             CreateMap<Order, OrderDto>()
                 .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
                 .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus))
+                .ForMember(dest => dest.OrderFacility, opt => opt.MapFrom(src => src.OrderFacility))
                 .ForMember(dest => dest.CreatedByEmployee, opt => opt.MapFrom(src => src.CreatedByEmployee))
                 .ForMember(dest => dest.CreatedByAccount, opt => opt.MapFrom(src => src.CreatedByAccount))
                 .ForMember(dest => dest.ApprovedByEmployee, opt => opt.MapFrom(src => src.ApprovedByEmployee))
@@ -41,7 +41,9 @@ namespace ArarasHealthHub.Application.Profiles
                 .ForMember(dest => dest.SeparatedByEmployee, opt => opt.MapFrom(src => src.SeparatedByEmployee))
                 .ForMember(dest => dest.SeparatedByAccount, opt => opt.MapFrom(src => src.SeparatedByAccount))
                 .ForMember(dest => dest.FinalizedByEmployee, opt => opt.MapFrom(src => src.FinalizedByEmployee))
-                .ForMember(dest => dest.FinalizedByAccount, opt => opt.MapFrom(src => src.FinalizedByAccount));
+                .ForMember(dest => dest.FinalizedByAccount, opt => opt.MapFrom(src => src.FinalizedByAccount))
+                .ForMember(dest => dest.FinalizedByEmployee, opt => opt.MapFrom(src => src.CanceledByEmployee))
+                .ForMember(dest => dest.FinalizedByAccount, opt => opt.MapFrom(src => src.CanceledByAccount));
         }
     }
 }

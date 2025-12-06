@@ -32,7 +32,13 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
             {
                 if (request.OperationType == StockOperationTypeEnum.Receipt || request.OperationType == StockOperationTypeEnum.Adjustment)
                 {
-                    stock = new Stock { ProductId = request.ProductId, CurrentQuantity = 0, MinQuantity = 0 };
+                    stock = new Stock
+                    {
+                        ProductId = request.ProductId,
+                        CurrentQuantity = 0,
+                        AvailableQuantity = 0,
+                        MinQuantity = 0
+                    };
                     _dbContext.Stocks.Add(stock);
 
                     await _dbContext.SaveChangesAsync(cancellationToken);
@@ -48,13 +54,16 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
                 case StockOperationTypeEnum.Receipt:
                 case StockOperationTypeEnum.Adjustment:
                     stock!.CurrentQuantity += request.Quantity;
+                    stock!.AvailableQuantity += request.Quantity;
                     break;
                 case StockOperationTypeEnum.Dispatch:
-                    if (stock!.CurrentQuantity < request.Quantity)
+                    if (stock!.AvailableQuantity < request.Quantity)
                     {
-                        throw new ApplicationException($"Estoque insuficiente para o produto {request.ProductId}.");
+                        throw new ApplicationException($"Estoque disponível insuficiente para o produto {request.ProductId}. Quantidade requerida: {request.Quantity}, disponível: {stock.AvailableQuantity}.");
                     }
+
                     stock.CurrentQuantity -= request.Quantity;
+                    stock.AvailableQuantity -= request.Quantity;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(request.OperationType), request.OperationType, "Tipo de operação de estoque não suportado.");

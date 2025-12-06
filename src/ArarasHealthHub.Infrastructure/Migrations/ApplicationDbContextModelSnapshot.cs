@@ -317,6 +317,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("FinalizedByEmployeeId");
 
+                    b.HasIndex("OrderFacilityId");
+
                     b.HasIndex("OrderStatusId");
 
                     b.HasIndex("SeparatedByAccountId");
@@ -1448,6 +1450,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("FinalizedByEmployeeId");
 
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Facility", "OrderFacility")
+                        .WithMany()
+                        .HasForeignKey("OrderFacilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
@@ -1477,6 +1485,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("FinalizedByAccount");
 
                     b.Navigation("FinalizedByEmployee");
+
+                    b.Navigation("OrderFacility");
 
                     b.Navigation("OrderStatus");
 

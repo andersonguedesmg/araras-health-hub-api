@@ -9,5 +9,6 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     public interface IStockLotRepository : IBaseRepository<StockLot>
     {
         Task<StockLot?> GetByStockIdAndBatchAndBrandAsync(int stockId, string batch, string brand);
+        Task<IEnumerable<StockLot>> GetAvailableLotsByProductIdFEFOAsync(int productId);
     }
 }

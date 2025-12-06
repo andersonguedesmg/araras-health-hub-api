@@ -11,6 +11,7 @@ using ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById;
+using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -59,6 +60,18 @@ namespace ArarasHealthHub.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllOrdersQuery query)
         {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("picking-details/{id}")]
+        [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetPickingDetails(int id)
+        {
+            var query = new GetOrderPickingDetailsQuery { Id = id };
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
