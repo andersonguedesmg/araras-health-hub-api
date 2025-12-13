@@ -43,7 +43,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
+            UpdateWithoutSaving(entity);
             await _context.SaveChangesAsync();
         }
 
@@ -65,6 +65,15 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public void UpdateWithoutSaving(T entity)
         {
+            var trackedEntity = _context.Set<T>()
+                .Local
+                .FirstOrDefault(e => e.Id.Equals(entity.Id));
+
+            if (trackedEntity != null)
+            {
+                _context.Entry(trackedEntity).State = EntityState.Detached;
+            }
+
             _dbSet.Update(entity);
         }
     }

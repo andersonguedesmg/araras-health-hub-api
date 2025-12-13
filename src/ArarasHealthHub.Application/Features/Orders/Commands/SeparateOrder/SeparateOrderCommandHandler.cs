@@ -119,6 +119,9 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
             }
 
             _orderRepo.UpdateWithoutSaving(order);
+
+            await _orderRepo.SaveAllAsync(cancellationToken);
+
             var orderDto = _mapper.Map<OrderDto>(order);
 
             return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("separado"), orderDto);
