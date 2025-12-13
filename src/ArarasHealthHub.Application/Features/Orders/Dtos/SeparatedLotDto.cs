@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 namespace ArarasHealthHub.Application.Features.Orders.Dtos
 {
     public record SeparatedLotDto(
-        int StockLotId,
+        string Batch,
+        string Brand,
         decimal Quantity
     );
 }

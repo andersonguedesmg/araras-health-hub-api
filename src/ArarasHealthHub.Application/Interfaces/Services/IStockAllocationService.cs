@@ -12,6 +12,8 @@ namespace ArarasHealthHub.Application.Interfaces.Services
     {
         Task<ApiResponse<StockAllocationResult>> AllocateFeFo(int productId, decimal quantityToAllocate);
 
+        Task<int?> FindStockLotIdByProductAttributes(int productId, string batch, string brand);
+
         Task<List<StockMovement>> PerformStockExit(
             StockAllocationResult allocationResult,
             int responsibleId,

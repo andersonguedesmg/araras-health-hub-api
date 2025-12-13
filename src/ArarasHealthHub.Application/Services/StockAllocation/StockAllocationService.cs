@@ -79,6 +79,19 @@ namespace ArarasHealthHub.Application.Services.StockAllocation
             return new ApiResponse<StockAllocationResult>(StatusCodes.Status200OK, "Alocação FEFO concluída com sucesso.", allocationResult);
         }
 
+        public async Task<int?> FindStockLotIdByProductAttributes(int productId, string batch, string brand)
+        {
+            return await _stockLotRepo.AsQueryable()
+                .Include(sl => sl.Stock)
+                .Where(sl =>
+                    sl.Stock.ProductId == productId &&
+                    sl.Batch.ToUpper() == batch.ToUpper() &&
+                    sl.Brand.ToUpper() == brand.ToUpper()
+                )
+                .Select(sl => (int?)sl.Id)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<List<StockMovement>> PerformStockExit(
             StockAllocationResult allocationResult,
             int responsibleId,

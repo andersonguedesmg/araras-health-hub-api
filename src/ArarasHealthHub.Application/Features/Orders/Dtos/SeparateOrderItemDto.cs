@@ -7,6 +7,8 @@ namespace ArarasHealthHub.Application.Features.Orders.Dtos
 {
     public record SeparateOrderItemDto(
         int OrderItemId,
-        decimal ActualQuantity
+        int ProductId,
+        decimal ActualQuantity,
+        List<SeparatedLotDto> SeparatedLots
     );
 }
