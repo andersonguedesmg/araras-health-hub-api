@@ -15,11 +15,13 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IMediator _mediator;
+        private readonly IEmployeeRepository _employeeRepo;
 
-        public CancelOrderCommandHandler(IOrderRepository orderRepo, IMediator mediator)
+        public CancelOrderCommandHandler(IOrderRepository orderRepo, IMediator mediator, IEmployeeRepository employeeRepo)
         {
             _orderRepo = orderRepo;
             _mediator = mediator;
+            _employeeRepo = employeeRepo;
         }
 
         public async Task<ApiResponse<bool>> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
@@ -43,6 +45,12 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder
                 return new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.OrderAlreadyCancelled, false);
             }
 
+            var responsible = await _employeeRepo.GetByIdAsync(request.CanceledByEmployeeId);
+            if (responsible == null)
+            {
+                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
+            }
+
             if (orderStatus != OrderStatusEnum.PendingApproval)
             {
                 var itemsToRelease = order.OrderItems.Where(oi => oi.ReservedQuantity > 0).ToList();
@@ -62,10 +70,10 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder
                 if (releaseResults.Any(r => !r.Success))
                 {
                     return new ApiResponse<bool>(
-                       StatusCodes.Status500InternalServerError,
-                       ApiMessages.StockReleaseFailed,
-                       false
-                   );
+                        StatusCodes.Status500InternalServerError,
+                        ApiMessages.StockReleaseFailed,
+                        false
+                    );
                 }
             }
 
@@ -76,6 +84,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder
             order.CanceledAt = DateTime.UtcNow;
 
             _orderRepo.UpdateWithoutSaving(order);
+            await _orderRepo.SaveAllAsync(cancellationToken);
 
             return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.OrderCancelledSuccessfully, true);
         }
