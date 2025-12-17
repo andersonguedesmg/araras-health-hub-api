@@ -87,5 +87,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
             return await query.ToListAsync();
         }
+
+        public IQueryable<Order> GetQueryable()
+        {
+            return _dbSet.AsQueryable();
+        }
     }
 }

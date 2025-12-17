@@ -12,5 +12,6 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
         Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem);
         Task UpdateOrderItemAsync(OrderItem orderItem);
         Task<IEnumerable<Order>> GetAllWithItemsAsync(int? orderStatusId = null, int? orderFacilityId = null);
+        IQueryable<Order> GetQueryable();
     }
 }

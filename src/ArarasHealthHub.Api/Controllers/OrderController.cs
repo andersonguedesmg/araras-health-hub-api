@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder;
@@ -9,6 +10,7 @@ using ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
+using ArarasHealthHub.Application.Features.Orders.Queries.ExportOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails;
@@ -140,6 +142,42 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("export")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Export([FromQuery] int? orderStatusId, [FromQuery] string? searchTerm)
+        {
+            var orders = await _mediator.Send(new ExportOrdersQuery
+            {
+                OrderStatusId = orderStatusId,
+                SearchTerm = searchTerm
+            });
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("ID;DATA;UNIDADE;SOLICITANTE;QTD ITENS;STATUS;MOTIVO CANCELAMENTO");
+
+            foreach (var order in orders)
+            {
+                sb.AppendLine(
+                    $"{order.Id};" +
+                    $"{order.CreatedAt:dd/MM/yyyy HH:mm};" +
+                    $"{order.OrderFacility!.Name};" +
+                    $"{order.CreatedByEmployee!.Name};" +
+                    $"{order.OrderItems.Count};" +
+                    $"{order.OrderStatus!.Description};"
+                );
+            }
+
+            var fileName = $"pedido_{DateTime.Now:yyyyMMddHHmmss}.csv";
+
+            var utf8WithBom = new UTF8Encoding(true);
+            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
         }
     }
 }

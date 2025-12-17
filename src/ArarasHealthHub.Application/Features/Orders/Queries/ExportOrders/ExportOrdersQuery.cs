@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
-using ArarasHealthHub.Shared.Core;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
+namespace ArarasHealthHub.Application.Features.Orders.Queries.ExportOrders
 {
-    public class GetAllOrdersQuery : PagedRequest, IRequest<PagedResponse<OrderDto>>
+    public class ExportOrdersQuery : IRequest<IEnumerable<OrderDto>>
     {
         public int? OrderStatusId { get; set; }
         public string? SearchTerm { get; set; }
