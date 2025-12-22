@@ -33,6 +33,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
                 var searchTermLower = request.SearchTerm.ToLower();
                 facilitiesQuery = facilitiesQuery.Where(p =>
                     p.Name.ToLower().Contains(searchTermLower) ||
+                    p.Cnes.ToLower().Contains(searchTermLower) ||
                     p.Address.Street.ToLower().Contains(searchTermLower) ||
                     p.Address.Number.ToLower().Contains(searchTermLower) ||
                     p.Address.Neighborhood.ToLower().Contains(searchTermLower) ||

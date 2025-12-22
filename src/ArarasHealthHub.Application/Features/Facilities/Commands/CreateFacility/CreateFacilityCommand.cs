@@ -10,6 +10,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacilit
 {
     public record CreateFacilityCommand(
         string Name,
+        string Cnes,
         AddressDto Address,
         ContactDto Contact
     ) : IRequest<ApiResponse<int>>;

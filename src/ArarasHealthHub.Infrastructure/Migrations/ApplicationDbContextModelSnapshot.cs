@@ -192,6 +192,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Cnes")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -217,7 +222,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Cnes = "1",
+                            CreatedOn = new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc),
                             IsActive = true,
                             Name = "Secretaria Municipal da Saúde"
                         });
@@ -1079,8 +1085,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "00000000-0000-0000-0000-000000000000",
-                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ConcurrencyStamp = "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99",
+                            CreatedOn = new DateTime(2025, 1, 2, 9, 14, 35, 0, DateTimeKind.Utc),
                             EmailConfirmed = false,
                             FacilityId = 1,
                             IsActive = true,
@@ -1089,7 +1095,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
                             PhoneNumberConfirmed = false,
                             Scope = 1,
-                            SecurityStamp = "00000000-0000-0000-0000-000000000000",
+                            SecurityStamp = "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11",
                             TwoFactorEnabled = false,
                             UserName = "sms_master"
                         });
@@ -1128,21 +1134,21 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "00000000-0000-0000-0000-000000000000",
+                            ConcurrencyStamp = "f2c9a0c0-7b1f-4e53-9b8a-3a0f1f4d8b11",
                             Name = "Master",
                             NormalizedName = "MASTER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "00000000-0000-0000-0000-000000000000",
+                            ConcurrencyStamp = "9a6a4b78-0d51-4b4b-9d65-2a7a8bfc9e32",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "00000000-0000-0000-0000-000000000000",
+                            ConcurrencyStamp = "c7f9c1aa-1c9a-4c4e-b8fa-5c8a2c1f3a99",
                             Name = "User",
                             NormalizedName = "USER"
                         });

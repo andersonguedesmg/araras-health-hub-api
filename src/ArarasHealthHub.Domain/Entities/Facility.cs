@@ -17,6 +17,10 @@ namespace ArarasHealthHub.Domain.Entities
         public string Name { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(7)]
+        public string Cnes { get; set; } = string.Empty;
+
+        [Required]
         public Address Address { get; set; } = new Address();
 
         [Required]

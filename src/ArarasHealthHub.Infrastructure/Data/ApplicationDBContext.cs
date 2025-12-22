@@ -82,21 +82,21 @@ namespace ArarasHealthHub.Infrastructure.Data
                     Id = roleMasterId,
                     Name = "Master",
                     NormalizedName = "MASTER",
-                    ConcurrencyStamp = Guid.Empty.ToString(),
+                    ConcurrencyStamp = "f2c9a0c0-7b1f-4e53-9b8a-3a0f1f4d8b11",
                 },
                 new IdentityRole<int>
                 {
                     Id = roleAdminId,
                     Name = "Admin",
                     NormalizedName = "ADMIN",
-                    ConcurrencyStamp = Guid.Empty.ToString(),
+                    ConcurrencyStamp = "9a6a4b78-0d51-4b4b-9d65-2a7a8bfc9e32",
                 },
                 new IdentityRole<int>
                 {
                     Id = roleUserId,
                     Name = "User",
                     NormalizedName = "USER",
-                    ConcurrencyStamp = Guid.Empty.ToString(),
+                    ConcurrencyStamp = "c7f9c1aa-1c9a-4c4e-b8fa-5c8a2c1f3a99",
                 },
             };
             builder.Entity<IdentityRole<int>>().HasData(roles);
@@ -133,8 +133,9 @@ namespace ArarasHealthHub.Infrastructure.Data
                 new
                 {
                     Id = 1,
-                    Name = "Secretaria Municipal da Saúde",
-                    CreatedOn = new DateTime(2024, 01, 01),
+                    Name = "Secretária Municipal da Saúde - Dr. João Geraldo Noronha",
+                    Cnes = "6345921",
+                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 08, 35, 14), DateTimeKind.Utc),
                     IsActive = true
                 }
             );
@@ -145,13 +146,13 @@ namespace ArarasHealthHub.Infrastructure.Data
                 Id = 1,
                 UserName = "sms_master",
                 NormalizedUserName = "SMS_MASTER",
-                CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 1, 1), DateTimeKind.Utc),
+                CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 09, 14, 35), DateTimeKind.Utc),
                 UpdatedOn = null,
                 IsActive = true,
                 FacilityId = facilityPrincipalId,
                 Scope = UserScopeEnum.Management,
-                SecurityStamp = Guid.Empty.ToString(),
-                ConcurrencyStamp = Guid.Empty.ToString(),
+                SecurityStamp = "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11",
+                ConcurrencyStamp = "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99",
                 PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
             };
             builder.Entity<ApplicationUser>().HasData(userMaster);

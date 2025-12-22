@@ -22,6 +22,10 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
                 .MaximumLength(100).WithMessage("O nome da unidade não pode exceder 100 caracteres.")
                 .MustAsync(BeUniqueName).WithMessage("Já existe uma unidade cadastrada com este nome.");
 
+            RuleFor(command => command.Cnes)
+                .NotEmpty().WithMessage("O código CNES é obrigatório.")
+                .Length(7).WithMessage("O código CNES deve conter 7 dígitos.");
+
             RuleFor(command => command.Address)
                 .NotNull().WithMessage("O objeto de endereço é obrigatório.")
                 .SetValidator(new AddressDtoValidator());

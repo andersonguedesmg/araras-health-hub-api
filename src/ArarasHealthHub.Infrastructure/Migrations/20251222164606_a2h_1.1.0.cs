@@ -55,6 +55,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Cnes = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
                     Address_Cep = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Address_Street = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Address_Complement = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -800,15 +801,15 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "00000000-0000-0000-0000-000000000000", "Master", "MASTER" },
-                    { 2, "00000000-0000-0000-0000-000000000000", "Admin", "ADMIN" },
-                    { 3, "00000000-0000-0000-0000-000000000000", "User", "USER" }
+                    { 1, "f2c9a0c0-7b1f-4e53-9b8a-3a0f1f4d8b11", "Master", "MASTER" },
+                    { 2, "9a6a4b78-0d51-4b4b-9d65-2a7a8bfc9e32", "Admin", "ADMIN" },
+                    { 3, "c7f9c1aa-1c9a-4c4e-b8fa-5c8a2c1f3a99", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Facilities",
-                columns: new[] { "Id", "CreatedOn", "IsActive", "Name", "UpdatedOn", "Address_Cep", "Address_City", "Address_Complement", "Address_Neighborhood", "Address_Number", "Address_State", "Address_Street", "Contact_Email", "Contact_Phone" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Secretaria Municipal da Saúde", null, "13601-111", "Araras", "", "Jardim Belvedere", "33", "SP", "Rua Campos Sales", "sms@araras.sp.gov.br", "(19) 3543-1522" });
+                columns: new[] { "Id", "Cnes", "CreatedOn", "IsActive", "Name", "UpdatedOn", "Address_Cep", "Address_City", "Address_Complement", "Address_Neighborhood", "Address_Number", "Address_State", "Address_Street", "Contact_Email", "Contact_Phone" },
+                values: new object[] { 1, "1", new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc), true, "Secretaria Municipal da Saúde", null, "13601-111", "Araras", "", "Jardim Belvedere", "33", "SP", "Rua Campos Sales", "sms@araras.sp.gov.br", "(19) 3543-1522" });
 
             migrationBuilder.InsertData(
                 table: "OrderStatuses",
@@ -826,7 +827,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Scope", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "00000000-0000-0000-0000-000000000000", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, 1, "00000000-0000-0000-0000-000000000000", false, null, "sms_master" });
+                values: new object[] { 1, 0, "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99", new DateTime(2025, 1, 2, 9, 14, 35, 0, DateTimeKind.Utc), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, 1, "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11", false, null, "sms_master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

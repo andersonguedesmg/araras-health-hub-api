@@ -11,6 +11,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string Cnes { get; set; } = string.Empty;
         public AddressDto Address { get; set; } = new AddressDto();
         public ContactDto Contact { get; set; } = new ContactDto();
         public DateTime CreatedOn { get; set; }
