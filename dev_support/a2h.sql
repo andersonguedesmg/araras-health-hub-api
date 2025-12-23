@@ -1,10 +1,9 @@
 USE [ararashealthhub]
 GO
 
-DECLARE @MaxMonthsAgo INT = 10
-DECLARE @NOW DATETIME = GETDATE()
-DECLARE @MinDate DATETIME = DATEADD(MONTH, -@MaxMonthsAgo, @NOW)
-DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
+DECLARE @MinDate DATETIME = '20250102'
+DECLARE @MaxDate DATETIME = '20250117'
+DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (Name, Cpf, [Function], Phone, IsActive, CreatedOn, UpdatedOn) AS (
       SELECT
@@ -15,87 +14,95 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
             T.IsActive,
 
             -- 'CreatedOn'
-            DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate) AS CreatedOn,
+            DATEADD(SECOND,
+                (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+            ) AS CreatedOn,
 
             -- 'UpdatedOn'
             CASE
-            WHEN T.IsActive = 0
-            THEN DATEADD(MINUTE, (ABS(CHECKSUM(NEWID())) % (60 * 24 * 30)) + 1, DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate))
-            ELSE NULL
+                WHEN T.IsActive = 0
+                THEN DATEADD(DAY, 1,
+                        DATEADD(SECOND,
+                            (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                            CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+                        )
+                    )
+                ELSE NULL
             END AS UpdatedOn
       FROM (
             VALUES
-               -- ('Name',                'Cpf',            'Function',                 'Phone',           'IsActive')
-                  ('Jed Bartlet',         '053.487.653-29', 'Coordenador',              '(19) 98564-1205',  1),
-                  ('Matt Santos',         '428.196.772-00', 'Coordenador',              '(19) 98812-7589',  1),
-                  ('Leo McGarry',         '619.043.208-87', 'Auxiliar Administrativo',  '(19) 97345-6402',  0),
-                  ('Josh Lyman',          '387.904.053-48', 'Auxiliar Administrativo',  '(19) 99123-8527',  1),
-                  ('Toby Ziegler',        '109.526.476-05', 'Auxiliar Administrativo',  '(19) 99765-4203',  1),
-                  ('C. J. Cregg',         '975.614.608-72', 'Farmacêutico',             '(19) 98142-6349',  1),
-                  ('Sam Seaborn',         '145.733.927-46', 'Auxiliar Administrativo',  '(19) 99123-5080',  1),
-                  ('Donna Moss',          '814.391.135-95', 'Auxiliar Administrativo',  '(19) 99985-3021',  1),
-                  ('Charlie Young',       '605.573.148-79', 'Auxiliar Administrativo',  '(19) 97456-3146',  1),
-                  ('Will Bailey',         '932.164.780-15', 'Auxiliar Administrativo',  '(19) 98230-4462',  1),
-                  ('Kate Harper',         '248.601.734-51', 'Auxiliar Administrativo',  '(19) 98257-8901',  1),
-                  ('Ainsley Hayes',       '540.832.179-05', 'Auxiliar Administrativo',  '(19) 98734-7605',  1),
-                  ('Amy Gardner',         '348.174.350-54', 'Farmacêutico',             '(19) 97417-9137',  1),
-                  ('Percy Fitzwallace',   '456.151.820-75', 'Auxiliar Administrativo',  '(19) 98872-3698',  0),
-                  ('Chandler Bing',       '356.918.420-56', 'Agente de Endemias',       '(19) 99564-7832',  0),
-                  ('Joey Tribbiani',      '183.076.495-21', 'Auxiliar Administrativo',  '(19) 99642-1198',  1),
-                  ('Rachel Green',        '401.597.332-68', 'Farmacêutico',             '(19) 98451-2389',  1),
-                  ('Monica Geller',       '578.223.149-10', 'Auxiliar Administrativo',  '(19) 98745-1023',  1),
-                  ('Ross Geller',         '901.884.750-77', 'Auxiliar Administrativo',  '(19) 98123-7654',  1),
-                  ('Phoebe Buffay',       '290.415.867-04', 'Farmacêutico',             '(19) 98325-4432',  1),
-                  ('Gregory House',       '642.378.910-63', 'Enfermeiro',               '(19) 98976-2154',  1),
-                  ('James Wilson',        '321.987.654-99', 'Enfermeiro',               '(19) 99112-9987',  1),
-                  ('Allison Cameron',     '987.321.654-55', 'Enfermeiro',               '(19) 98098-3212',  1),
-                  ('Matt Albie',          '174.053.820-00', 'Agente de Endemias',       '(19) 98333-3030',  0),
-                  ('Danny Tripp',         '836.290.110-54', 'Farmacêutico',             '(19) 98484-8484',  1),
-                  ('Jordan McDeere',      '285.741.056-11', 'Auxiliar Administrativo',  '(19) 98686-1212',  1),
-                  ('Alan Shore',          '318.490.572-00', 'Farmacêutico',             '(19) 98401-1234',  1),
-                  ('Denny Crane',         '365.872.760-20', 'Auxiliar Administrativo',  '(19) 98876-5543',  1),
-                  ('Mark Greene',         '930.417.586-77', 'Enfermeiro',               '(19) 98123-4770',  1),
-                  ('John Carter',         '587.146.903-88', 'Farmacêutico',             '(19) 98123-4567',  1),
-                  ('Abby Lockhart',       '169.324.570-90', 'Agente de Endemias',       '(19) 98045-6651',  1),
-                  ('Neela Rasgotra',      '758.219.043-42', 'Enfermeiro',               '(19) 98076-1194',  1),
-                  ('Lucien Dubenko',      '086.521.740-38', 'Enfermeiro',               '(19) 98760-4392',  1),
-                  ('Carol Hathaway',      '012.345.678-90', 'Enfermeiro',               '(19) 98895-2291',  1),
-                  ('Luka Kovač',          '059.143.700-98', 'Enfermeiro',               '(19) 98328-1147',  1),
-                  ('Adrian Monk',         '713.849.520-22', 'Agente de Endemias',       '(19) 99811-2374',  1),
-                  ('Michael Scofield',    '134.607.892-05', 'Auxiliar Administrativo',  '(19) 98560-4032',  1),
-                  ('Tony Soprano',        '591.028.347-79', 'Farmacêutico',             '(19) 97987-1204',  0),
-                  ('Ally McBeal',         '645.713.980-00', 'Auxiliar Administrativo',  '(19) 98543-6578',  1),
-                  ('Frank Underwood',     '892.406.115-43', 'Coordenador',              '(19) 98439-1052',  1),
-                  ('Sloan Sabbith',       '610.975.324-12', 'Auxiliar Administrativo',  '(19) 98244-3150',  1),
-                  ('Don Keefer',          '789.201.463-55', 'Auxiliar Administrativo',  '(19) 98899-2340',  1),
-                  ('Will McAvoy',         '654.729.330-62', 'Auxiliar Administrativo',  '(19) 98323-4420',  1),
-                  ('Natalie Hurley',      '068.591.309-47', 'Auxiliar Administrativo',  '(19) 98484-8485',  1),
-                  ('Dana Whitaker',       '456.456.123-22', 'Auxiliar Administrativo',  '(19) 98383-8383',  1),
-                  ('Jeremy Goodwin',      '147.258.369-44', 'Auxiliar Administrativo',  '(19) 98585-8586',  1),
-                  ('Lennie Briscoe',      '607.219.860-49', 'Agente de Endemias',       '(19) 99233-0090',  0),
-                  ('Ben Stone',           '305.691.440-30', 'Farmacêutico',             '(19) 99387-4456',  1),
-                  ('Anita Van Buren',     '220.374.830-58', 'Farmacêutico',             '(19) 99012-6172',  1),
-                  ('Adam Schiff',         '418.591.770-85', 'Auxiliar Administrativo',  '(19) 97582-3287',  0),
-                  ('Abbie Carmichael',    '215.501.400-78', 'Auxiliar Administrativo',  '(19) 97483-6479',  1),
-                  ('Connie Rubirosa',     '479.810.430-26', 'Auxiliar Administrativo',  '(19) 98974-3196',  1),
-                  ('Jack McCoy',          '188.967.230-36', 'Auxiliar Administrativo',  '(19) 98490-7633',  1),
-                  ('Dexter Morgan',       '734.012.986-53', 'Auxiliar Administrativo',  '(19) 99384-2911',  1),
-                  ('Jack Bauer',          '085.346.917-82', 'Agente de Endemias',       '(19) 99930-6871',  1),
-                  ('David Palmer',        '482.395.990-58', 'Coordenador',              '(19) 98946-3045',  1),
-                  ('Rosa Diaz',           '286.049.713-35', 'Auxiliar Administrativo',  '(19) 99475-3301',  1),
-                  ('Amy Santiago',        '540.721.398-67', 'Auxiliar Administrativo',  '(19) 99213-6644',  1),
-                  ('Raymond Holt',        '924.630.157-89', 'Auxiliar Administrativo',  '(19) 99915-8720',  0),
-                  ('Terry Jeffords',      '059.310.280-78', 'Auxiliar Administrativo',  '(19) 98702-9186',  1),
-                  ('Lucifer Morningstar', '187.593.240-66', 'Coordenador',              '(19) 99548-7299',  1),
-                  ('Chloe Decker',        '043.167.892-05', 'Auxiliar Administrativo',  '(19) 98993-4108',  1),
-                  ('Robin Scherbatsky',   '778.901.234-56', 'Auxiliar Administrativo',  '(19) 99166-2930',  1),
-                  ('Barney Stinson',      '889.012.345-67', 'Auxiliar Administrativo',  '(19) 98743-7099',  1),
-                  ('Ted Mosby',           '530.149.370-43', 'Farmacêutico',             '(19) 99784-1155',  1),
-                  ('Lorelai Gilmore',     '398.207.610-44', 'Auxiliar Administrativo',  '(19) 99076-3580',  1),
-                  ('Luke Danes',          '738.921.060-22', 'Auxiliar Administrativo',  '(19) 99499-2841',  1),
-                  ('Harvey Specter',      '434.567.890-12', 'Auxiliar Administrativo',  '(19) 98712-4350',  1),
-                  ('Donna Paulsen',       '545.678.901-23', 'Farmacêutico',             '(19) 98413-6572',  1),
-                  ('Louis Litt',          '656.789.012-34', 'Auxiliar Administrativo',  '(19) 98642-3033',  1)
+               -- ('Name',                 'Cpf',             'Function',                 'Phone',           'IsActive')
+                  ('Jed Bartlet',          '053.487.653-29',  'Coordenador',              '(19) 98564-8202',  1),
+                  ('Matt Santos',          '428.196.772-00',  'Coordenador',              '(19) 98812-7589',  1),
+                  ('Leo McGarry',          '619.043.208-87',  'Auxiliar Administrativo',  '(19) 97345-6402',  0),
+                  ('Josh Lyman',           '387.904.053-48',  'Auxiliar Administrativo',  '(19) 99123-8527',  1),
+                  ('Toby Ziegler',         '109.526.476-05',  'Auxiliar Administrativo',  '(19) 99765-4203',  1),
+                  ('C. J. Cregg',          '975.614.608-72',  'Farmacêutico',             '(19) 98142-6349',  1),
+                  ('Sam Seaborn',          '145.733.927-46',  'Auxiliar Administrativo',  '(19) 97149-5080',  1),
+                  ('Donna Moss',           '814.391.135-95',  'Auxiliar de Farmácia',     '(19) 99985-3021',  1),
+                  ('Charlie Young',        '605.573.148-79',  'Auxiliar Administrativo',  '(19) 97456-3146',  1),
+                  ('Will Bailey',          '932.164.780-15',  'Auxiliar Administrativo',  '(19) 98230-4462',  1),
+                  ('Kate Harper',          '248.601.734-51',  'Auxiliar Administrativo',  '(19) 98257-8901',  1),
+                  ('Ainsley Hayes',        '540.832.179-05',  'Auxiliar de Farmácia',     '(19) 98734-7605',  1),
+                  ('Amy Gardner',          '348.174.350-54',  'Farmacêutico',             '(19) 97417-9137',  1),
+                  ('Percy Fitzwallace',    '456.151.820-75',  'Auxiliar Administrativo',  '(19) 98762-3698',  0),
+                  ('Chandler Bing',        '356.918.420-56',  'Agente de Endemias',       '(19) 99564-7832',  0),
+                  ('Joey Tribbiani',       '183.076.495-21',  'Auxiliar Administrativo',  '(19) 99642-1198',  1),
+                  ('Rachel Green',         '401.597.332-68',  'Farmacêutico',             '(19) 98451-2389',  1),
+                  ('Monica Geller',        '578.223.149-10',  'Auxiliar de Farmácia',     '(19) 98745-1023',  1),
+                  ('Ross Geller',          '901.884.750-77',  'Auxiliar Administrativo',  '(19) 98982-7654',  1),
+                  ('Phoebe Buffay',        '290.415.867-04',  'Farmacêutico',             '(19) 98821-4432',  1),
+                  ('Gregory House',        '642.378.910-63',  'Enfermeiro',               '(19) 98976-2154',  1),
+                  ('James Wilson',         '321.987.654-99',  'Enfermeiro',               '(19) 99112-9987',  1),
+                  ('Allison Cameron',      '987.321.654-55',  'Enfermeiro',               '(19) 98098-3212',  1),
+                  ('Matt Albie',           '174.053.820-00',  'Agente de Endemias',       '(19) 98333-3030',  0),
+                  ('Danny Tripp',          '836.290.110-54',  'Farmacêutico',             '(19) 97297-3297',  1),
+                  ('Jordan McDeere',       '285.741.056-11',  'Auxiliar de Farmácia',     '(19) 98686-1212',  1),
+                  ('Alan Shore',           '318.490.572-00',  'Farmacêutico',             '(19) 98401-1234',  1),
+                  ('Denny Crane',          '365.872.760-20',  'Auxiliar Administrativo',  '(19) 98876-5543',  1),
+                  ('Mark Greene',          '930.417.586-77',  'Enfermeiro',               '(19) 99349-4770',  1),
+                  ('John Carter',          '587.146.903-88',  'Farmacêutico',             '(19) 98123-4567',  1),
+                  ('Abby Lockhart',        '169.324.570-90',  'Auxiliar de Farmácia',     '(19) 98045-6651',  1),
+                  ('Neela Rasgotra',       '758.219.043-42',  'Enfermeiro',               '(19) 98076-7124',  1),
+                  ('Lucien Dubenko',       '086.521.740-38',  'Enfermeiro',               '(19) 98760-4392',  1),
+                  ('Carol Hathaway',       '012.345.678-90',  'Enfermeiro',               '(19) 98895-2291',  1),
+                  ('Luka Kovač',           '059.143.700-98',  'Enfermeiro',               '(19) 98328-1147',  1),
+                  ('Adrian Monk',          '713.849.520-22',  'Agente de Endemias',       '(19) 99811-2374',  1),
+                  ('Michael Scofield',     '134.607.892-05',  'Auxiliar Administrativo',  '(19) 97564-4032',  1),
+                  ('Tony Soprano',         '591.028.347-79',  'Farmacêutico',             '(19) 97987-1204',  0),
+                  ('Ally McBeal',          '645.713.980-00',  'Auxiliar Administrativo',  '(19) 98543-6578',  1),
+                  ('Frank Underwood',      '892.406.115-43',  'Coordenador',              '(19) 98439-1052',  1),
+                  ('Sloan Sabbith',        '610.975.324-12',  'Auxiliar Administrativo',  '(19) 98244-3150',  1),
+                  ('Don Keefer',           '789.201.463-55',  'Auxiliar Administrativo',  '(19) 98899-2340',  1),
+                  ('Will McAvoy',          '654.729.330-62',  'Auxiliar de Farmácia',     '(19) 98323-4420',  1),
+                  ('Natalie Hurley',       '068.591.309-47',  'Auxiliar Administrativo',  '(19) 98484-8485',  1),
+                  ('Dana Whitaker',        '456.456.123-22',  'Auxiliar Administrativo',  '(19) 98383-8383',  1),
+                  ('Jeremy Goodwin',       '147.258.369-44',  'Auxiliar Administrativo',  '(19) 98585-8586',  1),
+                  ('Lennie Briscoe',       '607.219.860-49',  'Agente de Endemias',       '(19) 99233-0090',  0),
+                  ('Ben Stone',            '305.691.440-30',  'Farmacêutico',             '(19) 99387-4456',  1),
+                  ('Anita Van Buren',      '220.374.830-58',  'Farmacêutico',             '(19) 99012-6172',  1),
+                  ('Adam Schiff',          '418.591.770-85',  'Auxiliar Administrativo',  '(19) 97582-3287',  0),
+                  ('Abbie Carmichael',     '215.501.400-78',  'Auxiliar Administrativo',  '(19) 97483-6479',  1),
+                  ('Connie Rubirosa',      '479.810.430-26',  'Auxiliar de Farmácia',     '(19) 98974-3196',  1),
+                  ('Jack McCoy',           '188.967.230-36',  'Auxiliar Administrativo',  '(19) 98490-7633',  1),
+                  ('Dexter Morgan',        '734.012.986-53',  'Auxiliar Administrativo',  '(19) 99384-2911',  1),
+                  ('Jack Bauer',           '085.346.917-82',  'Agente de Endemias',       '(19) 99930-6871',  1),
+                  ('David Palmer',         '482.395.990-58',  'Coordenador',              '(19) 98946-3045',  1),
+                  ('Rosa Diaz',            '286.049.713-35',  'Auxiliar Administrativo',  '(19) 99475-3301',  1),
+                  ('Amy Santiago',         '540.721.398-67',  'Auxiliar Administrativo',  '(19) 99213-6644',  1),
+                  ('Raymond Holt',         '924.630.157-89',  'Auxiliar de Farmácia',     '(19) 99915-8720',  0),
+                  ('Terry Jeffords',       '059.310.280-78',  'Auxiliar Administrativo',  '(19) 98702-9186',  1),
+                  ('Lucifer Morningstar',  '187.593.240-66',  'Coordenador',              '(19) 99548-7299',  1),
+                  ('Chloe Decker',         '043.167.892-05',  'Auxiliar Administrativo',  '(19) 98993-4108',  1),
+                  ('Robin Scherbatsky',    '778.901.234-56',  'Auxiliar de Farmácia',     '(19) 99166-2930',  1),
+                  ('Barney Stinson',       '889.012.345-67',  'Auxiliar Administrativo',  '(19) 98743-7099',  1),
+                  ('Ted Mosby',            '530.149.370-43',  'Farmacêutico',             '(19) 99784-1155',  1),
+                  ('Lorelai Gilmore',      '398.207.610-44',  'Auxiliar Administrativo',  '(19) 99076-3580',  1),
+                  ('Luke Danes',           '738.921.060-22',  'Auxiliar Administrativo',  '(19) 99499-2841',  1),
+                  ('Harvey Specter',       '434.567.890-12',  'Auxiliar Administrativo',  '(19) 98712-4350',  1),
+                  ('Donna Paulsen',        '545.678.901-23',  'Farmacêutico',             '(19) 98413-6572',  1),
+                  ('Louis Litt',           '656.789.012-34',  'Auxiliar Administrativo',  '(19) 98642-3033',  1)
       ) AS T (Name, Cpf, [Function], Phone, IsActive)
 )
 
@@ -122,16 +129,16 @@ GO
 USE [ararashealthhub]
 GO
 
-DECLARE @MaxMonthsAgo INT = 10
-DECLARE @NOW DATETIME = GETDATE()
-DECLARE @MinDate DATETIME = DATEADD(MONTH, -@MaxMonthsAgo, @NOW)
-DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
+DECLARE @MinDate DATETIME = '20250102'
+DECLARE @MaxDate DATETIME = '20250117'
+DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
-      Name, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive, CreatedOn, UpdatedOn
+      Name, Cnes, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive, CreatedOn, UpdatedOn
 ) AS (
       SELECT
             T.Name,
+            T.Cnes,
             T.Address_Cep,
             T.Address_Street,
             T.Address_Complement,
@@ -144,81 +151,86 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
             T.IsActive,
 
             -- 'CreatedOn'
-            DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate) AS CreatedOn,
+            DATEADD(SECOND,
+                (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+            ) AS CreatedOn,
 
             -- 'UpdatedOn'
             CASE
-            WHEN T.IsActive = 0
-            THEN DATEADD(MINUTE, (ABS(CHECKSUM(NEWID())) % (60 * 24 * 30)) + 1, DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate))
-            ELSE NULL
+                WHEN T.IsActive = 0
+                THEN DATEADD(DAY, 1,
+                        DATEADD(SECOND,
+                            (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                            CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+                        )
+                    )
+                ELSE NULL
             END AS UpdatedOn
       FROM (
             VALUES
-               -- ('Name',                                                             'Address_Cep',  'Address_Street',                                'Address_Complement',                'Address_Number',  'Address_Neighborhood',                                        'Address_City',  'Address_State',  'Contact_Email',               'Contact_Phone',  'IsActive')
-               -- ('Secretaria Municipal da Saúde',	                                   '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'sms@araras.sp.gov.br',        '(19) 3543-1522',  1),
-                  ('Centro de Distribuição de Medicamentos Ricardo Francisco Vechin',  '13600-710',    'Rua Brasília',                                  '',                                  '295',             'Centro',                                                      'Araras',        'SP',             'cdm@araras.sp.gov.br',        '(19) 3544-4280',  1),
-                  ('UBS Ênio Vitalli',                                                 '13604-066',    'Rua Franca',                                    '',                                  '99',              'Jardim Piratininga',                                          'Araras',        'SP',             'ubs_ev@araras.sp.gov.br',     '(19) 3544-4280',  1),
-                  ('UPA Elisa Sbrissa Franchozza',                                     '13606-414',    'Avenida Irineu Carrocci',                       'até 1458/1459',                     '400',             'Jardim José Ometto II',                                       'Araras',        'SP',             'upa_esf@araras.sp.gov.br',    '(19) 3543-5100',  1),
-                  ('Farmácia de Alto Custo',                                           '13600-710',    'Rua Brasília',                                  '',                                  '295',             'Centro',                                                      'Araras',        'SP',             'fac@araras.sp.gov.br',        '(19) 3551-1096',  1),
-                  ('SAMU Regional de Araras',                                          '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',  '4585',            'Centro',                                                      'Araras',        'SP',             'samu@araras.sp.gov.br',       '(19) 3541-6819',  1),
-                  ('PSF Edmundo Ulson',                                                '13606-652',    'Rua Ângelo Francatto',                          '',                                  '393',             'Parque Tiradentes',                                           'Araras',        'SP',             'psf_eu@araras.sp.gov.br',     '(19) 3544-5232',  1),
-                  ('PSF Nilton De Lollo',                                              '13604-044',    'Rua Catanduva',                                 '',                                  '253',             'Jardim São João',                                             'Araras',        'SP',             'psf_ndl@araras.sp.gov.br',    '(19) 3544-7302',  1),
-                  ('PSF Jair Mourão',                                                  '13606-314',    'Rua do Estudante',                              '',                                  '110',             'Jardim José Ometto I',                                        'Araras',        'SP',             'psf_jm@araras.sp.gov.br',     '(19) 3544-7754',  1),
-                  ('UBS José Fiori',                                                   '13607-088',    'Rua Ana da Silva',                              '(Inhana)',                          's/nº',            'Jardim Nova Suissa',                                          'Araras',        'SP',             'ubs_jf@araras.sp.gov.br',     '(19) 3542-9308',  1),
-                  ('CAEM Dr. Nelson Salomé',                                           '13606-390',    'Rua Nelson Ferreira',                           '',                                  's/nº',            'Jardim José Ometto II',                                       'Araras',        'SP',             'caem_ns@araras.sp.gov.br',    '(19) 3542-7602',  1),
-                  ('Ambulatório de Saúde Mental Agnaldo Bianchini',                    '13607-200',    'Avenida Loreto',                                'até 1298 - lado par',               '1291',            'Jardim das Flores',                                           'Araras',        'SP',             'asm_ab@araras.sp.gov.br',     '(19) 3544-2674',  1),
-                  ('CAPS-AD',                                                          '13600-720',    'Avenida Washington Luiz',                       'até 400/401',                       '545',             'Centro',                                                      'Araras',        'SP',             'caps_ad@araras.sp.gov.br',    '(19) 3542-4137',  1),
-                  ('Centro de Controle de Zoonoses',                                   '13606-852',    'Estrada Municipal Luiz Segundo D''Alessandri',  '',                                  's/nº',            'Conjunto Residencial Prefeito Professor Jair Della Colleta',  'Araras',        'SP',             'ccz@araras.sp.gov.br',        '(19) 3544-4413',  1),
-                  ('Ambulatório de Pronto Atendimento Dr. Solon F. de Oliveira',       '13602-006',    'Rua dos Girassóis',                             '',                                  's/nº',            'Jardim Sobradinho',                                           'Araras',        'SP',             'apa_sfo@araras.sp.gov.br',    '(19) 3544-5630',  0),
-                  ('Vigilância Sanitária de Araras',                                   '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'vsa@araras.sp.gov.br',        '(19) 3543-1522',  1),
-                  ('Unidade Móvel Odontológica',                                       '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'umo@araras.sp.gov.br',        '(19) 3543-1522',  0),
-                  ('Unidade de Vigilância Epidemiológica',                             '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'uve@araras.sp.gov.br',        '(19) 3541-7037',  1),
-                  ('UBS Osvaldo Salvador Devitte',                                     '13601-400',    'Avenida Presidente Castello Branco',            '',                                  '27',              'Conjunto Habitacional Narciso Gomes',                         'Araras',        'SP',             'ubs_osd@araras.sp.gov.br',    '(19) 3544-4974',  1),
-                  ('UBS Dr. Humberto Rodrigues Junior',                                '13607-005',    'Avenida Melvin Jones',                          'de 1 a 447 - lado ímpar',           's/nº',            'Jardim Nossa Senhora de Fátima',                              'Araras',        'SP',             'ubs_hrj@araras.sp.gov.br',    '(19) 3544-6939',  1),
-                  ('UBS Dr. Emerson Mercatelli',                                       '13609-384',    'Rua Aníbal Lopes da Silva',                     '',                                  '190',             'Residencial Bosque de Versalles',                             'Araras',        'SP',             'ubs_em@araras.sp.gov.br',     '(19) 3547-9609',  1),
-                  ('UBS Dr. Antônio Simoes Pontes',                                    '13605-300',    'Avenida João Rossi',                            '',                                  's/nº',            'Chácaras Granja São Francisco',                               'Araras',        'SP',             'ubs_asp@araras.sp.gov.br',    '(19) 3547-3195',  0),
-                  ('UBS Antônio Carlos Fabricio',                                      '13606-320',    'Rua do Carpinteiro',                            '',                                  's/nº',            'Jardim José Ometto I',                                        'Araras',        'SP',             'ubs_acf@araras.sp.gov.br',    '(19) 3544-3569',  1),
-                  ('UBS Alberto Franzini',                                             '13606-508',    'Rua Cássio Gonzaga',                            '',                                  's/nº',            'Jardim Morumbi',                                              'Araras',        'SP',             'ubs_af@araras.sp.gov.br',     '(19) 3541-8016',  1),
-                  ('Pró Saúde Hospital Geral',                                         '13606-020',    'Avenida Augusta Viola da Costa',                '',                                  '805',             'Jardim Celina',                                               'Araras',        'SP',             'hps@araras.sp.gov.br',        '(19) 3321-1260',  1),
-                  ('PS Dr. Alcides Franco de Oliveira',                                '13606-326',    'Avenida Lourenço Batistella',                   '',                                  '514',             'Jardim José Ometto I',                                        'Araras',        'SP',             'sps_afoms@araras.sp.gov.br',  '(19) 3541-7211',  0),
-                  ('SAE/CTA Enfermeira Adalgisa dos Santos Gonçalves',                 '13600-559',    'Rua Doutor Francisco Paulo Russo',              '',                                  '119',             'Vila Bressan',                                                'Araras',        'SP',             'easg@araras.sp.gov.br',       '(19) 3544-2064',  1),
-                  ('Posto de Atendimento Médico Eva Almeida Costa Cruz',               '13601-430',    'Avenida Presidente Café Filho',                 '',                                  '209',             'Conjunto Habitacional Narciso Gomes',                         'Araras',        'SP',             'pa_eacc@araras.sp.gov.br',    '(19) 3541-7898',  0),
-                  ('Medicina Diagnóstica Castro Soares',                               '13600-710',    'Rua Brasília',                                  '',                                  '123',             'Centro',                                                      'Araras',        'SP',             'mdcs@araras.sp.gov.br',       '(19) 3541-4211',  1),
-                  ('LabVitta Laboratório de Análises Clínicas',                        '13600-690',    'Rua Coronel André Ulson Júnior',                '',                                  '244',             'Centro',                                                      'Araras',        'SP',             'labv@araras.sp.gov.br',       '(19) 3543-5400',  1),
-                  ('ESF Vital Pacífico Homem',                                         '13606-414',    'Avenida Irineu Carrocci',                       'até 1458/1459',                     '1469',            'Jardim José Ometto II',                                       'Araras',        'SP',             'esf_vph@araras.sp.gov.br',    '(19) 3544-5411',  1),
-                  ('Hospital de Campanha Covid 19',                                    '13606-414',    'Rua Nelson Ferreira',                           '',                                  's/nº',            'Jardim José Ometto II',                                       'Araras',        'SP',             'hcc19@araras.sp.gov.br',      '(19) 3543-1522',  0),
-                  ('Hospital São Leopoldo Mandic',                                     '13601-200',    'Avenida Padre Alarico Zacharias',               '',                                  '1253',            'Jardim Belvedere',                                            'Araras',        'SP',             'hslm@araras.sp.gov.br',       '(19) 3543-3211',  1),
-                  ('Hospital Irmandade da Santa Casa de Misericórdia de Araras',       '13600-695',    'Praça Doutor Narciso Gomes',                    '',                                  '49',              'Centro',                                                      'Araras',        'SP',             'hiscma@araras.sp.gov.br',     '(19) 3543-5400',  1),
-                  ('ESF Dr. Orlando Zaniboni',                                         '13606-643',    'Rua Francisco Cressoni',                        '',                                  '158',             'Parque Tiradentes',                                           'Araras',        'SP',             'esf_oz@araras.sp.gov.br',     '(19) 3541-7791',  1),
-                  ('ESF Dr. Sebastião Jair Mourão',                                    '13606-314',    'Rua do Estudante',                              '',                                  '110',             'Jardim José Ometto I',                                        'Araras',        'SP',             'esf_sjm@araras.sp.gov.br',    '(19) 3544-7754',  0),
-                  ('ESF Francisco Nicola Cascelli',                                    '13604-172',    'Rua Melânia Baraldi Maróstica',                 '',                                  '550',             'Parque das Árvores',                                          'Araras',        'SP',             'esf_fnc@araras.sp.gov.br',    '(19) 3544-5424',  1),
-                  ('ESF Jeronymo Ometto',                                              '13603-027',    'Rua Ciro Lagazzi',                              'até 798/799',                       '285',             'Jardim Cândida',                                              'Araras',        'SP',             'esf_jo@araras.sp.gov.br',     '(19) 3541-9490',  1),
-                  ('ESF Lucia Boquette Meneghetti',                                    '13601-361',    'Rua Allan Kardec',                              '',                                  's/nº',            'Vila Dona Rosa Zurita',                                       'Araras',        'SP',             'esf_lbm@araras.sp.gov.br',    '(19) 3544-7533',  1),
-                  ('ESF Madre Carla Rabolin',                                          '13604-312',    'Rua Carlindo Fernandes',                        '',                                  's/nº',            'Jardim Residencial Alvorada',                                 'Araras',        'SP',             'esf_mcr@araras.sp.gov.br',    '(19) 3551-3563',  1),
-                  ('ESF Narciso Gomes II',                                             '13601-430',    'Avenida Presidente Café Filho',                 '',                                  '209',             'Conjunto Habitacional Narciso Gomes',                         'Araras',        'SP',             'esf_ng@araras.sp.gov.br',     '(19) 3541-7898',  1),
-                  ('ESF Ophelia Geraci Pesse',                                         '13604-472',    'Avenida Professor Dirçon Kammer',               '',                                  '880',             'Jardim Alto da Colina',                                       'Araras',        'SP',             'esf_ogp@araras.sp.gov.br',    '(19) 3542-4137',  1),
-                  ('ESF Otavio João Breda',                                            '13606-839',    'Rua João Puppi',                                '',                                  '15',              'Parque Dom Pedro',                                            'Araras',        'SP',             'esf_ojb@araras.sp.gov.br',    '(19) 3541-7593',  1),
-                  ('ESF Dr. Fermin Blanco Vianna',                                     '13606-350',    'Rua Dalton Bird de Camargo Preto',              '',                                  '42',              'Jardim José Ometto II',                                       'Araras',        'SP',             'esf_fbv@araras.sp.gov.br',    '(19) 3544-8559',  1),
-                  ('ESF Dr. Bento Feres',                                              '13607-507',    'Rua Júlia Luiz Ruete',                          '',                                  '245',             'Jardim Ouro Verde II',                                        'Araras',        'SP',             'esf_bf@araras.sp.gov.br',     '(19) 3542-5453',  1),
-                  ('ESF Antônio Simoes Pontes',                                        '13605-300',    'Avenida João Rossi',                            '',                                  's/nº',            'Chácaras Granja São Francisco',                               'Araras',        'SP',             'esf_asp@araras.sp.gov.br',    '(19) 3547-3195',  1),
-                  ('Centro Odontologico Dr. Solon de Oliveira Fernandes',              '13606-326',    'Avenida Lourenço Batistella',                   '',                                  '514',             'Jardim José Ometto I',                                        'Araras',        'SP',             'co_sof@araras.sp.gov.br',     '(19) 3541-7211',  0),
-                  ('Centro Médico Social Comunitário Irma Maria Diva Patarra',         '13601-200',    'Avenida Padre Alarico Zacharias',               '',                                  '300',             'Jardim Belvedere',                                            'Araras',        'SP',             'cm_imdp@araras.sp.gov.br',    '(19) 3543-3088',  0),
-                  ('Centro Infantil Dr. Hercio Marcos Cintra Arantes',                 '13601-001',    'Avenida Washington Luiz',                       'de 402/403 ao fim',                 '545',             'Vila Michielin',                                              'Araras',        'SP',             'ci_hmca@araras.sp.gov.br',    '(19) 3542-9909',  1),
-                  ('Centro de Saúde Dra Rosa Chelminsk Teixeira',                      '13601-140',    'Avenida Governador Garcez',                     '',                                  '137',             'Jardim Belvedere',                                            'Araras',        'SP',             'cs_rct@araras.sp.gov.br',     '(19) 3542-6164',  1),
-                  ('Centro de Saúde Da Mulher Jandira A Leite Duarte',                 '13602-005',    'Rua dos Antúrios',                              'até 48/49',                         '30',              'Jardim Sobradinho',                                           'Araras',        'SP',             'csm_jad@araras.sp.gov.br',    '(19) 3551-5440',  1),
-                  ('Centro de Imagem Radiológica',                                     '13601-140',    'Avenida Governador Garcez',                     '',                                  's/nº',            'Jardim Belvedere',                                            'Araras',        'SP',             'cim@araras.sp.gov.br',        '(19) 3543-3055',  0),
-                  ('CDI Syrius',                                                       '13600-695',    'Praça Doutor Narciso Gomes',                    '',                                  '49',              'Centro',                                                      'Araras',        'SP',             'cdis@araras.sp.gov.br',       '(19) 3805-3737',  0),
-                  ('CAPS IJ Infanto Juvenil',                                          '13601-008',    'Rua Carlindo Pereira da Costa',                 '',                                  's/nº',            'Vila Michielin',                                              'Araras',        'SP',             'caps_ij@araras.sp.gov.br',    '(19) 3551-0277',  1),
-                  ('CAPS II Idalina Corredor Victorello',                              '13607-200',    'Avenida Loreto',                                'até 1298 - lado par',               '1291',            'Jardim das Flores',                                           'Araras',        'SP',             'caps_icv@araras.sp.gov.br',   '(19) 3544-5874',  1),
-                  ('CAPS AD Arceu Scanavini',                                          '13605-060',    'Rua Doutor Fábio Fachini',                      '',                                  '1011',            'Vila Candinha',                                               'Araras',        'SP',             'caps_as@araras.sp.gov.br',    '(19) 3542-0905',  1),
-                  ('APAE de Araras Sitio Arco Iris',                                   '13609-300',    'Rodovia Wilson Finardi',                        '',                                  's/nº',            'Jardim dos Ypês',                                             'Araras',        'SP',             'apae@araras.sp.gov.br',       '(19) 3541-3133',  1),
-                  ('Centro de Distribuicao de Imunobiológicos de Araras',              '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'cdi@araras.sp.gov.br',        '(19) 3543-1522',  0),
-                  ('CDB Araras Centro de Diagnósticos Brasil',                         '13607-220',    'Rua Hercília Dal Pietro',                       'até 298/299',                       '555',             'Jardim das Flores',                                           'Araras',        'SP',             'cdb@araras.sp.gov.br',        '(19) 3543-4600',  1)
-      ) AS T (Name, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive)
+               -- ('Name',                                                             'Cnes',     'Address_Cep',  'Address_Street',                                'Address_Complement',                'Address_Number',  'Address_Neighborhood',                                        'Address_City',  'Address_State',  'Contact_Email',                                 'Contact_Phone',  'IsActive')
+               -- ('Secretária Municipal da Saúde - Dr. João Geraldo Noronha',         '6345921',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'saude@araras.sp.gov.br',                        '(19) 3543-1522',  1),
+                  ('Centro de Distribuição de Medicamentos Ricardo Francisco Vechin',  '1',        '13600-710',    'Rua Brasília',                                  '',                                  '295',             'Centro',                                                      'Araras',        'SP',             'dispensario@araras.sp.gov.br',                  '(19) 3544-3353',  1),
+                  ('UBS Ênio Vitalli',                                                 '2067048',  '13604-066',    'Rua Franca',                                    '',                                  '99',              'Jardim Piratininga',                                          'Araras',        'SP',             'enio_vitalli@araras.sp.gov.br',                 '(19) 3544-4280',  1),
+                  ('UPA Elisa Sbrissa Franchozza',                                     '5053293',  '13606-414',    'Avenida Irineu Carrocci',                       'até 1458/1459',                     '400',             'Jardim José Ometto II',                                       'Araras',        'SP',             'elisa_franchozza@araras.sp.gov.br',             '(19) 3543-5100',  1),
+                  ('Farmácia de Alto Custo',                                           '20',       '13600-710',    'Rua Brasília',                                  '',                                  '295',             'Centro',                                                      'Araras',        'SP',             'farmacia_alto_custo@araras.sp.gov.br',          '(19) 3551-1096',  1),
+                  ('SAMU Regional de Araras',                                          '7594933',  '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',  '4585',            'Centro',                                                      'Araras',        'SP',             'samu@araras.sp.gov.br',                         '(19) 3541-6819',  1),
+                  ('ESF Dr. Edmundo Ulson',                                            '2065320',  '13606-652',    'Rua Ângelo Francatto',                          '',                                  '393',             'Parque Tiradentes',                                           'Araras',        'SP',             'edmundo_ulson@araras.sp.gov.br',                '(19) 3544-5232',  1),
+                  ('ESF Prof. Nilton De Lollo',                                        '2024926',  '13604-044',    'Rua Catanduva',                                 '',                                  '253',             'Jardim São João',                                             'Araras',        'SP',             'nilton_lollo@araras.sp.gov.br',                 '(19) 3544-7302',  1),
+                  ('SAD Melhor em Casa',                                               '22',       '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'melhor_em_casa@araras.sp.gov.br',               '(19) 3543-1522',  1),
+                  ('UBS José Fiori',                                                   '6676928',  '13607-088',    'Rua Ana da Silva',                              '(Inhana)',                          's/nº',            'Jardim Nova Suissa',                                          'Araras',        'SP',             'jose_fiori@araras.sp.gov.br',                   '(19) 3542-9308',  1),
+                  ('CAEM Dr. Nelson Salomé',                                           '7013272',  '13606-390',    'Rua Nelson Ferreira',                           '',                                  's/nº',            'Jardim José Ometto II',                                       'Araras',        'SP',             'caem_nelson_salome@araras.sp.gov.br',           '(19) 3542-7602',  1),
+                  ('Serviço de Saúde Mental Agnaldo Bianchini',                        '2038331',  '13607-200',    'Avenida Loreto',                                'até 1298 - lado par',               '1291',            'Jardim das Flores',                                           'Araras',        'SP',             'agnaldo_bianchini@araras.sp.gov.br',            '(19) 3544-2674',  1),
+                  ('CAPS AD Arceu Scanavini',                                          '7739729',  '13601-001',    'Avenida Washington Luiz',                       'de 402/403 ao fim',                 '545',             'Vila Michielin',                                              'Araras',        'SP',             'caps_arceu_scanavini@araras.sp.gov.br',         '(19) 3542-4137',  1),
+                  ('Centro de Controle de Zoonoses',                                   '25',       '13606-852',    'Estrada Municipal Luiz Segundo D''Alessandri',  '',                                  's/nº',            'Conjunto Residencial Prefeito Professor Jair Della Colleta',  'Araras',        'SP',             'controle_zoonoses@araras.sp.gov.br',            '(19) 3544-4413',  1),
+                  ('Ambulatório de Pronto Atendimento Dr. Solon F. de Oliveira',       '5773989',  '13602-006',    'Rua dos Girassóis',                             '',                                  's/nº',            'Jardim Sobradinho',                                           'Araras',        'SP',             'solon_oliveira@araras.sp.gov.br',               '(19) 3544-5630',  0),
+                  ('Vigilância Sanitária de Araras',                                   '2071541',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'vigilancia_sanitaria@araras.sp.gov.br',         '(19) 3543-1528',  1),
+                  ('Unidade Móvel Odontológica',                                       '4369165',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'unidade_movel_odonto@araras.sp.gov.br',         '(19) 3543-1522',  0),
+                  ('Unidade de Vigilância Epidemiológica',                             '3383504',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'vigilancia_epidemiologica@araras.sp.gov.br',    '(19) 3541-7037',  1),
+                  ('UBS Osvaldo Salvador Devitte',                                     '2038358',  '13601-400',    'Avenida Presidente Castello Branco',            '',                                  '27',              'Conjunto Habitacional Narciso Gomes',                         'Araras',        'SP',             'osvaldo_devitte@araras.sp.gov.br',              '(19) 3544-4974',  1),
+                  ('UBS Dr. Humberto Rodrigues Junior',                                '9059679',  '13607-005',    'Avenida Melvin Jones',                          'de 1 a 447 - lado ímpar',           's/nº',            'Jardim Nossa Senhora de Fátima',                              'Araras',        'SP',             'humberto_junior@araras.sp.gov.br',              '(19) 3544-6939',  1),
+                  ('UBS Dr. Emerson Mercatelli',                                       '6880150',  '13609-384',    'Rua Aníbal Lopes da Silva',                     '',                                  '190',             'Residencial Bosque de Versalles',                             'Araras',        'SP',             'emerson_mercatelli@araras.sp.gov.br',           '(19) 3547-9609',  1),
+                  ('UBS Dr. Antônio Simoes Pontes',                                    '0465658',  '13605-300',    'Avenida João Rossi',                            '',                                  's/nº',            'Chácaras Granja São Francisco',                               'Araras',        'SP',             'antonio_pontes@araras.sp.gov.br',               '(19) 3547-3195',  0),
+                  ('UBS Antônio Carlos Fabricio',                                      '2067056',  '13606-320',    'Rua do Carpinteiro',                            '',                                  's/nº',            'Jardim José Ometto I',                                        'Araras',        'SP',             'antonio_fabricio@araras.sp.gov.br',             '(19) 3544-3569',  1),
+                  ('UBS Alberto Franzini',                                             '9079912',  '13606-508',    'Rua Cássio Gonzaga',                            '',                                  's/nº',            'Jardim Morumbi',                                              'Araras',        'SP',             'alberto_franzini@araras.sp.gov.br',             '(19) 3541-8016',  1),
+                  ('PS Dr. Alcides Franco de Oliveira',                                '4047206',  '13606-326',    'Avenida Lourenço Batistella',                   '',                                  '514',             'Jardim José Ometto I',                                        'Araras',        'SP',             'alcides_oliveira@araras.sp.gov.br',             '(19) 3541-7211',  0),
+                  ('SAE/CTA Enfermeira Adalgisa dos Santos Gonçalves',                 '6758029',  '13600-559',    'Rua Doutor Francisco Paulo Russo',              '',                                  '119',             'Vila Bressan',                                                'Araras',        'SP',             'adalgisa_goncalves@araras.sp.gov.br',           '(19) 3544-2064',  1),
+                  ('Posto de Atendimento Médico Eva Almeida Costa Cruz',               '2067560',  '13601-430',    'Avenida Presidente Café Filho',                 '',                                  '209',             'Conjunto Habitacional Narciso Gomes',                         'Araras',        'SP',             'eva_cruz@araras.sp.gov.br',                     '(19) 3541-7898',  0),
+                  ('Farmácia CAM Guerino Bertolini',                                   '15',       '13606-414',    'Avenida Irineu Carrocci',                       'até 1458/1459',                     's/nº',            'Jardim José Ometto II',                                       'Araras',        'SP',             'guerino_bertolini@araras.sp.gov.br',            '(19) 3541-4211',  1),
+                  ('Farmácia de Processos',                                            '11',       '13600-710',    'Rua Brasília',                                  '',                                  '295',             'Centro',                                                      'Araras',        'SP',             'farmacia_processos@araras.sp.gov.br',           '(19) 3551-1096',  1),
+                  ('ESF Vital Pacífico Homem',                                         '2067587',  '13606-414',    'Avenida Irineu Carrocci',                       'até 1458/1459',                     '1469',            'Jardim José Ometto II',                                       'Araras',        'SP',             'vital_homem@araras.sp.gov.br',                  '(19) 3544-5411',  1),
+                  ('Hospital de Campanha Covid 19',                                    '0611484',  '13606-390',    'Rua Nelson Ferreira',                           '',                                  's/nº',            'Jardim José Ometto II',                                       'Araras',        'SP',             'hospital_covid@araras.sp.gov.br',               '(19) 3543-1522',  0),
+                  ('ESF Dr. Orlando Zaniboni',                                         '2066467',  '13606-643',    'Rua Francisco Cressoni',                        '',                                  '158',             'Parque Tiradentes',                                           'Araras',        'SP',             'orlando_zaniboni@araras.sp.gov.br',             '(19) 3541-7791',  1),
+                  ('ESF Dr. Sebastião Jair Mourão',                                    '2066998',  '13606-314',    'Rua do Estudante',                              '',                                  '110',             'Jardim José Ometto I',                                        'Araras',        'SP',             'jair_mourao@araras.sp.gov.br',                  '(19) 3544-7754',  0),
+                  ('ESF Francisco Nicola Cascelli',                                    '2066769',  '13604-172',    'Rua Melânia Baraldi Maróstica',                 '',                                  '550',             'Parque das Árvores',                                          'Araras',        'SP',             'francisco_cascelli@araras.sp.gov.br',           '(19) 3544-5424',  1),
+                  ('ESF Jeronymo Ometto',                                              '3540049',  '13603-027',    'Rua Ciro Lagazzi',                              'até 798/799',                       '285',             'Jardim Cândida',                                              'Araras',        'SP',             'jeronymo_ometto@araras.sp.gov.br',              '(19) 3541-9490',  1),
+                  ('ESF Lucia Boquette Meneghetti',                                    '2070464',  '13601-361',    'Rua Allan Kardec',                              '',                                  's/nº',            'Vila Dona Rosa Zurita',                                       'Araras',        'SP',             'lucia_meneghetti@araras.sp.gov.br',             '(19) 3544-7533',  1),
+                  ('ESF Madre Carla Rabolin',                                          '2800764',  '13604-312',    'Rua Carlindo Fernandes',                        '',                                  's/nº',            'Jardim Residencial Alvorada',                                 'Araras',        'SP',             'madre_carla@araras.sp.gov.br',                  '(19) 3551-3563',  1),
+                  ('ESF Narciso Gomes II',                                             '2067005',  '13601-430',    'Avenida Presidente Café Filho',                 '',                                  '209',             'Conjunto Habitacional Narciso Gomes',                         'Araras',        'SP',             'narciso_gomes@araras.sp.gov.br',                '(19) 3541-7898',  1),
+                  ('ESF Ophelia Geraci Pesse',                                         '0467944',  '13604-472',    'Avenida Professor Dirçon Kammer',               '',                                  '880',             'Jardim Alto da Colina',                                       'Araras',        'SP',             'ophelia_pesse@araras.sp.gov.br',                '(19) 3542-4137',  1),
+                  ('ESF Otavio João Breda',                                            '2024934',  '13606-839',    'Rua João Puppi',                                '',                                  '15',              'Parque Dom Pedro',                                            'Araras',        'SP',             'otavio_breda@araras.sp.gov.br',                 '(19) 3541-7593',  1),
+                  ('ESF Dr. Fermin Blanco Vianna',                                     '2024896',  '13606-350',    'Rua Dalton Bird de Camargo Preto',              '',                                  '42',              'Jardim José Ometto II',                                       'Araras',        'SP',             'fermin_vianna@araras.sp.gov.br',                '(19) 3544-8559',  1),
+                  ('ESF Dr. Bento Feres',                                              '3935574',  '13607-507',    'Rua Júlia Luiz Ruete',                          '',                                  '245',             'Jardim Ouro Verde II',                                        'Araras',        'SP',             'bento_feres@araras.sp.gov.br',                  '(19) 3542-5453',  1),
+                  ('ESF Antônio Simoes Pontes',                                        '2024918',  '13605-300',    'Avenida João Rossi',                            '',                                  's/nº',            'Chácaras Granja São Francisco',                               'Araras',        'SP',             'antonio_pontes@araras.sp.gov.br',               '(19) 3547-3195',  1),
+                  ('Centro Odontológico Dr. Solon de Oliveira Fernandes',              '2049422',  '13606-326',    'Avenida Lourenço Batistella',                   '',                                  '514',             'Jardim José Ometto I',                                        'Araras',        'SP',             'solon_oliveira@araras.sp.gov.br',               '(19) 3541-7211',  0),
+                  ('Centro Médico Social Comunitário Irmã Maria Diva Patarra',         '2043645',  '13601-200',    'Avenida Padre Alarico Zacharias',               '',                                  '300',             'Jardim Belvedere',                                            'Araras',        'SP',             'irma_diva_patarra@araras.sp.gov.br',            '(19) 3543-3088',  0),
+                  ('Centro de Atendimento Infantil Dr. Hercio Marcos Cintra Arantes',  '3988775',  '13606-314',    'Rua do Estudante',                              '',                                  '110',             'Jardim José Ometto I',                                        'Araras',        'SP',             'centro_infantil_hercio@araras.sp.gov.br',       '(19) 3542-9909',  1),
+                  ('Centro de Saúde Dra. Rosa Chelminsk Teixeira',                     '2049414',  '13601-140',    'Avenida Governador Garcez',                     '',                                  '137',             'Jardim Belvedere',                                            'Araras',        'SP',             'rosa_teixeira@araras.sp.gov.br',                '(19) 3542-6164',  1),
+                  ('Centro de Saúde da Mulher Jandira Alvares Leite Duarte',           '2022737',  '13602-005',    'Rua dos Antúrios',                              'até 48/49',                         '30',              'Jardim Sobradinho',                                           'Araras',        'SP',             'jandira_duarte@araras.sp.gov.br',               '(19) 3551-5440',  1),
+                  ('Centro de Imagem Radiológica',                                     '2799367',  '13601-140',    'Avenida Governador Garcez',                     '',                                  's/nº',            'Jardim Belvedere',                                            'Araras',        'SP',             'imagem_radiologica@araras.sp.gov.br',           '(19) 3543-3055',  0),
+                  ('CAPS IJ Infanto Juvenil',                                          '2870444',  '13601-008',    'Rua Carlindo Pereira da Costa',                 '',                                  's/nº',            'Vila Michielin',                                              'Araras',        'SP',             'caps_infanto_juvenil@araras.sp.gov.br',         '(19) 3551-0277',  1),
+                  ('CAPS II Idalina Corredor Victorello',                              '3583686',  '13607-200',    'Avenida Loreto',                                'até 1298 - lado par',               '1291',            'Jardim das Flores',                                           'Araras',        'SP',             'caps_idalina_victorello@araras.sp.gov.br',      '(19) 3544-5874',  1),
+                  ('Transporte Intermunicipal',                                        '12',       '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'transporte_intermunicipal@araras.sp.gov.br',    '(19) 3544-1878',  1),
+                  ('Consultório na Rua',                                               '4662571',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'consultorio_rua@araras.sp.gov.br',              '(19) 3543-1522',  0),
+                  ('Centro de Distribuição de Imunobiológicos de Araras',              '0500836',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'distribuicao_imunobiologico@araras.sp.gov.br',  '(19) 3543-1522',  0),
+                  ('Endemias',                                                         '33',       '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'endemias@araras.sp.gov.br',                     '(19) 3551-5840',  1)
+      ) AS T (Name, Cnes, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive)
 )
 
 INSERT INTO [dbo].[Facilities]
             ([Name]
+            ,[Cnes]
             ,[Address_Cep]
             ,[Address_Street]
             ,[Address_Complement]
@@ -233,6 +245,7 @@ INSERT INTO [dbo].[Facilities]
             ,[IsActive])
 SELECT
       Name,
+      Cnes,
       Address_Cep,
       Address_Street,
       Address_Complement,
@@ -252,10 +265,9 @@ GO
 USE [ararashealthhub]
 GO
 
-DECLARE @MaxMonthsAgo INT = 10
-DECLARE @NOW DATETIME = GETDATE()
-DECLARE @MinDate DATETIME = DATEADD(MONTH, -@MaxMonthsAgo, @NOW)
-DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
+DECLARE @MinDate DATETIME = '20250102'
+DECLARE @MaxDate DATETIME = '20250215'
+DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
       Name, Cnpj, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive, CreatedOn, UpdatedOn
@@ -275,13 +287,21 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
             T.IsActive,
 
             -- 'CreatedOn'
-            DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate) AS CreatedOn,
+            DATEADD(SECOND,
+                (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+            ) AS CreatedOn,
 
             -- 'UpdatedOn'
             CASE
-            WHEN T.IsActive = 0
-            THEN DATEADD(MINUTE, (ABS(CHECKSUM(NEWID())) % (60 * 24 * 30)) + 1, DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate))
-            ELSE NULL
+                WHEN T.IsActive = 0
+                THEN DATEADD(DAY, 1,
+                        DATEADD(SECOND,
+                            (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                            CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+                        )
+                    )
+                ELSE NULL
             END AS UpdatedOn
       FROM (
             VALUES
@@ -340,18 +360,18 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
                   ('Farmácia Drogal',                            '17.112.334/0001-90',  '13607-213',    'Avenida José Marques da Silva',                 '',                                    '1565',              'Jardim das Flores',                    'Araras',             'SP',             'drogalararas2@drogal.com.br',          '(19) 3352-5915',   1),
                   ('Mantecorp Farmasa',                          '61.082.426/0002-07',  '06465-134',    'Rua Bonnard (Green Valley I)',                  '',                                    '980',               'Alphaville Empresarial',               'Barueri',            'SP',             'daniel.almeida@hypera.com.br',         '(62) 3878-8150',   0),
                   ('Germed Farmacêutica',                        '45.992.062/0001-65',  '13186-901',    'Rodovia Jornalista Francisco Aguirre Proença',  '',                                    'S/N KM 08',         'Chácara Assay',                        'Hortolândia',        'SP',             'contabil.holding@ems.com.br',          '(19) 3887-9800',   1),
-                  ('FQM Farmoquímica',                           '12.345.678/0001-15',  '04530-001',    'Rua Doutor Renato Paes de Barros',              'de 631/632 ao fim',                   '750',               'Itaim Bibi',                           'São Paulo',          'SP',             'sac@fqm.com.br',                       '(11) 4000-0000',   1),
+                  ('FQM Farmoquímica',                           '21.136.918/0001-32',  '04530-001',    'Rua Doutor Renato Paes de Barros',              'de 631/632 ao fim',                   '750',               'Itaim Bibi',                           'São Paulo',          'SP',             'sac@fqm.com.br',                       '(11) 4000-0000',   1),
                   ('Drogaria Tiradentes',                        '60.772.002/0001-92',  '13606-620',    'Rua Laerte Tognasca',                           '',                                    '462',               'Parque Tiradentes',                    'Araras',             'SP',             'tiradentes@drogaria.com.br',           '(19) 97818-4796',  1),
                   ('Laboratório Teuto Brasileiro',               '97.033.645/0001-62',  '05307-000',    'Rua Major Paladino',                            'até 469/470',                         '128',               'Vila Ribeiro de Barros',               'São Paulo',          'SP',             'contato@teuto.com.br',                 '(11) 3645-0871',   1),
-                  ('Geolab Indústria Farmacêutica',              '98.765.432/0001-24',  '74000-000',    'Rua dos Laboratórios',                          '',                                    '200',               'Polo Industrial',                      'Goiânia',            'GO',             'contato@geolab.com.br',                '(62) 3900-0000',   1),
-                  ('Drogasil Araras',                            '01.234.567/0001-08',  '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',    '2345',              'Centro',                               'Araras',             'SP',             'araras@drogasil.com.br',               '(19) 3541-4545',   1),
+                  ('Geolab Indústria Farmacêutica',              '36.889.126/0001-06',  '74000-000',    'Rua dos Laboratórios',                          '',                                    '200',               'Polo Industrial',                      'Goiânia',            'GO',             'contato@geolab.com.br',                '(62) 3900-0000',   1),
+                  ('Drogasil Araras',                            '37.724.212/0001-21',  '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',    '2345',              'Centro',                               'Araras',             'SP',             'araras@drogasil.com.br',               '(19) 3541-4545',   1),
                   ('X-Data Papelaria',                           '42.144.710/0001-35',  '13600-140',    'Rua José Bonifácio',                            '',                                    '717',               'Centro',                               'Araras',             'SP',             'vendas@xdata.com.br',                  '(19) 3543-2000',   1),
                   ('Dimebrás Distribuidora Farmacêutica',        '42.545.039/0001-34',  '88133-560',    'Rua Cecília do Rego Almeida',                   '',                                    '300',               'Jardim Eldorado',                      'Palhoça',            'SC',             'dimebras@dimebras.com.br',             '(48) 3224-1834',   1),
                   ('Medmais Distribuidora',                      '54.223.019/0001-26',  '48400-000',    'Rua João Fernandes da Gama',                    '',                                    '160',               'Centro',                               'Ribeira do Pombal',  'BA',             'medmais@medmais.com.br',               '(75) 9904-7884',   1),
                   ('VPA Atacadista',                             '57.929.071/0001-90',  '03031-000',    'Rua Tiers',                                     '',                                    '505',               'Pari',                                 'Pari',               'SP',             'falecom@vpa.com.br',                   '(11) 3328-1145',   1),
                   ('Torrent Pharma',                             '33.197.886/0001-00',  '01155-060',    'Rua Doutor Alfredo de Castro',                  '',                                    '200',               'Barra Funda',                          'São Paulo',          'SP',             'contato@torrentpharma.com.br',         '(11) 3874-9000',   1),
-                  ('Libbs Farmacêutica',                         '33.197.886/0001-00',  '05036-040',    'Avenida Marquês de São Vicente',                'de 2200/2201 ao fim',                 '2219',              'Água Branca',                          'São Paulo',          'SP',             'contato@libbs.com.br',                 '(11) 3874-9000',   1),
-                  ('Tecnofarma',                                 '00.111.222/0001-95',  '13000-000',    'Avenida Marechal Deodoro',                      '',                                    '789',               'Centro',                               'Campinas',           'SP',             'contato@tecnofarma.com.br',            '(19) 3232-4444',   0),
+                  ('Libbs Farmacêutica',                         '42.332.686/0001-68',  '05036-040',    'Avenida Marquês de São Vicente',                'de 2200/2201 ao fim',                 '2219',              'Água Branca',                          'São Paulo',          'SP',             'contato@libbs.com.br',                 '(11) 3874-9000',   1),
+                  ('Tecnofarma',                                 '35.897.853/0001-52',  '13000-000',    'Avenida Marechal Deodoro',                      '',                                    '789',               'Centro',                               'Campinas',           'SP',             'contato@tecnofarma.com.br',            '(19) 3232-4444',   0),
                   ('Boehringer Ingelheim Brasil',                '60.846.120/0001-00',  '04794-000',    'Avenida das Nações Unidas',                     'lado ímpar',                          '13797',             'Vila Gertrudes',                       'São Paulo',          'SP',             'contato@boehringer-ingelheim.com.br',  '(11) 4949-4700',   1),
                   ('Biosintética Farmacêutica',                  '61.272.164/0001-80',  '02055-000',    'Rua Doutor José Bernardo Pinto',                '',                                    '333',               'Vila Guilherme',                       'São Paulo',          'SP',             'contato@biosintetica.com.br',          '(11) 2171-8000',   0),
                   ('Pharma Total Zona Leste',                    '46.112.334/0001-34',  '13606-360',    'Avenida Presidente Vargas',                     'até 799 - lado ímpar',                '599',               'Jardim José Ometto II',                'Araras',             'SP',             'pharmatotalzl@farmacia.com.br',        '(19) 3544-3072',   1),
@@ -407,10 +427,9 @@ GO
 USE [ararashealthhub]
 GO
 
-DECLARE @MaxMonthsAgo INT = 10
-DECLARE @NOW DATETIME = GETDATE()
-DECLARE @MinDate DATETIME = DATEADD(MONTH, -@MaxMonthsAgo, @NOW)
-DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
+DECLARE @MinDate DATETIME = '20250102'
+DECLARE @MaxDate DATETIME = '20250215'
+DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
       Name, Description, MainCategory, SubCategory, PresentationForm, IsActive, CreatedOn, UpdatedOn
@@ -424,13 +443,21 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
             T.IsActive,
 
             -- 'CreatedOn'
-            DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate) AS CreatedOn,
+            DATEADD(SECOND,
+                (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+            ) AS CreatedOn,
 
             -- 'UpdatedOn'
             CASE
-            WHEN T.IsActive = 0
-            THEN DATEADD(MINUTE, (ABS(CHECKSUM(NEWID())) % (60 * 24 * 30)) + 1, DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate))
-            ELSE NULL
+                WHEN T.IsActive = 0
+                THEN DATEADD(DAY, 1,
+                        DATEADD(SECOND,
+                            (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                            CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+                        )
+                    )
+                ELSE NULL
             END AS UpdatedOn
       FROM (
             VALUES
@@ -856,10 +883,9 @@ GO
 USE [ararashealthhub]
 GO
 
-DECLARE @MaxMonthsAgo INT = 10
-DECLARE @NOW DATETIME = GETDATE()
-DECLARE @MinDate DATETIME = DATEADD(MONTH, -@MaxMonthsAgo, @NOW)
-DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
+DECLARE @MinDate DATETIME = '20250102'
+DECLARE @MaxDate DATETIME = '20250215'
+DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
       FacilityId, Scope, IsActive, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, CreatedOn, UpdatedOn
@@ -884,13 +910,21 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @NOW)
             T.AccessFailedCount,
 
             -- 'CreatedOn'
-            DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate) AS CreatedOn,
+            DATEADD(SECOND,
+                (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+            ) AS CreatedOn,
 
             -- 'UpdatedOn'
             CASE
-            WHEN T.IsActive = 0
-            THEN DATEADD(MINUTE, (ABS(CHECKSUM(NEWID())) % (60 * 24 * 30)) + 1, DATEADD(SECOND, ABS(CHECKSUM(NEWID())) % @RangeSeconds, @MinDate))
-            ELSE NULL
+                WHEN T.IsActive = 0
+                THEN DATEADD(DAY, 1,
+                        DATEADD(SECOND,
+                            (ABS(CHECKSUM(NEWID())) % 28801) + 28800,
+                            CAST(DATEADD(DAY, ABS(CHECKSUM(NEWID())) % (DATEDIFF(DAY, @MinDate, @MaxDate) + 1), @MinDate) AS DATETIME)
+                        )
+                    )
+                ELSE NULL
             END AS UpdatedOn
       FROM (
             VALUES

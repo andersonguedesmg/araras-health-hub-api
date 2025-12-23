@@ -123,7 +123,7 @@ namespace ArarasHealthHub.Infrastructure.Data
                     new
                     {
                         FacilityId = 1,
-                        Email = "sms@araras.sp.gov.br",
+                        Email = "saude@araras.sp.gov.br",
                         Phone = "(19) 3543-1522"
                     }
                 );
