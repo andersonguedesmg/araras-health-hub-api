@@ -144,8 +144,8 @@ namespace ArarasHealthHub.Infrastructure.Data
             ApplicationUser userMaster = new()
             {
                 Id = 1,
-                UserName = "sms_master",
-                NormalizedUserName = "SMS_MASTER",
+                UserName = "saude_master",
+                NormalizedUserName = "SAUDE_MASTER",
                 CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 09, 14, 35), DateTimeKind.Utc),
                 UpdatedOn = null,
                 IsActive = true,

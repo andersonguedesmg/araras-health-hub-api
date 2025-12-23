@@ -222,10 +222,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Cnes = "1",
+                            Cnes = "6345921",
                             CreatedOn = new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc),
                             IsActive = true,
-                            Name = "Secretaria Municipal da Saúde"
+                            Name = "Secretária Municipal da Saúde - Dr. João Geraldo Noronha"
                         });
                 });
 
@@ -1091,13 +1091,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             FacilityId = 1,
                             IsActive = true,
                             LockoutEnabled = false,
-                            NormalizedUserName = "SMS_MASTER",
+                            NormalizedUserName = "SAUDE_MASTER",
                             PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
                             PhoneNumberConfirmed = false,
                             Scope = 1,
                             SecurityStamp = "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11",
                             TwoFactorEnabled = false,
-                            UserName = "sms_master"
+                            UserName = "saude_master"
                         });
                 });
 
@@ -1406,7 +1406,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                                 new
                                 {
                                     FacilityId = 1,
-                                    Email = "sms@araras.sp.gov.br",
+                                    Email = "saude@araras.sp.gov.br",
                                     Phone = "(19) 3543-1522"
                                 });
                         });

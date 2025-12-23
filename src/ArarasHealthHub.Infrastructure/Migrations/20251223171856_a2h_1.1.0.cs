@@ -809,7 +809,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Facilities",
                 columns: new[] { "Id", "Cnes", "CreatedOn", "IsActive", "Name", "UpdatedOn", "Address_Cep", "Address_City", "Address_Complement", "Address_Neighborhood", "Address_Number", "Address_State", "Address_Street", "Contact_Email", "Contact_Phone" },
-                values: new object[] { 1, "1", new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc), true, "Secretaria Municipal da Saúde", null, "13601-111", "Araras", "", "Jardim Belvedere", "33", "SP", "Rua Campos Sales", "sms@araras.sp.gov.br", "(19) 3543-1522" });
+                values: new object[] { 1, "6345921", new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc), true, "Secretária Municipal da Saúde - Dr. João Geraldo Noronha", null, "13601-111", "Araras", "", "Jardim Belvedere", "33", "SP", "Rua Campos Sales", "saude@araras.sp.gov.br", "(19) 3543-1522" });
 
             migrationBuilder.InsertData(
                 table: "OrderStatuses",
@@ -827,7 +827,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Scope", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99", new DateTime(2025, 1, 2, 9, 14, 35, 0, DateTimeKind.Utc), null, false, 1, true, false, null, null, "SMS_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, 1, "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11", false, null, "sms_master" });
+                values: new object[] { 1, 0, "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99", new DateTime(2025, 1, 2, 9, 14, 35, 0, DateTimeKind.Utc), null, false, 1, true, false, null, null, "SAUDE_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, 1, "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11", false, null, "saude_master" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
