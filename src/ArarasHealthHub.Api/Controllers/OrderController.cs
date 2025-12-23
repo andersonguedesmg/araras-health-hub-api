@@ -14,6 +14,7 @@ using ArarasHealthHub.Application.Features.Orders.Queries.ExportOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails;
+using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Shared.Core;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,10 +28,12 @@ namespace ArarasHealthHub.Api.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IPdfService _pdfService;
 
-        public OrderController(IMediator mediator)
+        public OrderController(IMediator mediator, IPdfService pdfService)
         {
             _mediator = mediator;
+            _pdfService = pdfService;
         }
 
         [HttpPost("create")]
@@ -142,6 +145,23 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("picking-report/{id}")]
+        [Authorize(Policy = "CanManageResource")]
+        public async Task<IActionResult> GetPickingReport(int id)
+        {
+            var result = await _mediator.Send(new GetOrderPickingDetailsQuery { Id = id });
+
+            if (!result.Success || result.Data == null)
+            {
+                return StatusCode(result.StatusCode, result);
+            }
+
+            byte[] pdfBytes = await _pdfService.GeneratePickingListAsync(result.Data);
+
+            var fileName = $"Lista_Separacao_Pedido_{id}.pdf";
+            return File(pdfBytes, "application/pdf", fileName);
         }
 
         [HttpGet("export")]

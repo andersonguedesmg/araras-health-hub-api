@@ -32,6 +32,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using QuestPDF.Infrastructure;
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -262,6 +265,7 @@ builder.Services.AddScoped<IStockCostRepository, StockCostRepository>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IStockAllocationService, StockAllocationService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
 
 builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 

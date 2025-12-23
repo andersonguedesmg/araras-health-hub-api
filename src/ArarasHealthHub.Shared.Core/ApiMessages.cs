@@ -62,6 +62,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string OrderCannotBeSeparated = "Não é possível separar o pedido. O status atual é 'Pendente', e a separação só pode ser feita em pedidos com status 'Aprovado'.";
         public const string OrderCannotBeCompleted = "Não é possível finalizar o pedido. Para finalizar, o pedido precisa estar com o status 'Separado'.";
         public const string OrderCancelledSuccessfully = "Pedido cancelado com sucesso.";
+        public const string PdfGeneratedSuccessfully = "PDF gerado com sucesso.";
         public const string StockReleaseFailed = "A liberação de estoque falhou.";
         public const string OrderAlreadyCancelled = "Pedido já cancelado.";
         public const string DispenseReturnRecordedSuccessfully = "Estorno dos itens do pedido realizado com sucesso.";
