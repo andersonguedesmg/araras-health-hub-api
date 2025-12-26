@@ -229,6 +229,69 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.MainCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("MainCategories", t =>
+                        {
+                            t.HasComment("Categoria principal de produtos (ex: Medicamento, Material Hospitalar, Material de Limpeza)");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedOn = new DateTime(2025, 1, 2, 11, 22, 33, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Name = "Pendente"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedOn = new DateTime(2025, 1, 2, 11, 25, 14, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Name = "Material Hospitalar"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedOn = new DateTime(2025, 1, 2, 11, 27, 21, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Name = "Material de Limpeza"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedOn = new DateTime(2025, 1, 2, 11, 30, 38, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            Name = "Material de Apoio e Administrativo"
+                        });
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -467,6 +530,39 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.PresentationForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("PresentationForms", t =>
+                        {
+                            t.HasComment("Forma de apresentação do produto (ex: Frasco, Ampola, Comprimido)");
+                        });
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -486,30 +582,30 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MainCategory")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("MainCategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("PresentationForm")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("PresentationFormId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("SubCategory")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("SubCategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MainCategoryId");
+
+                    b.HasIndex("PresentationFormId");
+
+                    b.HasIndex("SubCategoryId");
 
                     b.ToTable("Products", t =>
                         {
@@ -958,6 +1054,42 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.ToTable("StockMovements", t =>
                         {
                             t.HasComment("Representa uma entrada ou saída de itens do estoque.");
+                        });
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.SubCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MainCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MainCategoryId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("SubCategories", t =>
+                        {
+                            t.HasComment("Subcategoria vinculada a uma categoria principal (ex: Antibiótico, Analgésico, Antialérgico)");
                         });
                 });
 
@@ -1539,6 +1671,33 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("StockLot");
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Product", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.MainCategory", "MainCategory")
+                        .WithMany("Products")
+                        .HasForeignKey("MainCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.PresentationForm", "PresentationForm")
+                        .WithMany("Products")
+                        .HasForeignKey("PresentationFormId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.SubCategory", "SubCategory")
+                        .WithMany("Products")
+                        .HasForeignKey("SubCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MainCategory");
+
+                    b.Navigation("PresentationForm");
+
+                    b.Navigation("SubCategory");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.ReceivedItem", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
@@ -1686,6 +1845,17 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("Responsible");
 
                     b.Navigation("StockLot");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.SubCategory", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.MainCategory", "MainCategory")
+                        .WithMany("SubCategories")
+                        .HasForeignKey("MainCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MainCategory");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Supplier", b =>
@@ -1838,6 +2008,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("Accounts");
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.MainCategory", b =>
+                {
+                    b.Navigation("Products");
+
+                    b.Navigation("SubCategories");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -1846,6 +2023,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItem", b =>
                 {
                     b.Navigation("OrderItemLots");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.PresentationForm", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Product", b =>
@@ -1868,6 +2050,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>
                 {
                     b.Navigation("AdjustmentItems");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.SubCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

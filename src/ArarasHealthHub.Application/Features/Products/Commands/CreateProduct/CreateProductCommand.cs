@@ -10,8 +10,8 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
     public record CreateProductCommand(
         string Name,
         string Description,
-        string MainCategory,
-        string SubCategory,
-        string PresentationForm
+        int MainCategoryId,
+        int SubCategoryId,
+        int PresentationFormId
     ) : IRequest<ApiResponse<int>>;
 }

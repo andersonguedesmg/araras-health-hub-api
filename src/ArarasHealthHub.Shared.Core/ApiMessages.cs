@@ -22,6 +22,7 @@ namespace ArarasHealthHub.Shared.Core
         public static string OrderSuccessfully(string status) => $"Pedido {status} com sucesso.";
         public static string CannotCancelOrderInStatus(string status) => $"Não é possível cancelar o pedido com status {status}.";
         public static string CannotReturnFromOrderInStatus(string status) => $"Não é possível retornar do pedido com status {status}.";
+        public static string ExportEmpty(string entity) => $"Nenhum(a) {entity} encontrado(a) para os filtros aplicados. A exportação foi cancelada.";
 
         public const string OperationSuccessful = "Operação concluída com sucesso.";
         public const string InternalServerError = "Ocorreu um erro interno no servidor.";

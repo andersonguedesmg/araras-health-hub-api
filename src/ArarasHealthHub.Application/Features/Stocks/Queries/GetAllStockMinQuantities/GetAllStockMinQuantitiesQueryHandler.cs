@@ -25,49 +25,48 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuan
 
         public async Task<PagedResponse<StockMinQuantityDto>> Handle(GetAllStockMinQuantitiesQuery request, CancellationToken cancellationToken)
         {
-            var stockQuery = _stockRepository.GetQueryable().Include(s => s.Product).AsQueryable();
+            var stockQuery = _stockRepository.GetQueryable()
+                .AsNoTracking()
+                .Include(s => s.Product)
+                    .ThenInclude(p => p.MainCategory)
+                .Include(s => s.Product)
+                    .ThenInclude(p => p.SubCategory)
+                .Include(s => s.Product)
+                    .ThenInclude(p => p.PresentationForm)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
+                var searchTerm = request.SearchTerm.Trim().ToLower();
 
                 stockQuery = stockQuery.Where(s =>
-                    s.Id.ToString().Contains(searchTermLower) ||
-                    s.ProductId.ToString().Contains(searchTermLower) ||
-                    s.MinQuantity.ToString().Contains(searchTermLower) ||
-
-                    (s.Product != null && (
-                        s.Product.Name.ToLower().Contains(searchTermLower) ||
-                        s.Product.Id.ToString().Contains(searchTermLower) ||
-                        s.Product.Description.ToLower().Contains(searchTermLower) ||
-                        s.Product.MainCategory.ToLower().Contains(searchTermLower) ||
-                        s.Product.SubCategory.ToLower().Contains(searchTermLower) ||
-                        s.Product.PresentationForm.ToLower().Contains(searchTermLower) ||
-                        s.Product.IsActive.ToString().ToLower().Contains(searchTermLower)
-                    ))
+                    s.Product.Name.ToLower().Contains(searchTerm) ||
+                    s.Product.MainCategory!.Name.ToLower().Contains(searchTerm) ||
+                    s.Product.SubCategory!.Name.ToLower().Contains(searchTerm) ||
+                    s.Product.PresentationForm!.Name.ToLower().Contains(searchTerm) ||
+                    s.MinQuantity.ToString().Contains(searchTerm)
                 );
             }
 
             var totalCount = await stockQuery.CountAsync(cancellationToken);
 
             IQueryable<Stock> orderedStock;
+            var isDesc = request.SortOrder?.ToLower() == "desc";
 
             switch (request.OrderBy?.ToLower())
             {
                 case "productname":
-                    orderedStock = request.SortOrder?.ToLower() == "desc" ?
-                        stockQuery.OrderByDescending(s => s.Product.Name) :
-                        stockQuery.OrderBy(s => s.Product.Name);
+                    orderedStock = isDesc
+                        ? stockQuery.OrderByDescending(s => s.Product.Name)
+                        : stockQuery.OrderBy(s => s.Product.Name);
                     break;
                 case "minquantity":
-                    orderedStock = request.SortOrder?.ToLower() == "desc" ?
-                        stockQuery.OrderByDescending(s => s.MinQuantity) :
-                        stockQuery.OrderBy(s => s.MinQuantity);
+                    orderedStock = isDesc
+                        ? stockQuery.OrderByDescending(s => s.MinQuantity)
+                        : stockQuery.OrderBy(s => s.MinQuantity);
                     break;
                 default:
-                    orderedStock = request.SortOrder?.ToLower() == "desc" ?
-                        stockQuery.OrderByDescending(s => s.Product.Name) :
-                        stockQuery.OrderBy(s => s.Product.Name);
+                    orderedStock = stockQuery.OrderBy(s => s.Product.Name);
                     break;
             }
 

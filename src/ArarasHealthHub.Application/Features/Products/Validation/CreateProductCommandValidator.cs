@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
+using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Products.Validation
 {
@@ -12,7 +14,7 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
     {
         private readonly IProductRepository _productRepository;
 
-        public CreateProductCommandValidator(IProductRepository productRepository)
+        public CreateProductCommandValidator(IProductRepository productRepository, IApplicationDbContext context)
         {
             _productRepository = productRepository;
 
@@ -25,17 +27,17 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
                 .NotEmpty().WithMessage("A descrição do produto é obrigatória.")
                 .MaximumLength(200).WithMessage("A descrição do produto não pode exceder 200 caracteres.");
 
-            RuleFor(command => command.MainCategory)
-                .NotEmpty().WithMessage("A categoria principal do produto é obrigatória.")
-                .MaximumLength(100).WithMessage("A categoria principal do produto não pode exceder 100 caracteres.");
+            RuleFor(x => x.MainCategoryId).NotEmpty()
+                .MustAsync(async (id, ct) => await context.MainCategories.AnyAsync(c => c.Id == id, ct))
+                .WithMessage("Categoria Principal inválida.");
 
-            RuleFor(command => command.SubCategory)
-                .NotEmpty().WithMessage("A subcategoria do produto é obrigatória.")
-                .MaximumLength(100).WithMessage("A subcategoria do produto não pode exceder 100 caracteres.");
+            RuleFor(x => x.SubCategoryId).NotEmpty()
+                .MustAsync(async (id, ct) => await context.SubCategories.AnyAsync(c => c.Id == id, ct))
+                .WithMessage("Subcategoria inválida.");
 
-            RuleFor(command => command.PresentationForm)
-                .NotEmpty().WithMessage("A forma de apresentação do produto é obrigatória.")
-                .MaximumLength(100).WithMessage("A forma de apresentação do produto não pode exceder 100 caracteres.");
+            RuleFor(x => x.PresentationFormId).NotEmpty()
+                .MustAsync(async (id, ct) => await context.PresentationForms.AnyAsync(c => c.Id == id, ct))
+                .WithMessage("Forma de apresentação inválida.");
         }
 
         private async Task<bool> BeUniqueProductName(string name, CancellationToken cancellationToken)

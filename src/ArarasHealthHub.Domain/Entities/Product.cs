@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -19,16 +20,19 @@ namespace ArarasHealthHub.Domain.Entities
         public string Description { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(100)]
-        public string MainCategory { get; set; } = string.Empty;
+        [ForeignKey("MainCategoryId")]
+        public int MainCategoryId { get; set; }
+        public MainCategory? MainCategory { get; set; }
 
         [Required]
-        [MaxLength(100)]
-        public string SubCategory { get; set; } = string.Empty;
+        [ForeignKey("SubCategoryId")]
+        public int SubCategoryId { get; set; }
+        public SubCategory? SubCategory { get; set; }
 
         [Required]
-        [MaxLength(100)]
-        public string PresentationForm { get; set; } = string.Empty;
+        [ForeignKey("PresentationFormId")]
+        public int PresentationFormId { get; set; }
+        public PresentationForm? PresentationForm { get; set; }
 
         public Stock? Stock { get; set; }
     }

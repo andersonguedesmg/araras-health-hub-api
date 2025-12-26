@@ -25,17 +25,20 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public async Task<Product?> GetByProductNameAsync(string name)
         {
-            return await _dbSet.FirstOrDefaultAsync(s => s.Name.ToLower() == name.ToLower());
+            return await _dbContext.Products.AsNoTracking().FirstOrDefaultAsync(s => s.Name.ToLower() == name.ToLower());
         }
 
         public async Task<bool> ProductExists(int id)
         {
-            return await _dbSet.AnyAsync(p => p.Id == id);
+            return await _dbContext.Products.AnyAsync(p => p.Id == id);
         }
 
         public async Task<Product?> GetByIdWithStockAsync(int id)
         {
             return await _dbContext.Products
+                .Include(p => p.MainCategory)
+                .Include(p => p.SubCategory)
+                .Include(p => p.PresentationForm)
                 .Include(p => p.Stock)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -43,7 +46,11 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public IQueryable<Product> GetQueryable()
         {
-            return _dbContext.Set<Product>().AsNoTracking();
+            return _dbContext.Products
+                .Include(p => p.MainCategory)
+                .Include(p => p.SubCategory)
+                .Include(p => p.PresentationForm)
+                .AsNoTracking();
         }
     }
 }

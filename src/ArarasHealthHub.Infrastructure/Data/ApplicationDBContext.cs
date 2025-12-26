@@ -28,6 +28,9 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<MainCategory> MainCategories { get; set; }
+        public DbSet<SubCategory> SubCategories { get; set; }
+        public DbSet<PresentationForm> PresentationForms { get; set; }
         public DbSet<Receiving> Receivings { get; set; }
         public DbSet<ReceivedItem> ReceivedItems { get; set; }
         public DbSet<Stock> Stocks { get; set; }
@@ -69,6 +72,45 @@ namespace ArarasHealthHub.Infrastructure.Data
             builder.Entity<Employee>()
                 .HasIndex(e => e.Cpf)
                 .IsUnique();
+
+            builder.Entity<MainCategory>(entity =>
+            {
+                entity.HasIndex(e => e.Name).IsUnique();
+
+                entity.HasMany(m => m.SubCategories)
+                      .WithOne(s => s.MainCategory)
+                      .HasForeignKey(s => s.MainCategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<SubCategory>(entity =>
+            {
+                entity.HasIndex(e => new { e.MainCategoryId, e.Name }).IsUnique();
+            });
+
+            builder.Entity<PresentationForm>(entity =>
+            {
+                entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            builder.Entity<Product>(entity =>
+            {
+                entity.HasOne(p => p.MainCategory)
+                      .WithMany(m => m.Products)
+                      .HasForeignKey(p => p.MainCategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(p => p.SubCategory)
+                      .WithMany(s => s.Products)
+                      .HasForeignKey(p => p.SubCategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(p => p.PresentationForm)
+                      .WithMany(f => f.Products)
+                      .HasForeignKey(p => p.PresentationFormId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
 
             // --- Seed das Funções ---
             int roleMasterId = 1;
@@ -177,6 +219,40 @@ namespace ArarasHealthHub.Infrastructure.Data
                 new OrderStatus { Id = 6, Description = "Cancelado" },
             };
             builder.Entity<OrderStatus>().HasData(orderStatus);
+
+            // --- Seed de Categoria Principal ---
+            builder.Entity<MainCategory>().HasData(
+                new
+                {
+                    Id = 1,
+                    Name = "Pendente",
+                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 22, 33), DateTimeKind.Utc),
+                    IsActive = true
+                },
+                new
+                {
+                    Id = 2,
+                    Name = "Material Hospitalar",
+                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 25, 14), DateTimeKind.Utc),
+                    IsActive = true
+                },
+                new
+                {
+                    Id = 3,
+                    Name = "Material de Limpeza",
+                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 27, 21), DateTimeKind.Utc),
+                    IsActive = true
+                },
+                new
+                {
+                    Id = 4,
+                    Name = "Material de Apoio e Administrativo",
+                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 30, 38), DateTimeKind.Utc),
+                    IsActive = true
+                }
+            );
+
+
 
             // --- Configurações de Precisão ---
             // --- Regras de Padronização:

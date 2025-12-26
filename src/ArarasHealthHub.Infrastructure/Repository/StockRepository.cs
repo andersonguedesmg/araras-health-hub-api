@@ -26,37 +26,6 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .FirstOrDefaultAsync(s => s.ProductId == productId);
         }
 
-        public async Task<IEnumerable<Stock>> GetStockOverviewAsync(int pageNumber, int pageSize, string orderBy, string sortOrder)
-        {
-            var query = _dbContext.Stocks
-                .Include(s => s.Product)
-                .AsNoTracking();
-
-            switch (orderBy.ToLower())
-            {
-                case "productname":
-                    query = sortOrder.ToLower() == "desc" ?
-                        query.OrderByDescending(s => s.Product.Name) :
-                        query.OrderBy(s => s.Product.Name);
-                    break;
-                case "currentquantity":
-                    query = sortOrder.ToLower() == "desc" ?
-                        query.OrderByDescending(s => s.CurrentQuantity) :
-                        query.OrderBy(s => s.CurrentQuantity);
-                    break;
-                default:
-                    query = sortOrder.ToLower() == "desc" ?
-                        query.OrderByDescending(s => s.Id) :
-                        query.OrderBy(s => s.Id);
-                    break;
-            }
-
-            return await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-        }
-
         public async Task<IEnumerable<Stock>> GetLowStockAsync()
         {
             return await _dbContext.Stocks
@@ -73,7 +42,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public IQueryable<Stock> GetQueryable()
         {
-            return _dbContext.Set<Stock>();
+            return _dbContext.Stocks.AsNoTracking();
         }
 
         public IQueryable<Stock> GetLowStockQueryable()

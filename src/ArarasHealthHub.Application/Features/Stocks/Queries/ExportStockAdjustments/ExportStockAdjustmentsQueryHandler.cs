@@ -23,14 +23,20 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockAdjustm
 
         public async Task<IEnumerable<StockAdjustmentDto>> Handle(ExportStockAdjustmentsQuery request, CancellationToken cancellationToken)
         {
-            var query = _repo.AsQueryable();
-
-            query = query
+            var query = _repo.AsQueryable()
                 .AsNoTracking()
                 .Include(a => a.Responsible)
                 .Include(a => a.Account)
                 .Include(a => a.AdjustmentItems)
-                    .ThenInclude(ai => ai.Product);
+                    .ThenInclude(ai => ai.Product)
+                        .ThenInclude(p => p.MainCategory)
+                .Include(a => a.AdjustmentItems)
+                    .ThenInclude(ai => ai.Product)
+                        .ThenInclude(p => p.SubCategory)
+                .Include(a => a.AdjustmentItems)
+                    .ThenInclude(ai => ai.Product)
+                        .ThenInclude(p => p.PresentationForm)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
@@ -40,14 +46,10 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockAdjustm
                     a.Id.ToString().Contains(searchTermLower) ||
                     a.Reason.ToLower().Contains(searchTermLower) ||
                     (a.Observation != null && a.Observation.ToLower().Contains(searchTermLower)) ||
-                    a.AdjustmentDate.ToString().Contains(searchTermLower) ||
-                    a.Type.ToString().ToLower().Contains(searchTermLower) ||
                     (a.Responsible != null && a.Responsible.Name.ToLower().Contains(searchTermLower)) ||
-                    (a.Account != null && a.Account.UserName!.ToLower().Contains(searchTermLower)) ||
                     a.AdjustmentItems.Any(ai =>
-                        (ai.Batch != null && ai.Batch.ToLower().Contains(searchTermLower)) ||
-                        (ai.Brand != null && ai.Brand.ToLower().Contains(searchTermLower)) ||
-                        ai.Product.Name.ToLower().Contains(searchTermLower)
+                        ai.Product.Name.ToLower().Contains(searchTermLower) ||
+                        (ai.Batch != null && ai.Batch.ToLower().Contains(searchTermLower))
                     )
                 );
             }

@@ -9,7 +9,6 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     public interface IStockRepository : IBaseRepository<Stock>
     {
         Task<Stock?> GetByProductIdAsync(int productId);
-        Task<IEnumerable<Stock>> GetStockOverviewAsync(int pageNumber, int pageSize, string orderBy, string sortOrder);
         Task<IEnumerable<Stock>> GetLowStockAsync();
         Task<int> GetTotalCountAsync();
         IQueryable<Stock> GetQueryable();

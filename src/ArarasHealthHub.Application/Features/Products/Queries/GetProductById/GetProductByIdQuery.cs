@@ -8,8 +8,5 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
 {
-    /// <summary>
-    /// Query para obter um produto pelo seu ID.
-    /// </summary>
     public record GetProductByIdQuery(int Id) : IRequest<ApiResponse<ProductDto>>;
 }

@@ -21,6 +21,9 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
         DbSet<Supplier> Suppliers { get; set; }
         DbSet<Employee> Employees { get; set; }
         DbSet<Product> Products { get; set; }
+        DbSet<MainCategory> MainCategories { get; set; }
+        DbSet<SubCategory> SubCategories { get; set; }
+        DbSet<PresentationForm> PresentationForms { get; set; }
         DbSet<Receiving> Receivings { get; set; }
         DbSet<ReceivedItem> ReceivedItems { get; set; }
         DbSet<Stock> Stocks { get; set; }

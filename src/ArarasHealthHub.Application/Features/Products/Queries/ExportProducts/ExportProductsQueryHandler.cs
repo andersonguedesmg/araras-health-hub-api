@@ -27,20 +27,22 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.ExportProducts
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+
                 productsQuery = productsQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
-                    p.Description.ToLower().Contains(searchTermLower) ||
-                    p.MainCategory.ToLower().Contains(searchTermLower) ||
-                    p.SubCategory.ToLower().Contains(searchTermLower) ||
-                    p.PresentationForm.ToLower().Contains(searchTermLower)
+                    p.Name.ToLower().Contains(searchTerm) ||
+                    p.Description.ToLower().Contains(searchTerm) ||
+                    p.MainCategory!.Name.ToLower().Contains(searchTerm) ||
+                    p.SubCategory!.Name.ToLower().Contains(searchTerm) ||
+                    p.PresentationForm!.Name.ToLower().Contains(searchTerm)
                 );
             }
 
-            var allFilteredProducts = await productsQuery.ToListAsync(cancellationToken);
-            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(allFilteredProducts);
+            var allFilteredProducts = await productsQuery
+                .OrderBy(p => p.Name)
+                .ToListAsync(cancellationToken);
 
-            return productDtos;
+            return _mapper.Map<IEnumerable<ProductDto>>(allFilteredProducts);
         }
     }
 }

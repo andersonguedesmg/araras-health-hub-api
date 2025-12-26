@@ -14,19 +14,13 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public ProductProfile()
         {
-            CreateMap<Product, ProductDto>();
-            CreateMap<Product, ProductNameDto>();
+            CreateMap<Product, ProductDto>()
+                .ForMember(dest => dest.MainCategoryName, opt => opt.MapFrom(src => src.MainCategory!.Name))
+                .ForMember(dest => dest.SubCategoryName, opt => opt.MapFrom(src => src.SubCategory!.Name))
+                .ForMember(dest => dest.PresentationFormName, opt => opt.MapFrom(src => src.PresentationForm!.Name));
 
-            CreateMap<CreateProductCommand, Product>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.IsActive, opt => opt.Ignore());
-
-            CreateMap<UpdateProductCommand, Product>()
-                .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.IsActive, opt => opt.Ignore());
+            CreateMap<CreateProductCommand, Product>();
+            CreateMap<UpdateProductCommand, Product>();
         }
     }
 }

@@ -6,6 +6,7 @@ using ArarasHealthHub.Application.Common.Interfaces;
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,11 +16,16 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportNearExpiryLo
     {
         private readonly IStockLotRepository _stockLotRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IMapper _mapper;
 
-        public ExportNearExpiryLotsQueryHandler(IStockLotRepository stockLotRepository, IDateTimeProvider dateTimeProvider)
+        public ExportNearExpiryLotsQueryHandler(
+            IStockLotRepository stockLotRepository,
+            IDateTimeProvider dateTimeProvider,
+            IMapper mapper)
         {
             _stockLotRepository = stockLotRepository;
             _dateTimeProvider = dateTimeProvider;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<StockLotNearExpiryDto>> Handle(ExportNearExpiryLotsQuery request, CancellationToken cancellationToken)
@@ -31,47 +37,39 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportNearExpiryLo
                 .AsNoTracking()
                 .Include(sl => sl.Stock)
                     .ThenInclude(s => s.Product)
+                        .ThenInclude(p => p.MainCategory)
+                .Include(sl => sl.Stock)
+                    .ThenInclude(s => s.Product)
+                        .ThenInclude(p => p.SubCategory)
+                .Include(sl => sl.Stock)
+                    .ThenInclude(s => s.Product)
+                        .ThenInclude(p => p.PresentationForm)
                 .Where(sl => sl.AvailableQuantity > 0 && sl.ExpiryDate.Date <= expiryLimitDate)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
-
+                var searchTerm = request.SearchTerm.Trim().ToLower();
                 lotQuery = lotQuery.Where(sl =>
-                    sl.Batch.ToLower().Contains(searchTermLower) ||
-                    sl.Brand.ToLower().Contains(searchTermLower) ||
-                    sl.Stock.Product.Name.ToLower().Contains(searchTermLower) ||
-                    sl.Stock.Product.Description.ToLower().Contains(searchTermLower)
+                    sl.Batch.ToLower().Contains(searchTerm) ||
+                    sl.Stock.Product.Name.ToLower().Contains(searchTerm) ||
+                    sl.Stock.Product.MainCategory!.Name.ToLower().Contains(searchTerm)
                 );
             }
 
-            var exportList = await lotQuery
-                .OrderBy(sl => sl.ExpiryDate)
-                .Select(sl => new StockLotNearExpiryDto
-                {
-                    StockLotId = sl.Id,
-                    ProductId = sl.Stock.ProductId,
-                    Batch = sl.Batch,
-                    Brand = sl.Brand,
-                    AvailableQuantity = sl.AvailableQuantity,
-                    ExpiryDate = sl.ExpiryDate,
-                    DaysRemaining = (int)(sl.ExpiryDate.Date - today).TotalDays,
+            var results = await lotQuery.OrderBy(sl => sl.ExpiryDate).ToListAsync(cancellationToken);
 
-                    Product = new ProductDto
-                    {
-                        Id = sl.Stock.Product.Id,
-                        Name = sl.Stock.Product.Name,
-                        Description = sl.Stock.Product.Description,
-                        MainCategory = sl.Stock.Product.MainCategory,
-                        SubCategory = sl.Stock.Product.SubCategory,
-                        PresentationForm = sl.Stock.Product.PresentationForm,
-                        IsActive = sl.Stock.Product.IsActive
-                    }
-                })
-                .ToListAsync(cancellationToken);
-
-            return exportList;
+            return results.Select(sl => new StockLotNearExpiryDto
+            {
+                StockLotId = sl.Id,
+                ProductId = sl.Stock.ProductId,
+                Batch = sl.Batch,
+                Brand = sl.Brand,
+                AvailableQuantity = sl.AvailableQuantity,
+                ExpiryDate = sl.ExpiryDate,
+                DaysRemaining = (int)(sl.ExpiryDate.Date - today).TotalDays,
+                Product = _mapper.Map<ProductDto>(sl.Stock.Product)
+            });
         }
     }
 }

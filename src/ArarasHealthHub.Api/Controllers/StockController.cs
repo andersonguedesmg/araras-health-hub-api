@@ -169,31 +169,36 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var stockDtos = await _mediator.Send(new ExportStockGeneralOverviewQuery { SearchTerm = searchTerm });
 
-            var sb = new StringBuilder();
-            var culture = CultureInfo.InvariantCulture;
+            if (stockDtos == null || !stockDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Estoque Geral"), null!));
+            }
 
-            sb.AppendLine("ID_PRODUTO,PRODUTO,CATEGORIA_PRINCIPAL,SUBCATEGORIA,APRESENTACAO," +
-                          "QTD_ATUAL,QTD_RESERVADA,QTD_DISPONIVEL,QTD_MINIMA,CUSTO_MEDIO_UNITARIO," +
-                          "STATUS_CRITICO,DATA_CRIACAO,DATA_ATUALIZACAO");
+            var sb = new StringBuilder();
+            var culture = new CultureInfo("pt-BR");
+
+            sb.AppendLine($"ID_PRODUTO;PRODUTO;CATEGORIA_PRINCIPAL;SUBCATEGORIA;APRESENTACAO;" +
+                          $"QTD_ATUAL;QTD_RESERVADA;QTD_DISPONIVEL;QTD_MINIMA;CUSTO_MEDIO_UNITARIO;" +
+                          $"STATUS_CRITICO;DATA_CRIACAO;DATA_ATUALIZACAO");
 
             foreach (var stock in stockDtos)
             {
-                sb.Append(
-                    $"{stock.ProductId}," +
-                    $"{stock.ProductName.Replace(",", "")}," +
-                    $"{stock.MainCategory}," +
-                    $"{stock.SubCategory}," +
-                    $"{stock.PresentationForm}," +
-                    $"{stock.CurrentQuantity.ToString("F3", culture)}," +
-                    $"{stock.ReservedQuantity.ToString("F3", culture)}," +
-                    $"{stock.AvailableQuantity.ToString("F3", culture)}," +
-                    $"{stock.MinQuantity.ToString("F3", culture)}," +
-                    $"{stock.AverageCost.ToString("F4", culture)}," +
-                    $"{stock.CriticalStatus}," +
-                    $"{stock.CreatedOn:dd/MM/yyyy HH:mm:ss}," +
-                    $"{stock.UpdatedOn?.ToString("dd/MM/yyyy HH:mm:ss")}" +
-                    "\r\n"
-                );
+                var productName = stock.ProductName.Replace(";", " ");
+
+                sb.Append($"{stock.ProductId};");
+                sb.Append($"{productName};");
+                sb.Append($"{stock.MainCategory};");
+                sb.Append($"{stock.SubCategory};");
+                sb.Append($"{stock.PresentationForm};");
+                sb.Append($"{stock.CurrentQuantity.ToString("F3", culture)};");
+                sb.Append($"{stock.ReservedQuantity.ToString("F3", culture)};");
+                sb.Append($"{stock.AvailableQuantity.ToString("F3", culture)};");
+                sb.Append($"{stock.MinQuantity.ToString("F3", culture)};");
+                sb.Append($"{stock.AverageCost.ToString("C4", culture).Replace("R$", "").Trim()};");
+                sb.Append($"{stock.CriticalStatus};");
+                sb.Append($"{stock.CreatedOn:dd/MM/yyyy HH:mm:ss};");
+                sb.Append($"{stock.UpdatedOn?.ToString("dd/MM/yyyy HH:mm:ss")}");
+                sb.Append("\r\n");
             }
 
             var fileName = $"estoque_geral_{DateTime.Now:yyyyMMddHHmmss}.csv";
@@ -212,28 +217,33 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var stockDtos = await _mediator.Send(new ExportCriticalStockOverviewQuery { SearchTerm = searchTerm });
 
+            if (stockDtos == null || !stockDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Estoque Crítico"), null!));
+            }
+
             var sb = new StringBuilder();
             var culture = CultureInfo.InvariantCulture;
 
-            sb.AppendLine("ID_PRODUTO,PRODUTO,CATEGORIA_PRINCIPAL,SUBCATEGORIA,APRESENTACAO," +
-                          "QTD_ATUAL,QTD_RESERVADA,QTD_DISPONIVEL,QTD_MINIMA,CUSTO_MEDIO_UNITARIO," +
-                          "STATUS_CRITICO,DATA_CRIACAO,DATA_ATUALIZACAO");
+            sb.AppendLine("ID_PRODUTO;PRODUTO;CATEGORIA_PRINCIPAL;SUBCATEGORIA;APRESENTACAO;" +
+                          "QTD_ATUAL;QTD_RESERVADA;QTD_DISPONIVEL;QTD_MINIMA;CUSTO_MEDIO_UNITARIO;" +
+                          "STATUS_CRITICO;DATA_CRIACAO;DATA_ATUALIZACAO");
 
             foreach (var stock in stockDtos)
             {
                 sb.Append(
-                    $"{stock.ProductId}," +
-                    $"{stock.ProductName.Replace(",", "")}," +
-                    $"{stock.MainCategory}," +
-                    $"{stock.SubCategory}," +
-                    $"{stock.PresentationForm}," +
-                    $"{stock.CurrentQuantity.ToString("F3", culture)}," +
-                    $"{stock.ReservedQuantity.ToString("F3", culture)}," +
-                    $"{stock.AvailableQuantity.ToString("F3", culture)}," +
-                    $"{stock.MinQuantity.ToString("F3", culture)}," +
-                    $"{stock.AverageCost.ToString("F4", culture)}," +
-                    $"{stock.CriticalStatus}," +
-                    $"{stock.CreatedOn:dd/MM/yyyy HH:mm:ss}," +
+                    $"{stock.ProductId};" +
+                    $"{stock.ProductName.Replace(";", "")};" +
+                    $"{stock.MainCategory};" +
+                    $"{stock.SubCategory};" +
+                    $"{stock.PresentationForm};" +
+                    $"{stock.CurrentQuantity.ToString("F3", culture)};" +
+                    $"{stock.ReservedQuantity.ToString("F3", culture)};" +
+                    $"{stock.AvailableQuantity.ToString("F3", culture)};" +
+                    $"{stock.MinQuantity.ToString("F3", culture)};" +
+                    $"{stock.AverageCost.ToString("C4", culture).Replace("R$", "").Trim()};" +
+                    $"{stock.CriticalStatus};" +
+                    $"{stock.CreatedOn:dd/MM/yyyy HH:mm:ss};" +
                     $"{stock.UpdatedOn?.ToString("dd/MM/yyyy HH:mm:ss")}" +
                     "\r\n"
                 );
@@ -255,21 +265,26 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var lotDtos = await _mediator.Send(new ExportNearExpiryLotsQuery { SearchTerm = searchTerm });
 
+            if (lotDtos == null || !lotDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Lote próximo de vencimento"), null!));
+            }
+
             var sb = new StringBuilder();
             var culture = CultureInfo.InvariantCulture;
 
-            sb.AppendLine("PRODUTO,DESCRIÇÃO,APRESENTACAO,LOTE,MARCA,QTD_DISPONIVEL,DATA_VENCIMENTO,DIAS_RESTANTES");
+            sb.AppendLine("PRODUTO;DESCRIÇÃO;APRESENTACAO;LOTE;MARCA;QTD_DISPONIVEL;DATA_VENCIMENTO;DIAS_RESTANTES");
 
             foreach (var lot in lotDtos)
             {
                 sb.Append(
-                    $"{lot.Product.Name.Replace(",", "")}," +
-                    $"{lot.Product.Description.Replace(",", "")}," +
-                    $"{lot.Product.PresentationForm}," +
-                    $"{lot.Batch}," +
-                    $"{lot.Brand.Replace(",", "")}," +
-                    $"{lot.AvailableQuantity.ToString("F3", culture)}," +
-                    $"{lot.ExpiryDate:dd/MM/yyyy}," +
+                    $"{lot.Product.Name.Replace(";", "")};" +
+                    $"{lot.Product.Description.Replace(";", "")};" +
+                    $"{lot.Product.PresentationFormName};" +
+                    $"{lot.Batch};" +
+                    $"{lot.Brand.Replace(";", "")};" +
+                    $"{lot.AvailableQuantity.ToString("F3", culture)};" +
+                    $"{lot.ExpiryDate:dd/MM/yyyy};" +
                     $"{lot.DaysRemaining}" +
                     "\r\n"
                 );
@@ -289,19 +304,24 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var lotDtos = await _mediator.Send(query);
 
+            if (lotDtos == null || !lotDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Lote Ativo"), null!));
+            }
+
             var sb = new StringBuilder();
             var culture = CultureInfo.InvariantCulture;
 
-            sb.AppendLine("ID_LOTE,LOTE,PRODUTO,MARCA,QTD_DISPONIVEL,DATA_VENCIMENTO");
+            sb.AppendLine("ID_LOTE;LOTE;PRODUTO;MARCA;QTD_DISPONIVEL;DATA_VENCIMENTO");
 
             foreach (var lot in lotDtos)
             {
                 sb.Append(
-                    $"{lot.StockLotId}," +
-                    $"{lot.Batch}," +
-                    $"{lot.Product.Name.Replace(",", "")}," +
-                    $"{lot.Brand.Replace(",", "")}," +
-                    $"{lot.AvailableQuantity.ToString("F3", culture)}," +
+                    $"{lot.StockLotId};" +
+                    $"{lot.Batch};" +
+                    $"{lot.Product.Name.Replace(";", "")};" +
+                    $"{lot.Brand.Replace(";", "")};" +
+                    $"{lot.AvailableQuantity.ToString("F3", culture)};" +
                     $"{lot.ExpiryDate:dd/MM/yyyy}" +
                     "\r\n"
                 );
@@ -321,63 +341,56 @@ namespace ArarasHealthHub.Api.Controllers
         {
             var adjustmentDtos = await _mediator.Send(query);
 
-            var sb = new StringBuilder();
-            var culture = CultureInfo.InvariantCulture;
+            if (adjustmentDtos == null || !adjustmentDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Ajuste Manual"), null!));
+            }
 
-            sb.AppendLine("ID_AJUSTE,DATA_AJUSTE,TIPO,RAZÃO,RESPONSÁVEL,OBSERVAÇÃO,ITEM_ID,PRODUTO,LOTE,MARCA,VALIDADE,QUANTIDADE,VALOR_UNITARIO,VALOR_TOTAL");
+            var sb = new StringBuilder();
+            var separator = ";";
+            var culture = new CultureInfo("pt-BR");
+
+            var columns = new[] {
+                "ID_AJUSTE", "DATA_AJUSTE", "TIPO", "RAZAO", "RESPONSAVEL", "OBSERVACAO",
+                "PRODUTO", "CATEGORIA", "SUB_CATEGORIA", "APRESENTACAO", "LOTE",
+                "VALIDADE", "QUANTIDADE", "VALOR_UNITARIO", "VALOR_TOTAL"
+            };
+            sb.AppendLine(string.Join(separator, columns));
 
             foreach (var adjustment in adjustmentDtos)
             {
-                if (!adjustment.AdjustmentItems.Any())
+                if (adjustment.AdjustmentItems == null || !adjustment.AdjustmentItems.Any())
                 {
-                    sb.Append(
-                        $"{adjustment.Id}," +
-                        $"{adjustment.AdjustmentDate:dd/MM/yyyy HH:mm:ss}," +
-                        $"{adjustment.Type}," +
-                        $"{adjustment.Reason.Replace(",", "")}," +
-                        $"{adjustment.ResponsibleName.Replace(",", "")}," +
-                        $"{adjustment.Observation?.Replace(",", "") ?? ""}," +
-                        ",,,,,," +
-                        "\r\n"
-                    );
+                    sb.Append($"{adjustment.Id}{separator}");
+                    sb.Append($"{adjustment.AdjustmentDate:dd/MM/yyyy HH:mm:ss}{separator}");
+                    sb.Append($"{adjustment.Type}{separator}");
+                    sb.Append($"{CleanField(adjustment.Reason)}{separator}");
+                    sb.Append($"{CleanField(adjustment.ResponsibleName)}{separator}");
+                    sb.Append($"{CleanField(adjustment.Observation)}{separator}");
+                    sb.AppendLine($"{separator}{separator}{separator}{separator}{separator}{separator}{separator}{separator}");
                     continue;
                 }
 
-                bool isFirstItem = true;
                 foreach (var item in adjustment.AdjustmentItems)
                 {
-                    if (isFirstItem)
-                    {
-                        sb.Append(
-                            $"{adjustment.Id}," +
-                            $"{adjustment.AdjustmentDate:dd/MM/yyyy HH:mm:ss}," +
-                            $"{adjustment.Type}," +
-                            $"{adjustment.Reason.Replace(",", "")}," +
-                            $"{adjustment.ResponsibleName.Replace(",", "")}," +
-                            $"{adjustment.Observation?.Replace(",", "") ?? ""},"
-                        );
-                        isFirstItem = false;
-                    }
-                    else
-                    {
-                        sb.Append(
-                            $"{adjustment.Id}," +
-                            ",,,,," +
-                            ","
-                        );
-                    }
+                    sb.Append($"{adjustment.Id}{separator}");
+                    sb.Append($"{adjustment.AdjustmentDate:dd/MM/yyyy HH:mm:ss}{separator}");
+                    sb.Append($"{adjustment.Type}{separator}");
+                    sb.Append($"{CleanField(adjustment.Reason)}{separator}");
+                    sb.Append($"{CleanField(adjustment.ResponsibleName)}{separator}");
+                    sb.Append($"{CleanField(adjustment.Observation)}{separator}");
 
-                    sb.Append(
-                        $"{item.Id}," +
-                        $"{item.Product.Name.Replace(",", "")}," +
-                        $"{item.Batch?.Replace(",", "") ?? ""}," +
-                        $"{item.Brand?.Replace(",", "") ?? ""}," +
-                        $"{item.ExpiryDate?.ToString("dd/MM/yyyy") ?? ""}," +
-                        $"{item.Quantity.ToString("F3", culture)}," +
-                        $"{item.UnitValue?.ToString("F4", culture) ?? ""}," +
-                        $"{item.TotalValue?.ToString("F4", culture) ?? ""}" +
-                        "\r\n"
-                    );
+                    sb.Append($"{CleanField(item.Product?.Name)}{separator}");
+                    sb.Append($"{CleanField(item.Product?.MainCategoryName)}{separator}");
+                    sb.Append($"{CleanField(item.Product?.SubCategoryName)}{separator}");
+                    sb.Append($"{CleanField(item.Product?.PresentationFormName)}{separator}");
+                    sb.Append($"{CleanField(item.Batch)}{separator}");
+                    sb.Append($"{item.ExpiryDate?.ToString("dd/MM/yyyy") ?? ""}{separator}");
+                    sb.Append($"{item.Quantity.ToString("F3", culture)}{separator}");
+                    sb.Append($"{item.UnitValue?.ToString("F2", culture) ?? "0,00"}{separator}");
+                    sb.Append($"{item.TotalValue?.ToString("F2", culture) ?? "0,00"}");
+
+                    sb.Append("\r\n");
                 }
             }
 
@@ -386,6 +399,17 @@ namespace ArarasHealthHub.Api.Controllers
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());
 
             return File(fileBytes, "text/csv", fileName);
+        }
+
+        private string CleanField(string? text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return "";
+
+            return text
+                .Replace(";", " ")
+                .Replace("\r", " ")
+                .Replace("\n", " ")
+                .Trim();
         }
     }
 }

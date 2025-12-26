@@ -28,30 +28,33 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
         public async Task<PagedResponse<StockOverviewDto>> Handle(GetStockGeneralOverviewQuery request, CancellationToken cancellationToken)
         {
             var stockQuery = _stockRepository.GetQueryable()
-                            .AsNoTracking()
-                            .Include(s => s.Product)
-                            .Include(s => s.StockCost)
-                            .AsQueryable();
+                .AsNoTracking()
+                .Include(s => s.StockCost)
+                .Include(s => s.Product)
+                    .ThenInclude(p => p.MainCategory)
+                .Include(s => s.Product)
+                    .ThenInclude(p => p.SubCategory)
+                .Include(s => s.Product)
+                    .ThenInclude(p => p.PresentationForm)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
+                var searchTerm = request.SearchTerm.Trim().ToLower();
 
                 stockQuery = stockQuery.Where(s =>
-                    s.Product != null && (
-                        s.Product.Name.ToLower().Contains(searchTermLower) ||
-                        s.Product.Description.ToLower().Contains(searchTermLower) ||
-                        s.Product.MainCategory.ToLower().Contains(searchTermLower) ||
-                        s.Product.SubCategory.ToLower().Contains(searchTermLower) ||
-                        s.Product.PresentationForm.ToLower().Contains(searchTermLower)
-                    ) ||
-                    s.ProductId.ToString().Contains(searchTermLower)
+                    s.Product.Name.ToLower().Contains(searchTerm) ||
+                    s.Product.Description.ToLower().Contains(searchTerm) ||
+                    s.Product.MainCategory!.Name.ToLower().Contains(searchTerm) ||
+                    s.Product.SubCategory!.Name.ToLower().Contains(searchTerm) ||
+                    s.Product.PresentationForm!.Name.ToLower().Contains(searchTerm) ||
+                    s.ProductId.ToString().Contains(searchTerm)
                 );
             }
 
             var totalCount = await stockQuery.CountAsync(cancellationToken);
 
-            IQueryable<Stock> orderedStock;
+            IOrderedQueryable<Stock> orderedStock;
 
             switch (request.OrderBy?.ToLower())
             {
@@ -65,35 +68,39 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
                         stockQuery.OrderByDescending(s => s.MinQuantity) :
                         stockQuery.OrderBy(s => s.MinQuantity);
                     break;
-                default:
+                case "availablequantity":
                     orderedStock = request.SortOrder?.ToLower() == "desc" ?
-                        stockQuery.OrderByDescending(s => s.Product.Name) :
-                        stockQuery.OrderBy(s => s.Product.Name);
+                        stockQuery.OrderByDescending(s => s.AvailableQuantity) :
+                        stockQuery.OrderBy(s => s.AvailableQuantity);
+                    break;
+                default:
+                    orderedStock = stockQuery.OrderBy(s => s.Product.Name);
                     break;
             }
 
             var pagedStocks = await orderedStock
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(s => new StockOverviewDto
-                {
-                    Id = s.Id,
-                    ProductId = s.ProductId,
-                    Product = _mapper.Map<ProductDto>(s.Product),
-                    CurrentQuantity = s.CurrentQuantity,
-                    ReservedQuantity = s.ReservedQuantity,
-                    AvailableQuantity = s.AvailableQuantity,
-                    MinQuantity = s.MinQuantity,
-                    AverageCost = s.StockCost != null ? s.StockCost.AverageUnitCost : 0,
-                    IsCritical = s.AvailableQuantity <= s.MinQuantity
-                })
                 .ToListAsync(cancellationToken);
+
+            var stockDtos = pagedStocks.Select(s => new StockOverviewDto
+            {
+                Id = s.Id,
+                ProductId = s.ProductId,
+                Product = _mapper.Map<ProductDto>(s.Product),
+                CurrentQuantity = s.CurrentQuantity,
+                ReservedQuantity = s.ReservedQuantity,
+                AvailableQuantity = s.AvailableQuantity,
+                MinQuantity = s.MinQuantity,
+                AverageCost = s.StockCost?.AverageUnitCost ?? 0,
+                IsCritical = s.AvailableQuantity <= s.MinQuantity
+            }).ToList();
 
             return new PagedResponse<StockOverviewDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                pagedStocks
+                stockDtos
             );
         }
     }

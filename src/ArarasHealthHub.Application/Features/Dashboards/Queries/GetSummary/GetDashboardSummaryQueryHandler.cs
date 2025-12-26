@@ -39,12 +39,14 @@ namespace ArarasHealthHub.Application.Features.Dashboards.Queries.GetSummary
                 summary.CriticalStockCount = await _context.Stocks
                     .CountAsync(x => x.AvailableQuantity <= x.MinQuantity, cancellationToken);
 
-                summary.TotalActiveProducts = await _context.Products.CountAsync(cancellationToken);
+                summary.TotalActiveProducts = await _context.Products
+                    .CountAsync(p => p.IsActive, cancellationToken);
 
-                // Evolução Mensal (Últimos 6 meses)
                 var sixMonthsAgo = DateTime.Now.AddMonths(-5);
+                var startDate = new DateTime(sixMonthsAgo.Year, sixMonthsAgo.Month, 1);
+
                 var monthlyData = await _context.Orders
-                    .Where(o => o.CreatedAt >= new DateTime(sixMonthsAgo.Year, sixMonthsAgo.Month, 1))
+                    .Where(o => o.CreatedAt >= startDate)
                     .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
                     .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
                     .OrderBy(g => g.Year).ThenBy(g => g.Month)
@@ -52,12 +54,13 @@ namespace ArarasHealthHub.Application.Features.Dashboards.Queries.GetSummary
 
                 summary.MonthlyEvolution = monthlyData.Select(x => new MonthlyEvolutionDto
                 {
-                    Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(x.Month).ToUpper(),
+                    Month = new DateTime(x.Year, x.Month, 1).ToString("MMM", CultureInfo.CurrentCulture).ToUpper(),
                     Count = x.Count
                 }).ToList();
 
                 summary.CategoryDistribution = await _context.Products
-                    .GroupBy(p => p.MainCategory)
+                    .Where(p => p.IsActive && p.MainCategory != null)
+                    .GroupBy(p => p.MainCategory!.Name)
                     .Select(g => new CategoryDistributionDto
                     {
                         Category = g.Key,

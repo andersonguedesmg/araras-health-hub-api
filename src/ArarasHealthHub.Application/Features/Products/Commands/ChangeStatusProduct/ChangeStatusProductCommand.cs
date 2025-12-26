@@ -7,9 +7,6 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusProduct
 {
-    /// <summary>
-    /// Comando para alterar o status de um produto.
-    /// </summary>
     public record ChangeStatusProductCommand(
         int Id,
         bool IsActive

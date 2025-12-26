@@ -29,44 +29,44 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+
                 productsQuery = productsQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
-                    p.Description.ToLower().Contains(searchTermLower) ||
-                    p.MainCategory.ToLower().Contains(searchTermLower) ||
-                    p.SubCategory.ToLower().Contains(searchTermLower) ||
-                    p.PresentationForm.ToLower().Contains(searchTermLower)
+                    p.Name.ToLower().Contains(searchTerm) ||
+                    p.Description.ToLower().Contains(searchTerm) ||
+                    p.MainCategory!.Name.ToLower().Contains(searchTerm) ||
+                    p.SubCategory!.Name.ToLower().Contains(searchTerm) ||
+                    p.PresentationForm!.Name.ToLower().Contains(searchTerm)
                 );
             }
 
             var totalCount = await productsQuery.CountAsync(cancellationToken);
 
-            IQueryable<Product> orderedProducts;
+            IOrderedQueryable<Product> orderedQuery;
+
             switch (request.OrderBy?.ToLower())
             {
                 case "name":
-                    orderedProducts = request.SortOrder?.ToLower() == "desc" ?
-                        productsQuery.OrderByDescending(s => s.Name) :
-                        productsQuery.OrderBy(s => s.Name);
+                    orderedQuery = request.SortOrder?.ToLower() == "desc"
+                        ? productsQuery.OrderByDescending(p => p.Name)
+                        : productsQuery.OrderBy(p => p.Name);
                     break;
                 case "maincategory":
-                    orderedProducts = request.SortOrder?.ToLower() == "desc" ?
-                        productsQuery.OrderByDescending(s => s.MainCategory) :
-                        productsQuery.OrderBy(s => s.MainCategory);
+                    orderedQuery = request.SortOrder?.ToLower() == "desc"
+                        ? productsQuery.OrderByDescending(p => p.MainCategory!.Name)
+                        : productsQuery.OrderBy(p => p.MainCategory!.Name);
                     break;
                 case "subcategory":
-                    orderedProducts = request.SortOrder?.ToLower() == "desc" ?
-                        productsQuery.OrderByDescending(s => s.SubCategory) :
-                        productsQuery.OrderBy(s => s.SubCategory);
+                    orderedQuery = request.SortOrder?.ToLower() == "desc"
+                        ? productsQuery.OrderByDescending(p => p.SubCategory!.Name)
+                        : productsQuery.OrderBy(p => p.SubCategory!.Name);
                     break;
                 default:
-                    orderedProducts = request.SortOrder?.ToLower() == "desc" ?
-                        productsQuery.OrderByDescending(s => s.Id) :
-                        productsQuery.OrderBy(s => s.Id);
+                    orderedQuery = productsQuery.OrderBy(p => p.Name);
                     break;
             }
 
-            var pagedProducts = await orderedProducts
+            var pagedProducts = await orderedQuery
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);

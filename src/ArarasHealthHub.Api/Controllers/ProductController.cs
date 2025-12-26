@@ -125,16 +125,28 @@ namespace ArarasHealthHub.Api.Controllers
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Export([FromQuery] string? searchTerm)
         {
             var productDtos = await _mediator.Send(new ExportProductsQuery { SearchTerm = searchTerm });
 
+            if (productDtos == null || !productDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Produto"), null!));
+            }
+
             var sb = new StringBuilder();
-            sb.AppendLine("ID,NOME,DESCRIÇÃO,CATEGORIA PRINCIPAL,SUBCATEGORIA,FORMA DE APRESENTAÇÃO,STATUS");
+            sb.AppendLine("ID;NOME;DESCRIÇÃO;CATEGORIA PRINCIPAL;SUBCATEGORIA;FORMA DE APRESENTAÇÃO;STATUS");
 
             foreach (var productDto in productDtos)
             {
-                sb.Append($"{productDto.Id},{productDto.Name},{productDto.Description},{productDto.MainCategory},{productDto.SubCategory},{productDto.PresentationForm},{(productDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+                sb.Append($"{productDto.Id};");
+                sb.Append($"{productDto.Name};");
+                sb.Append($"{productDto.Description};");
+                sb.Append($"{productDto.MainCategoryName};");
+                sb.Append($"{productDto.SubCategoryName};");
+                sb.Append($"{productDto.PresentationFormName};");
+                sb.AppendLine(productDto.IsActive ? "Ativo" : "Inativo");
             }
 
             var fileName = $"produtos_{DateTime.Now:yyyyMMddHHmmss}.csv";

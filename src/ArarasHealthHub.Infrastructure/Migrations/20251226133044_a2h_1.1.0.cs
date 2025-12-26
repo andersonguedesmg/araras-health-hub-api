@@ -76,6 +76,23 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 comment: "Representa uma unidade.");
 
             migrationBuilder.CreateTable(
+                name: "MainCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MainCategories", x => x.Id);
+                },
+                comment: "Categoria principal de produtos (ex: Medicamento, Material Hospitalar, Material de Limpeza)");
+
+            migrationBuilder.CreateTable(
                 name: "OrderStatuses",
                 columns: table => new
                 {
@@ -90,25 +107,21 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 comment: "Tabela de lookup para os status possíveis de um pedido.");
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "PresentationForms",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    MainCategory = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    SubCategory = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PresentationForm = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_PresentationForms", x => x.Id);
                 },
-                comment: "Representa um produto.");
+                comment: "Forma de apresentação do produto (ex: Frasco, Ampola, Comprimido)");
 
             migrationBuilder.CreateTable(
                 name: "Suppliers",
@@ -196,31 +209,28 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Stocks",
+                name: "SubCategories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    CurrentQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade total disponível de todas as validades e lotes."),
-                    ReservedQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade que está reservada para pedidos pendentes/aprovados."),
-                    AvailableQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity)."),
-                    MinQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    MainCategoryId = table.Column<int>(type: "int", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stocks", x => x.Id);
+                    table.PrimaryKey("PK_SubCategories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Stocks_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
+                        name: "FK_SubCategories_MainCategories_MainCategoryId",
+                        column: x => x.MainCategoryId,
+                        principalTable: "MainCategories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Representa o estoque atual de um produto (visão consolidada).");
+                comment: "Subcategoria vinculada a uma categoria principal (ex: Antibiótico, Analgésico, Antialérgico)");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
@@ -482,29 +492,43 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 comment: "Representa um ajuste manual na quantidade do estoque.");
 
             migrationBuilder.CreateTable(
-                name: "StockCosts",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StockId = table.Column<int>(type: "int", nullable: false),
-                    AverageUnitCost = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
-                    CurrentTotalCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    MainCategoryId = table.Column<int>(type: "int", nullable: false),
+                    SubCategoryId = table.Column<int>(type: "int", nullable: false),
+                    PresentationFormId = table.Column<int>(type: "int", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockCosts", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StockCosts_Stocks_StockId",
-                        column: x => x.StockId,
-                        principalTable: "Stocks",
+                        name: "FK_Products_MainCategories_MainCategoryId",
+                        column: x => x.MainCategoryId,
+                        principalTable: "MainCategories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_PresentationForms_PresentationFormId",
+                        column: x => x.PresentationFormId,
+                        principalTable: "PresentationForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_SubCategories_SubCategoryId",
+                        column: x => x.SubCategoryId,
+                        principalTable: "SubCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Armazena o custo médio unitário e o custo total atual do estoque consolidado.");
+                comment: "Representa um produto.");
 
             migrationBuilder.CreateTable(
                 name: "DispenseReturns",
@@ -611,6 +635,58 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "Representa um item específico de um recebimento.");
+
+            migrationBuilder.CreateTable(
+                name: "Stocks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    CurrentQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade total disponível de todas as validades e lotes."),
+                    ReservedQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade que está reservada para pedidos pendentes/aprovados."),
+                    AvailableQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity)."),
+                    MinQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Stocks_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Representa o estoque atual de um produto (visão consolidada).");
+
+            migrationBuilder.CreateTable(
+                name: "StockCosts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StockId = table.Column<int>(type: "int", nullable: false),
+                    AverageUnitCost = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    CurrentTotalCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockCosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockCosts_Stocks_StockId",
+                        column: x => x.StockId,
+                        principalTable: "Stocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Armazena o custo médio unitário e o custo total atual do estoque consolidado.");
 
             migrationBuilder.CreateTable(
                 name: "StockLots",
@@ -812,6 +888,17 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 values: new object[] { 1, "6345921", new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc), true, "Secretária Municipal da Saúde - Dr. João Geraldo Noronha", null, "13601-111", "Araras", "", "Jardim Belvedere", "33", "SP", "Rua Campos Sales", "saude@araras.sp.gov.br", "(19) 3543-1522" });
 
             migrationBuilder.InsertData(
+                table: "MainCategories",
+                columns: new[] { "Id", "CreatedOn", "IsActive", "Name", "UpdatedOn" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 2, 11, 22, 33, 0, DateTimeKind.Utc), true, "Pendente", null },
+                    { 2, new DateTime(2025, 1, 2, 11, 25, 14, 0, DateTimeKind.Utc), true, "Material Hospitalar", null },
+                    { 3, new DateTime(2025, 1, 2, 11, 27, 21, 0, DateTimeKind.Utc), true, "Material de Limpeza", null },
+                    { 4, new DateTime(2025, 1, 2, 11, 30, 38, 0, DateTimeKind.Utc), true, "Material de Apoio e Administrativo", null }
+                });
+
+            migrationBuilder.InsertData(
                 table: "OrderStatuses",
                 columns: new[] { "Id", "Description" },
                 values: new object[,]
@@ -915,6 +1002,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_MainCategories_Name",
+                table: "MainCategories",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItemLots_OrderItemId",
                 table: "OrderItemLots",
                 column: "OrderItemId");
@@ -993,6 +1086,27 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "IX_Orders_SeparatedByEmployeeId",
                 table: "Orders",
                 column: "SeparatedByEmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PresentationForms_Name",
+                table: "PresentationForms",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_MainCategoryId",
+                table: "Products",
+                column: "MainCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_PresentationFormId",
+                table: "Products",
+                column: "PresentationFormId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_SubCategoryId",
+                table: "Products",
+                column: "SubCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReceivedItems_ProductId",
@@ -1076,6 +1190,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 table: "Stocks",
                 column: "ProductId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubCategories_MainCategoryId_Name",
+                table: "SubCategories",
+                columns: new[] { "MainCategoryId", "Name" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -1154,7 +1274,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "Suppliers");
 
             migrationBuilder.DropTable(
+                name: "PresentationForms");
+
+            migrationBuilder.DropTable(
+                name: "SubCategories");
+
+            migrationBuilder.DropTable(
                 name: "Facilities");
+
+            migrationBuilder.DropTable(
+                name: "MainCategories");
         }
     }
 }

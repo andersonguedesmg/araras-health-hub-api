@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
-using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core;
 using AutoMapper;
 using MediatR;
@@ -31,6 +30,13 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment
                 .Include(a => a.Account)
                 .Include(a => a.AdjustmentItems)
                     .ThenInclude(ai => ai.Product)
+                        .ThenInclude(p => p.MainCategory)
+                .Include(a => a.AdjustmentItems)
+                    .ThenInclude(ai => ai.Product)
+                        .ThenInclude(p => p.SubCategory)
+                .Include(a => a.AdjustmentItems)
+                    .ThenInclude(ai => ai.Product)
+                        .ThenInclude(p => p.PresentationForm)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
