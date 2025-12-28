@@ -220,40 +220,6 @@ namespace ArarasHealthHub.Infrastructure.Data
             };
             builder.Entity<OrderStatus>().HasData(orderStatus);
 
-            // --- Seed de Categoria Principal ---
-            builder.Entity<MainCategory>().HasData(
-                new
-                {
-                    Id = 1,
-                    Name = "Pendente",
-                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 22, 33), DateTimeKind.Utc),
-                    IsActive = true
-                },
-                new
-                {
-                    Id = 2,
-                    Name = "Material Hospitalar",
-                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 25, 14), DateTimeKind.Utc),
-                    IsActive = true
-                },
-                new
-                {
-                    Id = 3,
-                    Name = "Material de Limpeza",
-                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 27, 21), DateTimeKind.Utc),
-                    IsActive = true
-                },
-                new
-                {
-                    Id = 4,
-                    Name = "Material de Apoio e Administrativo",
-                    CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 11, 30, 38), DateTimeKind.Utc),
-                    IsActive = true
-                }
-            );
-
-
-
             // --- Configurações de Precisão ---
             // --- Regras de Padronização:
             // --- - Quantidades: decimal(18, 3).

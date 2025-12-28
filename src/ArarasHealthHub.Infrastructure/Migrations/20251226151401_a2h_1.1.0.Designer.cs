@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251226133044_a2h_1.1.0")]
+    [Migration("20251226151401_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -262,36 +262,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.ToTable("MainCategories", t =>
                         {
                             t.HasComment("Categoria principal de produtos (ex: Medicamento, Material Hospitalar, Material de Limpeza)");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedOn = new DateTime(2025, 1, 2, 11, 22, 33, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Pendente"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedOn = new DateTime(2025, 1, 2, 11, 25, 14, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Material Hospitalar"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedOn = new DateTime(2025, 1, 2, 11, 27, 21, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Material de Limpeza"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedOn = new DateTime(2025, 1, 2, 11, 30, 38, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Material de Apoio e Administrativo"
                         });
                 });
 

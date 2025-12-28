@@ -888,17 +888,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 values: new object[] { 1, "6345921", new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc), true, "Secretária Municipal da Saúde - Dr. João Geraldo Noronha", null, "13601-111", "Araras", "", "Jardim Belvedere", "33", "SP", "Rua Campos Sales", "saude@araras.sp.gov.br", "(19) 3543-1522" });
 
             migrationBuilder.InsertData(
-                table: "MainCategories",
-                columns: new[] { "Id", "CreatedOn", "IsActive", "Name", "UpdatedOn" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2025, 1, 2, 11, 22, 33, 0, DateTimeKind.Utc), true, "Pendente", null },
-                    { 2, new DateTime(2025, 1, 2, 11, 25, 14, 0, DateTimeKind.Utc), true, "Material Hospitalar", null },
-                    { 3, new DateTime(2025, 1, 2, 11, 27, 21, 0, DateTimeKind.Utc), true, "Material de Limpeza", null },
-                    { 4, new DateTime(2025, 1, 2, 11, 30, 38, 0, DateTimeKind.Utc), true, "Material de Apoio e Administrativo", null }
-                });
-
-            migrationBuilder.InsertData(
                 table: "OrderStatuses",
                 columns: new[] { "Id", "Description" },
                 values: new object[,]
