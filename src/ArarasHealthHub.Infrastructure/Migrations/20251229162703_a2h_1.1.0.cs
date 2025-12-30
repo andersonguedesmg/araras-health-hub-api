@@ -129,7 +129,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    LegalName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Razão Social."),
+                    TradeName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Nome Fantasia."),
                     Cnpj = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: false),
                     Address_Cep = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Address_Street = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),

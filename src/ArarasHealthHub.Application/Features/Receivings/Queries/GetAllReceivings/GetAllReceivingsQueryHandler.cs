@@ -45,7 +45,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
                     r.ReceivingDate.ToString().Contains(searchTermLower) ||
                     r.TotalValue.ToString().Contains(searchTermLower) ||
 
-                    (r.Supplier != null && r.Supplier.Name.ToLower().Contains(searchTermLower)) ||
+                    (r.Supplier != null && r.Supplier.LegalName.ToLower().Contains(searchTermLower)) ||
+                    (r.Supplier != null && r.Supplier.TradeName.ToLower().Contains(searchTermLower)) ||
                     (r.Responsible != null && r.Responsible.Name.ToLower().Contains(searchTermLower)) ||
                     (r.Account != null && r.Account.UserName!.ToLower().Contains(searchTermLower)) ||
 
@@ -71,10 +72,15 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
                            query.OrderByDescending(r => r.ReceivingDate) :
                            query.OrderBy(r => r.ReceivingDate);
                     break;
-                case "suppliername":
+                case "supplierlegalname":
                     query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderByDescending(r => r.Supplier!.Name) :
-                            query.OrderBy(r => r.Supplier!.Name);
+                            query.OrderByDescending(r => r.Supplier!.LegalName) :
+                            query.OrderBy(r => r.Supplier!.LegalName);
+                    break;
+                case "suppliertradename":
+                    query = request.SortOrder?.ToLower() == "desc" ?
+                            query.OrderByDescending(r => r.Supplier!.TradeName) :
+                            query.OrderBy(r => r.Supplier!.TradeName);
                     break;
                 default:
                     query = request.SortOrder?.ToLower() == "asc" ?

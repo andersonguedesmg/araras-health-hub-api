@@ -29,7 +29,8 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 suppliersQuery = suppliersQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
+                    p.LegalName.ToLower().Contains(searchTermLower) ||
+                    p.TradeName.ToLower().Contains(searchTermLower) ||
                     p.Cnpj.ToLower().Contains(searchTermLower) ||
                     p.Address.Street.ToLower().Contains(searchTermLower) ||
                     p.Address.Number.ToLower().Contains(searchTermLower) ||

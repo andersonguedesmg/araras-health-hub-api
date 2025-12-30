@@ -20,9 +20,13 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Validation
             RuleFor(command => command.Id)
                 .GreaterThan(0).WithMessage("O ID do fornecedor é inválido.");
 
-            RuleFor(command => command.Name)
-                .NotEmpty().WithMessage("O nome do fornecedor é obrigatório.")
-                .MaximumLength(100).WithMessage("O nome do fornecedor não pode exceder 100 caracteres.");
+            RuleFor(command => command.LegalName)
+                .NotEmpty().WithMessage("A Razão Social do fornecedor é obrigatória.")
+                .MaximumLength(100).WithMessage("A Razão Social do fornecedor não pode exceder 200 caracteres.");
+
+            RuleFor(command => command.TradeName)
+                .NotEmpty().WithMessage("O Nome Fantasia do fornecedor é obrigatório.")
+                .MaximumLength(100).WithMessage("O Nome Fantasia do fornecedor não pode exceder 200 caracteres.");
 
             RuleFor(command => command.Cnpj)
                 .NotEmpty().WithMessage("O CNPJ do fornecedor é obrigatório.")

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251226151401_a2h_1.1.0")]
+    [Migration("20251229162703_a2h_1.1.0")]
     partial class a2h_110
     {
         /// <inheritdoc />
@@ -1085,10 +1085,17 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LegalName")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Razão Social.");
+
+                    b.Property<string>("TradeName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Nome Fantasia.");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");

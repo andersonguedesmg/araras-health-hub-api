@@ -31,7 +31,8 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
             {
                 var searchTermLower = request.SearchTerm.ToLower();
                 suppliersQuery = suppliersQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
+                    p.LegalName.ToLower().Contains(searchTermLower) ||
+                    p.TradeName.ToLower().Contains(searchTermLower) ||
                     p.Cnpj.ToLower().Contains(searchTermLower) ||
                     p.Address.Street.ToLower().Contains(searchTermLower) ||
                     p.Address.Number.ToLower().Contains(searchTermLower) ||
@@ -49,10 +50,15 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
             IQueryable<Supplier> orderedSuppliers;
             switch (request.OrderBy.ToLower())
             {
-                case "name":
+                case "LegalName":
                     orderedSuppliers = request.SortOrder.ToLower() == "desc" ?
-                        suppliersQuery.OrderByDescending(s => s.Name) :
-                        suppliersQuery.OrderBy(s => s.Name);
+                        suppliersQuery.OrderByDescending(s => s.LegalName) :
+                        suppliersQuery.OrderBy(s => s.LegalName);
+                    break;
+                case "TradeName":
+                    orderedSuppliers = request.SortOrder.ToLower() == "desc" ?
+                        suppliersQuery.OrderByDescending(s => s.TradeName) :
+                        suppliersQuery.OrderBy(s => s.TradeName);
                     break;
                 case "cnpj":
                     orderedSuppliers = request.SortOrder.ToLower() == "desc" ?

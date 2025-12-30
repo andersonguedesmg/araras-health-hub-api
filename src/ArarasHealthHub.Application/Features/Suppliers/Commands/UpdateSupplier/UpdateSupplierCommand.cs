@@ -10,7 +10,8 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
 {
     public record UpdateSupplierCommand(
         int Id,
-        string Name,
+        string LegalName,
+        string TradeName,
         string Cnpj,
         AddressDto Address,
         ContactDto Contact

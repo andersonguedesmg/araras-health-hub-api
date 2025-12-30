@@ -1082,10 +1082,17 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LegalName")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Razão Social.");
+
+                    b.Property<string>("TradeName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Nome Fantasia.");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");

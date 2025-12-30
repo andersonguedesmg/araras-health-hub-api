@@ -8,6 +8,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Dtos
     public class SupplierNameDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string LegalName { get; set; } = string.Empty;
+        public string TradeName { get; set; } = string.Empty;
     }
 }

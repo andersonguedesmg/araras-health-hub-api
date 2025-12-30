@@ -131,13 +131,14 @@ namespace ArarasHealthHub.Api.Controllers
 
             var sb = new StringBuilder();
 
-            sb.AppendLine("ID,NOME,CNPJ,RUA,NÚMERO,COMPLEMENTO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
+            sb.AppendLine("ID,RAZÃO SOCIAL,NOME FANTASIA,CNPJ,RUA,NÚMERO,COMPLEMENTO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
 
             foreach (var supplierDto in supplierDtos)
             {
                 sb.Append(
                     $"{supplierDto.Id}," +
-                    $"{supplierDto.Name}," +
+                    $"{supplierDto.LegalName}," +
+                    $"{supplierDto.TradeName}," +
                     $"{supplierDto.Cnpj}," +
                     $"{supplierDto.Address.Street}," +
                     $"{supplierDto.Address.Number}," +

@@ -9,7 +9,8 @@ using MediatR;
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
 {
     public record CreateSupplierCommand(
-        string Name,
+        string LegalName,
+        string TradeName,
         string Cnpj,
         AddressDto Address,
         ContactDto Contact

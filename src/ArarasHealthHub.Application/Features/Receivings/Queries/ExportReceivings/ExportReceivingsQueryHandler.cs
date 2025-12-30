@@ -39,7 +39,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivin
                     r.Observation!.ToLower().Contains(searchTermLower) ||
                     r.ReceivingDate.ToString().Contains(searchTermLower) ||
                     r.TotalValue.ToString().Contains(searchTermLower) ||
-                    (r.Supplier != null && r.Supplier.Name.ToLower().Contains(searchTermLower)) ||
+                    (r.Supplier != null && r.Supplier.LegalName.ToLower().Contains(searchTermLower)) ||
+                    (r.Supplier != null && r.Supplier.TradeName.ToLower().Contains(searchTermLower)) ||
                     (r.Responsible != null && r.Responsible.Name.ToLower().Contains(searchTermLower)) ||
                     (r.Account != null && r.Account.UserName!.ToLower().Contains(searchTermLower)) ||
 
@@ -58,7 +59,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivin
                     InvoiceNumber = r.InvoiceNumber,
                     SupplyAuthorization = r.SupplyAuthorization,
                     ReceivingDate = r.ReceivingDate,
-                    SupplierName = r.Supplier!.Name,
+                    SupplierLegalName = r.Supplier!.LegalName,
+                    SupplierTradeName = r.Supplier!.TradeName,
                     ResponsibleName = r.Responsible!.Name,
                     Observation = r.Observation,
                     ProductName = ri.Product.Name,

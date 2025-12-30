@@ -12,8 +12,13 @@ namespace ArarasHealthHub.Domain.Entities
     public class Supplier : BaseEntity
     {
         [Required]
-        [MaxLength(150)]
-        public string Name { get; set; } = string.Empty;
+        [MaxLength(200)]
+        [Comment("Razão Social")]
+        public string LegalName { get; set; } = string.Empty;
+
+        [MaxLength(200)]
+        [Comment("Nome Fantasia")]
+        public string TradeName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(18)]

@@ -28,13 +28,14 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
             var query = _supplierRepository.GetQueryable();
             query = query
                 .Where(s => s.IsActive)
-                .OrderBy(s => s.Name);
+                .OrderBy(s => s.TradeName);
 
             var dropdownOptions = await query
                 .Select(s => new SupplierNameDto
                 {
                     Id = s.Id,
-                    Name = s.Name
+                    LegalName = s.LegalName,
+                    TradeName = s.TradeName
                 })
                 .ToListAsync(cancellationToken);
 

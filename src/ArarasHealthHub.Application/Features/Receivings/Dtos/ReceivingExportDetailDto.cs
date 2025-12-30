@@ -11,7 +11,8 @@ namespace ArarasHealthHub.Application.Features.Receivings.Dtos
         public string? InvoiceNumber { get; set; }
         public string? SupplyAuthorization { get; set; }
         public DateTime ReceivingDate { get; set; }
-        public string? SupplierName { get; set; }
+        public string? SupplierLegalName { get; set; }
+        public string? SupplierTradeName { get; set; }
         public string? ResponsibleName { get; set; }
         public string? Observation { get; set; }
 
