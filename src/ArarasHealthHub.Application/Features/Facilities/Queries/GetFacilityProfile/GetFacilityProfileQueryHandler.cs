@@ -71,7 +71,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityPro
                 {
                     UserId = user.Id,
                     UserName = user.UserName!,
-                    IsActive = isUserActive,
+                    IsActive = user.IsActive,
                     Scope = user.Scope,
                     Roles = roles.ToList()
                 });
