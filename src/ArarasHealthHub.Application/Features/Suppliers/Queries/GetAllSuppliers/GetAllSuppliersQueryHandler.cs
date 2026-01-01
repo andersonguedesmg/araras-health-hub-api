@@ -29,26 +29,27 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
-                suppliersQuery = suppliersQuery.Where(p =>
-                    p.LegalName.ToLower().Contains(searchTermLower) ||
-                    p.TradeName.ToLower().Contains(searchTermLower) ||
-                    p.Cnpj.ToLower().Contains(searchTermLower) ||
-                    p.Address.Street.ToLower().Contains(searchTermLower) ||
-                    p.Address.Number.ToLower().Contains(searchTermLower) ||
-                    p.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
-                    p.Address.City.ToLower().Contains(searchTermLower) ||
-                    p.Address.State.ToLower().Contains(searchTermLower) ||
-                    p.Address.Cep.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Phone.ToLower().Contains(searchTermLower)
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+
+                suppliersQuery = suppliersQuery.Where(s =>
+                    s.LegalName.ToLower().Contains(searchTerm) ||
+                    s.TradeName.ToLower().Contains(searchTerm) ||
+                    s.Cnpj.ToLower().Contains(searchTerm) ||
+                    s.Address.Street.ToLower().Contains(searchTerm) ||
+                    s.Address.Number.ToLower().Contains(searchTerm) ||
+                    s.Address.Neighborhood.ToLower().Contains(searchTerm) ||
+                    s.Address.City.ToLower().Contains(searchTerm) ||
+                    s.Address.State.ToLower().Contains(searchTerm) ||
+                    s.Address.Cep.ToLower().Contains(searchTerm) ||
+                    s.Contact.Email.ToLower().Contains(searchTerm) ||
+                    s.Contact.Phone.ToLower().Contains(searchTerm)
                 );
             }
 
             var totalCount = await suppliersQuery.CountAsync(cancellationToken);
 
-            IQueryable<Supplier> orderedSuppliers;
-            switch (request.OrderBy.ToLower())
+            IOrderedQueryable<Supplier> orderedSuppliers;
+            switch (request.OrderBy?.ToLower())
             {
                 case "LegalName":
                     orderedSuppliers = request.SortOrder.ToLower() == "desc" ?
@@ -66,9 +67,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
                         suppliersQuery.OrderBy(s => s.Cnpj);
                     break;
                 default:
-                    orderedSuppliers = request.SortOrder.ToLower() == "desc" ?
-                        suppliersQuery.OrderByDescending(s => s.Id) :
-                        suppliersQuery.OrderBy(s => s.Id);
+                    orderedSuppliers = suppliersQuery.OrderBy(e => e.LegalName);
                     break;
             }
 
