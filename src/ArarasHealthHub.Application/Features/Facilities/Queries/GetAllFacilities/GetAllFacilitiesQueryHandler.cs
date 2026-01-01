@@ -30,35 +30,39 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
-                facilitiesQuery = facilitiesQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
-                    p.Cnes.ToLower().Contains(searchTermLower) ||
-                    p.Address.Street.ToLower().Contains(searchTermLower) ||
-                    p.Address.Number.ToLower().Contains(searchTermLower) ||
-                    p.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
-                    p.Address.City.ToLower().Contains(searchTermLower) ||
-                    p.Address.State.ToLower().Contains(searchTermLower) ||
-                    p.Address.Cep.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Phone.ToLower().Contains(searchTermLower)
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+
+                facilitiesQuery = facilitiesQuery.Where(f =>
+                    f.Name.ToLower().Contains(searchTerm) ||
+                    f.Cnes.ToLower().Contains(searchTerm) ||
+                    f.Address.Street.ToLower().Contains(searchTerm) ||
+                    f.Address.Number.ToLower().Contains(searchTerm) ||
+                    f.Address.Neighborhood.ToLower().Contains(searchTerm) ||
+                    f.Address.City.ToLower().Contains(searchTerm) ||
+                    f.Address.State.ToLower().Contains(searchTerm) ||
+                    f.Address.Cep.ToLower().Contains(searchTerm) ||
+                    f.Contact.Email.ToLower().Contains(searchTerm) ||
+                    f.Contact.Phone.ToLower().Contains(searchTerm)
                 );
             }
 
             var totalCount = await facilitiesQuery.CountAsync(cancellationToken);
 
-            IQueryable<Facility> orderedFacilities;
-            switch (request.OrderBy.ToLower())
+            IOrderedQueryable<Facility> orderedFacilities;
+            switch (request.OrderBy?.ToLower())
             {
                 case "name":
-                    orderedFacilities = request.SortOrder.ToLower() == "desc" ?
+                    orderedFacilities = request.SortOrder?.ToLower() == "desc" ?
                             facilitiesQuery.OrderByDescending(s => s.Name) :
                             facilitiesQuery.OrderBy(s => s.Name);
                     break;
+                case "cnes":
+                    orderedFacilities = request.SortOrder?.ToLower() == "desc" ?
+                            facilitiesQuery.OrderByDescending(s => s.Cnes) :
+                            facilitiesQuery.OrderBy(s => s.Cnes);
+                    break;
                 default:
-                    orderedFacilities = request.SortOrder.ToLower() == "desc" ?
-                            facilitiesQuery.OrderByDescending(s => s.Id) :
-                            facilitiesQuery.OrderBy(s => s.Id);
+                    orderedFacilities = facilitiesQuery.OrderBy(e => e.Name);
                     break;
             }
 
