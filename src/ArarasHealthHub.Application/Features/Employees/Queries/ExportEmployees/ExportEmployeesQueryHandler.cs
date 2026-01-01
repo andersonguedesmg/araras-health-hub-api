@@ -28,15 +28,15 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var searchTermLower = request.SearchTerm.ToLower();
-                employeesQuery = employeesQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
-                    p.Cpf.ToLower().Contains(searchTermLower) ||
-                    p.Function.ToLower().Contains(searchTermLower) ||
-                    p.Phone.ToLower().Contains(searchTermLower)
+                employeesQuery = employeesQuery.Where(e =>
+                    e.Name.ToLower().Contains(searchTermLower) ||
+                    e.Cpf.ToLower().Contains(searchTermLower) ||
+                    e.Function.ToLower().Contains(searchTermLower) ||
+                    e.Phone.ToLower().Contains(searchTermLower)
                 );
             }
 
-            var allFilteredEmployees = await employeesQuery.ToListAsync(cancellationToken);
+            var allFilteredEmployees = await employeesQuery.OrderBy(e => e.Name).ToListAsync(cancellationToken);
             var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(allFilteredEmployees);
 
             return employeeDtos;

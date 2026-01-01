@@ -176,23 +176,28 @@ namespace ArarasHealthHub.Api.Controllers
                 SearchTerm = searchTerm
             });
 
+            if (orders == null || !orders.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("pedido"), null!));
+            }
+
             var sb = new StringBuilder();
 
-            sb.AppendLine("ID;DATA;UNIDADE;SOLICITANTE;QTD ITENS;STATUS;MOTIVO CANCELAMENTO");
+            sb.AppendLine("ID, DATA, UNIDADE, SOLICITANTE, QTD ITENS, STATUS, MOTIVO CANCELAMENTO");
 
             foreach (var order in orders)
             {
                 sb.AppendLine(
-                    $"{order.Id};" +
-                    $"{order.CreatedAt:dd/MM/yyyy HH:mm};" +
-                    $"{order.OrderFacility!.Name};" +
-                    $"{order.CreatedByEmployee!.Name};" +
-                    $"{order.OrderItems.Count};" +
-                    $"{order.OrderStatus!.Description};"
+                    $"{order.Id}, " +
+                    $"{order.CreatedAt:dd/MM/yyyy HH:mm}, " +
+                    $"{order.OrderFacility!.Name}, " +
+                    $"{order.CreatedByEmployee!.Name}, " +
+                    $"{order.OrderItems.Count}, " +
+                    $"{order.OrderStatus!.Description}, "
                 );
             }
 
-            var fileName = $"pedido_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var fileName = $"pedidos_{DateTime.Now:yyyyMMddHHmmss}.csv";
 
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());

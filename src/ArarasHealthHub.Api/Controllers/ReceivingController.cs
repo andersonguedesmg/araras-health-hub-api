@@ -72,31 +72,35 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> Export([FromQuery] string? searchTerm)
         {
             var detailDtos = await _mediator.Send(new ExportReceivingsQuery { SearchTerm = searchTerm });
+            if (detailDtos == null || !detailDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("recebimento"), null!));
+            }
 
             var sb = new StringBuilder();
 
-            sb.AppendLine("ID,NF,AF,DATA,FORNECEDOR (RAZÃO SOCIAL),FORNECEDOR (NOME FANTASIA),RESPONSÁVEL,OBSERVAÇÃO" +
-                          "PRODUTO,LOTE,MARCA,VALIDADE,QUANTIDADE,VALOR UNITÁRIO,VALOR TOTAL");
+            sb.AppendLine("ID, NF, AF, DATA, FORNECEDOR (RAZÃO SOCIAL), FORNECEDOR (NOME FANTASIA), RESPONSÁVEL, OBSERVAÇÃO" +
+                          "PRODUTO, LOTE, MARCA, VALIDADE, QUANTIDADE, VALOR UNITÁRIO, VALOR TOTAL");
 
             var culture = CultureInfo.InvariantCulture;
 
             foreach (var detail in detailDtos)
             {
                 sb.Append(
-                    $"{detail.ReceivingId}," +
-                    $"{detail.InvoiceNumber}," +
-                    $"{detail.SupplyAuthorization}," +
-                    $"{detail.ReceivingDate:dd/MM/yyyy HH:mm:ss}," +
-                    $"{detail.SupplierLegalName}," +
-                    $"{detail.SupplierTradeName}," +
-                    $"{detail.ResponsibleName}," +
-                    $"{detail.Observation}," +
-                    $"{detail.ProductName}," +
-                    $"{detail.Batch}," +
-                    $"{detail.Brand}," +
-                    $"{detail.ExpiryDate:dd/MM/yyyy}," +
-                    $"{detail.QuantityReceived.ToString("F3", culture)}," +
-                    $"{detail.UnitValue.ToString("F2", culture)}," +
+                    $"{detail.ReceivingId}, " +
+                    $"{detail.InvoiceNumber}, " +
+                    $"{detail.SupplyAuthorization}, " +
+                    $"{detail.ReceivingDate:dd/MM/yyyy HH:mm:ss}, " +
+                    $"{detail.SupplierLegalName}, " +
+                    $"{detail.SupplierTradeName}, " +
+                    $"{detail.ResponsibleName}, " +
+                    $"{detail.Observation}, " +
+                    $"{detail.ProductName}, " +
+                    $"{detail.Batch}, " +
+                    $"{detail.Brand}, " +
+                    $"{detail.ExpiryDate:dd/MM/yyyy}, " +
+                    $"{detail.QuantityReceived.ToString("F3", culture)}, " +
+                    $"{detail.UnitValue.ToString("F2", culture)}, " +
                     $"{detail.ItemTotalValue.ToString("F2", culture)}" +
                     "\r\n"
                 );

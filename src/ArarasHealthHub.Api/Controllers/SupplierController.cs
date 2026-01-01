@@ -128,32 +128,35 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> Export([FromQuery] string? searchTerm)
         {
             var supplierDtos = await _mediator.Send(new ExportSuppliersQuery { SearchTerm = searchTerm });
+            if (supplierDtos == null || !supplierDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("fornecedor(a)"), null!));
+            }
 
             var sb = new StringBuilder();
 
-            sb.AppendLine("ID,RAZÃO SOCIAL,NOME FANTASIA,CNPJ,RUA,NÚMERO,COMPLEMENTO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
+            sb.AppendLine("RAZÃO SOCIAL, NOME FANTASIA, CNPJ, RUA, NÚMERO, COMPLEMENTO, BAIRRO, CIDADE, ESTADO, CEP, E-MAIL, TELEFONE, STATUS");
 
             foreach (var supplierDto in supplierDtos)
             {
                 sb.Append(
-                    $"{supplierDto.Id}," +
-                    $"{supplierDto.LegalName}," +
-                    $"{supplierDto.TradeName}," +
-                    $"{supplierDto.Cnpj}," +
-                    $"{supplierDto.Address.Street}," +
-                    $"{supplierDto.Address.Number}," +
-                    $"{supplierDto.Address.Complement}," +
-                    $"{supplierDto.Address.Neighborhood}," +
-                    $"{supplierDto.Address.City}," +
-                    $"{supplierDto.Address.State}," +
-                    $"{supplierDto.Address.Cep}," +
-                    $"{supplierDto.Contact.Email}," +
-                    $"{supplierDto.Contact.Phone}," +
+                    $"{supplierDto.LegalName}, " +
+                    $"{supplierDto.TradeName}, " +
+                    $"{supplierDto.Cnpj}, " +
+                    $"{supplierDto.Address.Street}, " +
+                    $"{supplierDto.Address.Number}, " +
+                    $"{supplierDto.Address.Complement}, " +
+                    $"{supplierDto.Address.Neighborhood}, " +
+                    $"{supplierDto.Address.City}, " +
+                    $"{supplierDto.Address.State}, " +
+                    $"{supplierDto.Address.Cep}, " +
+                    $"{supplierDto.Contact.Email}, " +
+                    $"{supplierDto.Contact.Phone}, " +
                     $"{(supplierDto.IsActive ? "Ativo" : "Inativo")}\r\n"
                 );
             }
 
-            var fileName = $"fornecedor_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var fileName = $"fornecedores_{DateTime.Now:yyyyMMddHHmmss}.csv";
 
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());

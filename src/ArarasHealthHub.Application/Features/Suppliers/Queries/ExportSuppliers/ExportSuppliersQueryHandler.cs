@@ -28,22 +28,22 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var searchTermLower = request.SearchTerm.ToLower();
-                suppliersQuery = suppliersQuery.Where(p =>
-                    p.LegalName.ToLower().Contains(searchTermLower) ||
-                    p.TradeName.ToLower().Contains(searchTermLower) ||
-                    p.Cnpj.ToLower().Contains(searchTermLower) ||
-                    p.Address.Street.ToLower().Contains(searchTermLower) ||
-                    p.Address.Number.ToLower().Contains(searchTermLower) ||
-                    p.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
-                    p.Address.City.ToLower().Contains(searchTermLower) ||
-                    p.Address.State.ToLower().Contains(searchTermLower) ||
-                    p.Address.Cep.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Phone.ToLower().Contains(searchTermLower)
+                suppliersQuery = suppliersQuery.Where(s =>
+                    s.LegalName.ToLower().Contains(searchTermLower) ||
+                    s.TradeName.ToLower().Contains(searchTermLower) ||
+                    s.Cnpj.ToLower().Contains(searchTermLower) ||
+                    s.Address.Street.ToLower().Contains(searchTermLower) ||
+                    s.Address.Number.ToLower().Contains(searchTermLower) ||
+                    s.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
+                    s.Address.City.ToLower().Contains(searchTermLower) ||
+                    s.Address.State.ToLower().Contains(searchTermLower) ||
+                    s.Address.Cep.ToLower().Contains(searchTermLower) ||
+                    s.Contact.Email.ToLower().Contains(searchTermLower) ||
+                    s.Contact.Phone.ToLower().Contains(searchTermLower)
                 );
             }
 
-            var allFilteredSuppliers = await suppliersQuery.ToListAsync(cancellationToken);
+            var allFilteredSuppliers = await suppliersQuery.OrderBy(s => s.LegalName).ToListAsync(cancellationToken);
             var supplierDtos = _mapper.Map<IEnumerable<SupplierDto>>(allFilteredSuppliers);
 
             return supplierDtos;

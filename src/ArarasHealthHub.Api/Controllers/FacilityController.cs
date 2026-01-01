@@ -129,29 +129,33 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> Export([FromQuery] string? searchTerm)
         {
             var facilityDtos = await _mediator.Send(new ExportFacilitiesQuery { SearchTerm = searchTerm });
+            if (facilityDtos == null || !facilityDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("unidade"), null!));
+            }
 
             var sb = new StringBuilder();
-            sb.AppendLine("ID,NOME,RUA,NÚMERO,COMPLEMENTO,BAIRRO,CIDADE,ESTADO,CEP,E-MAIL,TELEFONE,STATUS");
+            sb.AppendLine("NOME, CNES, RUA, NÚMERO, COMPLEMENTO, BAIRRO, CIDADE, ESTADO, CEP, E-MAIL, TELEFONE, STATUS");
 
             foreach (var facilityDto in facilityDtos)
             {
                 sb.Append(
-                    $"{facilityDto.Id}," +
-                    $"{facilityDto.Name}," +
-                    $"{facilityDto.Address.Street}," +
-                    $"{facilityDto.Address.Number}," +
-                    $"{facilityDto.Address.Complement}," +
-                    $"{facilityDto.Address.Neighborhood}," +
-                    $"{facilityDto.Address.City}," +
-                    $"{facilityDto.Address.State}," +
-                    $"{facilityDto.Address.Cep}," +
-                    $"{facilityDto.Contact.Email}," +
-                    $"{facilityDto.Contact.Phone}," +
+                    $"{facilityDto.Name}, " +
+                    $"{facilityDto.Cnes}, " +
+                    $"{facilityDto.Address.Street}, " +
+                    $"{facilityDto.Address.Number}, " +
+                    $"{facilityDto.Address.Complement}, " +
+                    $"{facilityDto.Address.Neighborhood}, " +
+                    $"{facilityDto.Address.City}, " +
+                    $"{facilityDto.Address.State}, " +
+                    $"{facilityDto.Address.Cep}, " +
+                    $"{facilityDto.Contact.Email}, " +
+                    $"{facilityDto.Contact.Phone}, " +
                     $"{(facilityDto.IsActive ? "Ativo" : "Inativo")}\r\n"
                 );
             }
 
-            var fileName = $"unidade_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var fileName = $"unidades_{DateTime.Now:yyyyMMddHHmmss}.csv";
 
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());

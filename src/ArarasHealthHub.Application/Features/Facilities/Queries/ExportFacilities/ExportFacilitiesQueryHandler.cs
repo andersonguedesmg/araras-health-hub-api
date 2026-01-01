@@ -28,21 +28,21 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.ExportFaciliti
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var searchTermLower = request.SearchTerm.ToLower();
-                facilitiesQuery = facilitiesQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
-                    p.Cnes.ToLower().Contains(searchTermLower) ||
-                    p.Address.Street.ToLower().Contains(searchTermLower) ||
-                    p.Address.Number.ToLower().Contains(searchTermLower) ||
-                    p.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
-                    p.Address.City.ToLower().Contains(searchTermLower) ||
-                    p.Address.State.ToLower().Contains(searchTermLower) ||
-                    p.Address.Cep.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    p.Contact.Phone.ToLower().Contains(searchTermLower)
+                facilitiesQuery = facilitiesQuery.Where(f =>
+                    f.Name.ToLower().Contains(searchTermLower) ||
+                    f.Cnes.ToLower().Contains(searchTermLower) ||
+                    f.Address.Street.ToLower().Contains(searchTermLower) ||
+                    f.Address.Number.ToLower().Contains(searchTermLower) ||
+                    f.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
+                    f.Address.City.ToLower().Contains(searchTermLower) ||
+                    f.Address.State.ToLower().Contains(searchTermLower) ||
+                    f.Address.Cep.ToLower().Contains(searchTermLower) ||
+                    f.Contact.Email.ToLower().Contains(searchTermLower) ||
+                    f.Contact.Phone.ToLower().Contains(searchTermLower)
                 );
             }
 
-            var allFilteredFacilities = await facilitiesQuery.ToListAsync(cancellationToken);
+            var allFilteredFacilities = await facilitiesQuery.OrderBy(f => f.Name).ToListAsync(cancellationToken);
             var facilityDto = _mapper.Map<IEnumerable<FacilityDto>>(allFilteredFacilities);
 
             return facilityDto;

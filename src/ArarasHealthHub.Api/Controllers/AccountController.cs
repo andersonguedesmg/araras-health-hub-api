@@ -150,9 +150,13 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> Export([FromQuery] string? searchTerm)
         {
             var accountDtos = await _mediator.Send(new ExportAccountsQuery { SearchTerm = searchTerm });
+            if (accountDtos == null || !accountDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("conta"), null!));
+            }
 
             var sb = new StringBuilder();
-            sb.AppendLine("ID,NOME,UNIDADE,FUNÇÃO,ESCOPO,STATUS");
+            sb.AppendLine("NOME, UNIDADE, FUNÇÃO, ESCOPO, STATUS");
 
             foreach (var accountDto in accountDtos)
             {
@@ -161,7 +165,7 @@ namespace ArarasHealthHub.Api.Controllers
                 var scope = accountDto.Scope.ToString();
                 var status = accountDto.IsActive ? "Ativo" : "Inativo";
 
-                sb.Append($"{accountDto.UserId},{accountDto.UserName},{facilityName},{role},{scope},{status}\r\n");
+                sb.Append($"{accountDto.UserName}, {facilityName}, {role}, {scope}, {status}\r\n");
             }
 
             var fileName = $"contas_{DateTime.Now:yyyyMMddHHmmss}.csv";

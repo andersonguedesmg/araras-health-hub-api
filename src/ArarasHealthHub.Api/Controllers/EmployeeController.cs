@@ -128,16 +128,20 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> Export([FromQuery] string? searchTerm)
         {
             var employeeDtos = await _mediator.Send(new ExportEmployeesQuery { SearchTerm = searchTerm });
+            if (employeeDtos == null || !employeeDtos.Any())
+            {
+                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("funcionário(a)"), null!));
+            }
 
             var sb = new StringBuilder();
-            sb.AppendLine("ID,NOME,CPF,FUNÇÃO,TELEFONE,STATUS");
+            sb.AppendLine("NOME, CPF, FUNÇÃO, TELEFONE, STATUS");
 
             foreach (var employeeDto in employeeDtos)
             {
-                sb.Append($"{employeeDto.Id},{employeeDto.Name},{employeeDto.Cpf},{employeeDto.Function},{employeeDto.Phone},{(employeeDto.IsActive ? "Ativo" : "Inativo")}\r\n");
+                sb.Append($"{employeeDto.Name}, {employeeDto.Cpf}, {employeeDto.Function}, {employeeDto.Phone}, {(employeeDto.IsActive ? "Ativo" : "Inativo")}\r\n");
             }
 
-            var fileName = $"funcionario_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            var fileName = $"funcionarios_{DateTime.Now:yyyyMMddHHmmss}.csv";
 
             var utf8WithBom = new UTF8Encoding(true);
             var fileBytes = utf8WithBom.GetBytes(sb.ToString());

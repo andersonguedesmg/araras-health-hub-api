@@ -70,7 +70,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
             }
 
             var allFilteredUsers = await query
-                                        .OrderBy(u => u.Id)
+                                        .OrderBy(u => u.UserName)
                                         .ToListAsync(cancellationToken);
 
             if (!allFilteredUsers.Any())

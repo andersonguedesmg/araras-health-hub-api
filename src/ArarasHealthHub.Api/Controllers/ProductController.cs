@@ -136,16 +136,15 @@ namespace ArarasHealthHub.Api.Controllers
             }
 
             var sb = new StringBuilder();
-            sb.AppendLine("ID;NOME;DESCRIÇÃO;CATEGORIA PRINCIPAL;SUBCATEGORIA;FORMA DE APRESENTAÇÃO;STATUS");
+            sb.AppendLine("NOME, DESCRIÇÃO, CATEGORIA PRINCIPAL, SUBCATEGORIA, FORMA DE APRESENTAÇÃO, STATUS");
 
             foreach (var productDto in productDtos)
             {
-                sb.Append($"{productDto.Id};");
-                sb.Append($"{productDto.Name};");
-                sb.Append($"{productDto.Description};");
-                sb.Append($"{productDto.MainCategoryName};");
-                sb.Append($"{productDto.SubCategoryName};");
-                sb.Append($"{productDto.PresentationFormName};");
+                sb.Append($"{productDto.Name}, ");
+                sb.Append($"{productDto.Description}, ");
+                sb.Append($"{productDto.MainCategoryName}, ");
+                sb.Append($"{productDto.SubCategoryName}, ");
+                sb.Append($"{productDto.PresentationFormName}, ");
                 sb.AppendLine(productDto.IsActive ? "Ativo" : "Inativo");
             }
 
