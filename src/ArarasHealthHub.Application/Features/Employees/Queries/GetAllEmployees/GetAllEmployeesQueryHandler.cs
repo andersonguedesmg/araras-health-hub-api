@@ -29,38 +29,42 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
-                employeesQuery = employeesQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTermLower) ||
-                    p.Cpf.ToLower().Contains(searchTermLower) ||
-                    p.Function.ToLower().Contains(searchTermLower) ||
-                    p.Phone.ToLower().Contains(searchTermLower)
+                var searchTerm = request.SearchTerm.Trim().ToLower();
+
+                employeesQuery = employeesQuery.Where(e =>
+                    e.Name.ToLower().Contains(searchTerm) ||
+                    e.Cpf.ToLower().Contains(searchTerm) ||
+                    e.Function.ToLower().Contains(searchTerm) ||
+                    e.Phone.ToLower().Contains(searchTerm)
                 );
             }
 
             var totalCount = await employeesQuery.CountAsync(cancellationToken);
 
-            IQueryable<Employee> orderedEmployees;
-            switch (request.OrderBy.ToLower())
+            IOrderedQueryable<Employee> orderedQuery;
+            switch (request.OrderBy?.ToLower())
             {
                 case "name":
-                    orderedEmployees = request.SortOrder.ToLower() == "desc" ?
-                        employeesQuery.OrderByDescending(s => s.Name) :
-                        employeesQuery.OrderBy(s => s.Name);
+                    orderedQuery = request.SortOrder?.ToLower() == "desc"
+                        ? employeesQuery.OrderByDescending(p => p.Name)
+                        : employeesQuery.OrderBy(p => p.Name);
                     break;
                 case "cpf":
-                    orderedEmployees = request.SortOrder.ToLower() == "desc" ?
-                        employeesQuery.OrderByDescending(s => s.Cpf) :
-                        employeesQuery.OrderBy(s => s.Cpf);
+                    orderedQuery = request.SortOrder?.ToLower() == "desc" ?
+                        employeesQuery.OrderByDescending(e => e.Cpf) :
+                        employeesQuery.OrderBy(e => e.Cpf);
+                    break;
+                case "function":
+                    orderedQuery = request.SortOrder?.ToLower() == "desc" ?
+                        employeesQuery.OrderByDescending(e => e.Function) :
+                        employeesQuery.OrderBy(e => e.Function);
                     break;
                 default:
-                    orderedEmployees = request.SortOrder.ToLower() == "desc" ?
-                        employeesQuery.OrderByDescending(s => s.Id) :
-                        employeesQuery.OrderBy(s => s.Id);
+                    orderedQuery = employeesQuery.OrderBy(e => e.Name);
                     break;
             }
 
-            var pagedEmployees = await orderedEmployees
+            var pagedEmployees = await orderedQuery
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
