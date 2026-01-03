@@ -46,6 +46,7 @@ namespace ArarasHealthHub.Shared.Core
         public const string CnpjAlreadyExists = "CNPJ já registrado.";
         public const string CpfAlreadyExists = "CPF já registrado.";
         public const string ProductAlreadyExists = "Produto já registrado.";
+        public const string MainCategoryAlreadyExists = "Categoria principal já registrada.";
         public const string ReceivingAndStockMovementsCreatedSuccessfully = "Recebimento e movimentos de estoque criados com sucesso.";
         public const string MinimumQuantityUpdatedSuccessfully = "Quantidade mínima atualizada com sucesso.";
         public const string MinimumQuantityCannotBeNegative = "A quantidade mínima não pode ser um valor negativo.";
