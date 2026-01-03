@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Create
             var existingPresentationForm = await _presentationFormRepository.GetByPresentationFormNameAsync(request.Name);
             if (existingPresentationForm != null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.MainCategoryAlreadyExists, 0);
+                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.PresentationFormAlreadyExists, 0);
             }
 
             var mainCategory = _mapper.Map<PresentationForm>(request);

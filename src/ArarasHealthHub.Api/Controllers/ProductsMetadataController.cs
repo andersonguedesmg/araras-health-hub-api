@@ -7,12 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Application.Features.MainCategories.Dtos;
+using ArarasHealthHub.Application.Features.SubCategories.Dtos;
 using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.ChangeStatusMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdownOptions;
+using ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCategories;
+using ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubCategory;
+using ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubCategory;
+using ArarasHealthHub.Application.Features.SubCategories.Commands.ChangeStatusSubCategory;
+using ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryDropdownOptions;
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetAllPresentationForms;
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.CreatePresentationForm;
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm;
@@ -95,6 +101,73 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> GetMainCategoryDropdownOptions()
         {
             var query = new GetMainCategoryDropdownOptionsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+
+        [HttpGet("getAllSubCategories")]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(PagedResponse<SubCategoryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetAllSubCategories([FromQuery] GetAllSubCategoriesQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPost("createSubCategory")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> CreateSubCategory([FromBody] CreateSubCategoryCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut("updateSubCategory/{id}")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateSubCategory([FromRoute] int id, [FromBody] UpdateSubCategoryCommand command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
+            }
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPatch("changeStatusSubCategory/{id}")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeStatusSubCategory([FromRoute] int id, [FromBody] ChangeStatusSubCategoryCommand command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
+            }
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("getSubCategoryDropdownOptions")]
+        [ProducesResponseType(typeof(ApiResponse<List<SubCategoryNameDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSubCategoryDropdownOptions()
+        {
+            var query = new GetSubCategoryDropdownOptionsQuery();
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
