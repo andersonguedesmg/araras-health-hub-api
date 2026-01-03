@@ -7,11 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Application.Features.MainCategories.Dtos;
+using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.ChangeStatusMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdownOptions;
+using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetAllPresentationForms;
+using ArarasHealthHub.Application.Features.PresentationForms.Commands.CreatePresentationForm;
+using ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm;
+using ArarasHealthHub.Application.Features.PresentationForms.Commands.ChangeStatusPresentationForm;
+using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormDropdownOptions;
 
 namespace ArarasHealthHub.Api.Controllers
 {
@@ -89,6 +95,73 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> GetMainCategoryDropdownOptions()
         {
             var query = new GetMainCategoryDropdownOptionsQuery();
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+
+        [HttpGet("getAllPresentationForms")]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(PagedResponse<PresentationFormDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetAllPresentationForms([FromQuery] GetAllPresentationFormsQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPost("createPresentationForm")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> CreatePresentationForm([FromBody] CreatePresentationFormCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPut("updatePresentationForm/{id}")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdatePresentationForm([FromRoute] int id, [FromBody] UpdatePresentationFormCommand command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
+            }
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpPatch("changeStatusPresentationForm/{id}")]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeStatusPresentationForm([FromRoute] int id, [FromBody] ChangeStatusPresentationFormCommand command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
+            }
+            var result = await _mediator.Send(command);
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("getPresentationFormDropdownOptions")]
+        [ProducesResponseType(typeof(ApiResponse<List<PresentationFormNameDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPresentationFormDropdownOptions()
+        {
+            var query = new GetPresentationFormDropdownOptionsQuery();
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }
