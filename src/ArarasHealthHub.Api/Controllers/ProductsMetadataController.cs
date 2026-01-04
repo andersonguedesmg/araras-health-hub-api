@@ -165,9 +165,9 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpGet("getSubCategoryDropdownOptions")]
         [ProducesResponseType(typeof(ApiResponse<List<SubCategoryNameDto>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetSubCategoryDropdownOptions()
+        public async Task<IActionResult> GetSubCategoryDropdownOptions([FromQuery] int mainCategoryId)
         {
-            var query = new GetSubCategoryDropdownOptionsQuery();
+            var query = new GetSubCategoryDropdownOptionsQuery { MainCategoryId = mainCategoryId };
             var result = await _mediator.Send(query);
             return StatusCode(result.StatusCode, result);
         }

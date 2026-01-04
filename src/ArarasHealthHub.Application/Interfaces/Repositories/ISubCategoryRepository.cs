@@ -8,6 +8,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
 {
     public interface ISubCategoryRepository : IBaseRepository<SubCategory>
     {
-
+        Task<SubCategory?> GetBySubCategoryNameAndMainCategoryIdAsync(string name, int mainCategoryId);
+        IQueryable<SubCategory> GetQueryable();
     }
 }
