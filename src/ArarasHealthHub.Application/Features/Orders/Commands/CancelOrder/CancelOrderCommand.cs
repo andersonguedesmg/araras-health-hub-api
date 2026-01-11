@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder

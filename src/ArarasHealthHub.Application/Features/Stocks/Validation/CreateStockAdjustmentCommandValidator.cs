@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 

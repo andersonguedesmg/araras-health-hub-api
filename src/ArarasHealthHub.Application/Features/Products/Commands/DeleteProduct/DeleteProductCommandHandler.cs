@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core;
-using AutoMapper;
+using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

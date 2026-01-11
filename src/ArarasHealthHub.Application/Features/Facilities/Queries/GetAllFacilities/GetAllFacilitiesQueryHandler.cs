@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

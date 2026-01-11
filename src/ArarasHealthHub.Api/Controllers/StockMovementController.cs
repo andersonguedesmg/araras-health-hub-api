@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.StockMovements.Dtos;
 using ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStockMovements;
 using ArarasHealthHub.Application.Features.StockMovements.Queries.GetStockMovementById;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

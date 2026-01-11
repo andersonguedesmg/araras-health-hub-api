@@ -6,7 +6,7 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared.Core.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using static ArarasHealthHub.Application.Services.StockAllocation.StockAllocationDtos;

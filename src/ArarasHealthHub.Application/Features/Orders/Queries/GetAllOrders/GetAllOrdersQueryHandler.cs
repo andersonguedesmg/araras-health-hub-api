@@ -8,7 +8,7 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;

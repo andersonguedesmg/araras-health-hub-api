@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.StockMovements.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

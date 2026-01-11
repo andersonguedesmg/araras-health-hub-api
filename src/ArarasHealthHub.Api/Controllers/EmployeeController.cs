@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById;
@@ -14,139 +12,81 @@ using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEmployee;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdownOptions;
-using System.Text;
 using ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees;
+using araras_health_hub_api.Common;
+using ArarasHealthHub.Shared.Core.Responses;
 
 namespace ArarasHealthHub.Api.Controllers
 {
-    [Route("api/employee")]
-    [ApiController]
+    [Route("api/v1/employees")]
     [Authorize]
-    public class EmployeeController : ControllerBase
+    public class EmployeesController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public EmployeeController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
-        [HttpGet("getAll")]
+        [HttpGet]
         [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(PagedResponse<EmployeeDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllEmployeesQuery query)
-        {
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
-        }
+            => await Send(query);
 
-        [HttpGet("getById/{id}")]
+        [HttpGet("{id:int}")]
         [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(ApiResponse<EmployeeDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var query = new GetEmployeeByIdQuery(id);
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
+            return await Send(new GetEmployeeByIdQuery(0).WithId(id));
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
-        }
+        public async Task<IActionResult> Create(CreateEmployeeCommand command)
+            => await Send(command);
 
-        [HttpPut("update/{id}")]
+        [HttpPut("{id:int}")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateEmployeeCommand command)
+        public async Task<IActionResult> Update(int id, UpdateEmployeeCommand command)
         {
-            if (id != command.Id)
-            {
-                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
-            }
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(command.WithId(id));
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpPatch("{id:int}/status")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> ChangeStatus(int id, ChangeStatusEmployeeCommand command)
         {
-            var command = new DeleteEmployeeCommand(id);
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(command.WithId(id));
         }
 
-        [HttpPatch("changeStatus/{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusEmployeeCommand command)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id != command.Id)
-            {
-                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
-            }
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(new DeleteEmployeeCommand(0).WithId(id));
         }
 
-        [HttpGet("getDropdownOptions")]
+        [HttpGet("dropdown")]
         [ProducesResponseType(typeof(ApiResponse<List<EmployeeNameDto>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDropdownOptions()
-        {
-            var query = new GetEmployeeDropdownOptionsQuery();
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
-        }
+        public async Task<IActionResult> GetDropdown()
+            => await Send(new GetEmployeeDropdownOptionsQuery());
 
         [HttpGet("export")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Export([FromQuery] string? searchTerm)
+        public async Task<IActionResult> Export([FromQuery] ExportEmployeesQuery query)
         {
-            var employeeDtos = await _mediator.Send(new ExportEmployeesQuery { SearchTerm = searchTerm });
-            if (employeeDtos == null || !employeeDtos.Any())
-            {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("funcionário(a)"), null!));
-            }
+            var response = await Mediator.Send(query);
 
-            var sb = new StringBuilder();
-            sb.AppendLine("NOME, CPF, FUNÇÃO, TELEFONE, STATUS");
+            if (!response.Success || response.Data == null)
+                return StatusCode(response.StatusCode, response);
 
-            foreach (var employeeDto in employeeDtos)
-            {
-                sb.Append($"{employeeDto.Name}, {employeeDto.Cpf}, {employeeDto.Function}, {employeeDto.Phone}, {(employeeDto.IsActive ? "Ativo" : "Inativo")}\r\n");
-            }
-
-            var fileName = $"funcionarios_{DateTime.Now:yyyyMMddHHmmss}.csv";
-
-            var utf8WithBom = new UTF8Encoding(true);
-            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
-
-            return File(fileBytes, "text/csv", fileName);
+            return File(
+                response.Data.Content,
+                response.Data.ContentType,
+                response.Data.FileName
+            );
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace ArarasHealthHub.Shared.Core
+namespace ArarasHealthHub.Shared.Core.Messages
 {
     public static class ApiMessages
     {

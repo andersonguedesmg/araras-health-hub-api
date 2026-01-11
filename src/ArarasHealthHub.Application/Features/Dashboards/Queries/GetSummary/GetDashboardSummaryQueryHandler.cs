@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Dashboards.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
