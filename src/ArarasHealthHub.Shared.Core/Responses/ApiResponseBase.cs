@@ -7,9 +7,9 @@ namespace ArarasHealthHub.Shared.Core.Responses
 {
     public abstract class ApiResponseBase
     {
-        public int StatusCode { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public bool Success { get; set; }
-        public Dictionary<string, List<string>>? Errors { get; set; }
+        public int StatusCode { get; protected set; }
+        public string Message { get; protected set; } = string.Empty;
+        public bool Success { get; protected set; }
+        public IReadOnlyDictionary<string, IReadOnlyList<string>>? Errors { get; protected set; }
     }
 }

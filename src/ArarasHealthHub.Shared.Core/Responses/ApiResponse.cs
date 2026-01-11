@@ -5,45 +5,75 @@ using System.Threading.Tasks;
 
 namespace ArarasHealthHub.Shared.Core.Responses
 {
-    public class ApiResponse<T> : ApiResponseBase
+    public sealed class ApiResponse<T> : ApiResponseBase
     {
-        public T? Data { get; set; }
+        public T? Data { get; }
 
-        public ApiResponse() { }
-
-        public ApiResponse(int statusCode, string message, T? data)
+        private ApiResponse(
+            int statusCode,
+            string message,
+            bool success,
+            T? data = default,
+            IReadOnlyDictionary<string, IReadOnlyList<string>>? errors = null)
         {
             StatusCode = statusCode;
             Message = message;
+            Success = success;
             Data = data;
-            Success = true;
-        }
-
-        public ApiResponse(int statusCode, string message, bool success)
-        {
-            StatusCode = statusCode;
-            Message = message;
-            Success = success;
-            Data = default(T);
-        }
-
-        public ApiResponse(int statusCode, string message, List<string> errorList, bool success = false)
-        {
-            StatusCode = statusCode;
-            Message = message;
-            Errors = new Dictionary<string, List<string>> { { "GeneralErrors", errorList } };
-            Success = success;
-            Data = default(T);
-        }
-
-
-        public ApiResponse(int statusCode, string message, Dictionary<string, List<string>> errors, bool success)
-        {
-            StatusCode = statusCode;
-            Message = message;
             Errors = errors;
-            Success = success;
-            Data = default(T);
+        }
+
+        public static ApiResponse<T> SuccessResponse(
+            int statusCode,
+            string message,
+            T? data = default)
+        {
+            return new ApiResponse<T>(
+                statusCode,
+                message,
+                success: true,
+                data: data
+            );
+        }
+
+        public static ApiResponse<T> FailureResponse(
+            int statusCode,
+            string message)
+        {
+            return new ApiResponse<T>(
+                statusCode,
+                message,
+                success: false
+            );
+        }
+
+        public static ApiResponse<T> FailureResponse(
+            int statusCode,
+            string message,
+            IReadOnlyDictionary<string, IReadOnlyList<string>> errors)
+        {
+            return new ApiResponse<T>(
+                statusCode,
+                message,
+                success: false,
+                errors: errors
+            );
+        }
+
+        public static ApiResponse<T> FailureResponse(
+            int statusCode,
+            string message,
+            IEnumerable<string> errors)
+        {
+            return new ApiResponse<T>(
+                statusCode,
+                message,
+                success: false,
+                errors: new Dictionary<string, IReadOnlyList<string>>
+                {
+                    ["GeneralErrors"] = errors.ToList()
+                }
+            );
         }
     }
 }
