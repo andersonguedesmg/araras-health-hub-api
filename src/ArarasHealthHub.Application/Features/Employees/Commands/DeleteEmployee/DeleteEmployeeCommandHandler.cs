@@ -13,23 +13,32 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee
     {
         private readonly IEmployeeRepository _employeeRepository;
 
-        public DeleteEmployeeCommandHandler(IEmployeeRepository employeeRepository)
+        public DeleteEmployeeCommandHandler(
+            IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<bool>> Handle(
+            DeleteEmployeeCommand request,
+            CancellationToken cancellationToken)
         {
             var existingEmployee = await _employeeRepository.GetByIdAsync(request.Id);
 
-            if (existingEmployee == null)
+            if (existingEmployee is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Funcionário"), false);
+                return new ApiResponse<bool>(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Funcionário"),
+                    false);
             }
 
             await _employeeRepository.DeleteAsync(existingEmployee);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Funcionário"), true);
+            return new ApiResponse<bool>(
+                StatusCodes.Status200OK,
+                ApiMessages.DeletedSuccessfully("Funcionário"),
+                true);
         }
     }
 }

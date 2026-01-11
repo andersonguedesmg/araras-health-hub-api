@@ -8,5 +8,9 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
 {
-    public record GetEmployeeByIdQuery(int Id) : IRequest<ApiResponse<EmployeeDto>>;
+    public record GetEmployeeByIdQuery(int Id) : IRequest<ApiResponse<EmployeeDto>>
+    {
+        public GetEmployeeByIdQuery WithId(int id)
+            => this with { Id = id };
+    }
 }

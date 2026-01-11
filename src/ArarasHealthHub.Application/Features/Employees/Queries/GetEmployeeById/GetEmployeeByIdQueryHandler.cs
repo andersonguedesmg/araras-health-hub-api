@@ -16,24 +16,34 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
 
-        public GetEmployeeByIdQueryHandler(IEmployeeRepository employeeRepository, IMapper mapper)
+        public GetEmployeeByIdQueryHandler(
+            IEmployeeRepository employeeRepository,
+            IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<EmployeeDto>> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<EmployeeDto>> Handle(
+            GetEmployeeByIdQuery request,
+            CancellationToken cancellationToken)
         {
             var employee = await _employeeRepository.GetByIdAsync(request.Id);
 
-            if (employee == null)
+            if (employee is null)
             {
-                return new ApiResponse<EmployeeDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), null!);
+                return new ApiResponse<EmployeeDto>(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Funcionário"),
+                    null!);
             }
 
             var employeeDto = _mapper.Map<EmployeeDto>(employee);
 
-            return new ApiResponse<EmployeeDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Unidade"), employeeDto);
+            return new ApiResponse<EmployeeDto>(
+                StatusCodes.Status200OK,
+                ApiMessages.FoundSuccessfully("Funcionário"),
+                employeeDto);
         }
     }
 }

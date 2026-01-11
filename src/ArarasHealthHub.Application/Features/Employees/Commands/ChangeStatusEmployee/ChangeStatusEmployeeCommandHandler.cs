@@ -13,18 +13,25 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEm
     {
         private readonly IEmployeeRepository _employeeRepository;
 
-        public ChangeStatusEmployeeCommandHandler(IEmployeeRepository employeeRepository)
+        public ChangeStatusEmployeeCommandHandler(
+            IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(ChangeStatusEmployeeCommand command, CancellationToken cancellationToken)
+        public async Task<ApiResponse<bool>> Handle(
+            ChangeStatusEmployeeCommand command,
+            CancellationToken cancellationToken)
         {
-            var existingEmployee = await _employeeRepository.GetByIdAsync(command.Id);
+            var existingEmployee =
+                await _employeeRepository.GetByIdAsync(command.Id);
 
-            if (existingEmployee == null)
+            if (existingEmployee is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Funcionário"), false);
+                return new ApiResponse<bool>(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Funcionário"),
+                    false);
             }
 
             if (command.IsActive)
@@ -38,8 +45,14 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEm
 
             await _employeeRepository.UpdateAsync(existingEmployee);
 
-            var message = command.IsActive ? ApiMessages.ActivatedSuccessfully("Funcionário") : ApiMessages.DeactivatedSuccessfully("Funcionário");
-            return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
+            var message = command.IsActive
+                ? ApiMessages.ActivatedSuccessfully("Funcionário")
+                : ApiMessages.DeactivatedSuccessfully("Funcionário");
+
+            return new ApiResponse<bool>(
+                StatusCodes.Status200OK,
+                message,
+                true);
         }
     }
 }
