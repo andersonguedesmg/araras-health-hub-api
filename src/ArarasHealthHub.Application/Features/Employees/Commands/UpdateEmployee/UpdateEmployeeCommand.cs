@@ -13,7 +13,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
         string Cpf,
         string Function,
         string Phone
-    ) : IRequest<ApiResponse<bool>>
+    ) : IRequest<ApiResponse<object>>
     {
         public UpdateEmployeeCommand WithId(int id)
             => this with { Id = id };

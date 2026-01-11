@@ -10,7 +10,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEm
     public record ChangeStatusEmployeeCommand(
         int Id,
         bool IsActive
-    ) : IRequest<ApiResponse<bool>>
+    ) : IRequest<ApiResponse<object>>
     {
         public ChangeStatusEmployeeCommand WithId(int id)
             => this with { Id = id };

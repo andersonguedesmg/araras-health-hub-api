@@ -16,7 +16,8 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees
     {
         private readonly IEmployeeRepository _employeeRepository;
 
-        public ExportEmployeesQueryHandler(IEmployeeRepository employeeRepository)
+        public ExportEmployeesQueryHandler(
+            IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
         }
@@ -45,24 +46,25 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees
 
             if (!employees.Any())
             {
-                return new ApiResponse<FileResponse>(
+                return ApiResponse<FileResponse>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.ExportEmpty("funcionário"),
-                    false
+                    ApiMessages.ExportEmpty("funcionário")
                 );
             }
 
             var csvBytes = EmployeeCsvExporter.Export(employees);
 
-            return new ApiResponse<FileResponse>(
+            var fileResponse = new FileResponse
+            {
+                Content = csvBytes,
+                ContentType = "text/csv",
+                FileName = $"funcionarios_{DateTime.UtcNow:yyyyMMddHHmmss}.csv"
+            };
+
+            return ApiResponse<FileResponse>.SuccessResponse(
                 StatusCodes.Status200OK,
                 ApiMessages.OperationSuccessful,
-                new FileResponse
-                {
-                    Content = csvBytes,
-                    ContentType = "text/csv",
-                    FileName = $"funcionarios_{DateTime.UtcNow:yyyyMMddHHmmss}.csv"
-                }
+                fileResponse
             );
         }
     }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee
 {
-    public class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmployeeCommand, ApiResponse<bool>>
+    public class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmployeeCommand, ApiResponse<object>>
     {
         private readonly IEmployeeRepository _employeeRepository;
 
@@ -20,26 +20,27 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(
+        public async Task<ApiResponse<object>> Handle(
             DeleteEmployeeCommand request,
             CancellationToken cancellationToken)
         {
-            var existingEmployee = await _employeeRepository.GetByIdAsync(request.Id);
+            var existingEmployee =
+                await _employeeRepository.GetByIdAsync(request.Id);
 
             if (existingEmployee is null)
             {
-                return new ApiResponse<bool>(
+                return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Funcionário"),
-                    false);
+                    ApiMessages.NotFound("Funcionário")
+                );
             }
 
             await _employeeRepository.DeleteAsync(existingEmployee);
 
-            return new ApiResponse<bool>(
+            return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.DeletedSuccessfully("Funcionário"),
-                true);
+                ApiMessages.DeletedSuccessfully("Funcionário")
+            );
         }
     }
 }

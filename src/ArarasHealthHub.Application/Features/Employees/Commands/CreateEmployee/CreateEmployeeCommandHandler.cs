@@ -17,25 +17,38 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
 
-        public CreateEmployeeCommandHandler(IEmployeeRepository employeeRepository, IMapper mapper)
+        public CreateEmployeeCommandHandler(
+            IEmployeeRepository employeeRepository,
+            IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<int>> Handle(
+            CreateEmployeeCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingEmployee = await _employeeRepository.GetByCpfAsync(request.Cpf);
-            if (existingEmployee != null)
+            var existingEmployee =
+                await _employeeRepository.GetByCpfAsync(request.Cpf);
+
+            if (existingEmployee is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.CpfAlreadyExists, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.CpfAlreadyExists
+                );
             }
 
             var employee = _mapper.Map<Employee>(request);
 
             await _employeeRepository.AddAsync(employee);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Funcionário"), employee.Id);
+            return ApiResponse<int>.SuccessResponse(
+                StatusCodes.Status201Created,
+                ApiMessages.CreatedSuccessfully("Funcionário"),
+                employee.Id
+            );
         }
     }
 }

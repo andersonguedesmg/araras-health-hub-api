@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
 {
-    public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, ApiResponse<bool>>
+    public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, ApiResponse<object>>
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
@@ -24,30 +24,30 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<bool>> Handle(
+        public async Task<ApiResponse<object>> Handle(
             UpdateEmployeeCommand request,
             CancellationToken cancellationToken)
         {
-            var existingEmployee = await _employeeRepository.GetByIdAsync(request.Id);
+            var existingEmployee =
+                await _employeeRepository.GetByIdAsync(request.Id);
 
             if (existingEmployee is null)
             {
-                return new ApiResponse<bool>(
+                return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Funcionário"),
-                    false);
+                    ApiMessages.NotFound("Funcionário")
+                );
             }
 
             _mapper.Map(request, existingEmployee);
-
             existingEmployee.SetUpdatedOn();
 
             await _employeeRepository.UpdateAsync(existingEmployee);
 
-            return new ApiResponse<bool>(
+            return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.UpdatedSuccessfully("Funcionário"),
-                true);
+                ApiMessages.UpdatedSuccessfully("Funcionário")
+            );
         }
     }
 }

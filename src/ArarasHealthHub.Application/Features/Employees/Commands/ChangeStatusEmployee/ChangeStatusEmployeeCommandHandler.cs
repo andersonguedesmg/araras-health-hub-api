@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEmployee
 {
-    public class ChangeStatusEmployeeCommandHandler : IRequestHandler<ChangeStatusEmployeeCommand, ApiResponse<bool>>
+    public class ChangeStatusEmployeeCommandHandler : IRequestHandler<ChangeStatusEmployeeCommand, ApiResponse<object>>
     {
         private readonly IEmployeeRepository _employeeRepository;
 
@@ -20,7 +20,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEm
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(
+        public async Task<ApiResponse<object>> Handle(
             ChangeStatusEmployeeCommand command,
             CancellationToken cancellationToken)
         {
@@ -29,10 +29,10 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEm
 
             if (existingEmployee is null)
             {
-                return new ApiResponse<bool>(
+                return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Funcionário"),
-                    false);
+                    ApiMessages.NotFound("Funcionário")
+                );
             }
 
             if (command.IsActive)
@@ -50,10 +50,10 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEm
                 ? ApiMessages.ActivatedSuccessfully("Funcionário")
                 : ApiMessages.DeactivatedSuccessfully("Funcionário");
 
-            return new ApiResponse<bool>(
+            return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                message,
-                true);
+                message
+            );
         }
     }
 }
