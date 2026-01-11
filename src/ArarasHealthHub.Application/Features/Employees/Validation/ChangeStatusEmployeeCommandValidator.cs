@@ -11,11 +11,9 @@ namespace ArarasHealthHub.Application.Features.Employees.Validation
     {
         public ChangeStatusEmployeeCommandValidator()
         {
-            RuleFor(command => command.Id)
-                .GreaterThan(0).WithMessage("O ID do funcionário é inválido para alterar o status.");
-
-            RuleFor(command => command.IsActive)
-                .NotNull().WithMessage("O status 'IsActive' é obrigatório.");
+            RuleFor(x => x.Id)
+                .GreaterThan(0)
+                .WithMessage("O identificador do funcionário é inválido.");
         }
     }
 }
