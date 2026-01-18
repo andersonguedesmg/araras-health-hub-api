@@ -11,10 +11,11 @@ using ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.DeleteEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.ChangeStatusEmployee;
-using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdownOptions;
+using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdown;
 using ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees;
 using araras_health_hub_api.Common;
 using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Core.Pagination;
 
 namespace ArarasHealthHub.Api.Controllers
 {
@@ -41,7 +42,9 @@ namespace ArarasHealthHub.Api.Controllers
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreateEmployeeCommand command)
-            => await Send(command);
+        {
+            return await Send(command);
+        }
 
         [HttpPut("{id:int}")]
         [Authorize(Policy = "CanManageResource")]
@@ -68,9 +71,11 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("dropdown")]
-        [ProducesResponseType(typeof(ApiResponse<List<EmployeeNameDto>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDropdown()
-            => await Send(new GetEmployeeDropdownOptionsQuery());
+        [ProducesResponseType(typeof(PagedResponse<EmployeeNameDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDropdown([FromQuery] GetEmployeeDropdownQuery query)
+        {
+            return await Send(query);
+        }
 
         [HttpGet("export")]
         [Authorize(Policy = "CanManageResource")]

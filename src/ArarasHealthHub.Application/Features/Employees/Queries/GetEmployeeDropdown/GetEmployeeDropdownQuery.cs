@@ -6,7 +6,7 @@ using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
+namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdown
 {
-    public class GetAllEmployeesQuery : PagedRequest, IRequest<PagedResponse<EmployeeDto>> { }
+    public class GetEmployeeDropdownQuery : PagedRequest, IRequest<PagedResponse<EmployeeNameDto>> { }
 }

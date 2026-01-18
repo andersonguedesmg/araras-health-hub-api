@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Core.Pagination;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,9 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
 
-        public GetAllEmployeesQueryHandler(IEmployeeRepository employeeRepository, IMapper mapper)
+        public GetAllEmployeesQueryHandler(
+            IEmployeeRepository employeeRepository,
+            IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _mapper = mapper;
@@ -25,57 +28,49 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
 
         public async Task<PagedResponse<EmployeeDto>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var employeesQuery = _employeeRepository.GetQueryable();
+            var queryable = _employeeRepository.GetQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTerm = request.SearchTerm.Trim().ToLower();
-
-                employeesQuery = employeesQuery.Where(e =>
-                    e.Name.ToLower().Contains(searchTerm) ||
-                    e.Cpf.ToLower().Contains(searchTerm) ||
-                    e.Function.ToLower().Contains(searchTerm) ||
-                    e.Phone.ToLower().Contains(searchTerm)
+                var term = request.SearchTerm.Trim().ToLower();
+                queryable = queryable.Where(e =>
+                    e.Name.ToLower().Contains(term) ||
+                    e.Cpf.ToLower().Contains(term) ||
+                    e.Function.ToLower().Contains(term) ||
+                    e.Phone.ToLower().Contains(term)
                 );
             }
 
-            var totalCount = await employeesQuery.CountAsync(cancellationToken);
+            var totalCount = await queryable.CountAsync(cancellationToken);
 
-            IOrderedQueryable<Employee> orderedQuery;
-            switch (request.OrderBy?.ToLower())
+            var orderingColumns = new Dictionary<string, Expression<Func<Employee, object>>>
             {
-                case "name":
-                    orderedQuery = request.SortOrder?.ToLower() == "desc"
-                        ? employeesQuery.OrderByDescending(p => p.Name)
-                        : employeesQuery.OrderBy(p => p.Name);
-                    break;
-                case "cpf":
-                    orderedQuery = request.SortOrder?.ToLower() == "desc" ?
-                        employeesQuery.OrderByDescending(e => e.Cpf) :
-                        employeesQuery.OrderBy(e => e.Cpf);
-                    break;
-                case "function":
-                    orderedQuery = request.SortOrder?.ToLower() == "desc" ?
-                        employeesQuery.OrderByDescending(e => e.Function) :
-                        employeesQuery.OrderBy(e => e.Function);
-                    break;
-                default:
-                    orderedQuery = employeesQuery.OrderBy(e => e.Name);
-                    break;
-            }
+                ["name"] = e => e.Name,
+                ["cpf"] = e => e.Cpf,
+                ["function"] = e => e.Function,
+                ["phone"] = e => e.Phone
+            };
 
-            var pagedEmployees = await orderedQuery
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync(cancellationToken);
+            queryable = queryable.ApplyOrdering(
+                request.OrderBy?.ToLower(),
+                request.SortOrder?.ToLower() ?? "asc",
+                orderingColumns
+            );
 
-            var employeeDtos = _mapper.Map<List<EmployeeDto>>(pagedEmployees);
+            queryable = queryable.ApplyPagination(
+                request.PageNumber,
+                request.PageSize
+            );
 
-            return new PagedResponse<EmployeeDto>(
+            var items = await queryable.ToListAsync(cancellationToken);
+
+            var dtoList = _mapper.Map<IReadOnlyList<EmployeeDto>>(items);
+
+            return PagedResponse<EmployeeDto>.SuccessPaged(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                employeeDtos
+                dtoList
             );
         }
     }
