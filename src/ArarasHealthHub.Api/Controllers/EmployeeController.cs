@@ -27,7 +27,9 @@ namespace ArarasHealthHub.Api.Controllers
         [Authorize(Policy = "CanReadManagementResource")]
         [ProducesResponseType(typeof(PagedResponse<EmployeeDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllEmployeesQuery query)
-            => await Send(query);
+        {
+            return await Send(query);
+        }
 
         [HttpGet("{id:int}")]
         [Authorize(Policy = "CanReadManagementResource")]
@@ -49,6 +51,7 @@ namespace ArarasHealthHub.Api.Controllers
         [HttpPut("{id:int}")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(int id, UpdateEmployeeCommand command)
         {
             return await Send(command.WithId(id));
@@ -57,6 +60,7 @@ namespace ArarasHealthHub.Api.Controllers
         [HttpPatch("{id:int}/status")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeStatus(int id, ChangeStatusEmployeeCommand command)
         {
             return await Send(command.WithId(id));
@@ -65,6 +69,7 @@ namespace ArarasHealthHub.Api.Controllers
         [HttpDelete("{id:int}")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
             return await Send(new DeleteEmployeeCommand(0).WithId(id));
