@@ -10,27 +10,37 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.DeleteSupplier
 {
-    public class DeleteSupplierCommandHandler : IRequestHandler<DeleteSupplierCommand, ApiResponse<bool>>
+    public class DeleteSupplierCommandHandler : IRequestHandler<DeleteSupplierCommand, ApiResponse<object>>
     {
         private readonly ISupplierRepository _supplierRepository;
 
-        public DeleteSupplierCommandHandler(ISupplierRepository supplierRepository)
+        public DeleteSupplierCommandHandler(
+            ISupplierRepository supplierRepository)
         {
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(DeleteSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            DeleteSupplierCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingSupplier = await _supplierRepository.GetByIdAsync(request.Id);
+            var existingSupplier =
+                await _supplierRepository.GetByIdAsync(request.Id);
 
-            if (existingSupplier == null)
+            if (existingSupplier is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Fornecedor")
+                );
             }
 
             await _supplierRepository.DeleteAsync(existingSupplier);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Fornecedor"), true);
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.DeletedSuccessfully("Fornecedor")
+            );
         }
     }
 }

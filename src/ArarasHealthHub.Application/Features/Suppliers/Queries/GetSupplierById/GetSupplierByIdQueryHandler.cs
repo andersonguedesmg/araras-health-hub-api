@@ -17,24 +17,35 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById
         private readonly ISupplierRepository _supplierRepository;
         private readonly IMapper _mapper;
 
-        public GetSupplierByIdQueryHandler(ISupplierRepository supplierRepository, IMapper mapper)
+        public GetSupplierByIdQueryHandler(
+            ISupplierRepository supplierRepository,
+            IMapper mapper)
         {
             _supplierRepository = supplierRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<SupplierDto>> Handle(GetSupplierByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<SupplierDto>> Handle(
+            GetSupplierByIdQuery request,
+            CancellationToken cancellationToken)
         {
             var supplier = await _supplierRepository.GetByIdAsync(request.Id);
 
-            if (supplier == null)
+            if (supplier is null)
             {
-                return new ApiResponse<SupplierDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), null!);
+                return ApiResponse<SupplierDto>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Fornecedor")
+                );
             }
 
             var supplierDto = _mapper.Map<SupplierDto>(supplier);
 
-            return new ApiResponse<SupplierDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Fornecedor"), supplierDto);
+            return ApiResponse<SupplierDto>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.FoundSuccessfully("Fornecedor"),
+                supplierDto
+            );
         }
     }
 }

@@ -8,5 +8,9 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById
 {
-    public record GetSupplierByIdQuery(int Id) : IRequest<ApiResponse<SupplierDto>>;
+    public record GetSupplierByIdQuery(int Id) : IRequest<ApiResponse<SupplierDto>>
+    {
+        public GetSupplierByIdQuery WithId(int id)
+            => this with { Id = id };
+    }
 }

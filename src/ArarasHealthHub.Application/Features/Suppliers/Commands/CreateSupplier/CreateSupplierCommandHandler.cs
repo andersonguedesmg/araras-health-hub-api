@@ -17,25 +17,38 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
         private readonly ISupplierRepository _supplierRepository;
         private readonly IMapper _mapper;
 
-        public CreateSupplierCommandHandler(ISupplierRepository supplierRepository, IMapper mapper)
+        public CreateSupplierCommandHandler(
+            ISupplierRepository supplierRepository,
+            IMapper mapper)
         {
             _supplierRepository = supplierRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<int>> Handle(
+            CreateSupplierCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingSupplier = await _supplierRepository.GetByCnpjAsync(request.Cnpj);
-            if (existingSupplier != null)
+            var existingSupplier =
+                await _supplierRepository.GetByCnpjAsync(request.Cnpj);
+
+            if (existingSupplier is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.CnpjAlreadyExists, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.CnpjAlreadyExists
+                );
             }
 
             var supplier = _mapper.Map<Supplier>(request);
 
             await _supplierRepository.AddAsync(supplier);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Fornecedor"), supplier.Id);
+            return ApiResponse<int>.SuccessResponse(
+                StatusCodes.Status201Created,
+                ApiMessages.CreatedSuccessfully("Fornecedor"),
+                supplier.Id
+            );
         }
     }
 }

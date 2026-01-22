@@ -10,22 +10,29 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.ChangeStatusSupplier
 {
-    public class ChangeStatusSupplierCommandHandler : IRequestHandler<ChangeStatusSupplierCommand, ApiResponse<bool>>
+    public class ChangeStatusSupplierCommandHandler : IRequestHandler<ChangeStatusSupplierCommand, ApiResponse<object>>
     {
         private readonly ISupplierRepository _supplierRepository;
 
-        public ChangeStatusSupplierCommandHandler(ISupplierRepository supplierRepository)
+        public ChangeStatusSupplierCommandHandler(
+            ISupplierRepository supplierRepository)
         {
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(ChangeStatusSupplierCommand command, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            ChangeStatusSupplierCommand command,
+            CancellationToken cancellationToken)
         {
-            var existingSupplier = await _supplierRepository.GetByIdAsync(command.Id);
+            var existingSupplier =
+                await _supplierRepository.GetByIdAsync(command.Id);
 
-            if (existingSupplier == null)
+            if (existingSupplier is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Fornecedor")
+                );
             }
 
             if (command.IsActive)
@@ -39,8 +46,14 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.ChangeStatusSu
 
             await _supplierRepository.UpdateAsync(existingSupplier);
 
-            var message = command.IsActive ? ApiMessages.ActivatedSuccessfully("Fornecedor") : ApiMessages.DeactivatedSuccessfully("Fornecedor");
-            return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
+            var message = command.IsActive
+                ? ApiMessages.ActivatedSuccessfully("Fornecedor")
+                : ApiMessages.DeactivatedSuccessfully("Fornecedor");
+
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                message
+            );
         }
     }
 }

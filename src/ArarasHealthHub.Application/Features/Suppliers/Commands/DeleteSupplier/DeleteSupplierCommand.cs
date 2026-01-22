@@ -7,5 +7,9 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.DeleteSupplier
 {
-    public record DeleteSupplierCommand(int Id) : IRequest<ApiResponse<bool>>;
+    public record DeleteSupplierCommand(int Id) : IRequest<ApiResponse<object>>
+    {
+        public DeleteSupplierCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

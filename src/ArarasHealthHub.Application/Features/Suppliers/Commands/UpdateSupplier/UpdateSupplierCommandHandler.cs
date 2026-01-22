@@ -11,33 +11,43 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
 {
-    public class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplierCommand, ApiResponse<bool>>
+    public class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplierCommand, ApiResponse<object>>
     {
         private readonly ISupplierRepository _supplierRepository;
         private readonly IMapper _mapper;
 
-        public UpdateSupplierCommandHandler(ISupplierRepository supplierRepository, IMapper mapper)
+        public UpdateSupplierCommandHandler(
+            ISupplierRepository supplierRepository,
+            IMapper mapper)
         {
             _supplierRepository = supplierRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<bool>> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            UpdateSupplierCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingSupplier = await _supplierRepository.GetByIdAsync(request.Id);
+            var existingSupplier =
+                await _supplierRepository.GetByIdAsync(request.Id);
 
-            if (existingSupplier == null)
+            if (existingSupplier is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Fornecedor"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Fornecedor")
+                );
             }
 
             _mapper.Map(request, existingSupplier);
-
             existingSupplier.SetUpdatedOn();
 
             await _supplierRepository.UpdateAsync(existingSupplier);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Fornecedor"), true);
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.UpdatedSuccessfully("Fornecedor")
+            );
         }
     }
 }

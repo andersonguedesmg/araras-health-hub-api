@@ -2,51 +2,75 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Suppliers.Dtos;
+using ArarasHealthHub.Application.Features.Suppliers.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using AutoMapper;
+using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers
 {
-    public class ExportSuppliersQueryHandler : IRequestHandler<ExportSuppliersQuery, IEnumerable<SupplierDto>>
+    public class ExportSuppliersQueryHandler : IRequestHandler<ExportSuppliersQuery, ApiResponse<FileResponse>>
     {
         private readonly ISupplierRepository _supplierRepository;
-        private readonly IMapper _mapper;
 
-        public ExportSuppliersQueryHandler(ISupplierRepository supplierRepository, IMapper mapper)
+        public ExportSuppliersQueryHandler(
+            ISupplierRepository supplierRepository)
         {
             _supplierRepository = supplierRepository;
-            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<SupplierDto>> Handle(ExportSuppliersQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<FileResponse>> Handle(ExportSuppliersQuery request, CancellationToken cancellationToken)
         {
-            var suppliersQuery = _supplierRepository.GetQueryable();
+            var query = _supplierRepository.GetQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
-                suppliersQuery = suppliersQuery.Where(s =>
-                    s.LegalName.ToLower().Contains(searchTermLower) ||
-                    s.TradeName.ToLower().Contains(searchTermLower) ||
-                    s.Cnpj.ToLower().Contains(searchTermLower) ||
-                    s.Address.Street.ToLower().Contains(searchTermLower) ||
-                    s.Address.Number.ToLower().Contains(searchTermLower) ||
-                    s.Address.Neighborhood.ToLower().Contains(searchTermLower) ||
-                    s.Address.City.ToLower().Contains(searchTermLower) ||
-                    s.Address.State.ToLower().Contains(searchTermLower) ||
-                    s.Address.Cep.ToLower().Contains(searchTermLower) ||
-                    s.Contact.Email.ToLower().Contains(searchTermLower) ||
-                    s.Contact.Phone.ToLower().Contains(searchTermLower)
+                var term = request.SearchTerm.Trim().ToLower();
+
+                query = query.Where(s =>
+                    s.LegalName.ToLower().Contains(term) ||
+                    s.TradeName.ToLower().Contains(term) ||
+                    s.Cnpj.ToLower().Contains(term) ||
+                    s.Address.Street.ToLower().Contains(term) ||
+                    s.Address.Number.ToLower().Contains(term) ||
+                    s.Address.Neighborhood.ToLower().Contains(term) ||
+                    s.Address.City.ToLower().Contains(term) ||
+                    s.Address.State.ToLower().Contains(term) ||
+                    s.Address.Cep.ToLower().Contains(term) ||
+                    s.Contact.Email.ToLower().Contains(term) ||
+                    s.Contact.Phone.ToLower().Contains(term)
                 );
             }
 
-            var allFilteredSuppliers = await suppliersQuery.OrderBy(s => s.LegalName).ToListAsync(cancellationToken);
-            var supplierDtos = _mapper.Map<IEnumerable<SupplierDto>>(allFilteredSuppliers);
+            var suppliers = await query
+                .OrderBy(s => s.LegalName)
+                .ToListAsync(cancellationToken);
 
-            return supplierDtos;
+            if (!suppliers.Any())
+            {
+                return ApiResponse<FileResponse>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.ExportEmpty("fornecedor")
+                );
+            }
+
+            var csvBytes = SupplierCsvExporter.Export(suppliers);
+
+            var fileResponse = new FileResponse
+            {
+                Content = csvBytes,
+                ContentType = "text/csv",
+                FileName = $"fornecedores_{DateTime.UtcNow:yyyyMMddHHmmss}.csv"
+            };
+
+            return ApiResponse<FileResponse>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.OperationSuccessful,
+                fileResponse
+            );
         }
     }
 }

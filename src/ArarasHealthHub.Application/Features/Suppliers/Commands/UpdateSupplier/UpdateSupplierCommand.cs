@@ -15,5 +15,9 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
         string Cnpj,
         AddressDto Address,
         ContactDto Contact
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public UpdateSupplierCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

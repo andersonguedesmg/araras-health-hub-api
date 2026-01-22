@@ -6,7 +6,7 @@ using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
+namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdown
 {
-    public class GetAllSuppliersQuery : PagedRequest, IRequest<PagedResponse<SupplierDto>> { }
+    public class GetSupplierDropdownQuery : PagedRequest, IRequest<PagedResponse<SupplierNameDto>> { }
 }
