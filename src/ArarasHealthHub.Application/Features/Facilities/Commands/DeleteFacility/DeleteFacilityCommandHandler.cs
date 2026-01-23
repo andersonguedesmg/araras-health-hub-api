@@ -10,27 +10,37 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.DeleteFacility
 {
-    public class DeleteFacilityCommandHandler : IRequestHandler<DeleteFacilityCommand, ApiResponse<bool>>
+    public class DeleteFacilityCommandHandler : IRequestHandler<DeleteFacilityCommand, ApiResponse<object>>
     {
         private readonly IFacilityRepository _facilityRepository;
 
-        public DeleteFacilityCommandHandler(IFacilityRepository facilityRepository)
+        public DeleteFacilityCommandHandler(
+            IFacilityRepository facilityRepository)
         {
             _facilityRepository = facilityRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(DeleteFacilityCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            DeleteFacilityCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingFacility = await _facilityRepository.GetByIdAsync(request.Id);
+            var existingFacility =
+                await _facilityRepository.GetByIdAsync(request.Id);
 
-            if (existingFacility == null)
+            if (existingFacility is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Unidade")
+                );
             }
 
             await _facilityRepository.DeleteAsync(existingFacility);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Unidade"), true);
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.DeletedSuccessfully("Unidade")
+            );
         }
     }
 }

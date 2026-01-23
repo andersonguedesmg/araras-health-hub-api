@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Core.Pagination;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,67 +18,67 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
         private readonly IFacilityRepository _facilityRepository;
         private readonly IMapper _mapper;
 
-        public GetAllFacilitiesQueryHandler(IFacilityRepository facilityRepository, IMapper mapper)
+        public GetAllFacilitiesQueryHandler(
+            IFacilityRepository facilityRepository,
+            IMapper mapper)
         {
             _facilityRepository = facilityRepository;
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<FacilityDto>> Handle(GetAllFacilitiesQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponse<FacilityDto>> Handle(
+            GetAllFacilitiesQuery request,
+            CancellationToken cancellationToken)
         {
-            var facilitiesQuery = _facilityRepository.GetQueryable();
-            facilitiesQuery = facilitiesQuery.Include(f => f.Accounts);
+            var queryable = _facilityRepository.GetQueryable();
+            queryable = queryable.Include(f => f.Accounts);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTerm = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim().ToLower();
 
-                facilitiesQuery = facilitiesQuery.Where(f =>
-                    f.Name.ToLower().Contains(searchTerm) ||
-                    f.Cnes.ToLower().Contains(searchTerm) ||
-                    f.Address.Street.ToLower().Contains(searchTerm) ||
-                    f.Address.Number.ToLower().Contains(searchTerm) ||
-                    f.Address.Neighborhood.ToLower().Contains(searchTerm) ||
-                    f.Address.City.ToLower().Contains(searchTerm) ||
-                    f.Address.State.ToLower().Contains(searchTerm) ||
-                    f.Address.Cep.ToLower().Contains(searchTerm) ||
-                    f.Contact.Email.ToLower().Contains(searchTerm) ||
-                    f.Contact.Phone.ToLower().Contains(searchTerm)
+                queryable = queryable.Where(f =>
+                    f.Name.ToLower().Contains(term) ||
+                    f.Cnes.ToLower().Contains(term) ||
+                    f.Address.Street.ToLower().Contains(term) ||
+                    f.Address.Number.ToLower().Contains(term) ||
+                    f.Address.Neighborhood.ToLower().Contains(term) ||
+                    f.Address.City.ToLower().Contains(term) ||
+                    f.Address.State.ToLower().Contains(term) ||
+                    f.Address.Cep.ToLower().Contains(term) ||
+                    f.Contact.Email.ToLower().Contains(term) ||
+                    f.Contact.Phone.ToLower().Contains(term)
                 );
             }
 
-            var totalCount = await facilitiesQuery.CountAsync(cancellationToken);
+            var totalCount = await queryable.CountAsync(cancellationToken);
 
-            IOrderedQueryable<Facility> orderedFacilities;
-            switch (request.OrderBy?.ToLower())
+            var orderingColumns = new Dictionary<string, Expression<Func<Facility, object>>>
             {
-                case "name":
-                    orderedFacilities = request.SortOrder?.ToLower() == "desc" ?
-                            facilitiesQuery.OrderByDescending(s => s.Name) :
-                            facilitiesQuery.OrderBy(s => s.Name);
-                    break;
-                case "cnes":
-                    orderedFacilities = request.SortOrder?.ToLower() == "desc" ?
-                            facilitiesQuery.OrderByDescending(s => s.Cnes) :
-                            facilitiesQuery.OrderBy(s => s.Cnes);
-                    break;
-                default:
-                    orderedFacilities = facilitiesQuery.OrderBy(e => e.Name);
-                    break;
-            }
+                ["name"] = f => f.Name,
+                ["cnes"] = f => f.Cnes,
+            };
 
-            var pagedFacilities = await orderedFacilities
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync(cancellationToken);
+            queryable = queryable.ApplyOrdering(
+                request.OrderBy?.ToLower(),
+                request.SortOrder?.ToLower() ?? "asc",
+                orderingColumns
+            );
 
-            var facilityDtos = _mapper.Map<List<FacilityDto>>(pagedFacilities);
+            queryable = queryable.ApplyPagination(
+                request.PageNumber,
+                request.PageSize
+            );
 
-            return new PagedResponse<FacilityDto>(
+            var items = await queryable.ToListAsync(cancellationToken);
+
+            var dtoList = _mapper.Map<IReadOnlyList<FacilityDto>>(items);
+
+            return PagedResponse<FacilityDto>.SuccessPaged(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                facilityDtos
+                dtoList
             );
         }
     }

@@ -6,7 +6,7 @@ using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities
+namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdown
 {
-    public class GetAllFacilitiesQuery : PagedRequest, IRequest<PagedResponse<FacilityDto>> { }
+    public class GetFacilityDropdownQuery : PagedRequest, IRequest<PagedResponse<FacilityNameDto>> { }
 }

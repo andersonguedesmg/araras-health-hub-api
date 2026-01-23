@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusFacility;
+using ArarasHealthHub.Application.Features.Facilities.Commands.DeleteFacility;
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Validation
 {
-    public class ChangeStatusFacilityCommandValidator : AbstractValidator<ChangeStatusFacilityCommand>
+    public class DeleteFacilityCommandValidator : AbstractValidator<DeleteFacilityCommand>
     {
-        public ChangeStatusFacilityCommandValidator()
+        public DeleteFacilityCommandValidator()
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)

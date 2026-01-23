@@ -17,25 +17,38 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacilit
         private readonly IFacilityRepository _facilityRepository;
         private readonly IMapper _mapper;
 
-        public CreateFacilityCommandHandler(IFacilityRepository facilityRepository, IMapper mapper)
+        public CreateFacilityCommandHandler(
+            IFacilityRepository facilityRepository,
+            IMapper mapper)
         {
             _facilityRepository = facilityRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateFacilityCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<int>> Handle(
+            CreateFacilityCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingFacility = await _facilityRepository.GetByNameAsync(request.Name);
-            if (existingFacility != null)
+            var existingFacility =
+                await _facilityRepository.GetByNameAsync(request.Name);
+
+            if (existingFacility is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.FacilityAlreadyExists, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.FacilityAlreadyExists
+                );
             }
 
             var facility = _mapper.Map<Facility>(request);
 
             await _facilityRepository.AddAsync(facility);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Unidade"), facility.Id);
+            return ApiResponse<int>.SuccessResponse(
+                StatusCodes.Status201Created,
+                ApiMessages.CreatedSuccessfully("Unidade"),
+                facility.Id
+            );
         }
     }
 }

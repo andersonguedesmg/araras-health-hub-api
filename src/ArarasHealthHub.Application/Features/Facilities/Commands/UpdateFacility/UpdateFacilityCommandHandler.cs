@@ -11,33 +11,43 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility
 {
-    public class UpdateFacilityCommandHandler : IRequestHandler<UpdateFacilityCommand, ApiResponse<bool>>
+    public class UpdateFacilityCommandHandler : IRequestHandler<UpdateFacilityCommand, ApiResponse<object>>
     {
         private readonly IFacilityRepository _facilityRepository;
         private readonly IMapper _mapper;
 
-        public UpdateFacilityCommandHandler(IFacilityRepository facilityRepository, IMapper mapper)
+        public UpdateFacilityCommandHandler(
+            IFacilityRepository facilityRepository,
+            IMapper mapper)
         {
             _facilityRepository = facilityRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<bool>> Handle(UpdateFacilityCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            UpdateFacilityCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingFacility = await _facilityRepository.GetByIdAsync(request.Id);
+            var existingFacility =
+                await _facilityRepository.GetByIdAsync(request.Id);
 
-            if (existingFacility == null)
+            if (existingFacility is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Unidade")
+                );
             }
 
             _mapper.Map(request, existingFacility);
-
             existingFacility.SetUpdatedOn();
 
             await _facilityRepository.UpdateAsync(existingFacility);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Unidade"), true);
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.UpdatedSuccessfully("Unidade")
+            );
         }
     }
 }

@@ -37,50 +37,50 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityPro
 
         public async Task<ApiResponse<FacilityProfileDto>> Handle(GetFacilityProfileQuery request, CancellationToken cancellationToken)
         {
-            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+            // var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
 
-            if (currentUser == null)
-            {
-                return new ApiResponse<FacilityProfileDto>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, null!);
-            }
+            // if (currentUser == null)
+            // {
+            //     return new ApiResponse<FacilityProfileDto>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, false);
+            // }
 
-            var facilityId = currentUser.FacilityId;
-            var facility = await _dbContext.Facilities
-                .AsNoTracking()
-                .FirstOrDefaultAsync(f => f.Id == facilityId, cancellationToken);
+            // var facilityId = currentUser.FacilityId;
+            // var facility = await _dbContext.Facilities
+            //     .AsNoTracking()
+            //     .FirstOrDefaultAsync(f => f.Id == facilityId, cancellationToken);
 
-            if (facility == null)
-            {
-                return new ApiResponse<FacilityProfileDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), null!);
-            }
+            // if (facility == null)
+            // {
+            //     return new ApiResponse<FacilityProfileDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), null!);
+            // }
 
-            var users = await _dbContext.Users
-                .AsNoTracking()
-                .Where(u => u.FacilityId == facilityId)
-                .ToListAsync(cancellationToken);
+            // var users = await _dbContext.Users
+            //     .AsNoTracking()
+            //     .Where(u => u.FacilityId == facilityId)
+            //     .ToListAsync(cancellationToken);
 
-            var profileDto = _mapper.Map<FacilityProfileDto>(facility);
+            // var profileDto = _mapper.Map<FacilityProfileDto>(facility);
 
-            var accountDetailsList = new List<AccountDetailsDto>();
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
+            // var accountDetailsList = new List<AccountDetailsDto>();
+            // foreach (var user in users)
+            // {
+            //     var roles = await _userManager.GetRolesAsync(user);
 
-                var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
+            //     var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
 
-                accountDetailsList.Add(new AccountDetailsDto
-                {
-                    UserId = user.Id,
-                    UserName = user.UserName!,
-                    IsActive = user.IsActive,
-                    Scope = user.Scope,
-                    Roles = roles.ToList()
-                });
-            }
+            //     accountDetailsList.Add(new AccountDetailsDto
+            //     {
+            //         UserId = user.Id,
+            //         UserName = user.UserName!,
+            //         IsActive = user.IsActive,
+            //         Scope = user.Scope,
+            //         Roles = roles.ToList()
+            //     });
+            // }
 
-            profileDto.FacilityAccounts = accountDetailsList;
-
-            return new ApiResponse<FacilityProfileDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Perfil da Unidade"), profileDto);
+            // profileDto.FacilityAccounts = accountDetailsList;
+            return null!;
+            // return new ApiResponse<FacilityProfileDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Perfil da Unidade"), profileDto);
         }
     }
 }

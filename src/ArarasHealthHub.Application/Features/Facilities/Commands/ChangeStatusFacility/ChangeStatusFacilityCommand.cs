@@ -10,5 +10,9 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusF
     public record ChangeStatusFacilityCommand(
         int Id,
         bool IsActive
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public ChangeStatusFacilityCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

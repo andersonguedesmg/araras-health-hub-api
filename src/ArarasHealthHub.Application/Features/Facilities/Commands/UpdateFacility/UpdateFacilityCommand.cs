@@ -14,5 +14,9 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacilit
         string Cnes,
         AddressDto Address,
         ContactDto Contact
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public UpdateFacilityCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

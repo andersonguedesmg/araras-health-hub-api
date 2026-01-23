@@ -7,5 +7,9 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.DeleteFacility
 {
-    public record DeleteFacilityCommand(int Id) : IRequest<ApiResponse<bool>>;
+    public record DeleteFacilityCommand(int Id) : IRequest<ApiResponse<object>>
+    {
+        public DeleteFacilityCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

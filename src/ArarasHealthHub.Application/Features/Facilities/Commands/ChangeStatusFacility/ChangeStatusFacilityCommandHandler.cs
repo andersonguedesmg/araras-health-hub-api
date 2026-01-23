@@ -10,22 +10,29 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusFacility
 {
-    public class ChangeStatusFacilityCommandHandler : IRequestHandler<ChangeStatusFacilityCommand, ApiResponse<bool>>
+    public class ChangeStatusFacilityCommandHandler : IRequestHandler<ChangeStatusFacilityCommand, ApiResponse<object>>
     {
         private readonly IFacilityRepository _facilityRepository;
 
-        public ChangeStatusFacilityCommandHandler(IFacilityRepository FacilityRepository)
+        public ChangeStatusFacilityCommandHandler(
+            IFacilityRepository FacilityRepository)
         {
             _facilityRepository = FacilityRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(ChangeStatusFacilityCommand command, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            ChangeStatusFacilityCommand command,
+            CancellationToken cancellationToken)
         {
-            var existingFacility = await _facilityRepository.GetByIdAsync(command.Id);
+            var existingFacility =
+                await _facilityRepository.GetByIdAsync(command.Id);
 
-            if (existingFacility == null)
+            if (existingFacility is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Unidade")
+                );
             }
 
             if (command.IsActive)
@@ -39,8 +46,14 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusF
 
             await _facilityRepository.UpdateAsync(existingFacility);
 
-            var message = command.IsActive ? ApiMessages.ActivatedSuccessfully("Unidade") : ApiMessages.DeactivatedSuccessfully("Unidade");
-            return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
+            var message = command.IsActive
+                ? ApiMessages.ActivatedSuccessfully("Unidade")
+                : ApiMessages.DeactivatedSuccessfully("Unidade");
+
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                message
+            );
         }
     }
 }

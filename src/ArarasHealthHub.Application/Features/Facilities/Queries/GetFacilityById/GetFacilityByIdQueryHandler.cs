@@ -17,24 +17,35 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityByI
         private readonly IFacilityRepository _facilityRepository;
         private readonly IMapper _mapper;
 
-        public GetFacilityByIdQueryHandler(IFacilityRepository facilityRepository, IMapper mapper)
+        public GetFacilityByIdQueryHandler(
+            IFacilityRepository facilityRepository,
+            IMapper mapper)
         {
             _facilityRepository = facilityRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<FacilityDto>> Handle(GetFacilityByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<FacilityDto>> Handle(
+            GetFacilityByIdQuery request,
+            CancellationToken cancellationToken)
         {
-            var facility = await _facilityRepository.GetByIdWithAccountsAsync(request.Id);
+            var facility = await _facilityRepository.GetByIdAsync(request.Id);
 
-            if (facility == null)
+            if (facility is null)
             {
-                return new ApiResponse<FacilityDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), null!);
+                return ApiResponse<FacilityDto>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Unidade")
+                );
             }
 
             var facilityDto = _mapper.Map<FacilityDto>(facility);
 
-            return new ApiResponse<FacilityDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Unidade"), facilityDto);
+            return ApiResponse<FacilityDto>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.FoundSuccessfully("Unidade"),
+                facilityDto
+            );
         }
     }
 }

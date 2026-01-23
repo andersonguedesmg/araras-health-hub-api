@@ -17,21 +17,32 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
         {
             _facilityRepository = facilityRepository;
 
-            RuleFor(command => command.Name)
-                .NotEmpty().WithMessage("O nome da unidade é obrigatório.")
-                .MaximumLength(100).WithMessage("O nome da unidade não pode exceder 100 caracteres.")
-                .MustAsync(BeUniqueName).WithMessage("Já existe uma unidade cadastrada com este nome.");
+            RuleFor(x => x.Id)
+                .GreaterThan(0)
+                .WithMessage("O identificador do funcionário é inválido.");
 
-            RuleFor(command => command.Cnes)
-                .NotEmpty().WithMessage("O código CNES é obrigatório.")
-                .Length(7).WithMessage("O código CNES deve conter 7 dígitos.");
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                    .WithMessage("O nome é obrigatório.")
+                .MaximumLength(100)
+                    .WithMessage("O nome não pode exceder 100 caracteres.")
+                .MustAsync(BeUniqueName)
+                    .WithMessage("Já existe uma unidade cadastrada com este nome.");
 
-            RuleFor(command => command.Address)
-                .NotNull().WithMessage("O objeto de endereço é obrigatório.")
+            RuleFor(x => x.Cnes)
+                .NotEmpty()
+                    .WithMessage("O código CNES é obrigatório.")
+                .MaximumLength(7)
+                    .WithMessage("O código CNES não pode exceder 7 caracteres.");
+
+            RuleFor(x => x.Address)
+                .NotNull()
+                    .WithMessage("O objeto de endereço é obrigatório.")
                 .SetValidator(new AddressDtoValidator());
 
-            RuleFor(command => command.Contact)
-                .NotNull().WithMessage("O objeto de contato é obrigatório.")
+            RuleFor(x => x.Contact)
+                .NotNull()
+                    .WithMessage("O objeto de contato é obrigatório.")
                 .SetValidator(new ContactDtoValidator());
         }
 
