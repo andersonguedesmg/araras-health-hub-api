@@ -22,7 +22,7 @@ namespace ArarasHealthHub.Api.Controllers
 {
     [Route("api/v1/suppliers")]
     [Authorize]
-    public class SupplierController : BaseApiController
+    public class SuppliersController : BaseApiController
     {
         [HttpGet]
         [Authorize(Policy = "CanReadManagementResource")]
