@@ -13,7 +13,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
-                .WithMessage("O identificador do funcionário é inválido.");
+                .WithMessage("O identificador da unidade é inválido.");
         }
     }
 }
