@@ -6,7 +6,7 @@ using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
+namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdown
 {
-    public class GetAllProductsQuery : PagedRequest, IRequest<PagedResponse<ProductDto>> { }
+    public class GetProductDropdownQuery : PagedRequest, IRequest<PagedResponse<ProductNameDto>> { }
 }

@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusProduct;
+using ArarasHealthHub.Application.Features.Products.Commands.DeleteProduct;
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.Products.Validation
 {
-    public class ChangeStatusProductCommandValidator : AbstractValidator<ChangeStatusProductCommand>
+    public class DeleteProductCommandValidator : AbstractValidator<DeleteProductCommand>
     {
-        public ChangeStatusProductCommandValidator()
+        public DeleteProductCommandValidator()
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)

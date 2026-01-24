@@ -17,26 +17,38 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+        public CreateProductCommandHandler(
+            IProductRepository productRepository,
+            IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<int>> Handle(
+            CreateProductCommand request,
+            CancellationToken cancellationToken)
         {
+            var existingProduct =
+                await _productRepository.GetByProductNameAsync(request.Name);
 
-            var existingProduct = await _productRepository.GetByProductNameAsync(request.Name);
-            if (existingProduct != null)
+            if (existingProduct is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.ProductAlreadyExists, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.ProductAlreadyExists
+                );
             }
 
             var product = _mapper.Map<Product>(request);
 
             await _productRepository.AddAsync(product);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Produto"), product.Id);
+            return ApiResponse<int>.SuccessResponse(
+                StatusCodes.Status201Created,
+                ApiMessages.CreatedSuccessfully("Produto"),
+                product.Id
+            );
         }
     }
 }

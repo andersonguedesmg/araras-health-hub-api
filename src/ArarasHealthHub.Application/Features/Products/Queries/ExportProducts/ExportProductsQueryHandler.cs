@@ -2,47 +2,71 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Products.Dtos;
+using ArarasHealthHub.Application.Features.Products.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using AutoMapper;
+using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Products.Queries.ExportProducts
 {
-    public class ExportProductsQueryHandler : IRequestHandler<ExportProductsQuery, IEnumerable<ProductDto>>
+    public class ExportProductsQueryHandler : IRequestHandler<ExportProductsQuery, ApiResponse<FileResponse>>
     {
         private readonly IProductRepository _productRepository;
-        private readonly IMapper _mapper;
 
-        public ExportProductsQueryHandler(IProductRepository productRepository, IMapper mapper)
+        public ExportProductsQueryHandler(
+            IProductRepository productRepository)
         {
             _productRepository = productRepository;
-            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(ExportProductsQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<FileResponse>> Handle(
+            ExportProductsQuery request,
+            CancellationToken cancellationToken)
         {
-            var productsQuery = _productRepository.GetQueryable();
+            var query = _productRepository.GetQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTerm = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim().ToLower();
 
-                productsQuery = productsQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTerm) ||
-                    p.Description.ToLower().Contains(searchTerm) ||
-                    p.MainCategory!.Name.ToLower().Contains(searchTerm) ||
-                    p.SubCategory!.Name.ToLower().Contains(searchTerm) ||
-                    p.PresentationForm!.Name.ToLower().Contains(searchTerm)
+                query = query.Where(p =>
+                    p.Name.ToLower().Contains(term) ||
+                    p.Description.ToLower().Contains(term) ||
+                    p.MainCategory!.Name.ToLower().Contains(term) ||
+                    p.SubCategory!.Name.ToLower().Contains(term) ||
+                    p.PresentationForm!.Name.ToLower().Contains(term)
                 );
             }
 
-            var allFilteredProducts = await productsQuery
-                .OrderBy(p => p.Name)
+            var products = await query
+                .OrderBy(e => e.Name)
                 .ToListAsync(cancellationToken);
 
-            return _mapper.Map<IEnumerable<ProductDto>>(allFilteredProducts);
+            if (!products.Any())
+            {
+                return ApiResponse<FileResponse>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.ExportEmpty("produto")
+                );
+            }
+
+            var csvBytes = ProductCsvExporter.Export(products);
+
+            var fileResponse = new FileResponse
+            {
+                Content = csvBytes,
+                ContentType = "text/csv",
+                FileName = $"produtos_{DateTime.UtcNow:yyyyMMddHHmmss}.csv"
+            };
+
+            return ApiResponse<FileResponse>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.OperationSuccessful,
+                fileResponse
+            );
         }
     }
 }

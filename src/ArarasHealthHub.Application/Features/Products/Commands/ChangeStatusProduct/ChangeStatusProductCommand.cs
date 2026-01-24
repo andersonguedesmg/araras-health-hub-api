@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 
@@ -10,5 +11,9 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusPro
     public record ChangeStatusProductCommand(
         int Id,
         bool IsActive
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public ChangeStatusProductCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

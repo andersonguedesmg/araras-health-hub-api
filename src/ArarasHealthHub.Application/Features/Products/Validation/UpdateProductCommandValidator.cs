@@ -18,35 +18,38 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
         {
             _productRepository = productRepository;
 
-            RuleFor(command => command.Id)
-                .GreaterThan(0).WithMessage("ID do produto inválido.")
-                .MustAsync(ProductMustExist).WithMessage("Produto não encontrado.");
+            RuleFor(x => x.Id)
+                .GreaterThan(0)
+                .WithMessage("O identificador do produto é inválido.");
 
-            RuleFor(command => command.Name)
-                .NotEmpty().WithMessage("O nome do produto é obrigatório.")
-                .MaximumLength(150).WithMessage("O nome do produto não pode exceder 150 caracteres.")
-                .MustAsync(BeUniqueProductNameOnUpdate).WithMessage("Já existe um produto cadastrado com este Nome.");
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                    .WithMessage("O nome é obrigatório.")
+                .MaximumLength(150)
+                    .WithMessage("O nome não pode exceder 150 caracteres.")
+                .MustAsync(BeUniqueProductNameOnUpdate)
+                    .WithMessage("Já existe um produto cadastrado com este nome.");
 
-            RuleFor(command => command.Description)
-                .NotEmpty().WithMessage("A descrição do produto é obrigatória.")
-                .MaximumLength(200).WithMessage("A descrição do produto não pode exceder 200 caracteres.");
+            RuleFor(x => x.Description)
+                .NotEmpty()
+                    .WithMessage("A descrição é obrigatória.")
+                .MaximumLength(200)
+                    .WithMessage("A descrição não pode exceder 200 caracteres.");
 
-            RuleFor(x => x.MainCategoryId).NotEmpty()
+            RuleFor(x => x.MainCategoryId)
+                .NotEmpty()
                 .MustAsync(async (id, ct) => await context.MainCategories.AnyAsync(c => c.Id == id, ct))
                 .WithMessage("Categoria Principal inválida.");
 
-            RuleFor(x => x.SubCategoryId).NotEmpty()
+            RuleFor(x => x.SubCategoryId)
+                .NotEmpty()
                 .MustAsync(async (id, ct) => await context.SubCategories.AnyAsync(c => c.Id == id, ct))
                 .WithMessage("Subcategoria inválida.");
 
-            RuleFor(x => x.PresentationFormId).NotEmpty()
+            RuleFor(x => x.PresentationFormId)
+                .NotEmpty()
                 .MustAsync(async (id, ct) => await context.PresentationForms.AnyAsync(c => c.Id == id, ct))
                 .WithMessage("Forma de apresentação inválida.");
-        }
-
-        private async Task<bool> ProductMustExist(int id, CancellationToken cancellationToken)
-        {
-            return await _productRepository.ProductExists(id);
         }
 
         private async Task<bool> BeUniqueProductNameOnUpdate(UpdateProductCommand command, string name, CancellationToken cancellationToken)

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Core.Pagination;
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,67 +18,62 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public GetAllProductsQueryHandler(IProductRepository productRepository, IMapper mapper)
+        public GetAllProductsQueryHandler(
+            IProductRepository productRepository,
+            IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<ProductDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponse<ProductDto>> Handle(
+            GetAllProductsQuery request,
+            CancellationToken cancellationToken)
         {
-            var productsQuery = _productRepository.GetQueryable();
+            var queryable = _productRepository.GetQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTerm = request.SearchTerm.Trim().ToLower();
-
-                productsQuery = productsQuery.Where(p =>
-                    p.Name.ToLower().Contains(searchTerm) ||
-                    p.Description.ToLower().Contains(searchTerm) ||
-                    p.MainCategory!.Name.ToLower().Contains(searchTerm) ||
-                    p.SubCategory!.Name.ToLower().Contains(searchTerm) ||
-                    p.PresentationForm!.Name.ToLower().Contains(searchTerm)
+                var term = request.SearchTerm.Trim().ToLower();
+                queryable = queryable.Where(p =>
+                    p.Name.ToLower().Contains(term) ||
+                    p.Description.ToLower().Contains(term) ||
+                    p.MainCategory!.Name.ToLower().Contains(term) ||
+                    p.SubCategory!.Name.ToLower().Contains(term) ||
+                    p.PresentationForm!.Name.ToLower().Contains(term)
                 );
             }
 
-            var totalCount = await productsQuery.CountAsync(cancellationToken);
+            var totalCount = await queryable.CountAsync(cancellationToken);
 
-            IOrderedQueryable<Product> orderedQuery;
-
-            switch (request.OrderBy?.ToLower())
+            var orderingColumns = new Dictionary<string, Expression<Func<Product, object>>>
             {
-                case "name":
-                    orderedQuery = request.SortOrder?.ToLower() == "desc"
-                        ? productsQuery.OrderByDescending(p => p.Name)
-                        : productsQuery.OrderBy(p => p.Name);
-                    break;
-                case "maincategory":
-                    orderedQuery = request.SortOrder?.ToLower() == "desc"
-                        ? productsQuery.OrderByDescending(p => p.MainCategory!.Name)
-                        : productsQuery.OrderBy(p => p.MainCategory!.Name);
-                    break;
-                case "subcategory":
-                    orderedQuery = request.SortOrder?.ToLower() == "desc"
-                        ? productsQuery.OrderByDescending(p => p.SubCategory!.Name)
-                        : productsQuery.OrderBy(p => p.SubCategory!.Name);
-                    break;
-                default:
-                    orderedQuery = productsQuery.OrderBy(p => p.Name);
-                    break;
-            }
+                ["name"] = p => p.Name,
+                ["maincategory"] = p => p.MainCategory!.Name,
+                ["subcategory"] = p => p.MainCategory!.Name,
+                ["presentationform"] = p => p.PresentationForm!.Name,
+            };
 
-            var pagedProducts = await orderedQuery
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync(cancellationToken);
+            queryable = queryable.ApplyOrdering(
+                request.OrderBy?.ToLower(),
+                request.SortOrder?.ToLower() ?? "asc",
+                orderingColumns
+            );
 
-            var productDtos = _mapper.Map<List<ProductDto>>(pagedProducts);
+            queryable = queryable.ApplyPagination(
+                request.PageNumber,
+                request.PageSize
+            );
 
-            return new PagedResponse<ProductDto>(
+            var items = await queryable.ToListAsync(cancellationToken);
+
+            var dtoList = _mapper.Map<IReadOnlyList<ProductDto>>(items);
+
+            return PagedResponse<ProductDto>.SuccessPaged(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                productDtos
+                dtoList
             );
         }
     }

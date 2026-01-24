@@ -17,24 +17,35 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public GetProductByIdQueryHandler(IProductRepository productRepository, IMapper mapper)
+        public GetProductByIdQueryHandler(
+            IProductRepository productRepository,
+            IMapper mapper)
         {
             _productRepository = productRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<ProductDto>> Handle(
+            GetProductByIdQuery request,
+            CancellationToken cancellationToken)
         {
-            var products = await _productRepository.GetByIdAsync(request.Id);
+            var product = await _productRepository.GetByIdAsync(request.Id);
 
-            if (products == null)
+            if (product is null)
             {
-                return new ApiResponse<ProductDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Produto"), null!);
+                return ApiResponse<ProductDto>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Produto")
+                );
             }
 
-            var productDto = _mapper.Map<ProductDto>(products);
+            var productDto = _mapper.Map<ProductDto>(product);
 
-            return new ApiResponse<ProductDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Produto"), productDto);
+            return ApiResponse<ProductDto>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.FoundSuccessfully("Produto"),
+                productDto
+            );
         }
     }
 }

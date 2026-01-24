@@ -3,37 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
+using ArarasHealthHub.Shared.Core.Pagination;
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.Products.Validation
 {
-    public class GetAllProductsQueryValidator : AbstractValidator<GetAllProductsQuery>
+    public class GetAllProductsQueryValidator : PagedQueryValidator<GetAllProductsQuery>
     {
         public GetAllProductsQueryValidator()
         {
-            RuleFor(x => x.PageNumber)
-                .GreaterThanOrEqualTo(1).WithMessage("O número da página deve ser maior ou igual a 1.");
-
-            RuleFor(x => x.PageSize)
-                .GreaterThanOrEqualTo(1).WithMessage("O tamanho da página deve ser maior ou igual a 1.")
-                .LessThanOrEqualTo(100).WithMessage("O tamanho da página não pode exceder 100.");
-
-            RuleFor(x => x.SortOrder)
-                .Must(BeValidSortOrder).WithMessage("A ordem de classificação deve ser 'asc' ou 'desc'.");
-
             RuleFor(x => x.OrderBy)
-                .Must(BeValidOrderByProperty).WithMessage("O campo para ordenação não é válido.");
-        }
-
-        private bool BeValidSortOrder(string sortOrder)
-        {
-            return sortOrder.ToLower() == "asc" || sortOrder.ToLower() == "desc";
-        }
-
-        private bool BeValidOrderByProperty(string orderBy)
-        {
-            var allowedProperties = new[] { "id", "name", "description", "mainCategory", "subCategory", "presentationForm" };
-            return allowedProperties.Contains(orderBy.ToLower());
+                .Must(x => x is null ||
+                           x.ToLower() is "name" or "maincategory" or "subcategory" or "presentationform")
+                .WithMessage("O campo de ordenação informado não é válido.");
         }
     }
 }

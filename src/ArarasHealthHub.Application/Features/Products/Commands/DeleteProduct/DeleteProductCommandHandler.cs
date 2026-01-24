@@ -10,27 +10,37 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Products.Commands.DeleteProduct
 {
-    public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, ApiResponse<bool>>
+    public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, ApiResponse<object>>
     {
         private readonly IProductRepository _productRepository;
 
-        public DeleteProductCommandHandler(IProductRepository productRepository)
+        public DeleteProductCommandHandler(
+            IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            DeleteProductCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingProduct = await _productRepository.GetByIdAsync(request.Id);
+            var existingProduct =
+                await _productRepository.GetByIdAsync(request.Id);
 
-            if (existingProduct == null)
+            if (existingProduct is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Produto"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Produto")
+                );
             }
 
             await _productRepository.DeleteAsync(existingProduct);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.DeletedSuccessfully("Produto"), true);
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.DeletedSuccessfully("Produto")
+            );
         }
     }
 }

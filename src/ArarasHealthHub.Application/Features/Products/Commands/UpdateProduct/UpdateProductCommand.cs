@@ -14,5 +14,9 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
         int MainCategoryId,
         int SubCategoryId,
         int PresentationFormId
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public UpdateProductCommand WithId(int id)
+            => this with { Id = id };
+    }
 }
