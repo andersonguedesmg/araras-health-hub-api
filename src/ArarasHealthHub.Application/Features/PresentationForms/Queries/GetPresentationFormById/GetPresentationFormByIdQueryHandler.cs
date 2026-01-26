@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
@@ -9,14 +10,14 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm
+namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormById
 {
-    public class UpdatePresentationFormCommandHandler : IRequestHandler<UpdatePresentationFormCommand, ApiResponse<object>>
+    public class GetPresentationFormByIdQueryHandler : IRequestHandler<GetPresentationFormByIdQuery, ApiResponse<PresentationFormDto>>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
         private readonly IMapper _mapper;
 
-        public UpdatePresentationFormCommandHandler(
+        public GetPresentationFormByIdQueryHandler(
             IPresentationFormRepository presentationFormRepository,
             IMapper mapper)
         {
@@ -24,29 +25,26 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Update
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<object>> Handle(
-            UpdatePresentationFormCommand request,
+        public async Task<ApiResponse<PresentationFormDto>> Handle(
+            GetPresentationFormByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var existingPresentationForm =
-                await _presentationFormRepository.GetByIdAsync(request.Id);
+            var presentationForm = await _presentationFormRepository.GetByIdAsync(request.Id);
 
-            if (existingPresentationForm is null)
+            if (presentationForm is null)
             {
-                return ApiResponse<object>.FailureResponse(
+                return ApiResponse<PresentationFormDto>.FailureResponse(
                     StatusCodes.Status404NotFound,
                     ApiMessages.NotFound("Forma de apresentação")
                 );
             }
 
-            _mapper.Map(request, existingPresentationForm);
-            existingPresentationForm.SetUpdatedOn();
+            var presentationFormDto = _mapper.Map<PresentationFormDto>(presentationForm);
 
-            await _presentationFormRepository.UpdateAsync(existingPresentationForm);
-
-            return ApiResponse<object>.SuccessResponse(
+            return ApiResponse<PresentationFormDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.UpdatedSuccessfully("Forma de apresentação")
+                ApiMessages.FoundSuccessfully("Forma de apresentação"),
+                presentationFormDto
             );
         }
     }

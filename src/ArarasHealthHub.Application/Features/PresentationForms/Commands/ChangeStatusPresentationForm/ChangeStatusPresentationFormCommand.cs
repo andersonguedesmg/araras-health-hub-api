@@ -10,5 +10,9 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Change
     public record ChangeStatusPresentationFormCommand(
         int Id,
         bool IsActive
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public ChangeStatusPresentationFormCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

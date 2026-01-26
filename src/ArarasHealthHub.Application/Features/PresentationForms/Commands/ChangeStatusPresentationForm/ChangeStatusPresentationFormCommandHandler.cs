@@ -10,22 +10,29 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.ChangeStatusPresentationForm
 {
-    public class ChangeStatusPresentationFormCommandHandler : IRequestHandler<ChangeStatusPresentationFormCommand, ApiResponse<bool>>
+    public class ChangeStatusPresentationFormCommandHandler : IRequestHandler<ChangeStatusPresentationFormCommand, ApiResponse<object>>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
 
-        public ChangeStatusPresentationFormCommandHandler(IPresentationFormRepository presentationFormRepository)
+        public ChangeStatusPresentationFormCommandHandler(
+            IPresentationFormRepository presentationFormRepository)
         {
             _presentationFormRepository = presentationFormRepository;
         }
 
-        public async Task<ApiResponse<bool>> Handle(ChangeStatusPresentationFormCommand command, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            ChangeStatusPresentationFormCommand command,
+            CancellationToken cancellationToken)
         {
-            var existingPresentationForm = await _presentationFormRepository.GetByIdAsync(command.Id);
+            var existingPresentationForm =
+                await _presentationFormRepository.GetByIdAsync(command.Id);
 
-            if (existingPresentationForm == null)
+            if (existingPresentationForm is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Forma de Apresentação"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Forma de apresentação")
+                );
             }
 
             if (command.IsActive)
@@ -39,8 +46,14 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Change
 
             await _presentationFormRepository.UpdateAsync(existingPresentationForm);
 
-            var message = command.IsActive ? ApiMessages.ActivatedSuccessfully("Forma de Apresentação") : ApiMessages.DeactivatedSuccessfully("Forma de Apresentação");
-            return new ApiResponse<bool>(StatusCodes.Status200OK, message, true);
+            var message = command.IsActive
+                ? ApiMessages.ActivatedSuccessfully("Forma de apresentação")
+                : ApiMessages.DeactivatedSuccessfully("Forma de apresentação");
+
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                message
+            );
         }
     }
 }

@@ -17,25 +17,38 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Create
         private readonly IPresentationFormRepository _presentationFormRepository;
         private readonly IMapper _mapper;
 
-        public CreatePresentationFormCommandHandler(IPresentationFormRepository presentationFormRepository, IMapper mapper)
+        public CreatePresentationFormCommandHandler(
+            IPresentationFormRepository presentationFormRepository,
+            IMapper mapper)
         {
             _presentationFormRepository = presentationFormRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreatePresentationFormCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<int>> Handle(
+            CreatePresentationFormCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingPresentationForm = await _presentationFormRepository.GetByPresentationFormNameAsync(request.Name);
-            if (existingPresentationForm != null)
+            var existingPresentationForm =
+                await _presentationFormRepository.GetByPresentationFormNameAsync(request.Name);
+
+            if (existingPresentationForm is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.PresentationFormAlreadyExists, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.PresentationFormAlreadyExists
+                );
             }
 
-            var mainCategory = _mapper.Map<PresentationForm>(request);
+            var presentationForm = _mapper.Map<PresentationForm>(request);
 
-            await _presentationFormRepository.AddAsync(mainCategory);
+            await _presentationFormRepository.AddAsync(presentationForm);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Forma de Apresentação"), mainCategory.Id);
+            return ApiResponse<int>.SuccessResponse(
+                StatusCodes.Status201Created,
+                ApiMessages.CreatedSuccessfully("Forma de apresentação"),
+                presentationForm.Id
+            );
         }
     }
 }

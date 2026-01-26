@@ -5,27 +5,23 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm
+namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.DeletePresentationForm
 {
-    public class UpdatePresentationFormCommandHandler : IRequestHandler<UpdatePresentationFormCommand, ApiResponse<object>>
+    public class DeletePresentationFormCommandHandler : IRequestHandler<DeletePresentationFormCommand, ApiResponse<object>>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
-        private readonly IMapper _mapper;
 
-        public UpdatePresentationFormCommandHandler(
-            IPresentationFormRepository presentationFormRepository,
-            IMapper mapper)
+        public DeletePresentationFormCommandHandler(
+            IPresentationFormRepository presentationFormRepository)
         {
             _presentationFormRepository = presentationFormRepository;
-            _mapper = mapper;
         }
 
         public async Task<ApiResponse<object>> Handle(
-            UpdatePresentationFormCommand request,
+            DeletePresentationFormCommand request,
             CancellationToken cancellationToken)
         {
             var existingPresentationForm =
@@ -39,14 +35,11 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Update
                 );
             }
 
-            _mapper.Map(request, existingPresentationForm);
-            existingPresentationForm.SetUpdatedOn();
-
-            await _presentationFormRepository.UpdateAsync(existingPresentationForm);
+            await _presentationFormRepository.DeleteAsync(existingPresentationForm);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.UpdatedSuccessfully("Forma de apresentação")
+                ApiMessages.DeletedSuccessfully("Forma de apresentação")
             );
         }
     }

@@ -10,5 +10,9 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Update
     public record UpdatePresentationFormCommand(
         int Id,
         string Name
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public UpdatePresentationFormCommand WithId(int id)
+            => this with { Id = id };
+    }
 }
