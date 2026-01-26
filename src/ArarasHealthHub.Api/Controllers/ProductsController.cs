@@ -13,8 +13,6 @@ using ArarasHealthHub.Application.Features.Products.Queries.ExportProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductById;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdown;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Pagination;
 using ArarasHealthHub.Shared.Core.Responses;
 using Microsoft.AspNetCore.Authorization;
