@@ -11,41 +11,57 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubCategory
 {
-    public class UpdateSubCategoryCommandHandler : IRequestHandler<UpdateSubCategoryCommand, ApiResponse<bool>>
+    public class UpdateSubCategoryCommandHandler : IRequestHandler<UpdateSubCategoryCommand, ApiResponse<object>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
         private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly IMapper _mapper;
 
-        public UpdateSubCategoryCommandHandler(ISubCategoryRepository subCategoryRepository, IMainCategoryRepository mainCategoryRepository, IMapper mapper)
+        public UpdateSubCategoryCommandHandler(
+            ISubCategoryRepository subCategoryRepository,
+            IMainCategoryRepository mainCategoryRepository,
+            IMapper mapper)
         {
             _mainCategoryRepository = mainCategoryRepository;
             _subCategoryRepository = subCategoryRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<bool>> Handle(UpdateSubCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            UpdateSubCategoryCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingMainCategory = await _mainCategoryRepository.GetByIdAsync(request.MainCategoryId);
-            if (existingMainCategory != null)
+            var existingMainCategory =
+                await _mainCategoryRepository.GetByIdAsync(request.Id);
+
+            if (existingMainCategory is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.MainCategoryDoesNotExist, false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Categoria principal")
+                );
             }
 
-            var existingSubCategory = await _subCategoryRepository.GetByIdAsync(request.Id);
+            var existingSubCategory =
+                await _subCategoryRepository.GetBySubCategoryNameAndMainCategoryIdAsync(request.Name, request.MainCategoryId);
 
-            if (existingSubCategory == null)
+            if (existingSubCategory is null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Subcategoria"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.NotFound("Subcategoria")
+                );
             }
 
             _mapper.Map(request, existingSubCategory);
-
             existingSubCategory.SetUpdatedOn();
 
             await _subCategoryRepository.UpdateAsync(existingSubCategory);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Subcategoria"), true);
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.UpdatedSuccessfully("Subcategoria")
+            );
         }
     }
 }

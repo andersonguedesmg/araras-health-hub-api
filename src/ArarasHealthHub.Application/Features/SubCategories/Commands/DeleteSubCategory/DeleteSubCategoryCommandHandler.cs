@@ -8,24 +8,24 @@ using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ChangeStatusSubCategory
+namespace ArarasHealthHub.Application.Features.SubCategories.Commands.DeleteSubCategory
 {
-    public class ChangeStatusSubCategoryCommandHandler : IRequestHandler<ChangeStatusSubCategoryCommand, ApiResponse<object>>
+    public class DeleteSubCategoryCommandHandler : IRequestHandler<DeleteSubCategoryCommand, ApiResponse<object>>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
 
-        public ChangeStatusSubCategoryCommandHandler(
+        public DeleteSubCategoryCommandHandler(
             ISubCategoryRepository subCategoryRepository)
         {
             _subCategoryRepository = subCategoryRepository;
         }
 
         public async Task<ApiResponse<object>> Handle(
-            ChangeStatusSubCategoryCommand command,
+            DeleteSubCategoryCommand request,
             CancellationToken cancellationToken)
         {
             var existingSubCategory =
-                await _subCategoryRepository.GetByIdAsync(command.Id);
+                await _subCategoryRepository.GetByIdAsync(request.Id);
 
             if (existingSubCategory is null)
             {
@@ -35,24 +35,11 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ChangeStat
                 );
             }
 
-            if (command.IsActive)
-            {
-                existingSubCategory.Activate();
-            }
-            else
-            {
-                existingSubCategory.Deactivate();
-            }
-
-            await _subCategoryRepository.UpdateAsync(existingSubCategory);
-
-            var message = command.IsActive
-                ? ApiMessages.ActivatedSuccessfully("Subcategoria")
-                : ApiMessages.DeactivatedSuccessfully("Subcategoria");
+            await _subCategoryRepository.DeleteAsync(existingSubCategory);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                message
+                ApiMessages.DeletedSuccessfully("Subcategoria")
             );
         }
     }

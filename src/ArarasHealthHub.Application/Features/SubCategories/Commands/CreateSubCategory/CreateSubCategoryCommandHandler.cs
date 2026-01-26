@@ -18,32 +18,51 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubC
         private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly IMapper _mapper;
 
-        public CreateSubCategoryCommandHandler(ISubCategoryRepository subCategoryRepository, IMainCategoryRepository mainCategoryRepository, IMapper mapper)
+        public CreateSubCategoryCommandHandler(
+            ISubCategoryRepository subCategoryRepository,
+            IMainCategoryRepository mainCategoryRepository,
+            IMapper mapper)
         {
             _mainCategoryRepository = mainCategoryRepository;
             _subCategoryRepository = subCategoryRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateSubCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<int>> Handle(
+            CreateSubCategoryCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingMainCategory = await _mainCategoryRepository.GetByIdAsync(request.MainCategoryId);
-            if (existingMainCategory != null)
+            var existingMainCategory =
+                await _mainCategoryRepository.GetByIdAsync(request.MainCategoryId);
+
+            if (existingMainCategory is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status404NotFound, ApiMessages.MainCategoryDoesNotExist, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.MainCategoryDoesNotExist
+                );
             }
 
-            var existingSubCategory = await _subCategoryRepository.GetBySubCategoryNameAndMainCategoryIdAsync(request.Name, request.MainCategoryId);
-            if (existingSubCategory != null)
+            var existingSubCategory =
+                await _subCategoryRepository.GetBySubCategoryNameAndMainCategoryIdAsync(request.Name, request.MainCategoryId);
+
+            if (existingSubCategory is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.SubCategoryAlreadyExists, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.SubCategoryAlreadyExists
+                );
             }
 
-            var mainCategory = _mapper.Map<SubCategory>(request);
+            var subCategory = _mapper.Map<SubCategory>(request);
 
-            await _subCategoryRepository.AddAsync(mainCategory);
+            await _subCategoryRepository.AddAsync(subCategory);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Subcategoria"), mainCategory.Id);
+            return ApiResponse<int>.SuccessResponse(
+                StatusCodes.Status201Created,
+                ApiMessages.CreatedSuccessfully("Subcategoria"),
+                subCategory.Id
+            );
         }
     }
 }

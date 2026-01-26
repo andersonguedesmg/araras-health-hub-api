@@ -10,5 +10,9 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ChangeStat
     public record ChangeStatusSubCategoryCommand(
         int Id,
         bool IsActive
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public ChangeStatusSubCategoryCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

@@ -11,5 +11,9 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubC
         int Id,
         string Name,
         int MainCategoryId
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public UpdateSubCategoryCommand WithId(int id)
+            => this with { Id = id };
+    }
 }
