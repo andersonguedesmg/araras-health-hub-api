@@ -17,25 +17,38 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMai
         private readonly IMainCategoryRepository _mainCategoryRepository;
         private readonly IMapper _mapper;
 
-        public CreateMainCategoryCommandHandler(IMainCategoryRepository mainCategoryRepository, IMapper mapper)
+        public CreateMainCategoryCommandHandler(
+            IMainCategoryRepository mainCategoryRepository,
+            IMapper mapper)
         {
             _mainCategoryRepository = mainCategoryRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateMainCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<int>> Handle(
+            CreateMainCategoryCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingMainCategory = await _mainCategoryRepository.GetByMainCategoryNameAsync(request.Name);
-            if (existingMainCategory != null)
+            var existingMainCategory =
+                await _mainCategoryRepository.GetByMainCategoryNameAsync(request.Name);
+
+            if (existingMainCategory is not null)
             {
-                return new ApiResponse<int>(StatusCodes.Status409Conflict, ApiMessages.MainCategoryAlreadyExists, 0);
+                return ApiResponse<int>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.MainCategoryAlreadyExists
+                );
             }
 
             var mainCategory = _mapper.Map<MainCategory>(request);
 
             await _mainCategoryRepository.AddAsync(mainCategory);
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.CreatedSuccessfully("Categoria principal"), mainCategory.Id);
+            return ApiResponse<int>.SuccessResponse(
+                StatusCodes.Status201Created,
+                ApiMessages.CreatedSuccessfully("Categoria principal"),
+                mainCategory.Id
+            );
         }
     }
 }

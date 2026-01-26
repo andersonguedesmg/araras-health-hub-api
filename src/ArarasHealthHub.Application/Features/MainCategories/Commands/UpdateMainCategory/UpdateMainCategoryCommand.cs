@@ -10,5 +10,9 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMai
     public record UpdateMainCategoryCommand(
         int Id,
         string Name
-    ) : IRequest<ApiResponse<bool>>;
+    ) : IRequest<ApiResponse<object>>
+    {
+        public UpdateMainCategoryCommand WithId(int id)
+            => this with { Id = id };
+    }
 }

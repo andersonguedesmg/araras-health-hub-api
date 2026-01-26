@@ -6,7 +6,7 @@ using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories
+namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdown
 {
-    public class GetAllMainCategoriesQuery : PagedRequest, IRequest<PagedResponse<MainCategoryDto>> { }
+    public class GetMainCategoryDropdownQuery : PagedRequest, IRequest<PagedResponse<MainCategoryNameDto>> { }
 }

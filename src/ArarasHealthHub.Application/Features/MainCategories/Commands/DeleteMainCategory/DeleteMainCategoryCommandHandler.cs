@@ -8,24 +8,24 @@ using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.MainCategories.Commands.ChangeStatusMainCategory
+namespace ArarasHealthHub.Application.Features.MainCategories.Commands.DeleteMainCategory
 {
-    public class ChangeStatusMainCategoryCommandHandler : IRequestHandler<ChangeStatusMainCategoryCommand, ApiResponse<object>>
+    public class DeleteMainCategoryCommandHandler : IRequestHandler<DeleteMainCategoryCommand, ApiResponse<object>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
 
-        public ChangeStatusMainCategoryCommandHandler(
+        public DeleteMainCategoryCommandHandler(
             IMainCategoryRepository mainCategoryRepository)
         {
             _mainCategoryRepository = mainCategoryRepository;
         }
 
         public async Task<ApiResponse<object>> Handle(
-            ChangeStatusMainCategoryCommand command,
+            DeleteMainCategoryCommand request,
             CancellationToken cancellationToken)
         {
             var existingMainCategory =
-                await _mainCategoryRepository.GetByIdAsync(command.Id);
+                await _mainCategoryRepository.GetByIdAsync(request.Id);
 
             if (existingMainCategory is null)
             {
@@ -35,24 +35,11 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.ChangeSta
                 );
             }
 
-            if (command.IsActive)
-            {
-                existingMainCategory.Activate();
-            }
-            else
-            {
-                existingMainCategory.Deactivate();
-            }
-
-            await _mainCategoryRepository.UpdateAsync(existingMainCategory);
-
-            var message = command.IsActive
-                ? ApiMessages.ActivatedSuccessfully("Categoria principal")
-                : ApiMessages.DeactivatedSuccessfully("Categoria principal");
+            await _mainCategoryRepository.DeleteAsync(existingMainCategory);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                message
+                ApiMessages.DeletedSuccessfully("Categoria principal")
             );
         }
     }

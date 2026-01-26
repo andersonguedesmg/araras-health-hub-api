@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
@@ -9,14 +10,14 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory
+namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryById
 {
-    public class UpdateMainCategoryCommandHandler : IRequestHandler<UpdateMainCategoryCommand, ApiResponse<object>>
+    public class GetMainCategoryByIdQueryHandler : IRequestHandler<GetMainCategoryByIdQuery, ApiResponse<MainCategoryDto>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
         private readonly IMapper _mapper;
 
-        public UpdateMainCategoryCommandHandler(
+        public GetMainCategoryByIdQueryHandler(
             IMainCategoryRepository mainCategoryRepository,
             IMapper mapper)
         {
@@ -24,29 +25,26 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMai
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<object>> Handle(
-            UpdateMainCategoryCommand request,
+        public async Task<ApiResponse<MainCategoryDto>> Handle(
+            GetMainCategoryByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var existingMainCategory =
-                await _mainCategoryRepository.GetByIdAsync(request.Id);
+            var mainCategory = await _mainCategoryRepository.GetByIdAsync(request.Id);
 
-            if (existingMainCategory is null)
+            if (mainCategory is null)
             {
-                return ApiResponse<object>.FailureResponse(
+                return ApiResponse<MainCategoryDto>.FailureResponse(
                     StatusCodes.Status404NotFound,
                     ApiMessages.NotFound("Categoria principal")
                 );
             }
 
-            _mapper.Map(request, existingMainCategory);
-            existingMainCategory.SetUpdatedOn();
+            var mainCategoryDto = _mapper.Map<MainCategoryDto>(mainCategory);
 
-            await _mainCategoryRepository.UpdateAsync(existingMainCategory);
-
-            return ApiResponse<object>.SuccessResponse(
+            return ApiResponse<MainCategoryDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.UpdatedSuccessfully("Categoria principal")
+                ApiMessages.FoundSuccessfully("Categoria principal"),
+                mainCategoryDto
             );
         }
     }

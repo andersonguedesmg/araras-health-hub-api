@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.MainCategories.Commands.ChangeStatusMainCategory;
+using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryById;
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Validation
 {
-    public class ChangeStatusMainCategoryCommandValidator : AbstractValidator<ChangeStatusMainCategoryCommand>
+    public class GetMainCategoryByIdQueryValidator : AbstractValidator<GetMainCategoryByIdQuery>
     {
-        public ChangeStatusMainCategoryCommandValidator()
+        public GetMainCategoryByIdQueryValidator()
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
