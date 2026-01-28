@@ -8,26 +8,26 @@ using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ChangeStatusSubCategory
+namespace ArarasHealthHub.Application.Features.SubCategories.Commands.DeactivateSubCategory
 {
-    public class ChangeStatusSubCategoryCommandHandler : IRequestHandler<ChangeStatusSubCategoryCommand, ApiResponse<object>>
+    public class DeactivateSubCategoryCommandHandler : IRequestHandler<DeactivateSubCategoryCommand, ApiResponse<object>>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
 
-        public ChangeStatusSubCategoryCommandHandler(
+        public DeactivateSubCategoryCommandHandler(
             ISubCategoryRepository subCategoryRepository)
         {
             _subCategoryRepository = subCategoryRepository;
         }
 
         public async Task<ApiResponse<object>> Handle(
-            ChangeStatusSubCategoryCommand command,
+            DeactivateSubCategoryCommand command,
             CancellationToken cancellationToken)
         {
-            var existingSubCategory =
+            var subCategory =
                 await _subCategoryRepository.GetByIdAsync(command.Id);
 
-            if (existingSubCategory is null)
+            if (subCategory is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
@@ -35,24 +35,12 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ChangeStat
                 );
             }
 
-            if (command.IsActive)
-            {
-                existingSubCategory.Activate();
-            }
-            else
-            {
-                existingSubCategory.Deactivate();
-            }
-
-            await _subCategoryRepository.UpdateAsync(existingSubCategory);
-
-            var message = command.IsActive
-                ? ApiMessages.ActivatedSuccessfully("Subcategoria")
-                : ApiMessages.DeactivatedSuccessfully("Subcategoria");
+            subCategory.Deactivate();
+            await _subCategoryRepository.UpdateAsync(subCategory);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                message
+                ApiMessages.DeactivatedSuccessfully("Subcategoria")
             );
         }
     }

@@ -12,6 +12,7 @@ namespace ArarasHealthHub.Shared.Core.Messages
         public static string RegisteredSuccessfully(string entity) => $"{entity} registrada com sucesso.";
         public static string DeactivatedSuccessfully(string entity) => $"{entity} desativado com sucesso.";
         public static string ActivatedSuccessfully(string entity) => $"{entity} ativado com sucesso.";
+        public static string CannotActivateBecauseInactive(string entity, string parent) => $"Não é possível ativar {entity} porque a {parent} está inativa.";
         public static string NotFoundWithId(string entity, int id) => $"{entity} com ID {id} não encontrado.";
         public static string AccountStatusAlreadyAsDesired(string status) => $"O status da conta já está {status}.";
         public static string PasswordResetFailed(string errors) => $"Falha ao redefinir a senha: {errors}";

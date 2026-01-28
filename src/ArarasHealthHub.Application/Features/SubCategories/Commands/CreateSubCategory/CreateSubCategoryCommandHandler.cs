@@ -32,21 +32,22 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubC
             CreateSubCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var existingMainCategory =
+            var mainCategory =
                 await _mainCategoryRepository.GetByIdAsync(request.MainCategoryId);
 
-            if (existingMainCategory is not null)
+            if (mainCategory is null)
             {
                 return ApiResponse<int>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.MainCategoryDoesNotExist
+                    ApiMessages.NotFound("Categoria principal")
                 );
             }
 
-            var existingSubCategory =
-                await _subCategoryRepository.GetBySubCategoryNameAndMainCategoryIdAsync(request.Name, request.MainCategoryId);
+            var alreadyExists =
+                await _subCategoryRepository
+                    .GetBySubCategoryNameAndMainCategoryIdAsync(request.Name, request.MainCategoryId);
 
-            if (existingSubCategory is not null)
+            if (alreadyExists is not null)
             {
                 return ApiResponse<int>.FailureResponse(
                     StatusCodes.Status409Conflict,

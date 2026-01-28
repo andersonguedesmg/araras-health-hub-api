@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubCategory;
 using ArarasHealthHub.Application.Interfaces.Contexts;
-using ArarasHealthHub.Application.Interfaces.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,24 +11,29 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Validation
 {
     public class UpdateSubCategoryCommandValidator : AbstractValidator<UpdateSubCategoryCommand>
     {
-        private readonly IMainCategoryRepository _mainCategoryRepository;
-        private readonly ISubCategoryRepository _subCategoryRepository;
-
-        public UpdateSubCategoryCommandValidator(ISubCategoryRepository subCategoryRepository, IMainCategoryRepository mainCategoryRepository, IApplicationDbContext context)
+        public UpdateSubCategoryCommandValidator(IApplicationDbContext context)
         {
-            _mainCategoryRepository = mainCategoryRepository;
-            _subCategoryRepository = subCategoryRepository;
+            RuleFor(x => x.Id)
+                .GreaterThan(0).WithMessage("O identificador da subcategoria é inválido.");
 
-            RuleFor(command => command.Id)
-                 .GreaterThan(0).WithMessage("O ID da Subcategoria é inválido.");
+            RuleFor(x => x.Name)
+                .NotEmpty().WithMessage("O nome é obrigatório.")
+                .MaximumLength(100).WithMessage("O nome não pode exceder 100 caracteres.");
 
-            RuleFor(command => command.Name)
-                .NotEmpty().WithMessage("O nome da Subcategoria é obrigatório.")
-                .MaximumLength(100).WithMessage("O nome da Subcategoria não pode exceder 100 caracteres.");
+            RuleFor(x => x.MainCategoryId)
+                .GreaterThan(0).WithMessage("Categoria Principal inválida.")
+                .MustAsync(async (id, ct) =>
+                    await context.MainCategories.AnyAsync(c => c.Id == id, ct))
+                .WithMessage("Categoria Principal não encontrada.");
 
-            RuleFor(x => x.MainCategoryId).NotEmpty()
-                .MustAsync(async (id, ct) => await context.MainCategories.AnyAsync(c => c.Id == id, ct))
-                .WithMessage("Categoria Principal inválida.");
+            RuleFor(x => x)
+                .MustAsync(async (command, ct) =>
+                    !await context.SubCategories.AnyAsync(sc =>
+                        sc.Id != command.Id &&
+                        sc.MainCategoryId == command.MainCategoryId &&
+                        sc.Name == command.Name,
+                        ct))
+                .WithMessage("Já existe outra Subcategoria com este nome para a Categoria Principal informada.");
         }
     }
 }
