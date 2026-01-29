@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.MainCategories.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,7 +48,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.ExportMain
             {
                 return ApiResponse<FileResponse>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.ExportEmpty("categoria principal")
+                    ApiMessages.ExportEmpty(EntityNames.MainCategory)
                 );
             }
 

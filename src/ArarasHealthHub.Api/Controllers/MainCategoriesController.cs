@@ -2,18 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using araras_health_hub_api.Common;
-using ArarasHealthHub.Application.Features.MainCategories.Commands.ChangeStatusMainCategory;
+
+using ArarasHealthHub.Application.Features.MainCategories.Commands.ActivateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
-using ArarasHealthHub.Application.Features.MainCategories.Commands.DeleteMainCategory;
+using ArarasHealthHub.Application.Features.MainCategories.Commands.DeactivateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.ExportMainCategories;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryById;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdown;
+using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,26 +61,26 @@ namespace araras_health_hub_api.Controllers
             return await Send(command.WithId(id));
         }
 
-        [HttpPatch("{id:int}/status")]
+        [HttpPatch("{id:int}/activate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ChangeStatus(int id, ChangeStatusMainCategoryCommand command)
+        public async Task<IActionResult> Activate(int id)
         {
-            return await Send(command.WithId(id));
+            return await Send(new ActivateMainCategoryCommand(id));
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpPatch("{id:int}/deactivate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Deactivate(int id)
         {
-            return await Send(new DeleteMainCategoryCommand(0).WithId(id));
+            return await Send(new DeactivateMainCategoryCommand(id));
         }
 
         [HttpGet("dropdown")]
-        [ProducesResponseType(typeof(PagedResponse<MainCategoryNameDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponse<DropdownItemDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDropdown([FromQuery] GetMainCategoryDropdownQuery query)
         {
             return await Send(query);

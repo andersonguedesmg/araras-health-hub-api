@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.MainCategories.Dtos;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdown
 {
-    public class GetMainCategoryDropdownQueryHandler : IRequestHandler<GetMainCategoryDropdownQuery, PagedResponse<MainCategoryNameDto>>
+    public class GetMainCategoryDropdownQueryHandler : IRequestHandler<GetMainCategoryDropdownQuery, PagedResponse<DropdownItemDto>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
 
@@ -20,7 +23,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
             _mainCategoryRepository = mainCategoryRepository;
         }
 
-        public async Task<PagedResponse<MainCategoryNameDto>> Handle(
+        public async Task<PagedResponse<DropdownItemDto>> Handle(
             GetMainCategoryDropdownQuery request,
             CancellationToken cancellationToken)
         {
@@ -28,27 +31,30 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
                 .GetQueryable()
                 .Where(e => e.IsActive);
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            var term = request.SearchTerm?.Trim();
+
+            if (!string.IsNullOrWhiteSpace(term))
             {
-                var term = request.SearchTerm.Trim().ToLower();
-                queryable = queryable.Where(e => e.Name.ToLower().Contains(term));
+                var search = term.ToLower();
+
+                queryable = queryable.Where(e =>
+                    e.Name.ToLower().Contains(search)
+                );
             }
 
             var totalCount = await queryable.CountAsync(cancellationToken);
 
-            queryable = queryable
-                .OrderBy(e => e.Name)
-                .ApplyPagination(request.PageNumber, request.PageSize);
-
             var items = await queryable
-                .Select(e => new MainCategoryNameDto
+                .OrderBy(x => x.Name)
+                .ApplyPagination(request.PageNumber, request.PageSize)
+                .Select(x => new DropdownItemDto
                 {
-                    Id = e.Id,
-                    Name = e.Name
+                    Id = x.Id,
+                    Label = x.Name
                 })
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<MainCategoryNameDto>.SuccessPaged(
+            return PagedResponse<DropdownItemDto>.SuccessPaged(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

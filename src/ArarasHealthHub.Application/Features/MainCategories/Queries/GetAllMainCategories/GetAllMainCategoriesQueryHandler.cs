@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories
@@ -35,8 +39,9 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMain
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var term = request.SearchTerm.Trim().ToLower();
-                queryable = queryable.Where(m =>
-                    m.Name.ToLower().Contains(term)
+
+                queryable = queryable.Where(mc =>
+                    mc.Name.ToLower().Contains(term)
                 );
             }
 
@@ -44,7 +49,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMain
 
             var orderingColumns = new Dictionary<string, Expression<Func<MainCategory, object>>>
             {
-                ["name"] = e => e.Name,
+                ["name"] = mc => mc.Name
             };
 
             queryable = queryable.ApplyOrdering(

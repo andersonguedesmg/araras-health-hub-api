@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryById
@@ -35,7 +39,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
             {
                 return ApiResponse<MainCategoryDto>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Categoria principal")
+                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
                 );
             }
 
@@ -43,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
 
             return ApiResponse<MainCategoryDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.FoundSuccessfully("Categoria principal"),
+                ApiMessages.CollectionFound(EntityNames.MainCategories),
                 mainCategoryDto
             );
         }
