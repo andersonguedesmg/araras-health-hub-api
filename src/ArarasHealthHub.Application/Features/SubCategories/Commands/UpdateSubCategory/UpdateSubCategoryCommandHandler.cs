@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubCategory
@@ -31,39 +35,38 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubC
             UpdateSubCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var subCategory =
-                await _subCategoryRepository.GetByIdAsync(request.Id);
+            var subCategory = await _subCategoryRepository
+                .GetByIdAsync(request.Id);
 
             if (subCategory is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Subcategoria")
+                    ApiMessages.EntityNotFound(EntityNames.SubCategory)
                 );
             }
 
-            var mainCategory =
-                await _mainCategoryRepository.GetByIdAsync(request.MainCategoryId);
+            var mainCategory = await _mainCategoryRepository
+                .GetByIdAsync(request.MainCategoryId);
 
             if (mainCategory is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Categoria principal")
+                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
                 );
             }
 
-            var duplicate =
-                await _subCategoryRepository
-                    .GetBySubCategoryNameAndMainCategoryIdAsync(
-                        request.Name,
-                        request.MainCategoryId);
+            var duplicate = await _subCategoryRepository
+                .GetBySubCategoryNameAndMainCategoryIdAsync(
+                    request.Name,
+                    request.MainCategoryId);
 
             if (duplicate is not null && duplicate.Id != request.Id)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status409Conflict,
-                    ApiMessages.SubCategoryAlreadyExists
+                    ApiMessages.EntityAlreadyExists(EntityNames.SubCategory)
                 );
             }
 
@@ -74,7 +77,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubC
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.UpdatedSuccessfully("Subcategoria")
+                ApiMessages.EntityUpdated(EntityNames.SubCategory)
             );
         }
     }

@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.SubCategories.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,7 +56,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.ExportSubCa
             {
                 return ApiResponse<FileResponse>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.ExportEmpty("subcategoria")
+                    ApiMessages.ExportEmpty(EntityNames.SubCategories)
                 );
             }
 

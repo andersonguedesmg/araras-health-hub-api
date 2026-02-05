@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubCategory
@@ -32,26 +36,27 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubC
             CreateSubCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var mainCategory =
-                await _mainCategoryRepository.GetByIdAsync(request.MainCategoryId);
+            var mainCategory = await _mainCategoryRepository
+                .GetByIdAsync(request.MainCategoryId);
 
             if (mainCategory is null)
             {
                 return ApiResponse<int>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Categoria principal")
+                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
                 );
             }
 
-            var alreadyExists =
-                await _subCategoryRepository
-                    .GetBySubCategoryNameAndMainCategoryIdAsync(request.Name, request.MainCategoryId);
+            var alreadyExists = await _subCategoryRepository
+                .GetBySubCategoryNameAndMainCategoryIdAsync(
+                    request.Name,
+                    request.MainCategoryId);
 
             if (alreadyExists is not null)
             {
                 return ApiResponse<int>.FailureResponse(
                     StatusCodes.Status409Conflict,
-                    ApiMessages.SubCategoryAlreadyExists
+                    ApiMessages.EntityAlreadyExists(EntityNames.SubCategory)
                 );
             }
 
@@ -61,7 +66,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubC
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,
-                ApiMessages.CreatedSuccessfully("Subcategoria"),
+                ApiMessages.EntityCreated(EntityNames.SubCategory),
                 subCategory.Id
             );
         }

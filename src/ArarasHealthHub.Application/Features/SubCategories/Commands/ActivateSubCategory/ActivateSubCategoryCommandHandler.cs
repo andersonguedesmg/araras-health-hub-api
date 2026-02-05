@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSubCategory
@@ -27,25 +30,33 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
             ActivateSubCategoryCommand command,
             CancellationToken cancellationToken)
         {
-            var subCategory =
-                await _subCategoryRepository.GetByIdAsync(command.Id);
+            var subCategory = await _subCategoryRepository
+                .GetByIdAsync(command.Id);
 
             if (subCategory is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Subcategoria")
+                    ApiMessages.EntityNotFound(EntityNames.SubCategory)
                 );
             }
 
-            var mainCategory =
-                await _mainCategoryRepository.GetByIdAsync(subCategory.MainCategoryId);
+            if (subCategory.IsActive)
+            {
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.EntityAlreadyActive(EntityNames.SubCategory)
+                );
+            }
+
+            var mainCategory = await _mainCategoryRepository
+                .GetByIdAsync(subCategory.MainCategoryId);
 
             if (mainCategory is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Categoria Principal")
+                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
                 );
             }
 
@@ -54,8 +65,8 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status409Conflict,
                     ApiMessages.CannotActivateBecauseInactive(
-                        "a Subcategoria",
-                        "Categoria Principal")
+                        EntityNames.SubCategory,
+                        EntityNames.MainCategory)
                 );
             }
 
@@ -64,7 +75,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.ActivatedSuccessfully("Subcategoria")
+                ApiMessages.EntityActivated(EntityNames.SubCategory)
             );
         }
     }

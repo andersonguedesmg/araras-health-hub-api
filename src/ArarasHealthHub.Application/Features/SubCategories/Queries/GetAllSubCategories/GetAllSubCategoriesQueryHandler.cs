@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.SubCategories.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCategories
@@ -36,7 +40,8 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCa
 
             if (request.MainCategoryId > 0)
             {
-                query = query.Where(sc => sc.MainCategoryId == request.MainCategoryId);
+                query = query.Where(sc =>
+                    sc.MainCategoryId == request.MainCategoryId);
             }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
@@ -70,7 +75,8 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCa
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                dtoList);
+                dtoList
+            );
         }
     }
 }

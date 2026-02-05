@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using araras_health_hub_api.Common;
+
 using ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSubCategory;
 using ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubCategory;
 using ArarasHealthHub.Application.Features.SubCategories.Commands.DeactivateSubCategory;
@@ -15,6 +17,7 @@ using ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryD
 using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryDropdown
@@ -31,6 +34,14 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
             if (request.MainCategoryId > 0)
             {
                 query = query.Where(x => x.MainCategoryId == request.MainCategoryId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var term = request.SearchTerm.Trim().ToLower();
+
+                query = query.Where(x =>
+                    x.Name.ToLower().Contains(term));
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
