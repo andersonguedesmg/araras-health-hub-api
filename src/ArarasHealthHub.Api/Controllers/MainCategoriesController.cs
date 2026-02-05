@@ -65,18 +65,18 @@ namespace araras_health_hub_api.Controllers
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Activate(int id)
+        public async Task<IActionResult> Activate(int id, ActivateMainCategoryCommand command)
         {
-            return await Send(new ActivateMainCategoryCommand(id));
+            return await Send(command.WithId(id));
         }
 
         [HttpPatch("{id:int}/deactivate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Deactivate(int id)
+        public async Task<IActionResult> Deactivate(int id, DeactivateMainCategoryCommand command)
         {
-            return await Send(new DeactivateMainCategoryCommand(id));
+            return await Send(command.WithId(id));
         }
 
         [HttpGet("dropdown")]
