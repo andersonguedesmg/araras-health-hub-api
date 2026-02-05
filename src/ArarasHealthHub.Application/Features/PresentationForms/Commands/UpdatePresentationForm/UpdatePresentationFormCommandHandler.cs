@@ -2,12 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm
 {
@@ -28,25 +33,51 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Update
             UpdatePresentationFormCommand request,
             CancellationToken cancellationToken)
         {
-            var existingPresentationForm =
-                await _presentationFormRepository.GetByIdAsync(request.Id);
+            var entity = await _presentationFormRepository.GetByIdAsync(request.Id);
 
-            if (existingPresentationForm is null)
+            if (entity is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Forma de apresentação")
+                    ApiMessages.EntityNotFound(EntityNames.PresentationForm)
                 );
             }
 
-            _mapper.Map(request, existingPresentationForm);
-            existingPresentationForm.SetUpdatedOn();
+            var newName = request.Name.Trim();
 
-            await _presentationFormRepository.UpdateAsync(existingPresentationForm);
+            if (entity.Name.Equals(newName, StringComparison.OrdinalIgnoreCase))
+            {
+                return ApiResponse<object>.SuccessResponse(
+                    StatusCodes.Status200OK,
+                    ApiMessages.NoChangesDetected()
+                );
+            }
+
+            var conflictExists = await _presentationFormRepository
+                .GetQueryable()
+                .AnyAsync(
+                    c =>
+                        c.Id != entity.Id &&
+                        c.Name.ToLower() == newName.ToLower(),
+                    cancellationToken
+                );
+
+            if (conflictExists)
+            {
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.EntityAlreadyExists(EntityNames.PresentationForm)
+                );
+            }
+
+            entity.Name = newName;
+            entity.SetUpdatedOn();
+
+            await _presentationFormRepository.UpdateAsync(entity);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.UpdatedSuccessfully("Forma de apresentação")
+                ApiMessages.EntityUpdated(EntityNames.PresentationForm)
             );
         }
     }

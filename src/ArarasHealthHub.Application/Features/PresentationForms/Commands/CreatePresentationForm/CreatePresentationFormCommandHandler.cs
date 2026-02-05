@@ -2,52 +2,61 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
-using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.CreatePresentationForm
 {
     public class CreatePresentationFormCommandHandler : IRequestHandler<CreatePresentationFormCommand, ApiResponse<int>>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
-        private readonly IMapper _mapper;
 
         public CreatePresentationFormCommandHandler(
-            IPresentationFormRepository presentationFormRepository,
-            IMapper mapper)
+            IPresentationFormRepository presentationFormRepository)
         {
             _presentationFormRepository = presentationFormRepository;
-            _mapper = mapper;
         }
 
         public async Task<ApiResponse<int>> Handle(
             CreatePresentationFormCommand request,
             CancellationToken cancellationToken)
         {
-            var existingPresentationForm =
-                await _presentationFormRepository.GetByPresentationFormNameAsync(request.Name);
+            var name = request.Name.Trim();
 
-            if (existingPresentationForm is not null)
+            var alreadyExists = await _presentationFormRepository
+                .GetQueryable()
+                .AnyAsync(
+                    c => c.Name.ToLower() == name.ToLower(),
+                    cancellationToken
+                );
+
+            if (alreadyExists)
             {
                 return ApiResponse<int>.FailureResponse(
                     StatusCodes.Status409Conflict,
-                    ApiMessages.PresentationFormAlreadyExists
+                    ApiMessages.EntityAlreadyExists(EntityNames.PresentationForm)
                 );
             }
 
-            var presentationForm = _mapper.Map<PresentationForm>(request);
+            var entity = new PresentationForm
+            {
+                Name = name
+            };
 
-            await _presentationFormRepository.AddAsync(presentationForm);
+            await _presentationFormRepository.AddAsync(entity);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,
-                ApiMessages.CreatedSuccessfully("Forma de apresentação"),
-                presentationForm.Id
+                ApiMessages.EntityCreated(EntityNames.PresentationForm),
+                entity.Id
             );
         }
     }

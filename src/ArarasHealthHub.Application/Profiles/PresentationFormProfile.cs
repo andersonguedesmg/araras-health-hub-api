@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.CreatePresentationForm;
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm;
 using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Core.Dtos;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -15,7 +18,7 @@ namespace ArarasHealthHub.Application.Profiles
         public PresentationFormProfile()
         {
             CreateMap<PresentationForm, PresentationFormDto>();
-            CreateMap<PresentationForm, PresentationFormNameDto>();
+            CreateMap<PresentationForm, DropdownItemDto>();
 
             CreateMap<CreatePresentationFormCommand, PresentationForm>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())

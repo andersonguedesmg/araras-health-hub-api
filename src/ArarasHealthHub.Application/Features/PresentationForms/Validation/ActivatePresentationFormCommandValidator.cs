@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormById;
+using ArarasHealthHub.Application.Features.PresentationForms.Commands.ActivatePresentationForm;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Shared.Core.Messages;
 
@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Validation
 {
-    public class GetPresentationFormByIdQueryValidator : AbstractValidator<GetPresentationFormByIdQuery>
+    public class ActivatePresentationFormCommandValidator : AbstractValidator<ActivatePresentationFormCommand>
     {
-        public GetPresentationFormByIdQueryValidator(IApplicationDbContext context)
+        public ActivatePresentationFormCommandValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)

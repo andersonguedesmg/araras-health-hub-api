@@ -19,6 +19,10 @@ namespace ArarasHealthHub.Shared.Core.Messages
         public const string Order = "Pedido";
         public const string Orders = "Pedidos";
 
+        public const string PresentationForm = "Forma de apresentação";
+        public const string PresentationForms = "Formas de apresentação";
+
+
         public const string Product = "Produto";
         public const string Products = "Produtos";
 

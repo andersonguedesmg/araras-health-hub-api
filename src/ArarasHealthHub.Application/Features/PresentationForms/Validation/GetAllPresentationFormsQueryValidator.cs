@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetAllPresentationForms;
+using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Validation
@@ -14,8 +17,8 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Validation
         {
             RuleFor(x => x.OrderBy)
                 .Must(x => x is null ||
-                           x.ToLower() is "name")
-                .WithMessage("O campo de ordenação informado não é válido.");
+                        x.ToLower() is "name")
+                .WithMessage(ValidationMessages.InvalidOrderBy);
         }
     }
 }

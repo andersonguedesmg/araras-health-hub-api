@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormById
@@ -35,7 +39,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPres
             {
                 return ApiResponse<PresentationFormDto>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Forma de apresentação")
+                    ApiMessages.EntityNotFound(EntityNames.PresentationForm)
                 );
             }
 
@@ -43,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPres
 
             return ApiResponse<PresentationFormDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.FoundSuccessfully("Forma de apresentação"),
+                ApiMessages.EntityFound(EntityNames.PresentationForm),
                 presentationFormDto
             );
         }

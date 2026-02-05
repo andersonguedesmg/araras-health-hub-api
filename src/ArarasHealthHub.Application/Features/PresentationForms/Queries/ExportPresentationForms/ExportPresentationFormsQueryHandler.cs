@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.PresentationForms.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,19 +40,19 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.ExportP
                 );
             }
 
-            var mainCategories = await query
+            var presentationForms = await query
                 .OrderBy(p => p.Name)
                 .ToListAsync(cancellationToken);
 
-            if (!mainCategories.Any())
+            if (!presentationForms.Any())
             {
                 return ApiResponse<FileResponse>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.ExportEmpty("forma de apresentação")
+                    ApiMessages.ExportEmpty(EntityNames.PresentationForm)
                 );
             }
 
-            var csvBytes = PresentationFormCsvExporter.Export(mainCategories);
+            var csvBytes = PresentationFormCsvExporter.Export(presentationForms);
 
             var fileResponse = new FileResponse
             {
