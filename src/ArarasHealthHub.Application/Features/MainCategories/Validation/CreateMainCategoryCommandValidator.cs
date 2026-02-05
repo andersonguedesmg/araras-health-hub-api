@@ -17,9 +17,9 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Validation
             RuleFor(x => x.Name)
                 .NotEmpty()
                     .WithName("Nome")
-                    .WithMessage(ValidationMessages.RequiredWithField)
+                    .WithMessage(ValidationMessages.RequiredField)
                 .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthWithField(100));
+                    .WithMessage(ValidationMessages.MaxLengthField(100));
         }
     }
 }

@@ -47,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
 
             return ApiResponse<MainCategoryDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.CollectionFound(EntityNames.MainCategories),
+                ApiMessages.EntityFound(EntityNames.MainCategory),
                 mainCategoryDto
             );
         }

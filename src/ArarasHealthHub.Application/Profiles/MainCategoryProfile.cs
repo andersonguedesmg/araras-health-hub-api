@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Core.Dtos;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -15,7 +18,7 @@ namespace ArarasHealthHub.Application.Profiles
         public MainCategoryProfile()
         {
             CreateMap<MainCategory, MainCategoryDto>();
-            CreateMap<MainCategory, MainCategoryNameDto>();
+            CreateMap<MainCategory, DropdownItemDto>();
 
             CreateMap<CreateMainCategoryCommand, MainCategory>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
