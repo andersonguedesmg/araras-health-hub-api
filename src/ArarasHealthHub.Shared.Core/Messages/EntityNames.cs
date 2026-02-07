@@ -25,7 +25,6 @@ namespace ArarasHealthHub.Shared.Core.Messages
         public const string PresentationForm = "Forma de apresentação";
         public const string PresentationForms = "Formas de apresentação";
 
-
         public const string Product = "Produto";
         public const string Products = "Produtos";
 
@@ -34,5 +33,8 @@ namespace ArarasHealthHub.Shared.Core.Messages
 
         public const string SubCategory = "Subcategoria";
         public const string SubCategories = "Subcategorias";
+
+        public const string Supplier = "Fornecedor";
+        public const string Suppliers = "Fornecedores";
     }
 }

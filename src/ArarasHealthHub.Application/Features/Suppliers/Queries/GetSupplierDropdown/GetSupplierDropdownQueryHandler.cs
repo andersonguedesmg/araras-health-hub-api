@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Suppliers.Dtos;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdown
 {
-    public class GetSupplierDropdownQueryHandler : IRequestHandler<GetSupplierDropdownQuery, PagedResponse<SupplierNameDto>>
+    public class GetSupplierDropdownQueryHandler : IRequestHandler<GetSupplierDropdownQuery, PagedResponse<DropdownItemDto>>
     {
         private readonly ISupplierRepository _supplierRepository;
 
@@ -19,36 +22,38 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<PagedResponse<SupplierNameDto>> Handle(
+        public async Task<PagedResponse<DropdownItemDto>> Handle(
             GetSupplierDropdownQuery request,
             CancellationToken cancellationToken)
         {
             var queryable = _supplierRepository
-                .GetQueryable()
+                .AsQueryable()
                 .Where(e => e.IsActive);
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            var term = request.SearchTerm?.Trim();
+
+            if (!string.IsNullOrWhiteSpace(term))
             {
-                var term = request.SearchTerm.Trim().ToLower();
-                queryable = queryable.Where(e => e.LegalName.ToLower().Contains(term));
+                var search = term.ToLower();
+
+                queryable = queryable.Where(e =>
+                    e.LegalName.ToLower().Contains(search)
+                );
             }
 
             var totalCount = await queryable.CountAsync(cancellationToken);
 
-            queryable = queryable
-                .OrderBy(e => e.LegalName)
-                .ApplyPagination(request.PageNumber, request.PageSize);
-
             var items = await queryable
-                .Select(e => new SupplierNameDto
+                .OrderBy(x => x.LegalName)
+                .ApplyPagination(request.PageNumber, request.PageSize)
+                .Select(x => new DropdownItemDto
                 {
-                    Id = e.Id,
-                    LegalName = e.LegalName,
-                    TradeName = e.TradeName
+                    Id = x.Id,
+                    Label = x.LegalName
                 })
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<SupplierNameDto>.SuccessPaged(
+            return PagedResponse<DropdownItemDto>.SuccessPaged(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

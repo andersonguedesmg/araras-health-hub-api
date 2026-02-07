@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using araras_health_hub_api.Common;
-using ArarasHealthHub.Application.Features.Suppliers.Commands.ChangeStatusSupplier;
+
+using ArarasHealthHub.Application.Features.Suppliers.Commands.ActivateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier;
-using ArarasHealthHub.Application.Features.Suppliers.Commands.DeleteSupplier;
+using ArarasHealthHub.Application.Features.Suppliers.Commands.DeactivateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdown;
+using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,26 +62,26 @@ namespace ArarasHealthHub.Api.Controllers
             return await Send(command.WithId(id));
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpPatch("{id:int}/activate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Activate(int id, ActivateSupplierCommand command)
         {
-            return await Send(new DeleteSupplierCommand(0).WithId(id));
+            return await Send(command.WithId(id));
         }
 
-        [HttpPatch("{id:int}/status")]
+        [HttpPatch("{id:int}/deactivate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ChangeStatus(int id, ChangeStatusSupplierCommand command)
+        public async Task<IActionResult> Deactivate(int id, DeactivateSupplierCommand command)
         {
             return await Send(command.WithId(id));
         }
 
         [HttpGet("dropdown")]
-        [ProducesResponseType(typeof(PagedResponse<SupplierNameDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponse<DropdownItemDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDropdown([FromQuery] GetSupplierDropdownQuery query)
         {
             return await Send(query);

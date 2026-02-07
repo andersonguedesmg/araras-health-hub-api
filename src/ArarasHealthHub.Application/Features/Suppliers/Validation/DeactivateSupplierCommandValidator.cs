@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById;
+using ArarasHealthHub.Application.Features.Suppliers.Commands.DeactivateSupplier;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Shared.Core.Messages;
 
@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Validation
 {
-    public class GetSupplierByIdQueryValidator : AbstractValidator<GetSupplierByIdQuery>
+    public class DeactivateSupplierCommandValidator : AbstractValidator<DeactivateSupplierCommand>
     {
-        public GetSupplierByIdQueryValidator(IApplicationDbContext context)
+        public DeactivateSupplierCommandValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)

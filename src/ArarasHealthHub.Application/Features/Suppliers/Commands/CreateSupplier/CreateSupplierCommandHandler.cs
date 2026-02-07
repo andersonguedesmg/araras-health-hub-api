@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
@@ -30,7 +34,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
             CancellationToken cancellationToken)
         {
             var existingSupplier =
-                await _supplierRepository.GetByCnpjAsync(request.Cnpj);
+                await _supplierRepository.GetByCnpjAsync(request.Cnpj, cancellationToken);
 
             if (existingSupplier is not null)
             {
@@ -42,11 +46,11 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
 
             var supplier = _mapper.Map<Supplier>(request);
 
-            await _supplierRepository.AddAsync(supplier);
+            await _supplierRepository.AddAsync(supplier, cancellationToken);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,
-                ApiMessages.CreatedSuccessfully("Fornecedor"),
+                ApiMessages.EntityCreated(EntityNames.Supplier),
                 supplier.Id
             );
         }

@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
@@ -18,9 +20,10 @@ namespace ArarasHealthHub.Infrastructure.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<Supplier?> GetByCnpjAsync(string cnpj)
+        public async Task<Supplier?> GetByCnpjAsync(string cnpj, CancellationToken cancellationToken)
         {
-            return await _dbSet.FirstOrDefaultAsync(s => s.Cnpj == cnpj);
+            return await _dbSet
+                .FirstOrDefaultAsync(s => s.Cnpj == cnpj, cancellationToken);
         }
 
         public async Task<bool> SupplierExists(int id)

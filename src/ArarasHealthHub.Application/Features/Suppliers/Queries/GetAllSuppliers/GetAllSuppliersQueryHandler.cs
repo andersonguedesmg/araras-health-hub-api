@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
@@ -28,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
 
         public async Task<PagedResponse<SupplierDto>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
         {
-            var queryable = _supplierRepository.GetQueryable();
+            var queryable = _supplierRepository.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Suppliers.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,9 +25,11 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<ApiResponse<FileResponse>> Handle(ExportSuppliersQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<FileResponse>> Handle(
+            ExportSuppliersQuery request,
+            CancellationToken cancellationToken)
         {
-            var query = _supplierRepository.GetQueryable();
+            var query = _supplierRepository.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
@@ -53,7 +58,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers
             {
                 return ApiResponse<FileResponse>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.ExportEmpty("fornecedor")
+                    ApiMessages.ExportEmpty(EntityNames.Supplier)
                 );
             }
 
