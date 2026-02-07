@@ -51,7 +51,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMai
                 Name = name
             };
 
-            await _mainCategoryRepository.AddAsync(entity);
+            await _mainCategoryRepository.AddAsync(entity, cancellationToken);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,

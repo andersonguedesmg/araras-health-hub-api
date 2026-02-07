@@ -31,7 +31,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
             CancellationToken cancellationToken)
         {
             var subCategory = await _subCategoryRepository
-                .GetByIdAsync(command.Id);
+                .GetByIdAsync(command.Id, cancellationToken);
 
             if (subCategory is null)
             {
@@ -50,7 +50,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
             }
 
             var mainCategory = await _mainCategoryRepository
-                .GetByIdAsync(subCategory.MainCategoryId);
+                .GetByIdAsync(subCategory.MainCategoryId, cancellationToken);
 
             if (mainCategory is null)
             {
@@ -71,7 +71,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
             }
 
             subCategory.Activate();
-            await _subCategoryRepository.UpdateAsync(subCategory);
+            await _subCategoryRepository.UpdateAsync(subCategory, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,

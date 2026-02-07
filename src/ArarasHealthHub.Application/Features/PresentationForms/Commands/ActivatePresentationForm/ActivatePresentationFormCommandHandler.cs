@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Activa
             ActivatePresentationFormCommand request,
             CancellationToken cancellationToken)
         {
-            var category = await _presentationFormRepository.GetByIdAsync(request.Id);
+            var category = await _presentationFormRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (category is null)
             {
@@ -46,7 +46,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Activa
             }
 
             category.Activate();
-            await _presentationFormRepository.UpdateAsync(category);
+            await _presentationFormRepository.UpdateAsync(category, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,

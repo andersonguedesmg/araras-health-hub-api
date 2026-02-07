@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
@@ -17,17 +19,18 @@ namespace ArarasHealthHub.Infrastructure.Repository
         public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<T>();
+            _dbSet = context.Set<T>();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet
+                .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public async Task<List<T>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.ToListAsync(cancellationToken);
         }
 
         public IQueryable<T> AsQueryable()
@@ -35,27 +38,27 @@ namespace ArarasHealthHub.Infrastructure.Repository
             return _dbSet.AsQueryable();
         }
 
-        public async Task AddAsync(T entity)
+        public async Task AddAsync(T entity, CancellationToken cancellationToken)
         {
-            await AddWithoutSavingAsync(entity);
-            await _context.SaveChangesAsync();
+            await AddWithoutSavingAsync(entity, cancellationToken);
+            await SaveAllAsync(cancellationToken);
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity, CancellationToken cancellationToken)
         {
             UpdateWithoutSaving(entity);
-            await _context.SaveChangesAsync();
+            await SaveAllAsync(cancellationToken);
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity, CancellationToken cancellationToken)
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            await SaveAllAsync(cancellationToken);
         }
 
-        public async Task AddWithoutSavingAsync(T entity)
+        public async Task AddWithoutSavingAsync(T entity, CancellationToken cancellationToken)
         {
-            await _dbSet.AddAsync(entity);
+            await _dbSet.AddAsync(entity, cancellationToken);
         }
 
         public async Task SaveAllAsync(CancellationToken cancellationToken)
@@ -65,13 +68,13 @@ namespace ArarasHealthHub.Infrastructure.Repository
 
         public void UpdateWithoutSaving(T entity)
         {
-            var trackedEntity = _context.Set<T>()
-                .Local
-                .FirstOrDefault(e => e.Id.Equals(entity.Id));
+            var trackedEntity = _context.ChangeTracker
+                .Entries<T>()
+                .FirstOrDefault(e => e.Entity.Id == entity.Id);
 
             if (trackedEntity != null)
             {
-                _context.Entry(trackedEntity).State = EntityState.Detached;
+                trackedEntity.State = EntityState.Detached;
             }
 
             _dbSet.Update(entity);

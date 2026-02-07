@@ -28,7 +28,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMai
             UpdateMainCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var entity = await _mainCategoryRepository.GetByIdAsync(request.Id);
+            var entity = await _mainCategoryRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {
@@ -68,7 +68,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMai
             entity.Name = newName;
             entity.SetUpdatedOn();
 
-            await _mainCategoryRepository.UpdateAsync(entity);
+            await _mainCategoryRepository.UpdateAsync(entity, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,

@@ -51,7 +51,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Create
                 Name = name
             };
 
-            await _presentationFormRepository.AddAsync(entity);
+            await _presentationFormRepository.AddAsync(entity, cancellationToken);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,

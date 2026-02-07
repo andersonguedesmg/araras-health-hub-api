@@ -33,7 +33,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
             GetMainCategoryByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var mainCategory = await _mainCategoryRepository.GetByIdAsync(request.Id);
+            var mainCategory = await _mainCategoryRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (mainCategory is null)
             {

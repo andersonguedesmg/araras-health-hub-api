@@ -33,7 +33,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Update
             UpdatePresentationFormCommand request,
             CancellationToken cancellationToken)
         {
-            var entity = await _presentationFormRepository.GetByIdAsync(request.Id);
+            var entity = await _presentationFormRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (entity is null)
             {
@@ -73,7 +73,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Update
             entity.Name = newName;
             entity.SetUpdatedOn();
 
-            await _presentationFormRepository.UpdateAsync(entity);
+            await _presentationFormRepository.UpdateAsync(entity, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,

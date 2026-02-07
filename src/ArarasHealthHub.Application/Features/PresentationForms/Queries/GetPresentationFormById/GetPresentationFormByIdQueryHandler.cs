@@ -33,7 +33,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPres
             GetPresentationFormByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var presentationForm = await _presentationFormRepository.GetByIdAsync(request.Id);
+            var presentationForm = await _presentationFormRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (presentationForm is null)
             {
@@ -47,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPres
 
             return ApiResponse<PresentationFormDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.EntityFound(EntityNames.PresentationForm),
+                ApiMessages.OperationSuccessful,
                 presentationFormDto
             );
         }

@@ -27,7 +27,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.ActivateM
             ActivateMainCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var category = await _mainCategoryRepository.GetByIdAsync(request.Id);
+            var category = await _mainCategoryRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (category is null)
             {
@@ -46,7 +46,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.ActivateM
             }
 
             category.Activate();
-            await _mainCategoryRepository.UpdateAsync(category);
+            await _mainCategoryRepository.UpdateAsync(category, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,

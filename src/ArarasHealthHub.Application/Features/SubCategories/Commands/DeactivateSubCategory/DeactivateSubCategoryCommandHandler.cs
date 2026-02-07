@@ -28,7 +28,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.Deactivate
             CancellationToken cancellationToken)
         {
             var subCategory =
-                await _subCategoryRepository.GetByIdAsync(command.Id);
+                await _subCategoryRepository.GetByIdAsync(command.Id, cancellationToken);
 
             if (subCategory is null)
             {
@@ -47,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.Deactivate
             }
 
             subCategory.Deactivate();
-            await _subCategoryRepository.UpdateAsync(subCategory);
+            await _subCategoryRepository.UpdateAsync(subCategory, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,

@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubC
             CancellationToken cancellationToken)
         {
             var mainCategory = await _mainCategoryRepository
-                .GetByIdAsync(request.MainCategoryId);
+                .GetByIdAsync(request.MainCategoryId, cancellationToken);
 
             if (mainCategory is null)
             {
@@ -62,7 +62,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubC
 
             var subCategory = _mapper.Map<SubCategory>(request);
 
-            await _subCategoryRepository.AddAsync(subCategory);
+            await _subCategoryRepository.AddAsync(subCategory, cancellationToken);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,
