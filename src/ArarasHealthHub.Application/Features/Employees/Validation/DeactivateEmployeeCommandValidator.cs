@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById;
+using ArarasHealthHub.Application.Features.Employees.Commands.DeactivateEmployee;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Shared.Core.Messages;
 
@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Employees.Validation
 {
-    public class GetEmployeeByIdQueryValidator : AbstractValidator<GetEmployeeByIdQuery>
+    public class DeactivateEmployeeCommandValidator : AbstractValidator<DeactivateEmployeeCommand>
     {
-        public GetEmployeeByIdQueryValidator(IApplicationDbContext context)
+        public DeactivateEmployeeCommandValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)

@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
@@ -29,13 +33,13 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
             GetEmployeeByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var employee = await _employeeRepository.GetByIdAsync(request.Id);
+            var employee = await _employeeRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (employee is null)
             {
                 return ApiResponse<EmployeeDto>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Funcionário")
+                    ApiMessages.EntityNotFound(EntityNames.Employee)
                 );
             }
 
@@ -43,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
 
             return ApiResponse<EmployeeDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.FoundSuccessfully("Funcionário"),
+                ApiMessages.OperationSuccessful,
                 employeeDto
             );
         }

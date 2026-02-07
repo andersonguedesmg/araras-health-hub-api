@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
@@ -30,7 +34,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
             CancellationToken cancellationToken)
         {
             var existingEmployee =
-                await _employeeRepository.GetByCpfAsync(request.Cpf);
+                await _employeeRepository.GetByCpfAsync(request.Cpf, cancellationToken);
 
             if (existingEmployee is not null)
             {
@@ -42,11 +46,11 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
 
             var employee = _mapper.Map<Employee>(request);
 
-            await _employeeRepository.AddAsync(employee);
+            await _employeeRepository.AddAsync(employee, cancellationToken);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,
-                ApiMessages.CreatedSuccessfully("Funcionário"),
+                ApiMessages.EntityCreated(EntityNames.Employee),
                 employee.Id
             );
         }

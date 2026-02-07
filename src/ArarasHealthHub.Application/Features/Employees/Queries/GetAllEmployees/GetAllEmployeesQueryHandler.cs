@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
@@ -28,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
 
         public async Task<PagedResponse<EmployeeDto>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var queryable = _employeeRepository.GetQueryable();
+            var queryable = _employeeRepository.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

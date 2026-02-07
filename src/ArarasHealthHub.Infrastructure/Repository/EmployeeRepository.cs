@@ -2,35 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
 {
     public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-
-        public EmployeeRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public EmployeeRepository(ApplicationDbContext context) : base(context)
         {
-            _dbContext = dbContext;
         }
 
-        public async Task<Employee?> GetByCpfAsync(string cpf)
+        public async Task<Employee?> GetByCpfAsync(string cpf, CancellationToken cancellationToken)
         {
-            return await _dbSet.FirstOrDefaultAsync(s => s.Cpf == cpf);
+            return await _dbSet
+                .FirstOrDefaultAsync(e => e.Cpf == cpf, cancellationToken);
         }
 
-        public async Task<bool> EmployeeExists(int id)
+        public async Task<bool> EmployeeExistsAsync(int id, CancellationToken cancellationToken)
         {
-            return await _dbSet.AnyAsync(s => s.Id == id);
-        }
-
-        public IQueryable<Employee> GetQueryable()
-        {
-            return _dbContext.Set<Employee>();
+            return await _dbSet
+                .AnyAsync(e => e.Id == id, cancellationToken);
         }
     }
 }

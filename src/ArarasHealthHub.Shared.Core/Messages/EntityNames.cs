@@ -10,6 +10,9 @@ namespace ArarasHealthHub.Shared.Core.Messages
         public const string Account = "Conta";
         public const string Accounts = "Contas";
 
+        public const string Employee = "Funcionário";
+        public const string Employees = "Funcionários";
+
         public const string Facility = "Unidade";
         public const string Facilities = "Unidades";
 
