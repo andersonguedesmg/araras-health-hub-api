@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Core.Dtos;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -15,7 +18,7 @@ namespace ArarasHealthHub.Application.Profiles
         public EmployeeProfile()
         {
             CreateMap<Employee, EmployeeDto>();
-            CreateMap<Employee, EmployeeNameDto>();
+            CreateMap<Employee, DropdownItemDto>();
 
             CreateMap<CreateEmployeeCommand, Employee>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())

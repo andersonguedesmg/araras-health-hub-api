@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Identity;
+using ArarasHealthHub.Shared.Core.Dtos;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -16,8 +18,8 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public OrderProfile()
         {
-            CreateMap<Employee, EmployeeNameDto>();
-            CreateMap<Facility, FacilityNameDto>();
+            CreateMap<Employee, DropdownItemDto>();
+            CreateMap<Facility, DropdownItemDto>();
             CreateMap<ApplicationUser, AccountMinimalDto>();
             CreateMap<OrderStatus, OrderStatusDto>();
 

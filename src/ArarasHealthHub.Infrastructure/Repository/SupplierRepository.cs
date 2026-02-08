@@ -30,10 +30,5 @@ namespace ArarasHealthHub.Infrastructure.Repository
         {
             return await _dbSet.AnyAsync(s => s.Id == id);
         }
-
-        public IQueryable<Supplier> GetQueryable()
-        {
-            return _dbContext.Set<Supplier>();
-        }
     }
 }

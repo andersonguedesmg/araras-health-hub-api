@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Common.Dtos;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.ValueObjects;
+using ArarasHealthHub.Shared.Core.Dtos;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -20,7 +23,7 @@ namespace ArarasHealthHub.Application.Profiles
             CreateMap<ContactDto, Contact>().ReverseMap();
 
             CreateMap<Supplier, SupplierDto>();
-            CreateMap<Supplier, SupplierNameDto>();
+            CreateMap<Supplier, DropdownItemDto>();
 
             CreateMap<CreateSupplierCommand, Supplier>()
                 .ForPath(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
