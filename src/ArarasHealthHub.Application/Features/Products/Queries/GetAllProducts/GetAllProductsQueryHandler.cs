@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
@@ -30,7 +34,7 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
             GetAllProductsQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _productRepository.GetQueryable();
+            var queryable = _productRepository.AsQueryableWithIncludes();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

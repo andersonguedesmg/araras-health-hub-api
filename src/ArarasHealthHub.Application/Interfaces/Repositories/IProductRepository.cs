@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Entities;
 
 namespace ArarasHealthHub.Application.Interfaces.Repositories
@@ -10,12 +11,12 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     {
         Task<bool> HasProductNameUnique(string name, int productId, CancellationToken cancellationToken);
 
-        Task<Product?> GetByProductNameAsync(string name);
+        Task<Product?> GetByProductNameAsync(string name, CancellationToken cancellationToken);
 
         Task<bool> ProductExists(int id);
 
         Task<Product?> GetByIdWithStockAsync(int id);
 
-        IQueryable<Product> GetQueryable();
+        IQueryable<Product> AsQueryableWithIncludes();
     }
 }

@@ -7,35 +7,29 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 
-using AutoMapper;
-
 using MediatR;
 
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
+namespace ArarasHealthHub.Application.Features.Products.Commands.ActivateProduct
 {
-    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ApiResponse<object>>
+    public class ActivateProductCommandHandler : IRequestHandler<ActivateProductCommand, ApiResponse<object>>
     {
         private readonly IProductRepository _productRepository;
-        private readonly IMapper _mapper;
 
-        public UpdateProductCommandHandler(
-            IProductRepository productRepository,
-            IMapper mapper)
+        public ActivateProductCommandHandler(
+            IProductRepository productRepository)
         {
             _productRepository = productRepository;
-            _mapper = mapper;
         }
 
         public async Task<ApiResponse<object>> Handle(
-            UpdateProductCommand request,
+            ActivateProductCommand request,
             CancellationToken cancellationToken)
         {
-            var existingProduct =
-                await _productRepository.GetByIdAsync(request.Id, cancellationToken);
+            var product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
 
-            if (existingProduct is null)
+            if (product is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
@@ -43,14 +37,20 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
                 );
             }
 
-            _mapper.Map(request, existingProduct);
-            existingProduct.SetUpdatedOn();
+            if (product.IsActive)
+            {
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.EntityAlreadyActive(EntityNames.Product)
+                );
+            }
 
-            await _productRepository.UpdateAsync(existingProduct, cancellationToken);
+            product.Activate();
+            await _productRepository.UpdateAsync(product, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.EntityUpdated(EntityNames.Product)
+                ApiMessages.EntityActivated(EntityNames.Product)
             );
         }
     }

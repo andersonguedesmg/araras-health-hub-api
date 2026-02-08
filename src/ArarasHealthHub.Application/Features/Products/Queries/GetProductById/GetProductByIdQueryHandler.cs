@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
@@ -29,13 +33,13 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
             GetProductByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetByIdAsync(request.Id);
+            var product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (product is null)
             {
                 return ApiResponse<ProductDto>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Produto")
+                    ApiMessages.EntityNotFound(EntityNames.Product)
                 );
             }
 
@@ -43,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
 
             return ApiResponse<ProductDto>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.FoundSuccessfully("Produto"),
+                ApiMessages.OperationSuccessful,
                 productDto
             );
         }

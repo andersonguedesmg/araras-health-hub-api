@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Core.Dtos;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -14,6 +17,8 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public ProductProfile()
         {
+            CreateMap<Product, DropdownItemDto>();
+
             CreateMap<Product, ProductDto>()
                 .ForMember(dest => dest.MainCategoryName, opt => opt.MapFrom(src => src.MainCategory!.Name))
                 .ForMember(dest => dest.SubCategoryName, opt => opt.MapFrom(src => src.SubCategory!.Name))

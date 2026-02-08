@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Products.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +29,7 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.ExportProducts
             ExportProductsQuery request,
             CancellationToken cancellationToken)
         {
-            var query = _productRepository.GetQueryable();
+            var query = _productRepository.AsQueryableWithIncludes();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
@@ -49,7 +52,7 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.ExportProducts
             {
                 return ApiResponse<FileResponse>.FailureResponse(
                     StatusCodes.Status404NotFound,
-                    ApiMessages.ExportEmpty("produto")
+                    ApiMessages.ExportEmpty(EntityNames.Product)
                 );
             }
 

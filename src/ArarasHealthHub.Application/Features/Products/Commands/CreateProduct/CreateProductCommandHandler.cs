@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
@@ -30,23 +34,23 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
             CancellationToken cancellationToken)
         {
             var existingProduct =
-                await _productRepository.GetByProductNameAsync(request.Name);
+                await _productRepository.GetByProductNameAsync(request.Name, cancellationToken);
 
             if (existingProduct is not null)
             {
                 return ApiResponse<int>.FailureResponse(
                     StatusCodes.Status409Conflict,
-                    ApiMessages.ProductAlreadyExists
+                    ApiMessages.EntityAlreadyExists(EntityNames.Product)
                 );
             }
 
             var product = _mapper.Map<Product>(request);
 
-            await _productRepository.AddAsync(product);
+            await _productRepository.AddAsync(product, cancellationToken);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,
-                ApiMessages.CreatedSuccessfully("Produto"),
+                ApiMessages.EntityCreated(EntityNames.Product),
                 product.Id
             );
         }

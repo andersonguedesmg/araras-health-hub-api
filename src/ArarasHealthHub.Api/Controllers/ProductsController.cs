@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using araras_health_hub_api.Common;
-using ArarasHealthHub.Application.Features.Products.Commands.ChangeStatusProduct;
+
+using ArarasHealthHub.Application.Features.Products.Commands.ActivateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
-using ArarasHealthHub.Application.Features.Products.Commands.DeleteProduct;
+using ArarasHealthHub.Application.Features.Products.Commands.DeactivateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Features.Products.Queries.ExportProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductById;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdown;
+using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -59,26 +63,26 @@ namespace ArarasHealthHub.Api.Controllers
             return await Send(command.WithId(id));
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpPatch("{id:int}/activate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Activate(int id, ActivateProductCommand command)
         {
-            return await Send(new DeleteProductCommand(0).WithId(id));
+            return await Send(command.WithId(id));
         }
 
-        [HttpPatch("{id:int}/status")]
+        [HttpPatch("{id:int}/deactivate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ChangeStatus(int id, ChangeStatusProductCommand command)
+        public async Task<IActionResult> Deactivate(int id, DeactivateProductCommand command)
         {
             return await Send(command.WithId(id));
         }
 
         [HttpGet("dropdown")]
-        [ProducesResponseType(typeof(PagedResponse<ProductNameDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponse<DropdownItemDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDropdown([FromQuery] GetProductDropdownQuery query)
         {
             return await Send(query);
