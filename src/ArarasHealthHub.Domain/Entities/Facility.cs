@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Domain.ValueObjects;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
@@ -13,7 +15,7 @@ namespace ArarasHealthHub.Domain.Entities
     public class Facility : BaseEntity
     {
         [Required]
-        [MaxLength(150)]
+        [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
 
         [Required]

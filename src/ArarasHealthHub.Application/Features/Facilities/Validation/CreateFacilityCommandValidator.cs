@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Common.Validation;
 using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Shared.Core.Messages;
+
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Validation
@@ -19,32 +22,36 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
 
             RuleFor(x => x.Name)
                 .NotEmpty()
-                    .WithMessage("O nome é obrigatório.")
+                    .WithName("Nome")
+                    .WithMessage(ValidationMessages.RequiredField)
                 .MaximumLength(100)
-                    .WithMessage("O nome não pode exceder 100 caracteres.")
+                    .WithMessage(ValidationMessages.MaxLengthField(100))
                 .MustAsync(BeUniqueName)
                     .WithMessage("Já existe uma unidade cadastrada com este nome.");
 
             RuleFor(x => x.Cnes)
                 .NotEmpty()
-                    .WithMessage("O código CNES é obrigatório.")
+                    .WithName("CNES")
+                    .WithMessage(ValidationMessages.RequiredField)
                 .MaximumLength(7)
-                    .WithMessage("O código CNES não pode exceder 7 caracteres.");
+                    .WithMessage(ValidationMessages.MaxLengthField(7));
 
             RuleFor(x => x.Address)
                 .NotNull()
-                    .WithMessage("O objeto de endereço é obrigatório.")
+                    .WithName("endereço")
+                    .WithMessage(ValidationMessages.RequiredObject)
                 .SetValidator(new AddressDtoValidator());
 
             RuleFor(x => x.Contact)
                 .NotNull()
-                    .WithMessage("O objeto de contato é obrigatório.")
+                    .WithName("contato")
+                    .WithMessage(ValidationMessages.RequiredObject)
                 .SetValidator(new ContactDtoValidator());
         }
 
         private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
         {
-            var existingFacility = await _facilityRepository.GetByNameAsync(name);
+            var existingFacility = await _facilityRepository.GetByNameAsync(name, cancellationToken);
             return existingFacility == null;
         }
     }

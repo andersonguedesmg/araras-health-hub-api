@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility
@@ -30,23 +34,23 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacilit
             CancellationToken cancellationToken)
         {
             var existingFacility =
-                await _facilityRepository.GetByNameAsync(request.Name);
+                await _facilityRepository.GetByNameAsync(request.Name, cancellationToken);
 
             if (existingFacility is not null)
             {
                 return ApiResponse<int>.FailureResponse(
                     StatusCodes.Status409Conflict,
-                    ApiMessages.FacilityAlreadyExists
+                    ApiMessages.EntityAlreadyExists(EntityNames.Facility)
                 );
             }
 
             var facility = _mapper.Map<Facility>(request);
 
-            await _facilityRepository.AddAsync(facility);
+            await _facilityRepository.AddAsync(facility, cancellationToken);
 
             return ApiResponse<int>.SuccessResponse(
                 StatusCodes.Status201Created,
-                ApiMessages.CreatedSuccessfully("Unidade"),
+                ApiMessages.EntityCreated(EntityNames.Facility),
                 facility.Id
             );
         }

@@ -7,35 +7,29 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 
-using AutoMapper;
-
 using MediatR;
 
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility
+namespace ArarasHealthHub.Application.Features.Facilities.Commands.ActivateFacility
 {
-    public class UpdateFacilityCommandHandler : IRequestHandler<UpdateFacilityCommand, ApiResponse<object>>
+    public class ActivateFacilityCommandHandler : IRequestHandler<ActivateFacilityCommand, ApiResponse<object>>
     {
         private readonly IFacilityRepository _facilityRepository;
-        private readonly IMapper _mapper;
 
-        public UpdateFacilityCommandHandler(
-            IFacilityRepository facilityRepository,
-            IMapper mapper)
+        public ActivateFacilityCommandHandler(
+            IFacilityRepository facilityRepository)
         {
             _facilityRepository = facilityRepository;
-            _mapper = mapper;
         }
 
         public async Task<ApiResponse<object>> Handle(
-            UpdateFacilityCommand request,
+            ActivateFacilityCommand request,
             CancellationToken cancellationToken)
         {
-            var existingFacility =
-                await _facilityRepository.GetByIdAsync(request.Id, cancellationToken);
+            var facility = await _facilityRepository.GetByIdAsync(request.Id, cancellationToken);
 
-            if (existingFacility is null)
+            if (facility is null)
             {
                 return ApiResponse<object>.FailureResponse(
                     StatusCodes.Status404NotFound,
@@ -43,14 +37,20 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacilit
                 );
             }
 
-            _mapper.Map(request, existingFacility);
-            existingFacility.SetUpdatedOn();
+            if (facility.IsActive)
+            {
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status409Conflict,
+                    ApiMessages.EntityAlreadyActive(EntityNames.Facility)
+                );
+            }
 
-            await _facilityRepository.UpdateAsync(existingFacility, cancellationToken);
+            facility.Activate();
+            await _facilityRepository.UpdateAsync(facility, cancellationToken);
 
             return ApiResponse<object>.SuccessResponse(
                 StatusCodes.Status200OK,
-                ApiMessages.EntityUpdated(EntityNames.Facility)
+                ApiMessages.EntityActivated(EntityNames.Facility)
             );
         }
     }

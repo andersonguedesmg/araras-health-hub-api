@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
@@ -24,21 +25,17 @@ namespace ArarasHealthHub.Infrastructure.Repository
             return _dbSet.AnyAsync(s => s.Id == id);
         }
 
-        public async Task<Facility?> GetByNameAsync(string name)
-        {
-            return await _dbSet.FirstOrDefaultAsync(s => s.Name == name);
-        }
-
-        public async Task<Facility?> GetByIdWithAccountsAsync(int id)
+        public async Task<Facility?> GetByNameAsync(string name, CancellationToken cancellationToken)
         {
             return await _dbSet
-                        .Include(f => f.Accounts)
-                        .FirstOrDefaultAsync(f => f.Id == id);
+                .FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
         }
 
-        public IQueryable<Facility> GetQueryable()
+        public async Task<Facility?> GetByIdWithAccountsAsync(int id, CancellationToken cancellationToken)
         {
-            return _dbContext.Set<Facility>();
+            return await _dbSet
+                .Include(f => f.Accounts)
+                .FirstOrDefaultAsync(f => f.Id == id, cancellationToken);
         }
     }
 }

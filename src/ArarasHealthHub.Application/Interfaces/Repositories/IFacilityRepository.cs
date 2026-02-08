@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+
 using ArarasHealthHub.Domain.Entities;
 
 namespace ArarasHealthHub.Application.Interfaces.Repositories
@@ -11,10 +11,8 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     {
         Task<bool> FacilityExists(int id);
 
-        Task<Facility?> GetByNameAsync(string name);
+        Task<Facility?> GetByNameAsync(string name, CancellationToken cancellationToken);
 
-        Task<Facility?> GetByIdWithAccountsAsync(int id);
-
-        IQueryable<Facility> GetQueryable();
+        Task<Facility?> GetByIdWithAccountsAsync(int id, CancellationToken cancellationToken);
     }
 }

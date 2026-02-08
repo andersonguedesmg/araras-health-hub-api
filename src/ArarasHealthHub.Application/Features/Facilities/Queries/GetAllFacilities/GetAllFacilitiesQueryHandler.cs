@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Core.Pagination;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities
@@ -30,7 +34,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
             GetAllFacilitiesQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _facilityRepository.GetQueryable();
+            var queryable = _facilityRepository.AsQueryable();
             queryable = queryable.Include(f => f.Accounts);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))

@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Common.Dtos;
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Domain.ValueObjects;
+using ArarasHealthHub.Shared.Core.Dtos;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -22,7 +23,7 @@ namespace ArarasHealthHub.Application.Profiles
             CreateMap<ContactDto, Contact>().ReverseMap();
 
             CreateMap<Facility, FacilityDto>();
-            CreateMap<Facility, FacilityNameDto>();
+            CreateMap<Facility, DropdownItemDto>();
 
             CreateMap<CreateFacilityCommand, Facility>()
                 .ForPath(dest => dest.Address, opt => opt.MapFrom(src => src.Address))

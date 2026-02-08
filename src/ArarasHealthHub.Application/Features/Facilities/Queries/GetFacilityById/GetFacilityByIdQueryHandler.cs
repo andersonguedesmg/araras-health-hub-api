@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById
@@ -29,7 +33,7 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityByI
             GetFacilityByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var facility = await _facilityRepository.GetByIdAsync(request.Id);
+            var facility = await _facilityRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (facility is null)
             {

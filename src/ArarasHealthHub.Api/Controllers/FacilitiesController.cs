@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using araras_health_hub_api.Common;
-using ArarasHealthHub.Application.Features.Facilities.Commands.ChangeStatusFacility;
+
+using ArarasHealthHub.Application.Features.Facilities.Commands.ActivateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
-using ArarasHealthHub.Application.Features.Facilities.Commands.DeleteFacility;
+using ArarasHealthHub.Application.Features.Facilities.Commands.DeactivateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Features.Facilities.Queries.ExportFacilities;
@@ -14,8 +16,10 @@ using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdown;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityProfile;
+using ArarasHealthHub.Shared.Core.Dtos;
 using ArarasHealthHub.Shared.Core.Pagination;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,26 +64,26 @@ namespace ArarasHealthHub.Api.Controllers
             return await Send(command.WithId(id));
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpPatch("{id:int}/activate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Activate(int id, ActivateFacilityCommand command)
         {
-            return await Send(new DeleteFacilityCommand(0).WithId(id));
+            return await Send(command.WithId(id));
         }
 
-        [HttpPatch("{id:int}/status")]
+        [HttpPatch("{id:int}/deactivate")]
         [Authorize(Policy = "CanManageResource")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ChangeStatus(int id, ChangeStatusFacilityCommand command)
+        public async Task<IActionResult> Deactivate(int id, DeactivateFacilityCommand command)
         {
             return await Send(command.WithId(id));
         }
 
         [HttpGet("dropdown")]
-        [ProducesResponseType(typeof(PagedResponse<FacilityNameDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponse<DropdownItemDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDropdown([FromQuery] GetFacilityDropdownQuery query)
         {
             return await Send(query);
