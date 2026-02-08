@@ -60,7 +60,8 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubC
             var duplicate = await _subCategoryRepository
                 .GetBySubCategoryNameAndMainCategoryIdAsync(
                     request.Name,
-                    request.MainCategoryId);
+                    request.MainCategoryId,
+                    cancellationToken);
 
             if (duplicate is not null && duplicate.Id != request.Id)
             {

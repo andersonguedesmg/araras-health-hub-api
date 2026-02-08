@@ -28,7 +28,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
             CancellationToken cancellationToken)
         {
             var query = _subCategoryRepository
-                .GetQueryable()
+                .AsQueryableWithMainCategory()
                 .Where(x => x.IsActive);
 
             if (request.MainCategoryId > 0)

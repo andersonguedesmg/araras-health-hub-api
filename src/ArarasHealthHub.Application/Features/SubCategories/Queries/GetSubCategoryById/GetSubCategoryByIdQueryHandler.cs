@@ -35,8 +35,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
             CancellationToken cancellationToken)
         {
             var subCategory = await _subCategoryRepository
-                .GetQueryable()
-                .Include(sc => sc.MainCategory)
+                .AsQueryableWithMainCategory()
                 .FirstOrDefaultAsync(
                     sc => sc.Id == request.Id,
                     cancellationToken);
