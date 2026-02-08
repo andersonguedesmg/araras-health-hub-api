@@ -49,7 +49,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMai
             }
 
             var conflictExists = await _mainCategoryRepository
-                .GetQueryable()
+                .AsQueryable()
                 .AnyAsync(
                     c =>
                         c.Id != entity.Id &&

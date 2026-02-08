@@ -28,7 +28,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
             CancellationToken cancellationToken)
         {
             var queryable = _mainCategoryRepository
-                .GetQueryable()
+                .AsQueryable()
                 .Where(e => e.IsActive);
 
             var term = request.SearchTerm?.Trim();

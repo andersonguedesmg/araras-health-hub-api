@@ -29,7 +29,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.ExportMain
             ExportMainCategoriesQuery request,
             CancellationToken cancellationToken)
         {
-            var query = _mainCategoryRepository.GetQueryable();
+            var query = _mainCategoryRepository.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

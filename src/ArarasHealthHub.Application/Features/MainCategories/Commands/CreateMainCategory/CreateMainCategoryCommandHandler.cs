@@ -32,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMai
             var name = request.Name.Trim();
 
             var alreadyExists = await _mainCategoryRepository
-                .GetQueryable()
+                .AsQueryable()
                 .AnyAsync(
                     c => c.Name.ToLower() == name.ToLower(),
                     cancellationToken
