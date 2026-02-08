@@ -28,7 +28,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPres
             CancellationToken cancellationToken)
         {
             var queryable = _presentationFormRepository
-                .GetQueryable()
+                .AsQueryable()
                 .Where(p => p.IsActive);
 
             var term = request.SearchTerm?.Trim();

@@ -29,7 +29,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.ExportP
             ExportPresentationFormsQuery request,
             CancellationToken cancellationToken)
         {
-            var query = _presentationFormRepository.GetQueryable();
+            var query = _presentationFormRepository.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

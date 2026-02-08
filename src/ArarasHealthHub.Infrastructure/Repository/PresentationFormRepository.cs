@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
@@ -18,14 +20,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<PresentationForm?> GetByPresentationFormNameAsync(string name)
+        public async Task<PresentationForm?> GetByPresentationFormNameAsync(string name, CancellationToken cancellationToken)
         {
-            return await _dbContext.PresentationForms.AsNoTracking().FirstOrDefaultAsync(s => s.Name.ToLower() == name.ToLower());
-        }
-
-        public IQueryable<PresentationForm> GetQueryable()
-        {
-            return _dbContext.Set<PresentationForm>();
+            return await _dbContext.PresentationForms.AsNoTracking().FirstOrDefaultAsync(s => s.Name.ToLower() == name.ToLower(), cancellationToken);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Update
             }
 
             var conflictExists = await _presentationFormRepository
-                .GetQueryable()
+                .AsQueryable()
                 .AnyAsync(
                     c =>
                         c.Id != entity.Id &&

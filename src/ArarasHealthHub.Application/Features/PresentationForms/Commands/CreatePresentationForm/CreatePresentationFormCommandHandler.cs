@@ -32,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Create
             var name = request.Name.Trim();
 
             var alreadyExists = await _presentationFormRepository
-                .GetQueryable()
+                .AsQueryable()
                 .AnyAsync(
                     c => c.Name.ToLower() == name.ToLower(),
                     cancellationToken

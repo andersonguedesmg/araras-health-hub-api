@@ -34,7 +34,7 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetAllP
             GetAllPresentationFormsQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _presentationFormRepository.GetQueryable();
+            var queryable = _presentationFormRepository.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
