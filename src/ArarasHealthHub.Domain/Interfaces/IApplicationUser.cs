@@ -12,7 +12,7 @@ namespace ArarasHealthHub.Domain.Interfaces
         int Id { get; set; }
         string? UserName { get; set; }
         int FacilityId { get; set; }
-        public UserScopeEnum Scope { get; set; }
+        public AccountScopeEnum Scope { get; set; }
         DateTime CreatedOn { get; set; }
         DateTime? UpdatedOn { get; set; }
         bool IsActive { get; set; }

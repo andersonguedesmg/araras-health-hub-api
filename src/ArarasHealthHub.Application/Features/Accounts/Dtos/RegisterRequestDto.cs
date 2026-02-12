@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Enums;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Dtos
@@ -12,7 +13,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Dtos
         public string Password { get; set; } = string.Empty;
         public int FacilityId { get; set; }
         public string Role { get; set; } = string.Empty;
-        public UserScopeEnum Scope { get; set; } = UserScopeEnum.Operational;
+        public AccountScopeEnum Scope { get; set; } = AccountScopeEnum.Operational;
         public bool IsActive { get; set; } = true;
     }
 }

@@ -40,11 +40,11 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
                 .Must(BeAValidRole).WithMessage("Função inválida ou não permitida.");
 
             RuleFor(x => x)
-                .Must(command => !(command.Role.ToUpper() == "MASTER" && command.Scope != UserScopeEnum.Management))
+                .Must(command => !(command.Role.ToUpper() == "MASTER" && command.Scope != AccountScopeEnum.Management))
                 .WithMessage("A função 'MASTER' é exclusiva para o escopo de Gerenciamento (Management).");
 
             RuleFor(x => x)
-               .Must(command => !(command.Scope == UserScopeEnum.Operational && command.Role.ToUpper() == "MASTER"))
+               .Must(command => !(command.Scope == AccountScopeEnum.Operational && command.Role.ToUpper() == "MASTER"))
                .WithMessage("O escopo Operacional não pode ter a função 'MASTER'.");
         }
 

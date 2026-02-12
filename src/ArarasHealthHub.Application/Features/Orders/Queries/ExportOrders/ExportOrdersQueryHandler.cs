@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +45,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.ExportOrders
 
             var query = _orderRepo.GetQueryable();
 
-            if (scopeClaim == UserScopeEnum.Operational.ToString())
+            if (scopeClaim == AccountScopeEnum.Operational.ToString())
             {
                 var accountIdClaim = currentUser?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (accountIdClaim != null && int.TryParse(accountIdClaim, out int accountId))

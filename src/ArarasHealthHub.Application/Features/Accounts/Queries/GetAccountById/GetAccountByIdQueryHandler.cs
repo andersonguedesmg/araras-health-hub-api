@@ -54,7 +54,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
                 return new ApiResponseO<AccountDetailsDto>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, null);
             }
 
-            if (currentUser.Scope == UserScopeEnum.Operational)
+            if (currentUser.Scope == AccountScopeEnum.Operational)
             {
                 if (user.Id != currentUser.Id && user.FacilityId != currentUser.FacilityId)
                 {

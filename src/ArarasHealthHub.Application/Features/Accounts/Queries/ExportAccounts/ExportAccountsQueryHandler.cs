@@ -55,7 +55,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts
                                                         .Include(u => u.Facility)
                                                         .AsNoTracking();
 
-            if (currentUser.Scope == UserScopeEnum.Operational)
+            if (currentUser.Scope == AccountScopeEnum.Operational)
             {
                 query = query.Where(u => u.FacilityId == currentUser.FacilityId);
             }

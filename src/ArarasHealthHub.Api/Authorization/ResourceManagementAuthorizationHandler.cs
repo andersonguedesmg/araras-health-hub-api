@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -44,7 +46,7 @@ namespace araras_health_hub_api.Authorization
 
             var subjectRoles = await _userManager.GetRolesAsync(subjectUser);
 
-            if (subjectUser.Scope == UserScopeEnum.Management &&
+            if (subjectUser.Scope == AccountScopeEnum.Management &&
                 (subjectRoles.Contains("Master") || subjectRoles.Contains("Admin")))
             {
                 context.Succeed(requirement);

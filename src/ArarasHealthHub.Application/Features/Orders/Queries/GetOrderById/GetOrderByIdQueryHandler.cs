@@ -44,7 +44,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById
             var scope = currentUser?.FindFirst("Scope")?.Value;
             var facilityClaim = currentUser?.FindFirst("FacilityId")?.Value;
 
-            if (scope == UserScopeEnum.Operational.ToString() && int.TryParse(facilityClaim, out int userFacilityId))
+            if (scope == AccountScopeEnum.Operational.ToString() && int.TryParse(facilityClaim, out int userFacilityId))
             {
                 if (order.OrderFacilityId != userFacilityId)
                 {

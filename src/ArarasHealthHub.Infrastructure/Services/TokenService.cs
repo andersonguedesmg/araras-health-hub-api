@@ -5,8 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Enums;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -24,7 +26,7 @@ namespace ArarasHealthHub.Infrastructure.Services
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         }
 
-        public string CreateToken(int userId, string userName, IEnumerable<string> roles, UserScopeEnum scope)
+        public string CreateToken(int userId, string userName, IEnumerable<string> roles, AccountScopeEnum scope)
         {
             var claims = new List<Claim>
             {

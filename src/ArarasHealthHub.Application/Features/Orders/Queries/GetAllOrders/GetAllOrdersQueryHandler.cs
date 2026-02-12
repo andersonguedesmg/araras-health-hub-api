@@ -47,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
 
             var query = _orderRepo.GetQueryable();
 
-            if (scopeClaim == UserScopeEnum.Operational.ToString())
+            if (scopeClaim == AccountScopeEnum.Operational.ToString())
             {
                 var accountIdClaim = currentUser?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 

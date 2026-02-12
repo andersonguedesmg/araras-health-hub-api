@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Enums;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -49,7 +51,7 @@ namespace araras_health_hub_api.Filters
                 return;
             }
 
-            var targetScopeEnum = (UserScopeEnum)(targetScopeProp.GetValue(targetDto) ?? UserScopeEnum.Unassigned);
+            var targetScopeEnum = (AccountScopeEnum)(targetScopeProp.GetValue(targetDto) ?? AccountScopeEnum.Unassigned);
             var targetRole = (string)(targetRoleProp.GetValue(targetDto) ?? string.Empty);
 
             var requirement = new ManageAccountRequirement(targetScopeEnum, targetRole);

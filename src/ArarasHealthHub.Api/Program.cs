@@ -230,11 +230,11 @@ builder.Services.AddAuthorization(options =>
     // Políticas para gerenciamento de contas (requerem checagem hierárquica)
     options.AddPolicy("CanManageMasterAccount", policy =>
     {
-        policy.AddRequirements(new ManageAccountRequirement(UserScopeEnum.Management, "Master"));
+        policy.AddRequirements(new ManageAccountRequirement(AccountScopeEnum.Management, "Master"));
     });
     options.AddPolicy("CanManageAdminOrUserAccount", policy =>
     {
-        policy.AddRequirements(new ManageAccountRequirement(UserScopeEnum.Management, "Admin"));
+        policy.AddRequirements(new ManageAccountRequirement(AccountScopeEnum.Management, "Admin"));
     });
 
     // Política para gerenciamento de recursos gerais (Employee, Facility, Product, Supplier)
@@ -248,7 +248,7 @@ builder.Services.AddAuthorization(options =>
     // Requer: Apenas Scope Management (Master, Admin, User)
     options.AddPolicy("CanReadManagementResource", policy =>
     {
-        policy.RequireClaim("Scope", UserScopeEnum.Management.ToString());
+        policy.RequireClaim("Scope", AccountScopeEnum.Management.ToString());
     });
 });
 
