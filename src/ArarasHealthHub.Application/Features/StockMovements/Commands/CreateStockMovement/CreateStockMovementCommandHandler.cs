@@ -2,18 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.StockMovements.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockMovement
 {
-    public class CreateStockMovementCommandHandler : IRequestHandler<CreateStockMovementCommand, ApiResponse<StockMovementDto>>
+    public class CreateStockMovementCommandHandler : IRequestHandler<CreateStockMovementCommand, ApiResponseO<StockMovementDto>>
     {
         private readonly IStockMovementRepository _stockMovementRepository;
         private readonly IMapper _mapper;
@@ -27,7 +32,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<StockMovementDto>> Handle(CreateStockMovementCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<StockMovementDto>> Handle(CreateStockMovementCommand request, CancellationToken cancellationToken)
         {
             var stockMovement = new StockMovement
             {
@@ -41,10 +46,10 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
                 MovementDate = request.MovementDate,
             };
 
-            await _stockMovementRepository.AddWithoutSavingAsync(stockMovement);
+            await _stockMovementRepository.AddWithoutSavingAsync(stockMovement, cancellationToken);
 
             var stockMovementDto = _mapper.Map<StockMovementDto>(stockMovement);
-            return new ApiResponse<StockMovementDto>(StatusCodes.Status201Created, ApiMessages.RegisteredSuccessfully("Entrada de estoque"), stockMovementDto);
+            return new ApiResponseO<StockMovementDto>(StatusCodes.Status201Created, ApiMessages.RegisteredSuccessfully("Entrada de estoque"), stockMovementDto);
         }
     }
 }

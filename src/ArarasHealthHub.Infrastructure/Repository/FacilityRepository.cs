@@ -20,9 +20,9 @@ namespace ArarasHealthHub.Infrastructure.Repository
             _dbContext = dbContext;
         }
 
-        public Task<bool> FacilityExists(int id)
+        public Task<bool> FacilityExists(int id, CancellationToken cancellationToken)
         {
-            return _dbSet.AnyAsync(s => s.Id == id);
+            return _dbSet.AnyAsync(s => s.Id == id, cancellationToken);
         }
 
         public async Task<Facility?> GetByNameAsync(string name, CancellationToken cancellationToken)

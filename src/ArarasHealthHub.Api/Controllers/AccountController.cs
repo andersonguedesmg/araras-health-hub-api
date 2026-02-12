@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
+
 using araras_health_hub_api.Filters;
+
 using ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount;
@@ -11,9 +13,12 @@ using ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacilityId;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +38,7 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpPost("register")]
         [AuthorizeAccountManagement(typeof(RegisterRequestDto))]
-        [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ApiResponseO<AccountCreatedDto>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.Forbidden)]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
@@ -80,7 +85,7 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getAll")]
-        [ProducesResponseType(typeof(PagedResponse<AccountDetailsDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseO<AccountDetailsDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
@@ -138,7 +143,7 @@ namespace ArarasHealthHub.Api.Controllers
         {
             if (id != command.UserId)
             {
-                return BadRequest(new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
+                return BadRequest(new ApiResponseO<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
             }
             var result = await _mediator.Send(command);
             return StatusCode(result.StatusCode, result);
@@ -153,7 +158,7 @@ namespace ArarasHealthHub.Api.Controllers
             var accountDtos = await _mediator.Send(new ExportAccountsQuery { SearchTerm = searchTerm });
             if (accountDtos == null || !accountDtos.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("conta"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("conta"), null!));
             }
 
             var sb = new StringBuilder();

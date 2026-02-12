@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Identity;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
@@ -14,7 +15,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
 {
-    public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, ApiResponse<bool>>
+    public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, ApiResponseO<bool>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
@@ -27,13 +28,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ApiResponse<bool>> Handle(UpdateAccountCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<bool>> Handle(UpdateAccountCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
 
             if (user == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+                return new ApiResponseO<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
             }
 
             var targetRoles = await _userManager.GetRolesAsync(user);
@@ -45,7 +46,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
             var currentUser = _httpContextAccessor.HttpContext?.User;
             if (currentUser == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status401Unauthorized, ApiMessages.UnauthenticatedUser, false);
+                return new ApiResponseO<bool>(StatusCodes.Status401Unauthorized, ApiMessages.UnauthenticatedUser, false);
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(
@@ -56,14 +57,14 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
 
             if (!authorizationResult.Succeeded)
             {
-                return new ApiResponse<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+                return new ApiResponseO<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
             if (user.UserName != request.UserName)
             {
                 if (await _userManager.FindByNameAsync(request.UserName) != null)
                 {
-                    return new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
+                    return new ApiResponseO<bool>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
                 }
             }
 
@@ -75,10 +76,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
             {
                 var identityErrors = updateResult.Errors.Select(e => e.Description).ToList();
                 var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToUpdateAccount, errorsDict, false);
+                return new ApiResponseO<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToUpdateAccount, errorsDict, false);
             }
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Conta"), true);
+            return new ApiResponseO<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Conta"), true);
         }
     }
 }

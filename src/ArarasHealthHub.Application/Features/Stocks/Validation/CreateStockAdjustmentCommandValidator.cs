@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Identity;
+
 using FluentValidation;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Validation
@@ -56,7 +59,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Validation
 
         private async Task<bool> EmployeeExists(int employeeId, CancellationToken cancellationToken)
         {
-            return await _employeeRepository.EmployeeExists(employeeId);
+            return await _employeeRepository.EmployeeExistsAsync(employeeId, cancellationToken);
         }
 
         private async Task<bool> AccountExists(int accountId, CancellationToken cancellationToken)

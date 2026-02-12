@@ -9,7 +9,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
 {
-    public class GetAllOrdersQuery : PagedRequest, IRequest<PagedResponse<OrderDto>>
+    public class GetAllOrdersQuery : PagedRequest, IRequest<PagedResponseO<OrderDto>>
     {
         public int? OrderStatusId { get; set; }
         public string? SearchTerm { get; set; }

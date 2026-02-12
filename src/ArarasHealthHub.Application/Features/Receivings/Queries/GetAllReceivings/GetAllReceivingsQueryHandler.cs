@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings
 {
-    public class GetAllReceivingsQueryHandler : IRequestHandler<GetAllReceivingsQuery, PagedResponse<ReceivingDto>>
+    public class GetAllReceivingsQueryHandler : IRequestHandler<GetAllReceivingsQuery, PagedResponseO<ReceivingDto>>
     {
         private readonly IReceivingRepository _receivingRepository;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<ReceivingDto>> Handle(GetAllReceivingsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<ReceivingDto>> Handle(GetAllReceivingsQuery request, CancellationToken cancellationToken)
         {
             var query = _receivingRepository.AsQueryable();
 
@@ -96,7 +96,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
 
             var receivingDtos = _mapper.Map<List<ReceivingDto>>(pagedReceivings);
 
-            return new PagedResponse<ReceivingDto>(
+            return new PagedResponseO<ReceivingDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

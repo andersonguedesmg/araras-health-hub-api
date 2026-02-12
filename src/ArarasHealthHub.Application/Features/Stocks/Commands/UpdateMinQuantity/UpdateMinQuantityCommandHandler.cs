@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity
 {
-    public class UpdateMinQuantityCommandHandler : IRequestHandler<UpdateMinQuantityCommand, ApiResponse<StockDto>>
+    public class UpdateMinQuantityCommandHandler : IRequestHandler<UpdateMinQuantityCommand, ApiResponseO<StockDto>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -24,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<StockDto>> Handle(UpdateMinQuantityCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<StockDto>> Handle(UpdateMinQuantityCommand request, CancellationToken cancellationToken)
         {
             var stock = await _dbContext.Stocks
                 .Include(s => s.Product)
@@ -32,12 +33,12 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity
 
             if (stock == null)
             {
-                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
+                return new ApiResponseO<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
             }
 
             if (request.NewMinQuantity < 0)
             {
-                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, ApiMessages.MinimumQuantityCannotBeNegative, false);
+                return new ApiResponseO<StockDto>(StatusCodes.Status404NotFound, ApiMessages.MinimumQuantityCannotBeNegative, false);
             }
 
             stock.MinQuantity = request.NewMinQuantity;
@@ -45,7 +46,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var stockDto = _mapper.Map<StockDto>(stock);
-            return new ApiResponse<StockDto>(StatusCodes.Status200OK, ApiMessages.MinimumQuantityUpdatedSuccessfully, stockDto);
+            return new ApiResponseO<StockDto>(StatusCodes.Status200OK, ApiMessages.MinimumQuantityUpdatedSuccessfully, stockDto);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 
@@ -48,7 +49,7 @@ namespace ArarasHealthHub.Api.Middlewares
             var errorMessage = ApiMessages.InternalServerError;
             var errorDetails = _isDevelopment ? exception.ToString() : null;
 
-            var response = new ApiResponse<object>(
+            var response = new ApiResponseO<object>(
                 StatusCodes.Status500InternalServerError,
                 errorMessage,
                 false
@@ -71,7 +72,7 @@ namespace ArarasHealthHub.Api.Middlewares
             context.Response.ContentType = MediaTypeNames.Application.Json;
             context.Response.StatusCode = StatusCodes.Status404NotFound;
 
-            var response = new ApiResponse<object>(
+            var response = new ApiResponseO<object>(
                 StatusCodes.Status404NotFound,
                 ApiMessages.ResourceNotFound,
                 false

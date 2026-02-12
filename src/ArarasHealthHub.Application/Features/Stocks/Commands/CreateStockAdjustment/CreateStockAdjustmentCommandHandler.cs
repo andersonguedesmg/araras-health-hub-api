@@ -9,6 +9,7 @@ using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
@@ -18,7 +19,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment
 {
-    public class CreateStockAdjustmentCommandHandler : IRequestHandler<CreateStockAdjustmentCommand, ApiResponse<int>>
+    public class CreateStockAdjustmentCommandHandler : IRequestHandler<CreateStockAdjustmentCommand, ApiResponseO<int>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -34,7 +35,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
             _mediator = mediator;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateStockAdjustmentCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<int>> Handle(CreateStockAdjustmentCommand request, CancellationToken cancellationToken)
         {
             var adjustment = _mapper.Map<StockAdjustment>(request);
             bool isPositiveAdjustment = request.Type == StockAdjustmentType.Positive;
@@ -42,7 +43,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
             adjustment.Responsible = await _dbContext.Employees.FindAsync(request.ResponsibleId);
             if (adjustment.Responsible == null)
             {
-                return new ApiResponse<int>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Responsável", request.ResponsibleId), 0);
+                return new ApiResponseO<int>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Responsável", request.ResponsibleId), 0);
             }
 
             decimal totalAdjustmentValue = 0;
@@ -221,7 +222,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
                 item.StockLot = null;
             }
 
-            return new ApiResponse<int>(StatusCodes.Status201Created, ApiMessages.StockAdjustmentCompletedSuccessfully, adjustment.Id);
+            return new ApiResponseO<int>(StatusCodes.Status201Created, ApiMessages.StockAdjustmentCompletedSuccessfully, adjustment.Id);
         }
     }
 }

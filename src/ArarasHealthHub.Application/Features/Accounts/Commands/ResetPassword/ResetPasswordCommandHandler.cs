@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Identity;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
@@ -13,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword
 {
-    public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ApiResponse<bool>>
+    public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ApiResponseO<bool>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
@@ -26,13 +27,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ApiResponse<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
 
             if (user == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+                return new ApiResponseO<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
             }
 
             var targetRoles = await _userManager.GetRolesAsync(user);
@@ -44,7 +45,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword
             var currentUser = _httpContextAccessor.HttpContext?.User;
             if (currentUser == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status401Unauthorized, ApiMessages.UnauthenticatedUser, false);
+                return new ApiResponseO<bool>(StatusCodes.Status401Unauthorized, ApiMessages.UnauthenticatedUser, false);
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(
@@ -55,7 +56,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword
 
             if (!authorizationResult.Succeeded)
             {
-                return new ApiResponse<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+                return new ApiResponseO<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -64,12 +65,12 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword
 
             if (result.Succeeded)
             {
-                return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.PasswordResetSuccessfully, true);
+                return new ApiResponseO<bool>(StatusCodes.Status200OK, ApiMessages.PasswordResetSuccessfully, true);
             }
             else
             {
                 var errors = string.Join(" ", result.Errors.Select(e => e.Description));
-                return new ApiResponse<bool>(StatusCodes.Status400BadRequest, ApiMessages.PasswordResetFailed(errors), false);
+                return new ApiResponseO<bool>(StatusCodes.Status400BadRequest, ApiMessages.PasswordResetFailed(errors), false);
             }
         }
     }

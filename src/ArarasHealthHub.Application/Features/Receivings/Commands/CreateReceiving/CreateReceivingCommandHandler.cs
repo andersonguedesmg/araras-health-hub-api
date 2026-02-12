@@ -10,6 +10,7 @@ using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
@@ -18,7 +19,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceiving
 {
-    public class CreateReceivingCommandHandler : IRequestHandler<CreateReceivingCommand, ApiResponse<ReceivingDto>>
+    public class CreateReceivingCommandHandler : IRequestHandler<CreateReceivingCommand, ApiResponseO<ReceivingDto>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -34,26 +35,26 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
             _mediator = mediator;
         }
 
-        public async Task<ApiResponse<ReceivingDto>> Handle(CreateReceivingCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<ReceivingDto>> Handle(CreateReceivingCommand request, CancellationToken cancellationToken)
         {
             var receiving = _mapper.Map<Receiving>(request);
 
             receiving.Supplier = await _dbContext.Suppliers.FindAsync(request.SupplierId);
             if (receiving.Supplier == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Fornecedor", request.SupplierId), false);
+                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Fornecedor", request.SupplierId), null);
             }
 
             receiving.Responsible = await _dbContext.Employees.FindAsync(request.ResponsibleId);
             if (receiving.Responsible == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.ResponsibleId), false);
+                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.ResponsibleId), false);
             }
 
             var account = await _dbContext.Users.FindAsync(request.AccountId);
             if (account == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.AccountId), false);
+                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.AccountId), false);
             }
 
             decimal totalCalculatedValue = 0;
@@ -64,7 +65,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                 var product = await _dbContext.Products.FindAsync(itemCommand.ProductId);
                 if (product == null)
                 {
-                    return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, $"{ApiMessages.NotFoundWithId("Produto", itemCommand.ProductId)} para o item.", false);
+                    return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, $"{ApiMessages.NotFoundWithId("Produto", itemCommand.ProductId)} para o item.", false);
                 }
 
                 var receivedItems = _mapper.Map<ReceivedItem>(itemCommand);
@@ -144,7 +145,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
 
             var receivingDto = _mapper.Map<ReceivingDto>(receiving);
 
-            return new ApiResponse<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.ReceivingAndStockMovementsCreatedSuccessfully, receivingDto);
+            return new ApiResponseO<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.ReceivingAndStockMovementsCreatedSuccessfully, receivingDto);
         }
     }
 }

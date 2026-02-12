@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
@@ -14,7 +15,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails
 {
-    public class GetOrderPickingDetailsQueryHandler : IRequestHandler<GetOrderPickingDetailsQuery, ApiResponse<OrderDto>>
+    public class GetOrderPickingDetailsQueryHandler : IRequestHandler<GetOrderPickingDetailsQuery, ApiResponseO<OrderDto>>
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IStockLotRepository _stockLotRepo;
@@ -27,18 +28,18 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDet
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<OrderDto>> Handle(GetOrderPickingDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<OrderDto>> Handle(GetOrderPickingDetailsQuery request, CancellationToken cancellationToken)
         {
             var order = await _orderRepo.GetByIdWithItemsAsync(request.Id);
 
             if (order == null)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
             }
 
             if (order.OrderStatusId != (int)OrderStatusEnum.ReadyForPicking)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeSeparated, false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeSeparated, false);
             }
 
             var orderDto = _mapper.Map<OrderDto>(order);
@@ -78,7 +79,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDet
                 }
             }
 
-            return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Pedido"), orderDto);
+            return new ApiResponseO<OrderDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Pedido"), orderDto);
         }
     }
 }

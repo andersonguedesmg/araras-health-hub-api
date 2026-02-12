@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantities
 {
-    public class GetAllStockMinQuantitiesQueryHandler : IRequestHandler<GetAllStockMinQuantitiesQuery, PagedResponse<StockMinQuantityDto>>
+    public class GetAllStockMinQuantitiesQueryHandler : IRequestHandler<GetAllStockMinQuantitiesQuery, PagedResponseO<StockMinQuantityDto>>
     {
         private readonly IStockRepository _stockRepository;
         private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuan
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<StockMinQuantityDto>> Handle(GetAllStockMinQuantitiesQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<StockMinQuantityDto>> Handle(GetAllStockMinQuantitiesQuery request, CancellationToken cancellationToken)
         {
             var stockQuery = _stockRepository.GetQueryable()
                 .AsNoTracking()
@@ -77,7 +77,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuan
 
             var dtos = _mapper.Map<List<StockMinQuantityDto>>(pagedStocks);
 
-            return new PagedResponse<StockMinQuantityDto>(
+            return new PagedResponseO<StockMinQuantityDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

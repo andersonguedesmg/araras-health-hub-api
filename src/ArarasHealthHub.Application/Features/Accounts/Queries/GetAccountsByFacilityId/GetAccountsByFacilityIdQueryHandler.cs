@@ -2,21 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacilityId
 {
-    public class GetAccountsByFacilityIdQueryHandler : IRequestHandler<GetAccountsByFacilityIdQuery, ApiResponse<List<AccountDetailsDto>>>
+    public class GetAccountsByFacilityIdQueryHandler : IRequestHandler<GetAccountsByFacilityIdQuery, ApiResponseO<List<AccountDetailsDto>>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationDbContext _dbContext;
@@ -31,24 +36,24 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<List<AccountDetailsDto>>> Handle(GetAccountsByFacilityIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<List<AccountDetailsDto>>> Handle(GetAccountsByFacilityIdQuery request, CancellationToken cancellationToken)
         {
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
 
             if (currentUser == null)
             {
-                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, new List<AccountDetailsDto>());
+                return new ApiResponseO<List<AccountDetailsDto>>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, new List<AccountDetailsDto>());
             }
 
             if (currentUser.Scope == UserScopeEnum.Operational && currentUser.FacilityId != request.FacilityId)
             {
-                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, new List<AccountDetailsDto>());
+                return new ApiResponseO<List<AccountDetailsDto>>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, new List<AccountDetailsDto>());
             }
 
             var facilityExists = await _dbContext.Facilities.AnyAsync(f => f.Id == request.FacilityId, cancellationToken);
             if (!facilityExists)
             {
-                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), new List<AccountDetailsDto>());
+                return new ApiResponseO<List<AccountDetailsDto>>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), new List<AccountDetailsDto>());
             }
 
             var users = await _dbContext.Users
@@ -59,7 +64,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
 
             if (!users.Any())
             {
-                return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status200OK, ApiMessages.NoAccountsFoundForFacility(request.FacilityId), new List<AccountDetailsDto>());
+                return new ApiResponseO<List<AccountDetailsDto>>(StatusCodes.Status200OK, ApiMessages.NoAccountsFoundForFacility(request.FacilityId), new List<AccountDetailsDto>());
             }
 
             var userIds = users.Select(u => u.Id).ToList();
@@ -97,7 +102,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
                 accountDetailsList.Add(accountDto);
             }
 
-            return new ApiResponse<List<AccountDetailsDto>>(StatusCodes.Status200OK, ApiMessages.AccountsFoundForFacility(request.FacilityId), accountDetailsList);
+            return new ApiResponseO<List<AccountDetailsDto>>(StatusCodes.Status200OK, ApiMessages.AccountsFoundForFacility(request.FacilityId), accountDetailsList);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Identity;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
@@ -14,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
 {
-    public class LoginAccountCommandHandler : IRequestHandler<LoginAccountCommand, ApiResponse<LoginResponseDto>>
+    public class LoginAccountCommandHandler : IRequestHandler<LoginAccountCommand, ApiResponseO<LoginResponseDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -33,13 +34,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
             _tokenService = tokenService;
         }
 
-        public async Task<ApiResponse<LoginResponseDto>> Handle(LoginAccountCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<LoginResponseDto>> Handle(LoginAccountCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName, cancellationToken);
 
             if (user == null)
             {
-                return new ApiResponse<LoginResponseDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
+                return new ApiResponseO<LoginResponseDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
             }
 
             var isAccountAdministrativelyActive = user.IsActive;
@@ -47,14 +48,14 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
 
             if (!isAccountAdministrativelyActive || !isAccountNotLockedOut)
             {
-                return new ApiResponse<LoginResponseDto>(StatusCodes.Status403Forbidden, ApiMessages.AccountDisabled, false);
+                return new ApiResponseO<LoginResponseDto>(StatusCodes.Status403Forbidden, ApiMessages.AccountDisabled, false);
             }
 
             var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
 
             if (!signInResult.Succeeded)
             {
-                return new ApiResponse<LoginResponseDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
+                return new ApiResponseO<LoginResponseDto>(StatusCodes.Status401Unauthorized, ApiMessages.AccountIncorrect, false);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -77,7 +78,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
                 Roles = roleDtos
             };
 
-            return new ApiResponse<LoginResponseDto>(StatusCodes.Status200OK, ApiMessages.AccountLoginSuccessful, responseDto);
+            return new ApiResponseO<LoginResponseDto>(StatusCodes.Status200OK, ApiMessages.AccountLoginSuccessful, responseDto);
         }
     }
 }

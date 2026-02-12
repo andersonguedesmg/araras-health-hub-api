@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
 {
-    public class UpdateStockLotCommandHandler : IRequestHandler<UpdateStockLotCommand, ApiResponse<StockLot>>
+    public class UpdateStockLotCommandHandler : IRequestHandler<UpdateStockLotCommand, ApiResponseO<StockLot>>
     {
         private readonly IApplicationDbContext _dbContext;
 
@@ -21,7 +22,7 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
             _dbContext = dbContext;
         }
 
-        public async Task<ApiResponse<StockLot>> Handle(UpdateStockLotCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<StockLot>> Handle(UpdateStockLotCommand request, CancellationToken cancellationToken)
         {
             var stockLot = await _dbContext.StockLots
                 .FirstOrDefaultAsync(sl =>
@@ -54,7 +55,7 @@ namespace ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot
                 _dbContext.StockLots.Update(stockLot);
             }
 
-            return new ApiResponse<StockLot>(StatusCodes.Status200OK, ApiMessages.StockBatchUpdatedSuccessfully, stockLot);
+            return new ApiResponseO<StockLot>(StatusCodes.Status200OK, ApiMessages.StockBatchUpdatedSuccessfully, null);
         }
     }
 }

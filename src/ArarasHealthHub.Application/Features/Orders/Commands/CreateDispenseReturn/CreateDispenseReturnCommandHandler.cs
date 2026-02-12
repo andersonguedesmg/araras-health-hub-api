@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost;
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
 using ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockMovement;
@@ -10,15 +11,19 @@ using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateDispenseReturn
 {
-    public class CreateDispenseReturnCommandHandler : IRequestHandler<CreateDispenseReturnCommand, ApiResponse<int>>
+    public class CreateDispenseReturnCommandHandler : IRequestHandler<CreateDispenseReturnCommand, ApiResponseO<int>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -37,17 +42,17 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateDispenseRet
             _orderRepo = orderRepo;
         }
 
-        public async Task<ApiResponse<int>> Handle(CreateDispenseReturnCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<int>> Handle(CreateDispenseReturnCommand request, CancellationToken cancellationToken)
         {
-            var originalOrder = await _orderRepo.GetByIdAsync(request.OriginalOrderId);
+            var originalOrder = await _orderRepo.GetByIdAsync(request.OriginalOrderId, cancellationToken);
             if (originalOrder == null)
             {
-                return new ApiResponse<int>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Pedido Original", request.OriginalOrderId), 0);
+                return new ApiResponseO<int>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Pedido Original", request.OriginalOrderId), 0);
             }
 
             if (originalOrder.OrderStatusId != (int)OrderStatusEnum.Completed)
             {
-                return new ApiResponse<int>(StatusCodes.Status400BadRequest, ApiMessages.CannotReturnFromOrderInStatus(((OrderStatusEnum)originalOrder.OrderStatusId).ToString()), 0);
+                return new ApiResponseO<int>(StatusCodes.Status400BadRequest, ApiMessages.CannotReturnFromOrderInStatus(((OrderStatusEnum)originalOrder.OrderStatusId).ToString()), 0);
             }
 
             var newDispenseReturn = new DispenseReturn
@@ -62,7 +67,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateDispenseRet
             var responsible = await _dbContext.Employees.FindAsync(request.ReturnedByEmployeeId);
             if (responsible == null)
             {
-                return new ApiResponse<int>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Responsável pela Devolução", request.ReturnedByEmployeeId), 0);
+                return new ApiResponseO<int>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Responsável pela Devolução", request.ReturnedByEmployeeId), 0);
             }
             newDispenseReturn.ReturnedByEmployee = responsible;
 
@@ -160,7 +165,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateDispenseRet
             await _dbContext.SaveChangesAsync(cancellationToken);
 
 
-            return new ApiResponse<int>(
+            return new ApiResponseO<int>(
                 StatusCodes.Status201Created,
                 ApiMessages.DispenseReturnRecordedSuccessfully,
                 newDispenseReturn.Id

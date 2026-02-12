@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots
 {
-    public class GetActiveStockLotsQueryHandler : IRequestHandler<GetActiveStockLotsQuery, PagedResponse<ActiveStockLotDto>>
+    public class GetActiveStockLotsQueryHandler : IRequestHandler<GetActiveStockLotsQuery, PagedResponseO<ActiveStockLotDto>>
     {
         private readonly IStockLotRepository _stockLotRepository;
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<ActiveStockLotDto>> Handle(GetActiveStockLotsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<ActiveStockLotDto>> Handle(GetActiveStockLotsQuery request, CancellationToken cancellationToken)
         {
             var lotQuery = _stockLotRepository.AsQueryable()
                 .AsNoTracking()
@@ -88,7 +88,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots
                 Product = _mapper.Map<ProductDto>(sl.Stock.Product)
             }).ToList();
 
-            return new PagedResponse<ActiveStockLotDto>(
+            return new PagedResponseO<ActiveStockLotDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 
@@ -13,5 +14,5 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
         decimal EntryQuantity,
         decimal EntryUnitValue,
         decimal UpdatedStockQuantity
-    ) : IRequest<ApiResponse<StockCost>>;
+    ) : IRequest<ApiResponseO<StockCost>>;
 }

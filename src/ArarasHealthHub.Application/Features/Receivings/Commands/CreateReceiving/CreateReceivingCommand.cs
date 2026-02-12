@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
 using ArarasHealthHub.Application.Interfaces;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 
@@ -18,7 +19,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
         int ResponsibleId,
         int AccountId,
         List<CreateReceivedItemCommand> ReceivedItems
-    ) : IRequest<ApiResponse<ReceivingDto>>, ITransactionalRequest;
+    ) : IRequest<ApiResponseO<ReceivingDto>>, ITransactionalRequest;
 
     public record CreateReceivedItemCommand(
         int Quantity,

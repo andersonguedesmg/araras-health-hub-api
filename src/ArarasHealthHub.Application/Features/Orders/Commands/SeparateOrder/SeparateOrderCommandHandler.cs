@@ -2,21 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Features.Orders.Events;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
 {
-    public class SeparateOrderCommandHandler : IRequestHandler<SeparateOrderCommand, ApiResponse<OrderDto>>
+    public class SeparateOrderCommandHandler : IRequestHandler<SeparateOrderCommand, ApiResponseO<OrderDto>>
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IEmployeeRepository _employeeRepo;
@@ -38,24 +43,24 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<OrderDto>> Handle(SeparateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<OrderDto>> Handle(SeparateOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
 
             if (order == null)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), null);
             }
 
             if (order.OrderStatusId != (int)OrderStatusEnum.ReadyForPicking)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeSeparated, false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeSeparated, false);
             }
 
-            var responsible = await _employeeRepo.GetByIdAsync(request.SeparatedByEmployeeId);
+            var responsible = await _employeeRepo.GetByIdAsync(request.SeparatedByEmployeeId, cancellationToken);
             if (responsible == null)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
             }
 
             var reservedQuantitiesToRelease = new List<(int ProductId, decimal QuantityToRelease)>();
@@ -66,7 +71,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
 
                 if (orderItemToUpdate == null)
                 {
-                    return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.ItemNotFoundInOrder(item.OrderItemId), false);
+                    return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.ItemNotFoundInOrder(item.OrderItemId), false);
                 }
 
                 var quantityToSeparate = item.ActualQuantity;
@@ -74,18 +79,18 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
 
                 if (quantityToSeparate > reservedQuantity)
                 {
-                    return new ApiResponse<OrderDto>(
+                    return new ApiResponseO<OrderDto>(
                         StatusCodes.Status400BadRequest,
                         $"A quantidade separada ({quantityToSeparate}) para o item {item.OrderItemId} excede a quantidade reservada ({reservedQuantity}).",
                         false
                     );
                 }
 
-                var allocationResultResponse = await _stockAllocationService.AllocateFeFo(orderItemToUpdate.ProductId, quantityToSeparate);
+                var allocationResultResponse = await _stockAllocationService.AllocateFeFo(orderItemToUpdate.ProductId, quantityToSeparate, cancellationToken);
 
                 if (!allocationResultResponse.Success)
                 {
-                    return new ApiResponse<OrderDto>(
+                    return new ApiResponseO<OrderDto>(
                         StatusCodes.Status400BadRequest,
                         $"Falha na alocação FEFO para o Produto {orderItemToUpdate.ProductId}: {allocationResultResponse.Message}",
                         false
@@ -96,7 +101,8 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
                     allocationResultResponse.Data!,
                     request.SeparatedByEmployeeId,
                     order.Id,
-                    nameof(Order)
+                    nameof(Order),
+                    cancellationToken
                 );
 
                 orderItemToUpdate.ActualQuantity = quantityToSeparate;
@@ -125,7 +131,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
 
             var orderDto = _mapper.Map<OrderDto>(order);
 
-            return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("separado"), orderDto);
+            return new ApiResponseO<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("separado"), orderDto);
         }
     }
 }

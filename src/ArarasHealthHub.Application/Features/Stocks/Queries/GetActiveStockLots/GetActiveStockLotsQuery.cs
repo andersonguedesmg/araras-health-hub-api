@@ -9,7 +9,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots
 {
-    public class GetActiveStockLotsQuery : PagedRequest, IRequest<PagedResponse<ActiveStockLotDto>>
+    public class GetActiveStockLotsQuery : PagedRequest, IRequest<PagedResponseO<ActiveStockLotDto>>
     {
         public string? SearchTerm { get; set; }
     }

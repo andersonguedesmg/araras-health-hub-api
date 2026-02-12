@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Enums;
 
 namespace ArarasHealthHub.Domain.Interfaces

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Orders.Commands.ApproveOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.CreateDispenseReturn;
@@ -15,9 +16,12 @@ using ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails;
 using ArarasHealthHub.Application.Interfaces.Services;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,7 +64,7 @@ namespace ArarasHealthHub.Api.Controllers
         }
 
         [HttpGet("getAll")]
-        [ProducesResponseType(typeof(PagedResponse<OrderDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseO<OrderDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
@@ -179,7 +183,7 @@ namespace ArarasHealthHub.Api.Controllers
 
             if (orders == null || !orders.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("pedido"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("pedido"), null!));
             }
 
             var sb = new StringBuilder();
@@ -191,8 +195,8 @@ namespace ArarasHealthHub.Api.Controllers
                 sb.AppendLine(
                     $"{order.Id}, " +
                     $"{order.CreatedAt:dd/MM/yyyy HH:mm}, " +
-                    $"{order.OrderFacility!.Name}, " +
-                    $"{order.CreatedByEmployee!.Name}, " +
+                    $"{order.OrderFacility!.Label}, " +
+                    $"{order.CreatedByEmployee!.Label}, " +
                     $"{order.OrderItems.Count}, " +
                     $"{order.OrderStatus!.Description}, "
                 );

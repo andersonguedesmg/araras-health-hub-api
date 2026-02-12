@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using FluentValidation;
@@ -12,7 +13,7 @@ namespace ArarasHealthHub.Application.Behaviors
 {
     public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
-        where TResponse : ApiResponseBase, new()
+        where TResponse : ApiResponseBaseO, new()
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 

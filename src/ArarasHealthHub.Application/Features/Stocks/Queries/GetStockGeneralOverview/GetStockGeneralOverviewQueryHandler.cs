@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
 {
-    public class GetStockGeneralOverviewQueryHandler : IRequestHandler<GetStockGeneralOverviewQuery, PagedResponse<StockOverviewDto>>
+    public class GetStockGeneralOverviewQueryHandler : IRequestHandler<GetStockGeneralOverviewQuery, PagedResponseO<StockOverviewDto>>
     {
         private readonly IStockRepository _stockRepository;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<StockOverviewDto>> Handle(GetStockGeneralOverviewQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<StockOverviewDto>> Handle(GetStockGeneralOverviewQuery request, CancellationToken cancellationToken)
         {
             var stockQuery = _stockRepository.GetQueryable()
                 .AsNoTracking()
@@ -96,7 +96,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockOverview
                 IsCritical = s.AvailableQuantity <= s.MinQuantity
             }).ToList();
 
-            return new PagedResponse<StockOverviewDto>(
+            return new PagedResponseO<StockOverviewDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

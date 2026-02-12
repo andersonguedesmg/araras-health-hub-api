@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock
 {
-    public class UpdateProductStockCommandHandler : IRequestHandler<UpdateProductStockCommand, ApiResponse<Stock>>
+    public class UpdateProductStockCommandHandler : IRequestHandler<UpdateProductStockCommand, ApiResponseO<Stock>>
     {
         private readonly IApplicationDbContext _dbContext;
 
@@ -22,7 +23,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
             _dbContext = dbContext;
         }
 
-        public async Task<ApiResponse<Stock>> Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<Stock>> Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
         {
             var stock = await _dbContext.Stocks
                 .FirstOrDefaultAsync(s => s.ProductId == request.ProductId, cancellationToken);
@@ -46,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
                 }
                 else
                 {
-                    return new ApiResponse<Stock>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque do Produto", request.ProductId), false);
+                    return new ApiResponseO<Stock>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque do Produto", request.ProductId), false);
                 }
             }
 
@@ -72,7 +73,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStoc
 
             stock.SetUpdatedOn();
 
-            return new ApiResponse<Stock>(StatusCodes.Status200OK, ApiMessages.ProductStockUpdatedSuccessfully, stock);
+            return new ApiResponseO<Stock>(StatusCodes.Status200OK, ApiMessages.ProductStockUpdatedSuccessfully, stock);
         }
     }
 }

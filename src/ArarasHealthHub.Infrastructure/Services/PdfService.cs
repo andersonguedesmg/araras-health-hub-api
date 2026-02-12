@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces.Services;
+
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -34,7 +36,7 @@ namespace ArarasHealthHub.Infrastructure.Services
                                 .FontSize(16).SemiBold().FontColor(primaryColor);
 
                             col.Item().Text($"Data de Solicitação: {order.CreatedAt:dd/MM/yyyy HH:mm}");
-                            col.Item().Text($"Unidade: {order.OrderFacility!.Name}");
+                            col.Item().Text($"Unidade: {order.OrderFacility!.Label}");
                         });
 
                         row.ConstantItem(100).AlignRight().Column(col =>

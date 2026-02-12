@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments
 {
-    public class GetAllStockAdjustmentsQueryHandler : IRequestHandler<GetAllStockAdjustmentsQuery, PagedResponse<StockAdjustmentDto>>
+    public class GetAllStockAdjustmentsQueryHandler : IRequestHandler<GetAllStockAdjustmentsQuery, PagedResponseO<StockAdjustmentDto>>
     {
         private readonly IStockAdjustmentRepository _repo;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustm
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<StockAdjustmentDto>> Handle(GetAllStockAdjustmentsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<StockAdjustmentDto>> Handle(GetAllStockAdjustmentsQuery request, CancellationToken cancellationToken)
         {
             var query = _repo.AsQueryable()
                 .AsNoTracking()
@@ -54,7 +54,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustm
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
 
-            return new PagedResponse<StockAdjustmentDto>(
+            return new PagedResponseO<StockAdjustmentDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

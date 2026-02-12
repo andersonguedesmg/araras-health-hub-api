@@ -9,7 +9,7 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
 {
     public interface IFacilityRepository : IBaseRepository<Facility>
     {
-        Task<bool> FacilityExists(int id);
+        Task<bool> FacilityExists(int id, CancellationToken cancellationToken);
 
         Task<Facility?> GetByNameAsync(string name, CancellationToken cancellationToken);
 

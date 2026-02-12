@@ -3,21 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
 {
-    public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, PagedResponse<OrderDto>>
+    public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, PagedResponseO<OrderDto>>
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IMapper _mapper;
@@ -36,7 +40,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
             _userManager = userManager;
         }
 
-        public async Task<PagedResponse<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
             var currentUser = _httpContextAccessor.HttpContext?.User;
             var scopeClaim = currentUser?.FindFirst("Scope")?.Value;
@@ -108,7 +112,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders
 
             var orderDtos = _mapper.Map<List<OrderDto>>(pagedOrders);
 
-            return new PagedResponse<OrderDto>(
+            return new PagedResponseO<OrderDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

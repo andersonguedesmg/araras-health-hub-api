@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Text.Json;
+
 using araras_health_hub_api.Authorization;
+
 using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
 using ArarasHealthHub.Application.Common.Interfaces;
@@ -26,16 +28,21 @@ using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Repository;
 using ArarasHealthHub.Infrastructure.Services;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using FluentValidation;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 using QuestPDF.Infrastructure;
 
 QuestPDF.Settings.License = LicenseType.Community;
@@ -185,7 +192,7 @@ builder.Services.AddAuthentication(options =>
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             context.Response.ContentType = "application/json";
 
-            var response = new ApiResponse<object>(
+            var response = new ApiResponseO<object>(
                 StatusCodes.Status401Unauthorized,
                 ApiMessages.AuthorizationRequired,
                 (List<string>)null!,
@@ -200,7 +207,7 @@ builder.Services.AddAuthentication(options =>
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             context.Response.ContentType = "application/json";
 
-            var response = new ApiResponse<object>(
+            var response = new ApiResponseO<object>(
                 StatusCodes.Status403Forbidden,
                 ApiMessages.InsufficientPermissions,
                 (List<string>)null!,

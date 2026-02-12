@@ -9,7 +9,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 {
-    public class GetAllAccountsQuery : PagedRequest, IRequest<PagedResponse<AccountDetailsDto>>
+    public class GetAllAccountsQuery : PagedRequest, IRequest<PagedResponseO<AccountDetailsDto>>
     {
         public string? SearchTerm { get; set; }
     }

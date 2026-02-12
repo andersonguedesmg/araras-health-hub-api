@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots
 {
-    public class GetNearExpiryLotsQueryHandler : IRequestHandler<GetNearExpiryLotsQuery, PagedResponse<StockLotNearExpiryDto>>
+    public class GetNearExpiryLotsQueryHandler : IRequestHandler<GetNearExpiryLotsQuery, PagedResponseO<StockLotNearExpiryDto>>
     {
         private readonly IStockLotRepository _stockLotRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
@@ -30,7 +30,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<StockLotNearExpiryDto>> Handle(GetNearExpiryLotsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<StockLotNearExpiryDto>> Handle(GetNearExpiryLotsQuery request, CancellationToken cancellationToken)
         {
             var today = _dateTimeProvider.Now.Date;
             var expiryLimitDate = today.AddDays(request.ExpiryDaysThreshold);
@@ -103,7 +103,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots
                 Product = _mapper.Map<ProductDto>(sl.Stock.Product)
             }).ToList();
 
-            return new PagedResponse<StockLotNearExpiryDto>(
+            return new PagedResponseO<StockLotNearExpiryDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

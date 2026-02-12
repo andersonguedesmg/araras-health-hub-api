@@ -50,7 +50,8 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubC
             var alreadyExists = await _subCategoryRepository
                 .GetBySubCategoryNameAndMainCategoryIdAsync(
                     request.Name,
-                    request.MainCategoryId);
+                    request.MainCategoryId,
+                    cancellationToken);
 
             if (alreadyExists is not null)
             {

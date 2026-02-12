@@ -9,7 +9,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockMinQuantities
 {
-    public class GetAllStockMinQuantitiesQuery : PagedRequest, IRequest<PagedResponse<StockMinQuantityDto>>
+    public class GetAllStockMinQuantitiesQuery : PagedRequest, IRequest<PagedResponseO<StockMinQuantityDto>>
     {
         public string? SearchTerm { get; set; }
     }

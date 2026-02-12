@@ -4,12 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Orders.Commands.CreateDispenseReturn
 {
-    public class CreateDispenseReturnCommand : IRequest<ApiResponse<int>>, ITransactionalRequest
+    public class CreateDispenseReturnCommand : IRequest<ApiResponseO<int>>, ITransactionalRequest
     {
         [Required]
         public int OriginalOrderId { get; init; }

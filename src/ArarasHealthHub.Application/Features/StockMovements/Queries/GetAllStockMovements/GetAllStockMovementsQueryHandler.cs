@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStockMovements
 {
-    public class GetAllStockMovementsQueryHandler : IRequestHandler<GetAllStockMovementsQuery, PagedResponse<StockMovementDto>>
+    public class GetAllStockMovementsQueryHandler : IRequestHandler<GetAllStockMovementsQuery, PagedResponseO<StockMovementDto>>
     {
         private readonly IStockMovementRepository _stockMovementRepository;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStoc
             _mapper = mapper;
         }
 
-        public async Task<PagedResponse<StockMovementDto>> Handle(GetAllStockMovementsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<StockMovementDto>> Handle(GetAllStockMovementsQuery request, CancellationToken cancellationToken)
         {
             var query = _stockMovementRepository.AsQueryable();
 
@@ -85,7 +85,7 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStoc
 
             var movementDtos = _mapper.Map<List<StockMovementDto>>(pagedMovements);
 
-            return new PagedResponse<StockMovementDto>(
+            return new PagedResponseO<StockMovementDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

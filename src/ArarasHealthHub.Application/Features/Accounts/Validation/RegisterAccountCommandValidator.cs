@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
+
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Validation
@@ -54,7 +56,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
 
         private async Task<bool> FacilityMustExist(int facilityId, CancellationToken cancellationToken)
         {
-            return await _facilityRepo.FacilityExists(facilityId);
+            return await _facilityRepo.FacilityExists(facilityId, cancellationToken);
         }
     }
 }

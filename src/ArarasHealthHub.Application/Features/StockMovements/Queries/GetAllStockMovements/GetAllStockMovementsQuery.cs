@@ -9,7 +9,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStockMovements
 {
-    public class GetAllStockMovementsQuery : PagedRequest, IRequest<PagedResponse<StockMovementDto>>
+    public class GetAllStockMovementsQuery : PagedRequest, IRequest<PagedResponseO<StockMovementDto>>
     {
         public string? SearchTerm { get; set; }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 
@@ -17,7 +18,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
         int ResponsibleId,
         int AccountId,
         List<CreateStockAdjustmentItemCommand> AdjustmentItems
-    ) : IRequest<ApiResponse<int>>, ITransactionalRequest;
+    ) : IRequest<ApiResponseO<int>>, ITransactionalRequest;
 
     public record CreateStockAdjustmentItemCommand(
         int ProductId,

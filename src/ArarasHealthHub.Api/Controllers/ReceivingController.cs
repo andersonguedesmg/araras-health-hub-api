@@ -14,6 +14,7 @@ using ArarasHealthHub.Shared.Core.Responses;
 using ArarasHealthHub.Shared.Core.Messages;
 using System.Text;
 using System.Globalization;
+using ArarasHealthHub.Shared.Core;
 
 namespace ArarasHealthHub.Api.Controllers
 {
@@ -55,7 +56,7 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpGet("getAll")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<ReceivingDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseO<ReceivingDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
@@ -74,7 +75,7 @@ namespace ArarasHealthHub.Api.Controllers
             var detailDtos = await _mediator.Send(new ExportReceivingsQuery { SearchTerm = searchTerm });
             if (detailDtos == null || !detailDtos.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("recebimento"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("recebimento"), null!));
             }
 
             var sb = new StringBuilder();

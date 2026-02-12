@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
 {
-    public class FinalizeOrderCommandHandler : IRequestHandler<FinalizeOrderCommand, ApiResponse<OrderDto>>
+    public class FinalizeOrderCommandHandler : IRequestHandler<FinalizeOrderCommand, ApiResponseO<OrderDto>>
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IEmployeeRepository _employeeRepo;
@@ -38,31 +43,31 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
             _userManager = userManager;
         }
 
-        public async Task<ApiResponse<OrderDto>> Handle(FinalizeOrderCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<OrderDto>> Handle(FinalizeOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
 
             if (order == null)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
             }
 
             if (order.OrderStatusId != (int)OrderStatusEnum.ReadyForFinalization)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeCompleted, false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeCompleted, false);
             }
 
-            var responsible = await _employeeRepo.GetByIdAsync(request.FinalizedByEmployeeId);
+            var responsible = await _employeeRepo.GetByIdAsync(request.FinalizedByEmployeeId, cancellationToken);
             if (responsible == null)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
             }
 
             var applicationUser = await _userManager.FindByIdAsync(request.FinalizedByAccountId.ToString());
 
             if (applicationUser == null)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
             }
 
             var currentUser = _httpContextAccessor.HttpContext?.User;
@@ -70,12 +75,12 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
 
             if (userFacilityClaim == null)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
             if (order.OrderFacilityId != applicationUser.FacilityId)
             {
-                return new ApiResponse<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.OperationRestrictedToFacility, false);
+                return new ApiResponseO<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.OperationRestrictedToFacility, false);
             }
 
             order.OrderStatusId = (int)OrderStatusEnum.Completed;
@@ -88,7 +93,7 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
             await _orderRepo.SaveAllAsync(cancellationToken);
             var orderDto = _mapper.Map<OrderDto>(order);
 
-            return new ApiResponse<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("finalizado"), orderDto);
+            return new ApiResponseO<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("finalizado"), orderDto);
         }
     }
 }

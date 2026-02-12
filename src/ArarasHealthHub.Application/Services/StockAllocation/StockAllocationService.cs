@@ -2,13 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+
 using static ArarasHealthHub.Application.Services.StockAllocation.StockAllocationDtos;
 
 namespace ArarasHealthHub.Application.Services.StockAllocation
@@ -32,7 +36,7 @@ namespace ArarasHealthHub.Application.Services.StockAllocation
             _stockMovementRepo = stockMovementRepo;
         }
 
-        public async Task<ApiResponse<StockAllocationResult>> AllocateFeFo(int productId, decimal quantityToAllocate)
+        public async Task<ApiResponseO<StockAllocationResult>> AllocateFeFo(int productId, decimal quantityToAllocate, CancellationToken cancellationToken)
         {
             var availableLots = await _stockLotRepo.AsQueryable()
                 .Include(sl => sl.Stock)
@@ -71,15 +75,15 @@ namespace ArarasHealthHub.Application.Services.StockAllocation
 
             if (!allocationResult.IsFullyAllocated)
             {
-                var product = await _productRepo.GetByIdAsync(productId);
+                var product = await _productRepo.GetByIdAsync(productId, cancellationToken);
                 var message = $"Não foi possível alocar {quantityToAllocate} unidades do produto {product?.Name}. Saldo encontrado: {totalAllocated}.";
-                return new ApiResponse<StockAllocationResult>(StatusCodes.Status400BadRequest, message, false);
+                return new ApiResponseO<StockAllocationResult>(StatusCodes.Status400BadRequest, message, false);
             }
 
-            return new ApiResponse<StockAllocationResult>(StatusCodes.Status200OK, "Alocação FEFO concluída com sucesso.", allocationResult);
+            return new ApiResponseO<StockAllocationResult>(StatusCodes.Status200OK, "Alocação FEFO concluída com sucesso.", allocationResult);
         }
 
-        public async Task<int?> FindStockLotIdByProductAttributes(int productId, string batch, string brand)
+        public async Task<int?> FindStockLotIdByProductAttributes(int productId, string batch, string brand, CancellationToken cancellationToken)
         {
             return await _stockLotRepo.AsQueryable()
                 .Include(sl => sl.Stock)
@@ -96,7 +100,8 @@ namespace ArarasHealthHub.Application.Services.StockAllocation
             StockAllocationResult allocationResult,
             int responsibleId,
             int sourceDocumentId,
-            string sourceDocumentType)
+            string sourceDocumentType,
+            CancellationToken cancellationToken)
         {
             var movements = new List<StockMovement>();
 
@@ -110,7 +115,7 @@ namespace ArarasHealthHub.Application.Services.StockAllocation
 
             foreach (var detail in allocationResult.LotDetails)
             {
-                var lot = await _stockLotRepo.GetByIdAsync(detail.StockLotId);
+                var lot = await _stockLotRepo.GetByIdAsync(detail.StockLotId, cancellationToken);
 
                 if (lot == null) throw new ApplicationException($"Falha crítica: Lote de estoque (ID: {detail.StockLotId}) não encontrado durante a baixa.");
 

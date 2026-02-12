@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Shared.Core.Responses
 {
-    public class PagedResponse<T> : ApiResponse<List<T>>
+    public class PagedResponseO<T> : ApiResponseO<List<T>>
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
@@ -16,9 +16,9 @@ namespace ArarasHealthHub.Shared.Core.Responses
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => PageNumber < TotalPages;
 
-        public PagedResponse() { }
+        public PagedResponseO() { }
 
-        public PagedResponse(int pageNumber, int pageSize, int totalCount, List<T>? data)
+        public PagedResponseO(int pageNumber, int pageSize, int totalCount, List<T>? data)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;

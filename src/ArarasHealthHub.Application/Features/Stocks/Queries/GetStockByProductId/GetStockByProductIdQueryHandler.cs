@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId
 {
-    public class GetStockByProductIdQueryHandler : IRequestHandler<GetStockByProductIdQuery, ApiResponse<StockDto>>
+    public class GetStockByProductIdQueryHandler : IRequestHandler<GetStockByProductIdQuery, ApiResponseO<StockDto>>
     {
         private readonly IStockRepository _stockRepository;
         private readonly IMapper _mapper;
@@ -23,17 +24,17 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductI
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<StockDto>> Handle(GetStockByProductIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<StockDto>> Handle(GetStockByProductIdQuery request, CancellationToken cancellationToken)
         {
             var stock = await _stockRepository.GetByProductIdAsync(request.ProductId);
 
             if (stock == null)
             {
-                return new ApiResponse<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
+                return new ApiResponseO<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
             }
 
             var stockDto = _mapper.Map<StockDto>(stock);
-            return new ApiResponse<StockDto>(StatusCodes.Status200OK, ApiMessages.StockSearchByIdSuccessful, stockDto);
+            return new ApiResponseO<StockDto>(StatusCodes.Status200OK, ApiMessages.StockSearchByIdSuccessful, stockDto);
         }
     }
 }

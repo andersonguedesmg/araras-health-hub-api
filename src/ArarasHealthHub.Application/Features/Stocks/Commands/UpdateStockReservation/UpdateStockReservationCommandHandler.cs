@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReservation
 {
-    public class UpdateStockReservationCommandHandler : IRequestHandler<UpdateStockReservationCommand, ApiResponse<bool>>
+    public class UpdateStockReservationCommandHandler : IRequestHandler<UpdateStockReservationCommand, ApiResponseO<bool>>
     {
         private readonly IStockRepository _stockRepo;
         private readonly IStockLotRepository _stockLotRepo;
@@ -21,18 +22,18 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReserv
             _stockLotRepo = stockLotRepo;
         }
 
-        public async Task<ApiResponse<bool>> Handle(UpdateStockReservationCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<bool>> Handle(UpdateStockReservationCommand request, CancellationToken cancellationToken)
         {
             var stock = await _stockRepo.GetByProductIdAsync(request.ProductId);
 
             if (stock == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para Produto", request.ProductId), false);
+                return new ApiResponseO<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para Produto", request.ProductId), false);
             }
 
             if (request.QuantityToReserve > 0 && (stock.AvailableQuantity < request.QuantityToReserve))
             {
-                return new ApiResponse<bool>(
+                return new ApiResponseO<bool>(
                     StatusCodes.Status400BadRequest,
                     $"Não é possível reservar {request.QuantityToReserve} unidades. Saldo disponível (Não reservado): {stock.AvailableQuantity}.",
                     false
@@ -44,7 +45,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReserv
 
             _stockRepo.UpdateWithoutSaving(stock);
 
-            return new ApiResponse<bool>(StatusCodes.Status200OK, "Reserva de estoque atualizada com sucesso.", true);
+            return new ApiResponseO<bool>(StatusCodes.Status200OK, "Reserva de estoque atualizada com sucesso.", true);
         }
     }
 }

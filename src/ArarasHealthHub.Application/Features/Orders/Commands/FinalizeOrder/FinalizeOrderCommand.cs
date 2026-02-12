@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 
@@ -13,5 +14,5 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
         int OrderId,
         int FinalizedByEmployeeId,
         int FinalizedByAccountId
-    ) : IRequest<ApiResponse<OrderDto>>, ITransactionalRequest;
+    ) : IRequest<ApiResponseO<OrderDto>>, ITransactionalRequest;
 }

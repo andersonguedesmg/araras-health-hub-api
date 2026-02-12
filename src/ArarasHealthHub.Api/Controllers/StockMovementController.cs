@@ -37,7 +37,7 @@ namespace araras_health_hub_api.Controllers
         }
 
         [HttpGet("getAll")]
-        [ProducesResponseType(typeof(PagedResponse<StockMovementDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseO<StockMovementDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllStockMovementsQuery query)

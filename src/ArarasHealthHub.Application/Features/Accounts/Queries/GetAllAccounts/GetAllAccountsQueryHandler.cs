@@ -2,21 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 {
-    public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, PagedResponse<AccountDetailsDto>>
+    public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, PagedResponseO<AccountDetailsDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationDbContext _dbContext;
@@ -31,12 +35,12 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<PagedResponse<AccountDetailsDto>> Handle(GetAllAccountsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResponseO<AccountDetailsDto>> Handle(GetAllAccountsQuery request, CancellationToken cancellationToken)
         {
             var userIdString = _userManager.GetUserId(_httpContextAccessor.HttpContext!.User);
             if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out _))
             {
-                return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
+                return new PagedResponseO<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
                 {
                     StatusCode = StatusCodes.Status401Unauthorized,
                     Success = false,
@@ -47,7 +51,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
             var currentUser = await _userManager.FindByIdAsync(userIdString);
             if (currentUser == null)
             {
-                return new PagedResponse<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
+                return new PagedResponseO<AccountDetailsDto>(1, 1, 0, new List<AccountDetailsDto>())
                 {
                     StatusCode = StatusCodes.Status401Unauthorized,
                     Success = false,
@@ -102,7 +106,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 
             if (!pagedUsers.Any())
             {
-                return new PagedResponse<AccountDetailsDto>(
+                return new PagedResponseO<AccountDetailsDto>(
                     request.PageNumber,
                     request.PageSize,
                     0,
@@ -148,7 +152,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                 accountDetailsList.Add(accountDto);
             }
 
-            return new PagedResponse<AccountDetailsDto>(
+            return new PagedResponseO<AccountDetailsDto>(
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

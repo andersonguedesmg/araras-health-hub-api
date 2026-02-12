@@ -2,18 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Identity;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAccount
 {
-    public class ChangeStatusAccountCommandHandler : IRequestHandler<ChangeStatusAccountCommand, ApiResponse<bool>>
+    public class ChangeStatusAccountCommandHandler : IRequestHandler<ChangeStatusAccountCommand, ApiResponseO<bool>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
@@ -26,13 +30,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ApiResponse<bool>> Handle(ChangeStatusAccountCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<bool>> Handle(ChangeStatusAccountCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
 
             if (user == null)
             {
-                return new ApiResponse<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+                return new ApiResponseO<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
             }
 
             var targetRoles = await _userManager.GetRolesAsync(user);
@@ -44,7 +48,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
             var currentUser = _httpContextAccessor.HttpContext?.User;
             if (currentUser == null || !currentUser.Identity!.IsAuthenticated)
             {
-                return new ApiResponse<bool>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, false);
+                return new ApiResponseO<bool>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, false);
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(
@@ -55,13 +59,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
 
             if (!authorizationResult.Succeeded)
             {
-                return new ApiResponse<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+                return new ApiResponseO<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
             }
 
             if (user.IsActive == request.IsActive)
             {
                 var statusText = request.IsActive ? "ativada" : "desativada";
-                return new ApiResponse<bool>(StatusCodes.Status200OK, ApiMessages.AccountStatusAlreadyAsDesired(statusText), true);
+                return new ApiResponseO<bool>(StatusCodes.Status200OK, ApiMessages.AccountStatusAlreadyAsDesired(statusText), true);
             }
 
             user.IsActive = request.IsActive;
@@ -92,11 +96,11 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAcc
             {
                 var identityErrors = updateResult.Errors.Select(e => e.Description).ToList();
                 var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponse<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToChangeAccountStatus, errorsDict, false);
+                return new ApiResponseO<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToChangeAccountStatus, errorsDict, false);
             }
 
             string successMessage = request.IsActive ? ApiMessages.ActivatedSuccessfully("Conta") : ApiMessages.DeactivatedSuccessfully("Conta");
-            return new ApiResponse<bool>(StatusCodes.Status200OK, successMessage, true);
+            return new ApiResponseO<bool>(StatusCodes.Status200OK, successMessage, true);
         }
     }
 }

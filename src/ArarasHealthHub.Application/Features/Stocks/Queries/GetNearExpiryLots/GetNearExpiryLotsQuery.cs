@@ -9,7 +9,7 @@ using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots
 {
-    public class GetNearExpiryLotsQuery : PagedRequest, IRequest<PagedResponse<StockLotNearExpiryDto>>
+    public class GetNearExpiryLotsQuery : PagedRequest, IRequest<PagedResponseO<StockLotNearExpiryDto>>
     {
         public string? SearchTerm { get; set; }
         public int ExpiryDaysThreshold { get; set; } = 90;

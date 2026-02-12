@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Dashboards.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Dashboards.Queries.GetSummary
 {
-    public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSummaryQuery, ApiResponse<DashboardSummaryDto>>
+    public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSummaryQuery, ApiResponseO<DashboardSummaryDto>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -21,7 +22,7 @@ namespace ArarasHealthHub.Application.Features.Dashboards.Queries.GetSummary
             _context = context;
         }
 
-        public async Task<ApiResponse<DashboardSummaryDto>> Handle(GetDashboardSummaryQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<DashboardSummaryDto>> Handle(GetDashboardSummaryQuery request, CancellationToken cancellationToken)
         {
             try
             {
@@ -70,11 +71,11 @@ namespace ArarasHealthHub.Application.Features.Dashboards.Queries.GetSummary
                     .Take(5)
                     .ToListAsync(cancellationToken);
 
-                return new ApiResponse<DashboardSummaryDto>(200, "Dashboard carregado com sucesso", summary);
+                return new ApiResponseO<DashboardSummaryDto>(200, "Dashboard carregado com sucesso", summary);
             }
             catch (Exception ex)
             {
-                return new ApiResponse<DashboardSummaryDto>(500, $"Erro ao processar dashboard: {ex.Message}", false);
+                return new ApiResponseO<DashboardSummaryDto>(500, $"Erro ao processar dashboard: {ex.Message}", false);
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using AutoMapper;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingById
 {
-    public class GetReceivingByIdQueryHandler : IRequestHandler<GetReceivingByIdQuery, ApiResponse<ReceivingDto>>
+    public class GetReceivingByIdQueryHandler : IRequestHandler<GetReceivingByIdQuery, ApiResponseO<ReceivingDto>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -24,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingBy
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<ReceivingDto>> Handle(GetReceivingByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponseO<ReceivingDto>> Handle(GetReceivingByIdQuery request, CancellationToken cancellationToken)
         {
             var receiving = await _dbContext.Receivings
                 .Include(r => r.Supplier)
@@ -37,11 +38,11 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingBy
 
             if (receiving == null)
             {
-                return new ApiResponse<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Recebimento", request.Id), false);
+                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Recebimento", request.Id), null);
             }
 
             var receivingDto = _mapper.Map<ReceivingDto>(receiving);
-            return new ApiResponse<ReceivingDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Recebimento"), receivingDto);
+            return new ApiResponseO<ReceivingDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Recebimento"), receivingDto);
         }
     }
 }

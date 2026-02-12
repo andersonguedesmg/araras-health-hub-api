@@ -20,6 +20,7 @@ using ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview;
+using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
 using MediatR;
@@ -42,7 +43,7 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpGet("general")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<StockOverviewDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseO<StockOverviewDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
@@ -118,7 +119,7 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpGet("adjustments")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<StockAdjustmentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseO<StockAdjustmentDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAllStockAdjustments([FromQuery] GetAllStockAdjustmentsQuery query)
@@ -129,7 +130,7 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpGet("min-quantities")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<StockMinQuantityDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseO<StockMinQuantityDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
@@ -171,7 +172,7 @@ namespace ArarasHealthHub.Api.Controllers
             var stockDtos = await _mediator.Send(new ExportStockGeneralOverviewQuery { SearchTerm = searchTerm });
             if (stockDtos == null || !stockDtos.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Estoque Geral"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Estoque Geral"), null!));
             }
 
             var sb = new StringBuilder();
@@ -215,7 +216,7 @@ namespace ArarasHealthHub.Api.Controllers
             var stockDtos = await _mediator.Send(new ExportCriticalStockOverviewQuery { SearchTerm = searchTerm });
             if (stockDtos == null || !stockDtos.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Estoque Crítico"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Estoque Crítico"), null!));
             }
 
             var sb = new StringBuilder();
@@ -261,7 +262,7 @@ namespace ArarasHealthHub.Api.Controllers
             var lotDtos = await _mediator.Send(new ExportNearExpiryLotsQuery { SearchTerm = searchTerm });
             if (lotDtos == null || !lotDtos.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Lote próximo de vencimento"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Lote próximo de vencimento"), null!));
             }
 
             var sb = new StringBuilder();
@@ -299,7 +300,7 @@ namespace ArarasHealthHub.Api.Controllers
             var lotDtos = await _mediator.Send(query);
             if (lotDtos == null || !lotDtos.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Lote Ativo"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Lote Ativo"), null!));
             }
 
             var sb = new StringBuilder();
@@ -335,7 +336,7 @@ namespace ArarasHealthHub.Api.Controllers
             var adjustmentDtos = await _mediator.Send(query);
             if (adjustmentDtos == null || !adjustmentDtos.Any())
             {
-                return NotFound(new ApiResponse<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Ajuste Manual"), null!));
+                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("Ajuste Manual"), null!));
             }
 
             var sb = new StringBuilder();
