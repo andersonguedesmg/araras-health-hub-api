@@ -57,11 +57,12 @@ Regras centrais:
 
 #### Commands
 
-- CreateAccountCommand
-- UpdateAccountCommand
-- ChangePasswordCommand
 - ActivateAccountCommand
+- ChangeAccountPasswordCommand
+- CreateAccountCommand
 - DeactivateAccountCommand
+- LoginAccountCommand
+- UpdateAccountCommand
 
 ---
 
@@ -75,17 +76,25 @@ Regras centrais:
 
 #### Validators
 
-- CreateAccountValidator
-- UpdateAccountValidator
+- ActivateAccountCommandValidator
+- ChangeAccountPasswordCommandValidator
+- CreateAccountCommandValidator
+- DeactivateAccountCommandValidator
+- GetAccountByIdQueryValidator
+- GetAccountsByFacilityQueryValidator
 - GetAllAccountsQueryValidator
+- LoginAccountCommandValidator
+- UpdateAccountCommandValidator
 
 ---
 
 #### Responses
 
-- AccountResponse
+- AccountCreatedResponse
 - AccountListItemResponse
-- FacilityResponse
+- GetAccountByIdResponse
+- GetAccountsByFacilityResponse
+- LoginAccountResponse
 
 Todos definidos como record e imutáveis.
 
@@ -112,12 +121,15 @@ Policies:
 
 Rotas:
 
-- POST /accounts
-- PUT /accounts/{id}
-- GET /accounts/{id}
-- GET /accounts
-- PATCH /accounts/{id}/activate
-- PATCH /accounts/{id}/deactivate
+- GET /api/v1/accounts
+- GET /api/v1/accounts/facility/{facilityId}
+- GET /api/v1/accounts/{id}
+- PATCH /api/v1/accounts/{id}/activate
+- PATCH /api/v1/accounts/{id}/change-password
+- PATCH /api/v1/accounts/{id}/deactivate
+- POST /api/v1/accounts
+- POST /api/v1/accounts/login
+- PUT /api/v1/accounts/{id}
 
 ---
 
@@ -131,7 +143,7 @@ Rotas:
 
 ---
 
-## 10. Histórico de Alterações
+## 5. Histórico de Alterações
 
 | Data         | Alteração                                                | Autor    |
 | ------------ | -------------------------------------------------------- | -------- |
