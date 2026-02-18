@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Services;
-using ArarasHealthHub.Domain.Enums;
+using ArarasHealthHub.Domain.Identity;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -22,44 +22,39 @@ namespace ArarasHealthHub.Infrastructure.Services
         public TokenService(IConfiguration config)
         {
             _config = config;
-            var signingKey = _config["JWT:SigningKey"] ?? throw new InvalidOperationException("JWT:SigningKey is not configured.");
+
+            var signingKey = _config["JWT:SigningKey"]
+                ?? throw new InvalidOperationException("JWT:SigningKey is not configured.");
+
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         }
 
-        public string CreateToken(int userId, string userName, IEnumerable<string> roles, AccountScopeEnum scope)
+        public string CreateToken(ApplicationUser account)
         {
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                new Claim(JwtRegisteredClaimNames.GivenName, userName ?? string.Empty),
-                new Claim("Scope", scope.ToString()),
-            };
+        {
+            new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
+            new Claim(ClaimTypes.Name, account.UserName ?? string.Empty),
+            new Claim("FacilityId", account.FacilityId.ToString()),
+            new Claim("Scope", account.Scope.ToString()),
+            new Claim(ClaimTypes.Role, account.Role.ToString())
+        };
 
-            if (userId > 0)
-            {
-                claims.Add(new Claim("FacilityId", userId.ToString()));
-            }
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
 
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var descriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(8),
+                Expires = DateTime.UtcNow.AddHours(8),
                 SigningCredentials = creds,
                 Issuer = _config["JWT:Issuer"],
                 Audience = _config["JWT:Audience"]
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.CreateToken(descriptor);
 
-            return tokenHandler.WriteToken(token);
+            return handler.WriteToken(token);
         }
     }
 }
