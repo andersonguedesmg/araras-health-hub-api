@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace araras_health_hub_api.Common
@@ -18,10 +21,12 @@ namespace araras_health_hub_api.Common
         protected IMediator Mediator =>
             HttpContext.RequestServices.GetRequiredService<IMediator>();
 
-        protected async Task<IActionResult> Send<TResponse>(IRequest<TResponse> request)
+        protected async Task<IActionResult> Send<TResponse>(
+            IRequest<TResponse> request,
+            CancellationToken cancellationToken)
             where TResponse : ApiResponseBase
         {
-            var response = await Mediator.Send(request);
+            var response = await Mediator.Send(request, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
     }
