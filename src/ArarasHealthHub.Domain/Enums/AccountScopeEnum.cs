@@ -1,9 +1,8 @@
 namespace ArarasHealthHub.Domain.Enums
 {
-    public enum AccountScopeEnum
+    public enum AccountScopeEnum : byte
     {
-        Unassigned = 0,
         Management = 1,
-        Operational = 2,
+        Operational = 2
     }
 }
