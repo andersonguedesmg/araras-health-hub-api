@@ -1,185 +1,103 @@
 using System.Net;
 using System.Text;
 
+using araras_health_hub_api.Common;
 using araras_health_hub_api.Filters;
 
-using ArarasHealthHub.Application.Features.Accounts.Commands.ChangeStatusAccount;
+using ArarasHealthHub.Application.Features.Accounts.Commands.ActivateAccount;
+using ArarasHealthHub.Application.Features.Accounts.Commands.ChangeAccountPassword;
+using ArarasHealthHub.Application.Features.Accounts.Commands.CreateAccount;
+using ArarasHealthHub.Application.Features.Accounts.Commands.DeactivateAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount;
-using ArarasHealthHub.Application.Features.Accounts.Commands.RegisterAccount;
-using ArarasHealthHub.Application.Features.Accounts.Commands.ResetPassword;
 using ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount;
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Accounts.Queries.ExportAccounts;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById;
-using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacilityId;
+using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacility;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Core.Pagination;
 using ArarasHealthHub.Shared.Core.Responses;
-
-using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArarasHealthHub.Api.Controllers
 {
-    [Route("api/account")]
+    [Route("api/v1/accounts")]
     [ApiController]
     [Authorize]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public AccountController(IMediator mediator)
+        [HttpPost]
+        [AuthorizeAccountManagement]
+        [ProducesResponseType(typeof(ApiResponse<AccountCreatedResponse>), StatusCodes.Status201Created)]
+        public async Task<IActionResult> Create([FromBody] CreateAccountCommand command, CancellationToken cancellationToken)
         {
-            _mediator = mediator;
-        }
-
-        [HttpPost("register")]
-        [AuthorizeAccountManagement(typeof(RegisterRequestDto))]
-        [ProducesResponseType(typeof(ApiResponseO<AccountCreatedDto>), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<AccountCreatedDto>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
-        {
-            var command = new RegisterAccountCommand
-            {
-                UserName = request.UserName!,
-                Password = request.Password!,
-                FacilityId = request.FacilityId,
-                Scope = request.Scope,
-                Role = request.Role,
-                IsActive = request.IsActive
-            };
-
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(command, cancellationToken);
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<LoginResponseDto>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> Login([FromBody] LoginDto request)
+        [ProducesResponseType(typeof(ApiResponse<LoginAccountResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Login([FromBody] LoginAccountCommand command, CancellationToken cancellationToken)
         {
-            var command = new LoginAccountCommand { UserName = request.UserName, Password = request.Password };
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(command, cancellationToken);
         }
 
-        [HttpPost("resetPassword")]
-        [Authorize(Roles = "Master,Admin")]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
+        [HttpPatch("{id:int}/change-password")]
+        [AuthorizeAccountManagement]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangeAccountPasswordCommand command, CancellationToken cancellationToken)
         {
-            var command = new ResetPasswordCommand(request.UserName, request.NewPassword);
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(command with { TargetUserId = id }, cancellationToken);
         }
 
-        [HttpGet("getAll")]
-        [ProducesResponseType(typeof(PagedResponseO<AccountDetailsDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllAccountsQuery query)
+        [HttpGet]
+        [AuthorizeAccountManagement]
+        [ProducesResponseType(typeof(PagedResponse<AccountListItemResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllAccountsQuery query, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
+            return await Send(query, cancellationToken);
         }
 
-        [HttpGet("getById/{id:int}")]
-        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<AccountDetailsDto>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> GetAccountById(int id)
+        [HttpGet("{id:int}")]
+        [AuthorizeAccountManagement]
+        [ProducesResponseType(typeof(ApiResponse<GetAccountByIdResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<GetAccountByIdResponse>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            var query = new GetAccountByIdQuery(id);
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
+            return await Send(new GetAccountByIdQuery(id), cancellationToken);
         }
 
-        [HttpGet("getByFacilityId/{facilityId:int}")]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<List<AccountDetailsDto>>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> GetAccountsByFacilityId(int facilityId)
+        [HttpGet("facility/{facilityId:int}")]
+        [AuthorizeAccountManagement]
+        [ProducesResponseType(typeof(ApiResponse<List<GetAccountsByFacilityResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<GetAccountsByFacilityResponse>>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAccountsByFacility(int facilityId, CancellationToken cancellationToken)
         {
-            var query = new GetAccountsByFacilityIdQuery { FacilityId = facilityId };
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
+            return await Send(new GetAccountsByFacilityQuery(facilityId), cancellationToken);
         }
 
-        [HttpPut("update")]
-        [AuthorizeAccountManagement(typeof(UpdateAccountCommand))]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountCommand command)
+        [HttpPut("{id:int}")]
+        [AuthorizeAccountManagement]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateAccountCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(command.WithId(id), cancellationToken);
         }
 
-        [HttpPatch("changeStatus/{id}")]
-        [Authorize(Roles = "Master,Admin")]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.Forbidden)]
-        public async Task<IActionResult> ChangeStatus([FromRoute] int id, [FromBody] ChangeStatusAccountCommand command)
+        [HttpPatch("{id:int}/activate")]
+        [AuthorizeAccountManagement]
+        public async Task<IActionResult> Activate(int id, ActivateAccountCommand command, CancellationToken cancellationToken)
         {
-            if (id != command.UserId)
-            {
-                return BadRequest(new ApiResponseO<bool>(StatusCodes.Status400BadRequest, ApiMessages.IdMismatch, false));
-            }
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(command.WithId(id), cancellationToken);
         }
 
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Export([FromQuery] string? searchTerm)
+        [HttpPatch("{id:int}/deactivate")]
+        [AuthorizeAccountManagement]
+        public async Task<IActionResult> Deactivate(int id, DeactivateAccountCommand command, CancellationToken cancellationToken)
         {
-            var accountDtos = await _mediator.Send(new ExportAccountsQuery { SearchTerm = searchTerm });
-            if (accountDtos == null || !accountDtos.Any())
-            {
-                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("conta"), null!));
-            }
-
-            var sb = new StringBuilder();
-            sb.AppendLine("NOME, UNIDADE, FUNÇÃO, ESCOPO, STATUS");
-
-            foreach (var accountDto in accountDtos)
-            {
-                var role = accountDto.Roles?.FirstOrDefault() ?? "";
-                var facilityName = accountDto.Facility?.Name ?? "N/A";
-                var scope = accountDto.Scope.ToString();
-                var status = accountDto.IsActive ? "Ativo" : "Inativo";
-
-                sb.Append($"{accountDto.UserName}, {facilityName}, {role}, {scope}, {status}\r\n");
-            }
-
-            var fileName = $"contas_{DateTime.Now:yyyyMMddHHmmss}.csv";
-
-            var utf8WithBom = new UTF8Encoding(true);
-            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
-
-            return File(fileBytes, "text/csv", fileName);
+            return await Send(command.WithId(id), cancellationToken);
         }
     }
 }

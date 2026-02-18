@@ -50,13 +50,7 @@ namespace ArarasHealthHub.Shared.Core.Messages
         public static string CreatedSuccessfully(string entity) => $"{entity} criado com sucesso.";
         public static string UpdatedSuccessfully(string entity) => $"{entity} atualizado com sucesso.";
         public static string RegisteredSuccessfully(string entity) => $"{entity} registrada com sucesso.";
-        public static string DeactivatedSuccessfully(string entity) => $"{entity} desativado com sucesso.";
-        public static string ActivatedSuccessfully(string entity) => $"{entity} ativado com sucesso.";
         public static string NotFoundWithId(string entity, int id) => $"{entity} com ID {id} não encontrado.";
-        public static string AccountStatusAlreadyAsDesired(string status) => $"O status da conta já está {status}.";
-        public static string PasswordResetFailed(string errors) => $"Falha ao redefinir a senha: {errors}";
-        public static string AccountsFoundForFacility(int facilityId) => $"Contas da unidade com ID {facilityId} recuperadas com sucesso.";
-        public static string NoAccountsFoundForFacility(int facilityId) => $"Nenhuma conta encontrada para a unidade com ID {facilityId}.";
         public static string ItemNotFoundInOrder(int orderItemId) => $"O item de pedido com ID {orderItemId} não foi encontrado no pedido.";
         public static string OrderSuccessfully(string status) => $"Pedido {status} com sucesso.";
         public static string CannotCancelOrderInStatus(string status) => $"Não é possível cancelar o pedido com status {status}.";
@@ -67,6 +61,7 @@ namespace ArarasHealthHub.Shared.Core.Messages
         public const string AccountLoginSuccessful = "Login realizado com sucesso.";
         public const string AccountIncorrect = "Credenciais inválidas.";
         public const string AccountNameAlreadyInUse = "Nome da conta já está em uso.";
+        public const string FailedToResetPassword = "Falha ao redefinir a senha.";
         public const string PasswordResetSuccessfully = "Senha redefinida com sucesso.";
         public const string FailedToCreateAccount = "Falha ao criar a conta.";
         public const string FailedToAssignRoleToAccount = "Falha ao atribuir a função a conta.";

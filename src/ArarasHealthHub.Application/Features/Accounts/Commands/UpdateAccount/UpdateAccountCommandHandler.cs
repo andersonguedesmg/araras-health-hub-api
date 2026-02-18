@@ -3,83 +3,82 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using ArarasHealthHub.Domain.Authorization;
+
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount
 {
-    public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, ApiResponseO<bool>>
+    public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, ApiResponse<object>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IAuthorizationService _authorizationService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UpdateAccountCommandHandler(UserManager<ApplicationUser> userManager, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
+        public UpdateAccountCommandHandler(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-            _authorizationService = authorizationService;
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ApiResponseO<bool>> Handle(UpdateAccountCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<object>> Handle(
+            UpdateAccountCommand request,
+            CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            var account = await _userManager.FindByIdAsync(request.UserId.ToString());
 
-            if (user == null)
+            if (account is null)
             {
-                return new ApiResponseO<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.EntityNotFound(EntityNames.Account)
+                );
             }
 
-            var targetRoles = await _userManager.GetRolesAsync(user);
-            var targetRole = targetRoles.FirstOrDefault() ?? "User";
-            var targetScope = user.Scope;
-
-            var requiredPermission = new ManageAccountRequirement(targetScope, targetRole);
-
-            var currentUser = _httpContextAccessor.HttpContext?.User;
-            if (currentUser == null)
+            if (account.UserName == request.UserName)
             {
-                return new ApiResponseO<bool>(StatusCodes.Status401Unauthorized, ApiMessages.UnauthenticatedUser, false);
+                return ApiResponse<object>.SuccessResponse(
+                    StatusCodes.Status200OK,
+                    ApiMessages.UpdatedSuccessfully(EntityNames.Account)
+                );
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(
-                currentUser,
-                null,
-                requiredPermission
-            );
+            var existingAccount = await _userManager.FindByNameAsync(request.UserName);
 
-            if (!authorizationResult.Succeeded)
+            if (existingAccount is not null)
             {
-                return new ApiResponseO<bool>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status400BadRequest,
+                    ApiMessages.AccountNameAlreadyInUse
+                );
             }
 
-            if (user.UserName != request.UserName)
-            {
-                if (await _userManager.FindByNameAsync(request.UserName) != null)
-                {
-                    return new ApiResponseO<bool>(StatusCodes.Status400BadRequest, ApiMessages.AccountNameAlreadyInUse, false);
-                }
-            }
+            account.UserName = request.UserName;
 
-            user.UserName = request.UserName;
-
-            var updateResult = await _userManager.UpdateAsync(user);
+            var updateResult = await _userManager.UpdateAsync(account);
 
             if (!updateResult.Succeeded)
             {
-                var identityErrors = updateResult.Errors.Select(e => e.Description).ToList();
-                var errorsDict = new Dictionary<string, List<string>> { { "GeneralErrors", identityErrors } };
-                return new ApiResponseO<bool>(StatusCodes.Status500InternalServerError, ApiMessages.FailedToUpdateAccount, errorsDict, false);
+                var errors = updateResult.Errors
+                    .GroupBy(e => e.Code)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => (IReadOnlyList<string>)g.Select(e => e.Description).ToList()
+                    );
+
+                return ApiResponse<object>.FailureResponse(
+                    StatusCodes.Status500InternalServerError,
+                    ApiMessages.FailedToUpdateAccount,
+                    errors);
             }
 
-            return new ApiResponseO<bool>(StatusCodes.Status200OK, ApiMessages.UpdatedSuccessfully("Conta"), true);
+            return ApiResponse<object>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.EntityUpdated(EntityNames.Account)
+            );
         }
     }
 }

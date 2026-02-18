@@ -12,9 +12,9 @@ namespace ArarasHealthHub.Domain.Authorization
     public class ManageAccountRequirement : IAuthorizationRequirement
     {
         public AccountScopeEnum TargetScope { get; }
-        public string TargetRole { get; }
+        public AccountRoleEnum TargetRole { get; }
 
-        public ManageAccountRequirement(AccountScopeEnum targetScope, string targetRole)
+        public ManageAccountRequirement(AccountScopeEnum targetScope, AccountRoleEnum targetRole)
         {
             TargetScope = targetScope;
             TargetRole = targetRole;

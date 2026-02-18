@@ -4,76 +4,71 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
+using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
-using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
-
-using AutoMapper;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
 {
-    public class GetAccountByIdQueryHandler : IRequestHandler<GetAccountByIdQuery, ApiResponseO<AccountDetailsDto>>
+    public class GetAccountByIdQueryHandler : IRequestHandler<GetAccountByIdQuery, ApiResponse<GetAccountByIdResponse>>
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IApplicationDbContext _dbContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
+        private readonly IApplicationDbContext _context;
 
-        public GetAccountByIdQueryHandler(UserManager<ApplicationUser> userManager, IApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public GetAccountByIdQueryHandler(IApplicationDbContext context)
         {
-            _userManager = userManager;
-            _dbContext = dbContext;
-            _httpContextAccessor = httpContextAccessor;
-            _mapper = mapper;
+            _context = context;
         }
 
-        public async Task<ApiResponseO<AccountDetailsDto>> Handle(GetAccountByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<GetAccountByIdResponse>> Handle(
+            GetAccountByIdQuery request,
+            CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users
-                .Include(u => u.Facility)
+            var account = await _context.Set<ApplicationUser>()
+                .Where(a => a.Id == request.UserId)
+                .Select(a => new GetAccountByIdResponse(
+                    a.Id,
+                    a.UserName!,
+                    a.IsActive,
+                    a.Scope,
+                    a.Role,
+                    a.CreatedOn,
+                    a.UpdatedOn,
+                    new FacilityResponse(
+                        a.Facility.Id,
+                        a.Facility.Name,
+                        a.Facility.Cnes,
+                        a.Facility.Address.Cep,
+                        a.Facility.Address.Street,
+                        a.Facility.Address.Number,
+                        a.Facility.Address.Complement,
+                        a.Facility.Address.Neighborhood,
+                        a.Facility.Address.City,
+                        a.Facility.Address.State,
+                        a.Facility.Contact.Email,
+                        a.Facility.Contact.Phone
+                    )
+                ))
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (user == null)
+            if (account is null)
             {
-                return new ApiResponseO<AccountDetailsDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), null);
+                return ApiResponse<GetAccountByIdResponse>.FailureResponse(
+                    StatusCodes.Status404NotFound,
+                    ApiMessages.EntityNotFound(EntityNames.Account));
             }
 
-            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-            if (currentUser == null)
-            {
-                return new ApiResponseO<AccountDetailsDto>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, null);
-            }
-
-            if (currentUser.Scope == AccountScopeEnum.Operational)
-            {
-                if (user.Id != currentUser.Id && user.FacilityId != currentUser.FacilityId)
-                {
-                    return new ApiResponseO<AccountDetailsDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, null);
-                }
-            }
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var accountDto = _mapper.Map<AccountDetailsDto>(user);
-            accountDto.Roles = roles.ToList();
-            accountDto.IsActive = user.IsActive;
-
-            if (user.Facility != null)
-            {
-                accountDto.Facility = _mapper.Map<FacilityDetailsDto>(user.Facility);
-            }
-
-            return new ApiResponseO<AccountDetailsDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Conta"), accountDto);
+            return ApiResponse<GetAccountByIdResponse>.SuccessResponse(
+                StatusCodes.Status200OK,
+                ApiMessages.FoundSuccessfully(EntityNames.Account),
+                account);
         }
     }
 }

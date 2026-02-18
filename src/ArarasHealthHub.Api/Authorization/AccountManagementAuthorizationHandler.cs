@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Domain.Authorization;
-using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 
 using Microsoft.AspNetCore.Authorization;
@@ -21,39 +20,38 @@ namespace araras_health_hub_api.Authorization
             _userManager = userManager;
         }
 
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ManageAccountRequirement requirement)
+        protected override async Task HandleRequirementAsync(
+            AuthorizationHandlerContext context,
+            ManageAccountRequirement requirement)
         {
-            var subjectUser = await _userManager.GetUserAsync(context.User);
-            if (subjectUser == null || context.User.Identity?.IsAuthenticated == false)
+            if (context.User.Identity?.IsAuthenticated != true)
             {
                 context.Fail();
                 return;
             }
 
-            var subjectRoles = await _userManager.GetRolesAsync(subjectUser);
+            var subjectUser = await _userManager.GetUserAsync(context.User);
+            if (subjectUser == null || !subjectUser.IsActive)
+            {
+                context.Fail();
+                return;
+            }
+
+            var subjectRole = subjectUser.Role;
             var subjectScope = subjectUser.Scope;
 
             var targetScope = requirement.TargetScope;
             var targetRole = requirement.TargetRole;
 
-            if (subjectRoles.Contains("Master") && subjectScope == AccountScopeEnum.Management)
+            if (subjectScope != targetScope)
             {
-                context.Succeed(requirement);
+                context.Fail();
                 return;
             }
 
-            if (subjectScope == AccountScopeEnum.Management && (subjectRoles.Contains("Master") || subjectRoles.Contains("Admin")))
+            if (subjectRole <= targetRole)
             {
-                if (targetRole == "Admin" || targetRole == "User")
-                {
-                    context.Succeed(requirement);
-                    return;
-                }
-            }
-
-            if (targetRole == "Master")
-            {
-                context.Fail();
+                context.Succeed(requirement);
                 return;
             }
 

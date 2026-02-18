@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
 using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost;
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
@@ -13,8 +14,11 @@ using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Core;
 using ArarasHealthHub.Shared.Core.Messages;
 using ArarasHealthHub.Shared.Core.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceiving
@@ -51,11 +55,11 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
                 return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.ResponsibleId), false);
             }
 
-            var account = await _dbContext.Users.FindAsync(request.AccountId);
-            if (account == null)
-            {
-                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.AccountId), false);
-            }
+            // var account = await _dbContext.Users.FindAsync(request.AccountId);
+            // if (account == null)
+            // {
+            //     return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.AccountId), false);
+            // }
 
             decimal totalCalculatedValue = 0;
             var newReceivedItems = new List<ReceivedItem>();
