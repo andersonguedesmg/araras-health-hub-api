@@ -9,12 +9,13 @@ namespace ArarasHealthHub.Domain.Interfaces
 {
     public interface IApplicationUser
     {
-        int Id { get; set; }
-        string? UserName { get; set; }
-        int FacilityId { get; set; }
-        public AccountScopeEnum Scope { get; set; }
-        DateTime CreatedOn { get; set; }
-        DateTime? UpdatedOn { get; set; }
-        bool IsActive { get; set; }
+        int Id { get; }
+        string? UserName { get; }
+        int FacilityId { get; }
+        AccountScopeEnum Scope { get; }
+        AccountRoleEnum Role { get; }
+        DateTime CreatedOn { get; }
+        DateTime? UpdatedOn { get; }
+        bool IsActive { get; }
     }
 }

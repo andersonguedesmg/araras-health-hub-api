@@ -8,14 +8,13 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ArarasHealthHub.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int, IdentityUserClaim<int>, IdentityUserRole<int>, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityUserContext<ApplicationUser, int>, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions) : base(dbContextOptions)
         {
@@ -24,8 +23,6 @@ namespace ArarasHealthHub.Infrastructure.Data
 
         public new DatabaseFacade Database => base.Database;
 
-        public new DbSet<IdentityUserRole<int>> UserRoles { get; set; } = default!;
-        public new DbSet<IdentityRole<int>> Roles { get; set; } = default!;
         public DbSet<Facility> Facilities { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Employee> Employees { get; set; }
@@ -52,16 +49,39 @@ namespace ArarasHealthHub.Infrastructure.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ApplicationUser>()
-                .Property(u => u.Id)
-                .ValueGeneratedOnAdd();
+            builder.Entity<ApplicationUser>(entity =>
+            {
+                entity.ToTable("AspNetUsers");
 
-            builder.Entity<ApplicationUser>()
-                .HasOne(u => u.Facility)
-                .WithMany(f => f.Accounts)
-                .HasForeignKey(u => u.FacilityId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(u => u.Facility)
+                      .WithMany(f => f.Accounts)
+                      .HasForeignKey(u => u.FacilityId)
+                      .IsRequired()
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(u => u.Scope)
+                      .HasConversion<byte>()
+                      .IsRequired();
+
+                entity.Property(u => u.Role)
+                      .HasConversion<byte>()
+                      .IsRequired();
+
+                entity.Property(u => u.CreatedOn)
+                      .IsRequired();
+
+                entity.Property(u => u.IsActive)
+                      .IsRequired();
+            });
+
+            builder.Entity<Facility>(entity =>
+            {
+                entity.HasKey(f => f.Id);
+
+                entity.Property(f => f.Name)
+                    .HasMaxLength(200)
+                    .IsRequired();
+            });
 
             builder.Entity<Facility>().OwnsOne(f => f.Address);
             builder.Entity<Facility>().OwnsOne(f => f.Contact);
@@ -113,38 +133,6 @@ namespace ArarasHealthHub.Infrastructure.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-
-            // --- Seed das Funções ---
-            int roleMasterId = 1;
-            int roleAdminId = 2;
-            int roleUserId = 3;
-
-            List<IdentityRole<int>> roles = new List<IdentityRole<int>>
-            {
-                new IdentityRole<int>
-                {
-                    Id = roleMasterId,
-                    Name = "Master",
-                    NormalizedName = "MASTER",
-                    ConcurrencyStamp = "f2c9a0c0-7b1f-4e53-9b8a-3a0f1f4d8b11",
-                },
-                new IdentityRole<int>
-                {
-                    Id = roleAdminId,
-                    Name = "Admin",
-                    NormalizedName = "ADMIN",
-                    ConcurrencyStamp = "9a6a4b78-0d51-4b4b-9d65-2a7a8bfc9e32",
-                },
-                new IdentityRole<int>
-                {
-                    Id = roleUserId,
-                    Name = "User",
-                    NormalizedName = "USER",
-                    ConcurrencyStamp = "c7f9c1aa-1c9a-4c4e-b8fa-5c8a2c1f3a99",
-                },
-            };
-            builder.Entity<IdentityRole<int>>().HasData(roles);
-
             // --- Seed da Unidade Principal ---
             int facilityPrincipalId = 1;
             builder.Entity<Facility>(entity =>
@@ -185,30 +173,20 @@ namespace ArarasHealthHub.Infrastructure.Data
             );
 
             // --- Seed do Usuário Principal ---
-            ApplicationUser userMaster = new()
+            builder.Entity<ApplicationUser>().HasData(new
             {
                 Id = 1,
                 UserName = "saude_master",
                 NormalizedUserName = "SAUDE_MASTER",
-                CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 09, 14, 35), DateTimeKind.Utc),
-                UpdatedOn = null,
-                IsActive = true,
                 FacilityId = facilityPrincipalId,
                 Scope = AccountScopeEnum.Management,
+                Role = AccountRoleEnum.Master,
+                CreatedOn = DateTime.SpecifyKind(new DateTime(2025, 01, 02, 09, 14, 35), DateTimeKind.Utc),
+                IsActive = true,
                 SecurityStamp = "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11",
                 ConcurrencyStamp = "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99",
-                PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
-            };
-            builder.Entity<ApplicationUser>().HasData(userMaster);
-
-
-            // --- Associar Usuário Principal à Função Master ---
-            IdentityUserRole<int> userMasterRole = new()
-            {
-                RoleId = roleMasterId,
-                UserId = userMaster.Id,
-            };
-            builder.Entity<IdentityUserRole<int>>().HasData(userMasterRole);
+                PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA=="
+            });
 
             // --- Seed de Status de Pedido ---
             List<OrderStatus> orderStatus = new List<OrderStatus>
@@ -338,12 +316,6 @@ namespace ArarasHealthHub.Infrastructure.Data
                     .HasPrecision(18, 2);
 
                 entity.Property(e => e.TotalValue)
-                    .HasPrecision(18, 2);
-            });
-
-            builder.Entity<DispenseReturn>(entity =>
-            {
-                entity.Property(e => e.TotalReturnedValue)
                     .HasPrecision(18, 2);
             });
 

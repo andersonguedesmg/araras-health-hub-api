@@ -147,16 +147,16 @@ builder.Services.AddSwaggerGen(option =>
 // ===============================================
 
 // Configuração do ASP.NET Core Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
-    // Define requisitos de segurança da senha
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
 })
-.AddEntityFrameworkStores<ApplicationDbContext>() // Usa o DbContext para persistência
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddSignInManager()
 .AddDefaultTokenProviders();
 
 // Configuração da Autenticação JWT Bearer
@@ -230,11 +230,11 @@ builder.Services.AddAuthorization(options =>
     // Políticas para gerenciamento de contas (requerem checagem hierárquica)
     options.AddPolicy("CanManageMasterAccount", policy =>
     {
-        policy.AddRequirements(new ManageAccountRequirement(AccountScopeEnum.Management, "Master"));
+        policy.AddRequirements(new ManageAccountRequirement(AccountScopeEnum.Management, AccountRoleEnum.Master));
     });
     options.AddPolicy("CanManageAdminOrUserAccount", policy =>
     {
-        policy.AddRequirements(new ManageAccountRequirement(AccountScopeEnum.Management, "Admin"));
+        policy.AddRequirements(new ManageAccountRequirement(AccountScopeEnum.Management, AccountRoleEnum.Admin));
     });
 
     // Política para gerenciamento de recursos gerais (Employee, Facility, Product, Supplier)
