@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
@@ -20,10 +21,12 @@ using ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId;
 using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Responses;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

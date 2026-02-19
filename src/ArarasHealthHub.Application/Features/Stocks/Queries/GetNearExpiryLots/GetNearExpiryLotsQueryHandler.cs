@@ -2,14 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Common.Interfaces;
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots

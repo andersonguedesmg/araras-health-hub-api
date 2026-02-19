@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAverageCost;
 using ArarasHealthHub.Application.Features.StockLots.Commands.UpdateStockLot;
 using ArarasHealthHub.Application.Features.StockMovements.Commands.CreateStockMovement;
@@ -9,11 +10,14 @@ using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Responses;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 

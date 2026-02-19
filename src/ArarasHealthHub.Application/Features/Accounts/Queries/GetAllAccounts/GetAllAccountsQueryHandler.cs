@@ -8,7 +8,7 @@ using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core.Pagination;
+using ArarasHealthHub.Shared.Pagination;
 
 using MediatR;
 

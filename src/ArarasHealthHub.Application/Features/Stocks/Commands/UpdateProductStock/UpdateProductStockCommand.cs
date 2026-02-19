@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Responses;
+
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock

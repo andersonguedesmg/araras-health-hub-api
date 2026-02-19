@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Accounts.Commands.CreateAccount;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 

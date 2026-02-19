@@ -15,9 +15,9 @@ using ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdown;
-using ArarasHealthHub.Shared.Core.Dtos;
-using ArarasHealthHub.Shared.Core.Pagination;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

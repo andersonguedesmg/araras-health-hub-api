@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCategories;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Pagination;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Pagination;
 
 using FluentValidation;
 

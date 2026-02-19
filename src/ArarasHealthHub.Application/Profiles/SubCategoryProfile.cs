@@ -7,7 +7,7 @@ using ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubCateg
 using ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubCategory;
 using ArarasHealthHub.Application.Features.SubCategories.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Common.Validation;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 

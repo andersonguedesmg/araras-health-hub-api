@@ -14,8 +14,8 @@ using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacility;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
-using ArarasHealthHub.Shared.Core.Pagination;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

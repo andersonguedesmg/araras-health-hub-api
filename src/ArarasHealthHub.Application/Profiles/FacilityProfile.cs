@@ -9,7 +9,7 @@ using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.ValueObjects;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 

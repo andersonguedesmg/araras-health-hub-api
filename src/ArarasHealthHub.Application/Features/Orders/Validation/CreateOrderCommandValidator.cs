@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
-using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Messages;
+
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.Orders.Validation

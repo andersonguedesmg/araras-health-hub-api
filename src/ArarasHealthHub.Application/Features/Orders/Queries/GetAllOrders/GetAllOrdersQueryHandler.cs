@@ -9,7 +9,7 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Responses;
 
 using AutoMapper;
 

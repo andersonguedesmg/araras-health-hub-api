@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Messages;
 
 namespace ArarasHealthHub.Api.Middlewares
 {

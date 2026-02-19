@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 namespace ArarasHealthHub.Application.Features.Orders.Dtos
 {

@@ -11,9 +11,9 @@ using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateProductStock;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Responses;
 
 using AutoMapper;
 

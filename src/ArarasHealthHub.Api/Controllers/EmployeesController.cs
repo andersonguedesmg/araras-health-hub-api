@@ -14,9 +14,9 @@ using ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdown;
-using ArarasHealthHub.Shared.Core.Dtos;
-using ArarasHealthHub.Shared.Core.Pagination;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

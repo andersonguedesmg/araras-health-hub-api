@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
-using ArarasHealthHub.Shared.Core.Pagination;
+using ArarasHealthHub.Shared.Pagination;
+
 using FluentValidation;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Validation

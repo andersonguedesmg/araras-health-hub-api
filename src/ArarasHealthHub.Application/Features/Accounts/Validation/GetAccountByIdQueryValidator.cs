@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById;
-using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 

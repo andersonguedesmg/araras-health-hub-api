@@ -16,9 +16,9 @@ using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdown;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityProfile;
-using ArarasHealthHub.Shared.Core.Dtos;
-using ArarasHealthHub.Shared.Core.Pagination;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

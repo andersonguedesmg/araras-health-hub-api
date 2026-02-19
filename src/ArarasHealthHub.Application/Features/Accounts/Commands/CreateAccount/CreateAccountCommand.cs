@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Responses;
 
 using MediatR;
 

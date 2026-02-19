@@ -14,9 +14,9 @@ using ArarasHealthHub.Application.Features.MainCategories.Queries.ExportMainCate
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryById;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdown;
-using ArarasHealthHub.Shared.Core.Dtos;
-using ArarasHealthHub.Shared.Core.Pagination;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core;
+using ArarasHealthHub.Shared;
 
 using static ArarasHealthHub.Application.Services.StockAllocation.StockAllocationDtos;
 

@@ -7,7 +7,7 @@ using ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 

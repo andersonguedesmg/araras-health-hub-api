@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Shared.Core.Pagination;
+using ArarasHealthHub.Shared.Pagination;
 
 using MediatR;
 

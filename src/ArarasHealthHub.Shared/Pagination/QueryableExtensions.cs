@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace ArarasHealthHub.Shared.Core.Pagination
+namespace ArarasHealthHub.Shared.Pagination
 {
     public static class QueryableExtensions
     {

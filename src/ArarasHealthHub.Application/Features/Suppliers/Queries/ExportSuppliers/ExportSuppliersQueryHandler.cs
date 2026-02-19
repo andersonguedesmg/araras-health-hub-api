@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Suppliers.Exports;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Responses;
 
 using MediatR;
 

@@ -14,9 +14,9 @@ using ArarasHealthHub.Application.Features.SubCategories.Queries.ExportSubCatego
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCategories;
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryById;
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryDropdown;
-using ArarasHealthHub.Shared.Core.Dtos;
-using ArarasHealthHub.Shared.Core.Pagination;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

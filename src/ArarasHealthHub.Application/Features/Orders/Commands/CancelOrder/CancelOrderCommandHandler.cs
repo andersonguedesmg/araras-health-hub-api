@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReservation;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Responses;
 
 using MediatR;
 

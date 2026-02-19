@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ArarasHealthHub.Domain\ArarasHealthHub.Domain.csproj" />
-    <ProjectReference Include="..\ArarasHealthHub.Shared.Core\ArarasHealthHub.Shared.Core.csproj" />
+    <ProjectReference Include="..\ArarasHealthHub.Shared\ArarasHealthHub.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

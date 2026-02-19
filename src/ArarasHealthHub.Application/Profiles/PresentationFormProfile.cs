@@ -7,7 +7,7 @@ using ArarasHealthHub.Application.Features.PresentationForms.Commands.CreatePres
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm;
 using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 

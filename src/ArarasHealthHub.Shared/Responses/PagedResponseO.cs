@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Shared.Core.Messages;
+
+using ArarasHealthHub.Shared.Messages;
+
 using Microsoft.AspNetCore.Http;
 
-namespace ArarasHealthHub.Shared.Core.Responses
+namespace ArarasHealthHub.Shared.Responses
 {
     public class PagedResponseO<T> : ApiResponseO<List<T>>
     {

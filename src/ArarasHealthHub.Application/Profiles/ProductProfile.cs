@@ -7,7 +7,7 @@ using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 

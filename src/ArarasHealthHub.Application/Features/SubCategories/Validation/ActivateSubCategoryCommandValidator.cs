@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSubCategory;
 using ArarasHealthHub.Application.Interfaces.Contexts;
-using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 

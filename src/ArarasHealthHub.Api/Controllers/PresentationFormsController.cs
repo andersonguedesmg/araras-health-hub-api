@@ -14,9 +14,9 @@ using ArarasHealthHub.Application.Features.PresentationForms.Queries.ExportPrese
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetAllPresentationForms;
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormById;
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormDropdown;
-using ArarasHealthHub.Shared.Core.Dtos;
-using ArarasHealthHub.Shared.Core.Pagination;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

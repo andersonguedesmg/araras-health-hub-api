@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Employees.Commands.DeactivateEmployee;
 using ArarasHealthHub.Application.Interfaces.Contexts;
-using ArarasHealthHub.Shared.Core.Messages;
+using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 

@@ -7,8 +7,8 @@ using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Responses;
 
 using MediatR;
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Pagination;
+using ArarasHealthHub.Shared.Pagination;
 
 using AutoMapper;
 

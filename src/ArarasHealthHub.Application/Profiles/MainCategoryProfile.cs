@@ -7,7 +7,7 @@ using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCat
 using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 

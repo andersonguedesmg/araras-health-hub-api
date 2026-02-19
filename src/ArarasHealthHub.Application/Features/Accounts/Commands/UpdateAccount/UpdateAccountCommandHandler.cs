@@ -5,8 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Responses;
 
 using MediatR;
 

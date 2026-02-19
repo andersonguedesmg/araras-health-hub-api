@@ -28,7 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ArarasHealthHub.Application\ArarasHealthHub.Application.csproj" />
     <ProjectReference Include="..\ArarasHealthHub.Infrastructure\ArarasHealthHub.Infrastructure.csproj" />
-    <ProjectReference Include="..\ArarasHealthHub.Shared.Core\ArarasHealthHub.Shared.Core.csproj" />
+    <ProjectReference Include="..\ArarasHealthHub.Shared\ArarasHealthHub.Shared.csproj" />
   </ItemGroup>
 
 </Project>

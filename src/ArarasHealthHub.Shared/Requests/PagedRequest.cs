@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArarasHealthHub.Shared.Core.Requests
+namespace ArarasHealthHub.Shared.Requests
 {
     public class PagedRequest
     {

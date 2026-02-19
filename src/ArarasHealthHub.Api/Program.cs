@@ -28,9 +28,8 @@ using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Repository;
 using ArarasHealthHub.Infrastructure.Services;
-using ArarasHealthHub.Shared.Core;
-using ArarasHealthHub.Shared.Core.Messages;
-using ArarasHealthHub.Shared.Core.Responses;
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 

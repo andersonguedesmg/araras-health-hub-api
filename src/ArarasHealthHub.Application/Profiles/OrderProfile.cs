@@ -8,7 +8,7 @@ using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Core.Dtos;
+using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace ArarasHealthHub.Shared.Core.Pagination
+namespace ArarasHealthHub.Shared.Pagination
 {
     public class PagedQueryValidator<TQuery> : AbstractValidator<TQuery>
         where TQuery : PagedRequest
