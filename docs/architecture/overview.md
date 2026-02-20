@@ -10,7 +10,8 @@ O projeto ArarasHealthHub segue os princípios de:
 - CQRS (Command Query Responsibility Segregation)
 - Separação clara de responsabilidades por camada
 - Baixo acoplamento entre Application e Infrastructure
-- Forte tipagem e imutabilidade de modelos de resposta
+- Tratamento centralizado de exceções
+- Padronização de respostas utilizando Result`<T>` e ProblemDetails (RFC 7807)
 
 O objetivo é garantir:
 
@@ -23,8 +24,6 @@ O objetivo é garantir:
 ---
 
 ## 2. Estrutura de Camadas
-
-O sistema está organizado nas seguintes camadas:
 
 ### 2.1 Domain
 
@@ -54,14 +53,16 @@ Responsável por:
 - Validators
 - DTOs (Responses)
 - Interfaces de serviços (ex: ITokenService)
+- Pipeline Behaviors
 
 Regras:
 
-- Não deve depender diretamente de HttpContext
-- Não deve usar UserManager ou dependências de Identity diretamente
-- Não deve acessar banco fora de abstrações definidas
-- Queries devem usar projeção direta (sem AutoMapper)
+- Não deve depender de HttpContext
+- Não deve usar UserManager diretamente
+- Não deve acessar banco fora de abstrações
+- Queries devem usar projeção direta
 - Não usar Include quando projeção resolver
+- Exceções de domínio devem ser lançadas aqui
 
 ---
 
@@ -72,13 +73,13 @@ Responsável por:
 - Persistência (EF Core)
 - Configuração de entidades
 - Implementação de serviços externos
-- Implementação de interfaces definidas na Application
+- Implementação de interfaces da Application
 
 Regras:
 
 - Pode depender de Application
 - Não deve conter regra de negócio
-- Configurações de relacionamento e Owned Types ficam aqui
+- Configurações de relacionamento ficam aqui
 
 ---
 
@@ -90,103 +91,118 @@ Responsável por:
 - Configuração de DI
 - Middlewares
 - Policies de autorização
-- Configuração de autenticação
+- Autenticação
 
 Regras:
 
 - Apenas orquestra requisições
 - Não contém regra de negócio
-- Deve delegar toda lógica à Application via MediatR
-- Deve suportar CancellationToken
+- Delegar lógica à Application via MediatR
+- Suportar CancellationToken
+- Converter exceções em ProblemDetails
 
 ---
 
 ## 3. Padrão CQRS
-
-O sistema utiliza CQRS:
 
 - Commands alteram estado
 - Queries apenas consultam dados
 
 Regras:
 
-- Commands retornam ApiResponse<T>
-- Queries retornam ApiResponse<T> ou PagedResponse<T>
+- Commands retornam Result ou Result`<T>`
+- Queries retornam Result`<T>` ou PagedResult`<T>`
 - Queries não devem modificar estado
-- Handlers não devem conter lógica de autorização baseada em HttpContext
 
 ---
 
-## 4. Padrão de Resposta
+## 4. Modelo de Resposta
 
-Todas as respostas seguem um padrão consistente.
+### 4.1 Sucesso
 
-### 4.1 ApiResponse<T>
+Utiliza Result ou Result`<T>`
 
-Usado para retornos simples.
+Estrutura:
 
-### 4.2 PagedResponse<T>
+{ "isSuccess": true, "message": "Mensagem clara ao usuário", "data": { }
+}
 
-Usado para listagens paginadas.
+### 4.2 Paginação
 
-Regras:
+Utiliza PagedResult`<T>`
 
-- DTOs devem ser imutáveis (record)
-- Não retornar entidades diretamente
-- Não retornar null
-- Padronizar mensagens de erro
+Inclui:
+
+- pageNumber
+- pageSize
+- totalCount
+- totalPages
+- data
+
+### 4.3 Erros
+
+Erros são tratados exclusivamente via Exceptions e convertidos em
+ProblemDetails.
+
+Formato (RFC 7807):
+
+{ "type": "https://httpstatuses.com/400", "title": "Erro de validação",
+"status": 400, "detail": "Ocorreram erros de validação.", "errors": {
+"Email": \["Email inválido"\] } }
 
 ---
 
-## 5. Autorização
+## 5. Exceções Customizadas
 
-O sistema utiliza Policy-Based Authorization.
+- DomainException
+- ApplicationValidationException
+- NotFoundException
+- UnauthorizedException
+- ForbiddenException
 
-Regras:
+Regra:
 
-- Autorização aplicada na camada API
-- Application não deve acessar HttpContext
+Exceptions representam falhas. Result representa sucesso.
+
+---
+
+## 6. Autorização
+
+- Policy-Based Authorization
 - Claims geradas via TokenService
-- Roles e Scopes definidos via Enums
+- Roles e Scopes definidos por Enums
+- Application não acessa HttpContext
 
 ---
 
-## 6. Padrões de Nomeação
+## 7. Padrões de Nomeação
 
-### Commands
+Commands: `<CreateEntidade>Command`
 
-<CreateEntidade>Command
+Queries: `<GetEntidade>Query`
 
-### Queries
+Responses: `<Entidade>Response`
+`<Entidade>ListItemResponse`
 
-<GetEntidade>Query
-
-### Responses
-
-<Entidade>Response
-<Entidade>ListItemResponse
-
-### Validators
-
-<Classe>Validator
+Validators: `<Classe>Validator`
 
 ---
 
-## 7. Boas Práticas Obrigatórias
+## 8. Governança do Projeto
 
-- Um commit deve seguir o padrão definido em commit-pattern.md
-- Uma feature deve possuir documentação em /docs/features
-- Não misturar múltiplas responsabilidades no mesmo commit
-- Manter baixo acoplamento entre camadas
-- Não introduzir dependências circulares
+- Seguir padrão de commit definido em commit-pattern.md
+- Cada feature deve possuir documentação própria
+- Não misturar responsabilidades em um único commit
+- Manter baixo acoplamento
+- Evitar dependências circulares
 
 ---
 
-## 8. Objetivo Estratégico
+## 9. Objetivo Estratégico
 
 Garantir que o projeto:
 
 - Permaneça organizado conforme cresce
-- Permita onboarding rápido de novos desenvolvedores
-- Seja facilmente auditável
+- Permita onboarding rápido
+- Seja auditável
 - Seja sustentável a longo prazo
