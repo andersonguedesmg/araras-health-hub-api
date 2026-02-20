@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Messages;
+using ArarasHealthHub.Shared.Exceptions;
 
 using FluentValidation;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
+
 
 namespace ArarasHealthHub.Application.Behaviors
 {
-    public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class ValidationPipelineBehavior<TRequest, TResponse>
+        : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
-        where TResponse : ApiResponseBaseO, new()
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -25,42 +24,34 @@ namespace ArarasHealthHub.Application.Behaviors
             _validators = validators;
         }
 
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(
+            TRequest request,
+            RequestHandlerDelegate<TResponse> next,
+            CancellationToken cancellationToken)
         {
             if (!_validators.Any())
-            {
                 return await next();
-            }
 
-            var validationContext = new ValidationContext<TRequest>(request);
-            var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(validationContext, cancellationToken)));
+            var context = new ValidationContext<TRequest>(request);
 
-            var failures = validationResults
-                .Where(r => r.Errors.Any())
+            var results = await Task.WhenAll(
+                _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+
+            var failures = results
                 .SelectMany(r => r.Errors)
+                .Where(f => f != null)
                 .ToList();
 
             if (failures.Any())
             {
-                var errors = new Dictionary<string, List<string>>();
-                foreach (var failure in failures)
-                {
-                    if (!errors.ContainsKey(failure.PropertyName))
-                    {
-                        errors[failure.PropertyName] = new List<string>();
-                    }
-                    errors[failure.PropertyName].Add(failure.ErrorMessage);
-                }
+                var errors = failures
+                    .GroupBy(f => f.PropertyName)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(f => f.ErrorMessage).ToArray()
+                    );
 
-                var response = new TResponse
-                {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    Message = ApiMessages.ValidationErrors,
-                    Errors = errors,
-                    Success = false
-                };
-
-                return response;
+                throw new ApplicationValidationException(errors);
             }
 
             return await next();
