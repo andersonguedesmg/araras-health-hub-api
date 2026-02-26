@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Common.Helpers;
 using ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -14,53 +12,30 @@ namespace ArarasHealthHub.Application.Features.Employees.Validation
 {
     public class CreateEmployeeCommandValidator : AbstractValidator<CreateEmployeeCommand>
     {
-        private readonly IEmployeeRepository _employeeRepository;
-
-        public CreateEmployeeCommandValidator(IEmployeeRepository employeeRepository)
+        public CreateEmployeeCommandValidator()
         {
-            _employeeRepository = employeeRepository;
+            {
+                RuleFor(x => x.Name)
+                    .NotEmpty().WithMessage("Nome é obrigatório.")
+                    .MaximumLength(100).WithMessage("Nome não pode exceder 100 caracteres.");
 
-            RuleFor(x => x.Name)
-                .NotEmpty()
-                    .WithName("Nome")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthField(100));
+                RuleFor(x => x.Cpf)
+                    .NotEmpty().WithMessage("CPF é obrigatório.")
+                    .Matches(@"^\d{3}\.\d{3}\.\d{3}\-\d{2}$")
+                    .WithMessage("CPF deve estar no formato XXX.XXX.XXX-XX.")
+                    .Must(CpfValidatorHelper.IsValidCpf)
+                    .WithMessage("CPF inválido.");
 
-            RuleFor(x => x.Cpf)
-                .NotEmpty()
-                    .WithName("CPF")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .Matches(@"^\d{3}\.\d{3}\.\d{3}\-\d{2}$")
-                    .WithMessage(ValidationMessages.InvalidCpfFormat)
-                .Must(CpfValidatorHelper.IsValidCpf)
-                    .WithMessage(ValidationMessages.InvalidField)
-                .MustAsync(BeUniqueCpf)
-                    .WithMessage(ApiMessages.CpfAlreadyExists);
+                RuleFor(x => x.Function)
+                    .NotEmpty().WithMessage("Função é obrigatória.")
+                    .MaximumLength(100).WithMessage("Função não pode exceder 100 caracteres.");
 
-            RuleFor(x => x.Function)
-                .NotEmpty()
-                    .WithName("Função")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthField(100));
-
-            RuleFor(x => x.Phone)
-                .NotEmpty()
-                    .WithName("Telefone")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(20)
-                    .WithMessage(ValidationMessages.MaxLengthField(20))
-                .Matches(@"^\d{10,11}$|^(\+\d{1,3}\s?)?(\(?\d{2}\)?\s?\d{4,5}-?\d{4})$")
-                    .WithMessage(ValidationMessages.InvalidPhoneFormat);
-        }
-
-        private async Task<bool> BeUniqueCpf(
-            string cpf,
-            CancellationToken cancellationToken)
-        {
-            var existingEmployee = await _employeeRepository.GetByCpfAsync(cpf, cancellationToken);
-            return existingEmployee is null;
+                RuleFor(x => x.Phone)
+                    .NotEmpty().WithMessage("Telefone é obrigatório.")
+                    .MaximumLength(20).WithMessage("Telefone não pode exceder 20 caracteres.")
+                    .Matches(@"^\d{10,11}$|^(\+\d{1,3}\s?)?(\(?\d{2}\)?\s?\d{4,5}-?\d{4})$")
+                    .WithMessage("Telefone inválido.");
+            }
         }
     }
 }
