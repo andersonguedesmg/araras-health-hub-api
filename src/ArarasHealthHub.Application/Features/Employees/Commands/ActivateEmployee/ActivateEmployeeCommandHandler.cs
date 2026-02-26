@@ -4,16 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Employees.Commands.ActivateEmployee
 {
-    public class ActivateEmployeeCommandHandler : IRequestHandler<ActivateEmployeeCommand, ApiResponse<object>>
+    public sealed class ActivateEmployeeCommandHandler
+        : IRequestHandler<ActivateEmployeeCommand, Result>
     {
         private readonly IEmployeeRepository _employeeRepository;
 
@@ -23,35 +22,25 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.ActivateEmploy
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             ActivateEmployeeCommand request,
             CancellationToken cancellationToken)
         {
-            var employee = await _employeeRepository.GetByIdAsync(request.Id, cancellationToken);
+            var employee = await _employeeRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (employee is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Employee)
-                );
-            }
+                throw new NotFoundException("Funcionário não foi encontrado.");
 
             if (employee.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyActive(EntityNames.Employee)
-                );
-            }
+                throw new BusinessRuleException("O funcionário já está ativo.");
 
             employee.Activate();
-            await _employeeRepository.UpdateAsync(employee, cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityActivated(EntityNames.Employee)
-            );
+            await _employeeRepository
+                .UpdateAsync(employee, cancellationToken);
+
+            return Result.Success("Funcionário ativado com sucesso.");
         }
     }
 }

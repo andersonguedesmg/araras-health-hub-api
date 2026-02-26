@@ -4,18 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
 {
-    public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, ApiResponse<object>>
+    public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, Result>
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
@@ -28,41 +26,36 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             UpdateEmployeeCommand request,
             CancellationToken cancellationToken)
         {
             var existingEmployee =
-                await _employeeRepository.GetByIdAsync(request.Id, cancellationToken);
+                await _employeeRepository.GetByIdAsync(
+                    request.Id,
+                    cancellationToken);
 
             if (existingEmployee is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Employee)
-                );
-            }
+                throw new NotFoundException("Funcionário não foi encontrado.");
 
             var duplicateCpfEmployee =
-                await _employeeRepository.GetByCpfAsync(request.Cpf, cancellationToken);
+                await _employeeRepository.GetByCpfAsync(
+                    request.Cpf,
+                    cancellationToken);
 
-            if (duplicateCpfEmployee is not null && duplicateCpfEmployee.Id != request.Id)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.CpfAlreadyExists
-                );
-            }
+            if (duplicateCpfEmployee is not null &&
+                duplicateCpfEmployee.Id != request.Id)
+                throw new BusinessRuleException(
+                    "Já existe um funcionário com o CPF informado.");
 
             _mapper.Map(request, existingEmployee);
             existingEmployee.SetUpdatedOn();
 
-            await _employeeRepository.UpdateAsync(existingEmployee, cancellationToken);
+            await _employeeRepository.UpdateAsync(
+                existingEmployee,
+                cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityUpdated(EntityNames.Employee)
-            );
+            return Result.Success("Funcionário atualizado com sucesso.");
         }
     }
 }

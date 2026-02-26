@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -14,5 +14,5 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
         string Cpf,
         string Function,
         string Phone
-    ) : IRequest<ApiResponse<int>>;
+    ) : IRequest<Result<int>>;
 }
