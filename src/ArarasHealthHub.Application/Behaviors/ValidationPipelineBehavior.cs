@@ -9,13 +9,11 @@ using FluentValidation;
 
 using MediatR;
 
-
-
 namespace ArarasHealthHub.Application.Behaviors
 {
     public class ValidationPipelineBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : IRequest<TResponse>
+        where TRequest : notnull
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -34,21 +32,19 @@ namespace ArarasHealthHub.Application.Behaviors
 
             var context = new ValidationContext<TRequest>(request);
 
-            var results = await Task.WhenAll(
-                _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
-
-            var failures = results
+            var failures = (await Task.WhenAll(
+                    _validators.Select(v => v.ValidateAsync(context, cancellationToken))))
                 .SelectMany(r => r.Errors)
-                .Where(f => f != null)
+                .Where(f => f is not null)
                 .ToList();
 
-            if (failures.Any())
+            if (failures.Count != 0)
             {
                 var errors = failures
                     .GroupBy(f => f.PropertyName)
                     .ToDictionary(
                         g => g.Key,
-                        g => g.Select(f => f.ErrorMessage).ToArray()
+                        g => g.Select(f => f.ErrorMessage).Distinct().ToArray()
                     );
 
                 throw new ApplicationValidationException(errors);

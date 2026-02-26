@@ -46,59 +46,49 @@ namespace ArarasHealthHub.Api.Middlewares
         {
             context.Response.ContentType = "application/problem+json";
 
-            ProblemDetails problem;
-
-            if (exception is BaseAppException appException)
+            var problem = exception switch
             {
-                problem = new ProblemDetails
-                {
-                    Status = appException.StatusCode,
-                    Title = GetTitle(appException.StatusCode),
-                    Detail = appException.Message,
-                    Type = $"https://httpstatuses.com/{appException.StatusCode}"
-                };
+                ApplicationValidationException validation => CreateProblemDetails(
+                    status: validation.StatusCode,
+                    title: "Erro de validação",
+                    detail: validation.Message,
+                    errors: validation.Errors),
 
-                if (exception is ApplicationValidationException validation)
-                {
-                    problem.Extensions["errors"] = validation.Errors;
-                }
+                BaseAppException appException => CreateProblemDetails(
+                    status: appException.StatusCode,
+                    title: GetTitle(appException.StatusCode),
+                    detail: appException.Message),
 
-                context.Response.StatusCode = appException.StatusCode;
-            }
-            else
-            {
-                problem = new ProblemDetails
-                {
-                    Status = 500,
-                    Title = "Erro interno do servidor",
-                    Detail = _env.IsDevelopment()
+                _ => CreateProblemDetails(
+                    status: StatusCodes.Status500InternalServerError,
+                    title: "Erro interno do servidor",
+                    detail: _env.IsDevelopment()
                         ? exception.ToString()
-                        : "Ocorreu um erro inesperado.",
-                    Type = "https://httpstatuses.com/500"
-                };
+                        : "Ocorreu um erro inesperado.")
+            };
 
-                context.Response.StatusCode = 500;
-            }
+            problem.Extensions["traceId"] = context.TraceIdentifier;
 
-            var json = JsonSerializer.Serialize(problem);
-            await context.Response.WriteAsync(json);
+            context.Response.StatusCode = problem.Status!.Value;
+
+            await context.Response.WriteAsJsonAsync(problem);
         }
 
-        private ProblemDetails CreateProblemDetails(
-            HttpStatusCode status,
+        private static ProblemDetails CreateProblemDetails(
+            int status,
             string title,
             string detail,
-            IDictionary<string, string[]>? errors = null)
+            IReadOnlyDictionary<string, string[]>? errors = null)
         {
             var problem = new ProblemDetails
             {
-                Status = (int)status,
+                Status = status,
                 Title = title,
                 Detail = detail,
-                Type = $"https://httpstatuses.com/{(int)status}"
+                Type = $"https://httpstatuses.com/{status}"
             };
 
-            if (errors != null)
+            if (errors is not null)
                 problem.Extensions["errors"] = errors;
 
             return problem;

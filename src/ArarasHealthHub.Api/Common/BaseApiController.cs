@@ -24,17 +24,21 @@ namespace araras_health_hub_api.Common
             where TResponse : Result
         {
             var result = await Mediator.Send(request, cancellationToken);
+            return Ok(result);
+        }
 
-            return result switch
-            {
-                Result r when r.GetType() == typeof(Result)
-                    => Ok(new
-                    {
-                        message = r.Message
-                    }),
+        protected async Task<IActionResult> SendCreated<T>(
+            IRequest<Result<T>> request,
+            string actionName,
+            Func<T, object> routeValuesFactory,
+            CancellationToken cancellationToken)
+        {
+            var result = await Mediator.Send(request, cancellationToken);
 
-                _ => Ok(result)
-            };
+            return CreatedAtAction(
+                actionName,
+                routeValuesFactory(result.Data),
+                result);
         }
     }
 }
