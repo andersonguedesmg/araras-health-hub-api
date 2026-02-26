@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Employees.Dtos;
+using ArarasHealthHub.Application.Features.Employees.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
 {
-    public class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, ApiResponse<EmployeeDto>>
+    public class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, Result<EmployeeResponse>>
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
@@ -29,27 +27,21 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<EmployeeDto>> Handle(
+        public async Task<Result<EmployeeResponse>> Handle(
             GetEmployeeByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var employee = await _employeeRepository.GetByIdAsync(request.Id, cancellationToken);
+            var employee = await _employeeRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (employee is null)
-            {
-                return ApiResponse<EmployeeDto>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Employee)
-                );
-            }
+                throw new NotFoundException("Funcionário não foi encontrado.");
 
-            var employeeDto = _mapper.Map<EmployeeDto>(employee);
+            var response = _mapper.Map<EmployeeResponse>(employee);
 
-            return ApiResponse<EmployeeDto>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.OperationSuccessful,
-                employeeDto
-            );
+            return Result<EmployeeResponse>.Success(
+                response,
+                "Funcionário encontrado com sucesso.");
         }
     }
 }

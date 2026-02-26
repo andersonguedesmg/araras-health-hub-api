@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Employees.Dtos;
+using ArarasHealthHub.Application.Features.Employees.Responses;
 using ArarasHealthHub.Application.Features.Suppliers.Dtos;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Dtos
@@ -22,7 +23,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Dtos
         public int AccountId { get; set; }
 
         public SupplierDto? Supplier { get; set; }
-        public EmployeeDto? Responsible { get; set; }
+        public EmployeeResponse? Responsible { get; set; }
         public AccountMinimalDto? Account { get; set; }
 
         public List<ReceivedItemDto> ReceivedItem { get; set; } = new();

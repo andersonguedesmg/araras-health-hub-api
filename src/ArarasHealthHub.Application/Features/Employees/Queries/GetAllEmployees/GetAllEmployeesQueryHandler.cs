@@ -4,12 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Employees.Dtos;
+using ArarasHealthHub.Application.Features.Employees.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Pagination;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -17,65 +14,76 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees
 {
-    public class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmployeesQuery, PagedResponse<EmployeeDto>>
+    public class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmployeesQuery, PagedResult<EmployeeListItemResponse>>
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IMapper _mapper;
 
         public GetAllEmployeesQueryHandler(
-            IEmployeeRepository employeeRepository,
-            IMapper mapper)
+            IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
-            _mapper = mapper;
         }
 
-        public async Task<PagedResponse<EmployeeDto>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<EmployeeListItemResponse>> Handle(
+            GetAllEmployeesQuery request,
+            CancellationToken cancellationToken)
         {
-            var queryable = _employeeRepository.AsQueryable();
+            var query = _employeeRepository
+                .AsQueryable()
+                .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
-                queryable = queryable.Where(e =>
-                    e.Name.ToLower().Contains(term) ||
-                    e.Cpf.ToLower().Contains(term) ||
-                    e.Function.ToLower().Contains(term) ||
-                    e.Phone.ToLower().Contains(term)
-                );
+                var term = request.SearchTerm.Trim();
+
+                query = query.Where(e =>
+                    EF.Functions.Like(e.Name, $"%{term}%") ||
+                    EF.Functions.Like(e.Cpf, $"%{term}%") ||
+                    EF.Functions.Like(e.Function, $"%{term}%") ||
+                    EF.Functions.Like(e.Phone, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var orderingColumns = new Dictionary<string, Expression<Func<Employee, object>>>
+            query = request.OrderBy?.ToLower() switch
             {
-                ["name"] = e => e.Name,
-                ["cpf"] = e => e.Cpf,
-                ["function"] = e => e.Function,
-                ["phone"] = e => e.Phone
+                "name" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(e => e.Name)
+                    : query.OrderBy(e => e.Name),
+
+                "cpf" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(e => e.Cpf)
+                    : query.OrderBy(e => e.Cpf),
+
+                "function" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(e => e.Function)
+                    : query.OrderBy(e => e.Function),
+
+                "phone" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(e => e.Phone)
+                    : query.OrderBy(e => e.Phone),
+
+                _ => query.OrderBy(e => e.Name)
             };
 
-            queryable = queryable.ApplyOrdering(
-                request.OrderBy?.ToLower(),
-                request.SortOrder?.ToLower() ?? "asc",
-                orderingColumns
-            );
+            var items = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(e => new EmployeeListItemResponse(
+                    e.Id,
+                    e.Name,
+                    e.Cpf,
+                    e.Function,
+                    e.Phone,
+                    e.IsActive))
+                .ToListAsync(cancellationToken);
 
-            queryable = queryable.ApplyPagination(
-                request.PageNumber,
-                request.PageSize
-            );
-
-            var items = await queryable.ToListAsync(cancellationToken);
-
-            var dtoList = _mapper.Map<IReadOnlyList<EmployeeDto>>(items);
-
-            return PagedResponse<EmployeeDto>.SuccessPaged(
+            return PagedResult<EmployeeListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                dtoList
-            );
+                "Funcionários listados com sucesso.");
         }
     }
 }
