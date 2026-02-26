@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
-using ArarasHealthHub.Application.Features.Employees.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 
@@ -17,9 +15,6 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public EmployeeProfile()
         {
-            CreateMap<Employee, EmployeeDto>();
-            CreateMap<Employee, DropdownItemDto>();
-
             CreateMap<CreateEmployeeCommand, Employee>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
