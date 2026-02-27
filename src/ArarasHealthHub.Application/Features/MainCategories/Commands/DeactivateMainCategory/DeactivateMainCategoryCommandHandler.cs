@@ -4,16 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.MainCategories.Commands.DeactivateMainCategory
 {
-    public class DeactivateMainCategoryCommandHandler : IRequestHandler<DeactivateMainCategoryCommand, ApiResponse<object>>
+    public class DeactivateMainCategoryCommandHandler : IRequestHandler<DeactivateMainCategoryCommand, Result>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
 
@@ -23,35 +21,23 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.Deactivat
             _mainCategoryRepository = mainCategoryRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             DeactivateMainCategoryCommand request,
             CancellationToken cancellationToken)
         {
             var category = await _mainCategoryRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (category is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
-                );
-            }
+                throw new NotFoundException("Categoria principal não foi encontrada.");
 
             if (!category.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyInactive(EntityNames.MainCategory)
-                );
-            }
+                throw new BusinessRuleException("A categoria principal já está inativa.");
 
             category.Deactivate();
+
             await _mainCategoryRepository.UpdateAsync(category, cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityDeactivated(EntityNames.MainCategory)
-            );
+            return Result.Success("Categoria principal desativada com sucesso.");
         }
     }
 }

@@ -4,76 +4,49 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
+
+using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory
 {
-    public class UpdateMainCategoryCommandHandler : IRequestHandler<UpdateMainCategoryCommand, ApiResponse<object>>
+    public class UpdateMainCategoryCommandHandler : IRequestHandler<UpdateMainCategoryCommand, Result>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
+        private readonly IMapper _mapper;
 
         public UpdateMainCategoryCommandHandler(
-            IMainCategoryRepository mainCategoryRepository)
+            IMainCategoryRepository mainCategoryRepository,
+            IMapper mapper)
         {
             _mainCategoryRepository = mainCategoryRepository;
+            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             UpdateMainCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var entity = await _mainCategoryRepository.GetByIdAsync(request.Id, cancellationToken);
+            var existingMainCategory =
+                await _mainCategoryRepository.GetByIdAsync(
+                    request.Id,
+                    cancellationToken);
 
-            if (entity is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
-                );
-            }
+            if (existingMainCategory is null)
+                throw new NotFoundException("Categoria principal não foi encontrada.");
 
-            var newName = request.Name.Trim();
 
-            if (entity.Name.Equals(newName, StringComparison.OrdinalIgnoreCase))
-            {
-                return ApiResponse<object>.SuccessResponse(
-                    StatusCodes.Status200OK,
-                    ApiMessages.NoChangesDetected()
-                );
-            }
+            _mapper.Map(request, existingMainCategory);
+            existingMainCategory.SetUpdatedOn();
 
-            var conflictExists = await _mainCategoryRepository
-                .AsQueryable()
-                .AnyAsync(
-                    c =>
-                        c.Id != entity.Id &&
-                        c.Name.ToLower() == newName.ToLower(),
-                    cancellationToken
-                );
+            await _mainCategoryRepository.UpdateAsync(
+                existingMainCategory,
+                cancellationToken);
 
-            if (conflictExists)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyExists(EntityNames.MainCategory)
-                );
-            }
-
-            entity.Name = newName;
-            entity.SetUpdatedOn();
-
-            await _mainCategoryRepository.UpdateAsync(entity, cancellationToken);
-
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityUpdated(EntityNames.MainCategory)
-            );
+            return Result.Success("Categoria principal atualizada com sucesso.");
         }
     }
 }

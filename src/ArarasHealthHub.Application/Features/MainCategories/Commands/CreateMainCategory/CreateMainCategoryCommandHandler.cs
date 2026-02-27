@@ -5,59 +5,42 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
+
+using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory
 {
-    public class CreateMainCategoryCommandHandler : IRequestHandler<CreateMainCategoryCommand, ApiResponse<int>>
+    public class CreateMainCategoryCommandHandler : IRequestHandler<CreateMainCategoryCommand, Result<int>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
+        private readonly IMapper _mapper;
 
         public CreateMainCategoryCommandHandler(
-            IMainCategoryRepository mainCategoryRepository)
+            IMainCategoryRepository mainCategoryRepository,
+            IMapper mapper)
         {
             _mainCategoryRepository = mainCategoryRepository;
+            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(
+        public async Task<Result<int>> Handle(
             CreateMainCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var name = request.Name.Trim();
+            var existingMainCategory = await _mainCategoryRepository.GetByMainCategoryNameAsync(request.Name, cancellationToken);
 
-            var alreadyExists = await _mainCategoryRepository
-                .AsQueryable()
-                .AnyAsync(
-                    c => c.Name.ToLower() == name.ToLower(),
-                    cancellationToken
-                );
+            if (existingMainCategory is not null)
+                throw new BusinessRuleException("Já existe uma categoria principal com o nome informado.");
 
-            if (alreadyExists)
-            {
-                return ApiResponse<int>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyExists(EntityNames.MainCategory)
-                );
-            }
+            var mainCategory = _mapper.Map<MainCategory>(request);
 
-            var entity = new MainCategory
-            {
-                Name = name
-            };
+            await _mainCategoryRepository.AddAsync(mainCategory, cancellationToken);
 
-            await _mainCategoryRepository.AddAsync(entity, cancellationToken);
-
-            return ApiResponse<int>.SuccessResponse(
-                StatusCodes.Status201Created,
-                ApiMessages.EntityCreated(EntityNames.MainCategory),
-                entity.Id
-            );
+            return Result<int>.Success(mainCategory.Id, "Funcionário criado com sucesso.");
         }
     }
 }

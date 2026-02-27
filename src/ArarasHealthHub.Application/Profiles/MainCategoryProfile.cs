@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
-using ArarasHealthHub.Application.Features.MainCategories.Dtos;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Dtos;
 
 using AutoMapper;
 
@@ -17,9 +15,6 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public MainCategoryProfile()
         {
-            CreateMap<MainCategory, MainCategoryDto>();
-            CreateMap<MainCategory, DropdownItemDto>();
-
             CreateMap<CreateMainCategoryCommand, MainCategory>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
