@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Dtos;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdown
 {
-    public class GetMainCategoryDropdownQueryHandler : IRequestHandler<GetMainCategoryDropdownQuery, PagedResponse<DropdownItemDto>>
+    public class GetMainCategoryDropdownQueryHandler : IRequestHandler<GetMainCategoryDropdownQuery, PagedResult<DropdownItemResponse>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
 
@@ -23,43 +23,40 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
             _mainCategoryRepository = mainCategoryRepository;
         }
 
-        public async Task<PagedResponse<DropdownItemDto>> Handle(
+        public async Task<PagedResult<DropdownItemResponse>> Handle(
             GetMainCategoryDropdownQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _mainCategoryRepository
+            var query = _mainCategoryRepository
                 .AsQueryable()
-                .Where(e => e.IsActive);
+                .AsNoTracking()
+                .Where(mc => mc.IsActive);
 
-            var term = request.SearchTerm?.Trim();
-
-            if (!string.IsNullOrWhiteSpace(term))
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var search = term.ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(e =>
-                    e.Name.ToLower().Contains(search)
-                );
+                query = query.Where(mc =>
+                    EF.Functions.Like(mc.Name, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var items = await queryable
-                .OrderBy(x => x.Name)
-                .ApplyPagination(request.PageNumber, request.PageSize)
-                .Select(x => new DropdownItemDto
-                {
-                    Id = x.Id,
-                    Label = x.Name
-                })
+            var items = await query
+                .OrderBy(mc => mc.Name)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(mc => new DropdownItemResponse(
+                    mc.Id,
+                    mc.Name))
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<DropdownItemDto>.SuccessPaged(
+            return PagedResult<DropdownItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                items
-            );
+                "Categorias principais listadas para seleção.");
         }
     }
 }

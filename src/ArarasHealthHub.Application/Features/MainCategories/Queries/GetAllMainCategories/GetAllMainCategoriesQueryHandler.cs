@@ -4,12 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.MainCategories.Dtos;
+using ArarasHealthHub.Application.Features.MainCategories.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Pagination;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -17,62 +14,58 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories
 {
-    public class GetAllMainCategoriesQueryHandler : IRequestHandler<GetAllMainCategoriesQuery, PagedResponse<MainCategoryDto>>
+    public class GetAllMainCategoriesQueryHandler : IRequestHandler<GetAllMainCategoriesQuery, PagedResult<MainCategoryListItemResponse>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
-        private readonly IMapper _mapper;
 
         public GetAllMainCategoriesQueryHandler(
-            IMainCategoryRepository mainCategoryRepository,
-            IMapper mapper)
+            IMainCategoryRepository mainCategoryRepository)
         {
             _mainCategoryRepository = mainCategoryRepository;
-            _mapper = mapper;
         }
 
-        public async Task<PagedResponse<MainCategoryDto>> Handle(
+        public async Task<PagedResult<MainCategoryListItemResponse>> Handle(
             GetAllMainCategoriesQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _mainCategoryRepository.AsQueryable();
+            var query = _mainCategoryRepository
+                .AsQueryable()
+                .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(mc =>
-                    mc.Name.ToLower().Contains(term)
-                );
+                query = query.Where(mc =>
+                    EF.Functions.Like(mc.Name, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var orderingColumns = new Dictionary<string, Expression<Func<MainCategory, object>>>
+            query = request.OrderBy?.ToLower() switch
             {
-                ["name"] = mc => mc.Name
+                "name" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(mc => mc.Name)
+                    : query.OrderBy(mc => mc.Name),
+
+                _ => query.OrderBy(mc => mc.Name)
             };
 
-            queryable = queryable.ApplyOrdering(
-                request.OrderBy?.ToLower(),
-                request.SortOrder?.ToLower() ?? "asc",
-                orderingColumns
-            );
+            var items = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(mc => new MainCategoryListItemResponse(
+                    mc.Id,
+                    mc.Name,
+                    mc.IsActive))
+                .ToListAsync(cancellationToken);
 
-            queryable = queryable.ApplyPagination(
-                request.PageNumber,
-                request.PageSize
-            );
-
-            var items = await queryable.ToListAsync(cancellationToken);
-
-            var dtoList = _mapper.Map<IReadOnlyList<MainCategoryDto>>(items);
-
-            return PagedResponse<MainCategoryDto>.SuccessPaged(
+            return PagedResult<MainCategoryListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                dtoList
-            );
+                "Categorias principais listadas com sucesso.");
         }
     }
 }
