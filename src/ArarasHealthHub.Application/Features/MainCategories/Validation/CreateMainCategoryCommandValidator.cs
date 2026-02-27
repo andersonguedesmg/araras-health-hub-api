@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -15,11 +14,8 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Validation
         public CreateMainCategoryCommandValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty()
-                    .WithName("Nome")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthField(100));
+                .NotEmpty().WithMessage("Nome é obrigatório.")
+                .MaximumLength(100).WithMessage("Nome não pode exceder 100 caracteres.");
         }
     }
 }
