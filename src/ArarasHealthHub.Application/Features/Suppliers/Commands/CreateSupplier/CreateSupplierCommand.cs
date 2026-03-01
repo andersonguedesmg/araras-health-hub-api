@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Common.Dtos;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Domain.ValueObjects;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -14,7 +14,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
         string LegalName,
         string TradeName,
         string Cnpj,
-        AddressDto Address,
-        ContactDto Contact
-    ) : IRequest<ApiResponse<int>>;
+        Address Address,
+        Contact Contact
+    ) : IRequest<Result<int>>;
 }

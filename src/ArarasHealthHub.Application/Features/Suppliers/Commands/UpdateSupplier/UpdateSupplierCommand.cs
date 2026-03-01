@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Common.Dtos;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Domain.ValueObjects;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -15,9 +15,9 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
         string LegalName,
         string TradeName,
         string Cnpj,
-        AddressDto Address,
-        ContactDto Contact
-    ) : IRequest<ApiResponse<object>>
+        Address Address,
+        Contact Contact
+    ) : IRequest<Result>
     {
         public UpdateSupplierCommand WithId(int id)
             => this with { Id = id };

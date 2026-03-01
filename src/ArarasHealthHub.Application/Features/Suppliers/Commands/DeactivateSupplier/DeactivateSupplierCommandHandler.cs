@@ -4,16 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.DeactivateSupplier
 {
-    public class DeactivateSupplierCommandHandler : IRequestHandler<DeactivateSupplierCommand, ApiResponse<object>>
+    public class DeactivateSupplierCommandHandler : IRequestHandler<DeactivateSupplierCommand, Result>
     {
         private readonly ISupplierRepository _supplierRepository;
 
@@ -23,35 +21,25 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.DeactivateSupp
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             DeactivateSupplierCommand request,
             CancellationToken cancellationToken)
         {
-            var supplier = await _supplierRepository.GetByIdAsync(request.Id, cancellationToken);
+            var supplier = await _supplierRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (supplier is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Supplier)
-                );
-            }
+                throw new NotFoundException("Funcionário não foi encontrado.");
 
             if (!supplier.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyInactive(EntityNames.Supplier)
-                );
-            }
+                throw new BusinessRuleException("O funcionário já está inativo.");
 
             supplier.Deactivate();
-            await _supplierRepository.UpdateAsync(supplier, cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityDeactivated(EntityNames.Supplier)
-            );
+            await _supplierRepository
+                .UpdateAsync(supplier, cancellationToken);
+
+            return Result.Success("Funcionário desativado com sucesso.");
         }
     }
 }
