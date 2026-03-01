@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Common.Validation;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -14,55 +12,31 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Validation
 {
     public class UpdateSupplierCommandValidator : AbstractValidator<UpdateSupplierCommand>
     {
-        private readonly ISupplierRepository _supplierRepository;
-
-        public UpdateSupplierCommandValidator(ISupplierRepository supplierRepository)
+        public UpdateSupplierCommandValidator()
         {
-            _supplierRepository = supplierRepository;
-
             RuleFor(x => x.Id)
                 .GreaterThan(0)
-                    .WithMessage(ValidationMessages.InvalidId);
+                .WithMessage("Identificador inválido.");
 
             RuleFor(x => x.LegalName)
-                .NotEmpty()
-                    .WithName("Razão Social")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthField(200));
+                .NotEmpty().WithMessage("A razão social é obrigatória.")
+                .MaximumLength(200).WithMessage("A razão social deve ter no máximo 200 caracteres.");
 
             RuleFor(x => x.TradeName)
-                .NotEmpty()
-                    .WithName("Nome Fantasia")
-                .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthField(200));
+                .MaximumLength(200).WithMessage("O nome fantasia deve ter no máximo 200 caracteres.");
 
             RuleFor(x => x.Cnpj)
-                .NotEmpty()
-                    .WithName("CNPJ")
-                    .WithMessage(ValidationMessages.RequiredField)
+                .NotEmpty().WithMessage("O CNPJ é obrigatório.")
                 .Matches(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$")
-                    .WithMessage(ValidationMessages.InvalidCnpjFormat)
-                .MustAsync(BeUniqueCnpjForUpdate)
-                    .WithMessage(ApiMessages.CnpjAlreadyExists);
+                .WithMessage("O CNPJ deve estar no formato 00.000.000/0000-00.");
 
             RuleFor(x => x.Address)
-                .NotNull()
-                    .WithName("endereço")
-                    .WithMessage(ValidationMessages.RequiredObject)
-                .SetValidator(new AddressDtoValidator());
+                .NotNull().WithMessage("O endereço é obrigatório.")
+                .SetValidator(new AddressRequestValidator());
 
             RuleFor(x => x.Contact)
-                .NotNull()
-                    .WithName("contato")
-                    .WithMessage(ValidationMessages.RequiredObject)
-                .SetValidator(new ContactDtoValidator());
-        }
-
-        private async Task<bool> BeUniqueCnpjForUpdate(UpdateSupplierCommand command, string cnpj, CancellationToken cancellationToken)
-        {
-            var existingSupplier = await _supplierRepository.GetByCnpjAsync(cnpj, cancellationToken);
-            return existingSupplier == null || existingSupplier.Id == command.Id;
+                .NotNull().WithMessage("O contato é obrigatório.")
+                .SetValidator(new ContactRequestValidator());
         }
     }
 }
