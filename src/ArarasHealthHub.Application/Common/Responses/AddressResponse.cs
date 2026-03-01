@@ -1,18 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArarasHealthHub.Domain.ValueObjects
+namespace ArarasHealthHub.Application.Common.Responses
 {
-    public sealed record Address(
-        string Cep,
+    public record AddressResponse(
         string Street,
         string Number,
+        string? Complement,
         string Neighborhood,
         string City,
         string State,
-        string? Complement
+        string Cep
     );
 }

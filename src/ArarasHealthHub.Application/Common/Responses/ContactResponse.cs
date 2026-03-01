@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArarasHealthHub.Domain.ValueObjects
+namespace ArarasHealthHub.Application.Common.Responses
 {
-    public sealed record Contact(
+    public record ContactResponse(
         string Email,
         string Phone
     );
