@@ -4,12 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
+using ArarasHealthHub.Application.Features.PresentationForms.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Pagination;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -17,62 +14,58 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetAllPresentationForms
 {
-    public class GetAllPresentationFormsQueryHandler : IRequestHandler<GetAllPresentationFormsQuery, PagedResponse<PresentationFormDto>>
+    public class GetAllPresentationFormsQueryHandler : IRequestHandler<GetAllPresentationFormsQuery, PagedResult<PresentationFormListItemResponse>>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
-        private readonly IMapper _mapper;
 
         public GetAllPresentationFormsQueryHandler(
-            IPresentationFormRepository presentationFormRepository,
-            IMapper mapper)
+            IPresentationFormRepository presentationFormRepository)
         {
             _presentationFormRepository = presentationFormRepository;
-            _mapper = mapper;
         }
 
-        public async Task<PagedResponse<PresentationFormDto>> Handle(
+        public async Task<PagedResult<PresentationFormListItemResponse>> Handle(
             GetAllPresentationFormsQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _presentationFormRepository.AsQueryable();
+            var query = _presentationFormRepository
+                .AsQueryable()
+                .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(p =>
-                    p.Name.ToLower().Contains(term)
-                );
+                query = query.Where(pf =>
+                    EF.Functions.Like(pf.Name, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var orderingColumns = new Dictionary<string, Expression<Func<PresentationForm, object>>>
+            query = request.OrderBy?.ToLower() switch
             {
-                ["name"] = p => p.Name,
+                "name" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(pf => pf.Name)
+                    : query.OrderBy(pf => pf.Name),
+
+                _ => query.OrderBy(pf => pf.Name)
             };
 
-            queryable = queryable.ApplyOrdering(
-                request.OrderBy?.ToLower(),
-                request.SortOrder?.ToLower() ?? "asc",
-                orderingColumns
-            );
+            var items = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(pf => new PresentationFormListItemResponse(
+                    pf.Id,
+                    pf.Name,
+                    pf.IsActive))
+                .ToListAsync(cancellationToken);
 
-            queryable = queryable.ApplyPagination(
-                request.PageNumber,
-                request.PageSize
-            );
-
-            var items = await queryable.ToListAsync(cancellationToken);
-
-            var dtoList = _mapper.Map<IReadOnlyList<PresentationFormDto>>(items);
-
-            return PagedResponse<PresentationFormDto>.SuccessPaged(
+            return PagedResult<PresentationFormListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                dtoList
-            );
+                "Formas de apresentação listadas com sucesso.");
         }
     }
 }

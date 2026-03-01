@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.PresentationForms.Dtos;
+using ArarasHealthHub.Application.Features.PresentationForms.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormById
 {
-    public class GetPresentationFormByIdQueryHandler : IRequestHandler<GetPresentationFormByIdQuery, ApiResponse<PresentationFormDto>>
+    public class GetPresentationFormByIdQueryHandler : IRequestHandler<GetPresentationFormByIdQuery, Result<PresentationFormResponse>>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
         private readonly IMapper _mapper;
@@ -29,27 +27,21 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPres
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<PresentationFormDto>> Handle(
+        public async Task<Result<PresentationFormResponse>> Handle(
             GetPresentationFormByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var presentationForm = await _presentationFormRepository.GetByIdAsync(request.Id, cancellationToken);
+            var presentationForm = await _presentationFormRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (presentationForm is null)
-            {
-                return ApiResponse<PresentationFormDto>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.PresentationForm)
-                );
-            }
+                throw new NotFoundException("Forma de apresentação não foi encontrada.");
 
-            var presentationFormDto = _mapper.Map<PresentationFormDto>(presentationForm);
+            var response = _mapper.Map<PresentationFormResponse>(presentationForm);
 
-            return ApiResponse<PresentationFormDto>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.OperationSuccessful,
-                presentationFormDto
-            );
+            return Result<PresentationFormResponse>.Success(
+                response,
+                "Forma de apresentação encontrada com sucesso.");
         }
     }
 }
