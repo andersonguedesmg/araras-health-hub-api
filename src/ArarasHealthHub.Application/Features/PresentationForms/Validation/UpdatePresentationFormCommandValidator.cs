@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -16,14 +15,11 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Validation
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
-                    .WithMessage(ValidationMessages.InvalidId);
+                .WithMessage("Identificador inválido.");
 
             RuleFor(x => x.Name)
-                .NotEmpty()
-                    .WithName("Nome")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthField(100));
+                .NotEmpty().WithMessage("Nome é obrigatório.")
+                .MaximumLength(100).WithMessage("Nome não pode exceder 100 caracteres.");
         }
     }
 }
