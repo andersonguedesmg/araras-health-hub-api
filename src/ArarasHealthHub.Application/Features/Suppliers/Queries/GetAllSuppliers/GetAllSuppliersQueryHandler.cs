@@ -4,12 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Suppliers.Dtos;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Pagination;
-
-using AutoMapper;
+using ArarasHealthHub.Application.Common.Responses;
+using ArarasHealthHub.Application.Features.SubCategories.Responses;
+using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -17,70 +15,82 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
 {
-    public class GetAllSuppliersQueryHandler : IRequestHandler<GetAllSuppliersQuery, PagedResponse<SupplierDto>>
+    public class GetAllSuppliersQueryHandler : IRequestHandler<GetAllSuppliersQuery, PagedResult<SupplierListItemResponse>>
     {
-        private readonly ISupplierRepository _supplierRepository;
-        private readonly IMapper _mapper;
+        private readonly IApplicationDbContext _context;
 
-        public GetAllSuppliersQueryHandler(
-            ISupplierRepository supplierRepository,
-            IMapper mapper)
+        public GetAllSuppliersQueryHandler(IApplicationDbContext context)
         {
-            _supplierRepository = supplierRepository;
-            _mapper = mapper;
+            _context = context;
         }
 
-        public async Task<PagedResponse<SupplierDto>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<SupplierListItemResponse>> Handle(
+            GetAllSuppliersQuery request,
+            CancellationToken cancellationToken)
         {
-            var queryable = _supplierRepository.AsQueryable();
+            var query = _context.Suppliers
+                .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
-                queryable = queryable.Where(s =>
-                    s.LegalName.ToLower().Contains(term) ||
-                    s.TradeName.ToLower().Contains(term) ||
-                    s.Cnpj.ToLower().Contains(term) ||
-                    s.Address.Street.ToLower().Contains(term) ||
-                    s.Address.Number.ToLower().Contains(term) ||
-                    s.Address.Neighborhood.ToLower().Contains(term) ||
-                    s.Address.City.ToLower().Contains(term) ||
-                    s.Address.State.ToLower().Contains(term) ||
-                    s.Address.Cep.ToLower().Contains(term) ||
-                    s.Contact.Email.ToLower().Contains(term) ||
-                    s.Contact.Phone.ToLower().Contains(term)
-                );
+                var term = request.SearchTerm.Trim();
+
+                query = query.Where(s =>
+                    s.LegalName.Contains(term) ||
+                    s.TradeName.Contains(term) ||
+                    s.Cnpj.Contains(term));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var orderingColumns = new Dictionary<string, Expression<Func<Supplier, object>>>
+            query = request.OrderBy?.ToLower() switch
             {
-                ["legalName"] = e => e.LegalName,
-                ["tradeName"] = e => e.TradeName,
-                ["cnpj"] = e => e.Cnpj,
+                "legalname" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.LegalName)
+                    : query.OrderBy(x => x.LegalName),
+
+                "tradename" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.TradeName)
+                    : query.OrderBy(x => x.TradeName),
+
+                "cnpj" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Cnpj)
+                    : query.OrderBy(x => x.Cnpj),
+
+                _ => query.OrderBy(x => x.LegalName)
             };
 
-            queryable = queryable.ApplyOrdering(
-                request.OrderBy?.ToLower(),
-                request.SortOrder?.ToLower() ?? "asc",
-                orderingColumns
-            );
+            var items = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(s => new SupplierListItemResponse(
+                    s.Id,
+                    s.LegalName,
+                    s.TradeName,
+                    s.Cnpj,
+                    new AddressResponse(
+                        s.Address.Street,
+                        s.Address.Number,
+                        s.Address.Complement,
+                        s.Address.Neighborhood,
+                        s.Address.City,
+                        s.Address.State,
+                        s.Address.Cep
+                    ),
+                    new ContactResponse(
+                        s.Contact.Email,
+                        s.Contact.Phone
+                    ),
+                    s.IsActive
+                ))
+                .ToListAsync(cancellationToken);
 
-            queryable = queryable.ApplyPagination(
-                request.PageNumber,
-                request.PageSize
-            );
-
-            var items = await queryable.ToListAsync(cancellationToken);
-
-            var dtoList = _mapper.Map<IReadOnlyList<SupplierDto>>(items);
-
-            return PagedResponse<SupplierDto>.SuccessPaged(
+            return PagedResult<SupplierListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                dtoList
+                "Fornecedores listados com sucesso."
             );
         }
     }

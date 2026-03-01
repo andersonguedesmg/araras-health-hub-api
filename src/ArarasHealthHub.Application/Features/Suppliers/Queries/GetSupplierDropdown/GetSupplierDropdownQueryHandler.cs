@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Dtos;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdown
 {
-    public class GetSupplierDropdownQueryHandler : IRequestHandler<GetSupplierDropdownQuery, PagedResponse<DropdownItemDto>>
+    public class GetSupplierDropdownQueryHandler : IRequestHandler<GetSupplierDropdownQuery, PagedResult<DropdownItemResponse>>
     {
         private readonly ISupplierRepository _supplierRepository;
 
@@ -22,43 +22,40 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<PagedResponse<DropdownItemDto>> Handle(
+        public async Task<PagedResult<DropdownItemResponse>> Handle(
             GetSupplierDropdownQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _supplierRepository
+            var query = _supplierRepository
                 .AsQueryable()
-                .Where(e => e.IsActive);
+                .AsNoTracking()
+                .Where(s => s.IsActive);
 
-            var term = request.SearchTerm?.Trim();
-
-            if (!string.IsNullOrWhiteSpace(term))
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var search = term.ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(e =>
-                    e.LegalName.ToLower().Contains(search)
-                );
+                query = query.Where(s =>
+                    EF.Functions.Like(s.LegalName, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var items = await queryable
-                .OrderBy(x => x.LegalName)
-                .ApplyPagination(request.PageNumber, request.PageSize)
-                .Select(x => new DropdownItemDto
-                {
-                    Id = x.Id,
-                    Label = x.LegalName
-                })
+            var items = await query
+                .OrderBy(s => s.LegalName)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(s => new DropdownItemResponse(
+                    s.Id,
+                    s.LegalName))
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<DropdownItemDto>.SuccessPaged(
+            return PagedResult<DropdownItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                items
-            );
+                "Fornecedores listados para seleção.");
         }
     }
 }
