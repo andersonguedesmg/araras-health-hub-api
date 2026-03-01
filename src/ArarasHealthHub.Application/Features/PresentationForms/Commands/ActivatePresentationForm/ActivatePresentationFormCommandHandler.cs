@@ -4,16 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.ActivatePresentationForm
 {
-    public class ActivatePresentationFormCommandHandler : IRequestHandler<ActivatePresentationFormCommand, ApiResponse<object>>
+    public class ActivatePresentationFormCommandHandler : IRequestHandler<ActivatePresentationFormCommand, Result>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
 
@@ -23,35 +21,25 @@ namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.Activa
             _presentationFormRepository = presentationFormRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             ActivatePresentationFormCommand request,
             CancellationToken cancellationToken)
         {
-            var category = await _presentationFormRepository.GetByIdAsync(request.Id, cancellationToken);
+            var presentationForm = await _presentationFormRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
-            if (category is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.PresentationForm)
-                );
-            }
+            if (presentationForm is null)
+                throw new NotFoundException("Forma de apresentação não foi encontrada.");
 
-            if (category.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyActive(EntityNames.PresentationForm)
-                );
-            }
+            if (presentationForm.IsActive)
+                throw new BusinessRuleException("A forma de apresentação já está ativa.");
 
-            category.Activate();
-            await _presentationFormRepository.UpdateAsync(category, cancellationToken);
+            presentationForm.Activate();
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityActivated(EntityNames.PresentationForm)
-            );
+            await _presentationFormRepository
+                .UpdateAsync(presentationForm, cancellationToken);
+
+            return Result.Success("Forma de apresentação ativada com sucesso.");
         }
     }
 }

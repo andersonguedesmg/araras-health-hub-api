@@ -5,59 +5,47 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
+
+using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.CreatePresentationForm
 {
-    public class CreatePresentationFormCommandHandler : IRequestHandler<CreatePresentationFormCommand, ApiResponse<int>>
+    public class CreatePresentationFormCommandHandler : IRequestHandler<CreatePresentationFormCommand, Result<int>>
     {
         private readonly IPresentationFormRepository _presentationFormRepository;
+        private readonly IMapper _mapper;
 
         public CreatePresentationFormCommandHandler(
-            IPresentationFormRepository presentationFormRepository)
+            IPresentationFormRepository presentationFormRepository,
+            IMapper mapper)
         {
             _presentationFormRepository = presentationFormRepository;
+            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(
+        public async Task<Result<int>> Handle(
             CreatePresentationFormCommand request,
             CancellationToken cancellationToken)
         {
-            var name = request.Name.Trim();
+            var existingPresentationForm =
+                await _presentationFormRepository.GetByPresentationFormNameAsync(
+                    request.Name,
+                    cancellationToken);
 
-            var alreadyExists = await _presentationFormRepository
-                .AsQueryable()
-                .AnyAsync(
-                    c => c.Name.ToLower() == name.ToLower(),
-                    cancellationToken
-                );
+            if (existingPresentationForm is not null)
+                throw new BusinessRuleException("Já existe um forma de apresentação com o nome informado.");
 
-            if (alreadyExists)
-            {
-                return ApiResponse<int>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyExists(EntityNames.PresentationForm)
-                );
-            }
+            var presentationForm = _mapper.Map<PresentationForm>(request);
 
-            var entity = new PresentationForm
-            {
-                Name = name
-            };
+            await _presentationFormRepository.AddAsync(presentationForm, cancellationToken);
 
-            await _presentationFormRepository.AddAsync(entity, cancellationToken);
-
-            return ApiResponse<int>.SuccessResponse(
-                StatusCodes.Status201Created,
-                ApiMessages.EntityCreated(EntityNames.PresentationForm),
-                entity.Id
-            );
+            return Result<int>.Success(
+                presentationForm.Id,
+                "Forma de apresentação criada com sucesso.");
         }
     }
 }

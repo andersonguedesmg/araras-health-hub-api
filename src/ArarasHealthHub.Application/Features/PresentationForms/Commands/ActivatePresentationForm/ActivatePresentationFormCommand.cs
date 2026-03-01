@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.PresentationForms.Commands.ActivatePresentationForm
 {
-    public record ActivatePresentationFormCommand(int Id) : IRequest<ApiResponse<object>>
-    {
-        public ActivatePresentationFormCommand WithId(int id)
-            => this with { Id = id };
-    }
+    public sealed record ActivatePresentationFormCommand(int Id) : IRequest<Result>;
 }
