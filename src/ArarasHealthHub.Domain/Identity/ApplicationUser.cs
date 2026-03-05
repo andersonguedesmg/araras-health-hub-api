@@ -31,16 +31,19 @@ namespace ArarasHealthHub.Domain.Identity
 
         public ApplicationUser(
             string userName,
+            string email,
             int facilityId,
             AccountScopeEnum scope,
-            AccountRoleEnum role,
-            bool isActive)
+            AccountRoleEnum role)
         {
             UserName = userName;
+            Email = email;
+
             FacilityId = facilityId;
             Scope = scope;
             Role = role;
-            IsActive = isActive;
+
+            IsActive = true;
             CreatedOn = DateTime.UtcNow;
         }
 

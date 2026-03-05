@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Tabela de lookup para os status possíveis de um pedido.")]
-    public class OrderStatus
+    public class OrderStatus : BaseEntity
     {
-        public int Id { get; set; }
+        public string Description { get; private set; } = string.Empty;
 
-        [Required]
-        [MaxLength(50)]
-        public string Description { get; set; } = string.Empty;
+        private OrderStatus() { }
+
+        public OrderStatus(string description)
+        {
+            Description = description;
+        }
     }
 }

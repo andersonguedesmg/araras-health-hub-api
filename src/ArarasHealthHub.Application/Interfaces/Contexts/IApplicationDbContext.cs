@@ -14,27 +14,27 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
     {
         DatabaseFacade Database { get; }
 
-        DbSet<Facility> Facilities { get; set; }
-        DbSet<Supplier> Suppliers { get; set; }
-        DbSet<Employee> Employees { get; set; }
-        DbSet<Product> Products { get; set; }
-        DbSet<MainCategory> MainCategories { get; set; }
-        DbSet<SubCategory> SubCategories { get; set; }
-        DbSet<PresentationForm> PresentationForms { get; set; }
-        DbSet<Receiving> Receivings { get; set; }
-        DbSet<ReceivedItem> ReceivedItems { get; set; }
-        DbSet<Stock> Stocks { get; set; }
-        DbSet<Order> Orders { get; set; }
-        DbSet<OrderItem> OrderItems { get; set; }
-        DbSet<OrderStatus> OrderStatuses { get; set; }
-        DbSet<StockMovement> StockMovements { get; set; }
-        DbSet<StockAdjustment> StockAdjustments { get; set; }
-        DbSet<StockAdjustmentItem> StockAdjustmentItem { get; set; }
-        DbSet<StockLot> StockLots { get; set; }
-        DbSet<StockCost> StockCosts { get; set; }
-        DbSet<OrderItemLot> OrderItemLots { get; set; }
-        DbSet<DispenseReturn> DispenseReturns { get; set; }
-        DbSet<DispenseReturnItem> DispenseReturnItem { get; set; }
+        DbSet<Facility> Facilities { get; }
+        DbSet<Supplier> Suppliers { get; }
+        DbSet<Employee> Employees { get; }
+        DbSet<Product> Products { get; }
+        DbSet<MainCategory> MainCategories { get; }
+        DbSet<SubCategory> SubCategories { get; }
+        DbSet<PresentationForm> PresentationForms { get; }
+        DbSet<Receiving> Receivings { get; }
+        DbSet<ReceivedItem> ReceivedItems { get; }
+        DbSet<Stock> Stocks { get; }
+        DbSet<Order> Orders { get; }
+        DbSet<OrderItem> OrderItems { get; }
+        DbSet<OrderStatus> OrderStatuses { get; }
+        DbSet<StockMovement> StockMovements { get; }
+        DbSet<StockAdjustment> StockAdjustments { get; }
+        DbSet<StockAdjustmentItem> StockAdjustmentItems { get; }
+        DbSet<StockLot> StockLots { get; }
+        DbSet<StockCost> StockCosts { get; }
+        DbSet<OrderItemLot> OrderItemLots { get; }
+        DbSet<DispenseReturn> DispenseReturns { get; }
+        DbSet<DispenseReturnItem> DispenseReturnItems { get; }
 
         DbSet<TEntity> Set<TEntity>() where TEntity : class;
 

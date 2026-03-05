@@ -3,27 +3,31 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa um funcionário.")]
     public class Employee : BaseEntity
     {
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
+        public string Cpf { get; private set; } = string.Empty;
+        public string Function { get; private set; } = string.Empty;
+        public string Phone { get; private set; } = string.Empty;
 
-        [Required]
-        [MaxLength(14)]
-        public string Cpf { get; set; } = string.Empty;
+        private Employee() { }
 
-        [Required]
-        [MaxLength(100)]
-        public string Function { get; set; } = string.Empty;
+        public Employee(string name, string cpf, string function, string phone)
+        {
+            Name = name;
+            Cpf = cpf;
+            Function = function;
+            Phone = phone;
+        }
 
-        [Required]
-        [MaxLength(20)]
-        public string Phone { get; set; } = string.Empty;
+        public void Update(string name, string function, string phone)
+        {
+            Name = name;
+            Function = function;
+            Phone = phone;
+        }
     }
 }

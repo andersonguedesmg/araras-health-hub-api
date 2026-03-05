@@ -4,22 +4,29 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Subcategoria vinculada a uma categoria principal (ex: Antibiótico, Analgésico, Antialérgico)")]
     public class SubCategory : BaseEntity
     {
-        [Required, MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
 
-        [Required]
-        public int MainCategoryId { get; set; }
+        public int MainCategoryId { get; private set; }
+        public MainCategory? MainCategory { get; private set; }
 
-        [ForeignKey("MainCategoryId")]
-        public MainCategory? MainCategory { get; set; }
+        public ICollection<Product> Products { get; private set; } = new List<Product>();
 
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        private SubCategory() { }
+
+        public SubCategory(string name, int mainCategoryId)
+        {
+            Name = name;
+            MainCategoryId = mainCategoryId;
+        }
+
+        public void Update(string name)
+        {
+            Name = name;
+        }
     }
 }

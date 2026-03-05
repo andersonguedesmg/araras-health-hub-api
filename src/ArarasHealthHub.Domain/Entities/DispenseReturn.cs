@@ -4,40 +4,44 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Domain.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa uma devolução de itens dispensados de um pedido ao estoque.")]
     public class DispenseReturn : BaseEntity
     {
-        [Required]
-        [ForeignKey("OriginalOrder")]
-        public int OriginalOrderId { get; set; }
-        public Order OriginalOrder { get; set; } = null!;
+        public int OriginalOrderId { get; private set; }
+        public Order OriginalOrder { get; private set; } = null!;
 
-        [Required]
-        [MaxLength(500)]
-        public string Reason { get; set; } = string.Empty;
+        public string Reason { get; private set; } = string.Empty;
+        public DateTime ReturnDate { get; private set; }
 
-        [Required]
-        public DateTime ReturnDate { get; set; }
+        public int ReturnedByEmployeeId { get; private set; }
+        public int ReturnedByAccountId { get; private set; }
 
-        [Required]
-        [ForeignKey("ReturnedByEmployee")]
-        public int ReturnedByEmployeeId { get; set; }
-        public Employee ReturnedByEmployee { get; set; } = null!;
+        public decimal TotalReturnedValue { get; private set; }
 
-        [Required]
-        [ForeignKey("ReturnedByAccount")]
-        public int ReturnedByAccountId { get; set; }
-        public ApplicationUser ReturnedByAccount { get; set; } = null!;
+        private readonly List<DispenseReturnItem> _items = new();
+        public IReadOnlyCollection<DispenseReturnItem> ReturnItems => _items;
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalReturnedValue { get; set; }
+        private DispenseReturn() { }
 
-        public ICollection<DispenseReturnItem> ReturnItems { get; set; } = new List<DispenseReturnItem>();
+        public DispenseReturn(
+            int orderId,
+            string reason,
+            int employeeId,
+            int accountId)
+        {
+            OriginalOrderId = orderId;
+            Reason = reason;
+            ReturnedByEmployeeId = employeeId;
+            ReturnedByAccountId = accountId;
+            ReturnDate = DateTime.UtcNow;
+        }
+
+        public void AddItem(DispenseReturnItem item)
+        {
+            _items.Add(item);
+            TotalReturnedValue += item.TotalValue;
+        }
     }
 }

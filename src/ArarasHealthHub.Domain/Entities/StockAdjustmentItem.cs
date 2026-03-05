@@ -9,34 +9,38 @@ namespace ArarasHealthHub.Domain.Entities
 {
     public class StockAdjustmentItem : BaseEntity
     {
-        [Required]
-        [ForeignKey("StockAdjustment")]
-        public int StockAdjustmentId { get; set; }
-        public StockAdjustment StockAdjustment { get; set; } = null!;
+        public int StockAdjustmentId { get; private set; }
+        public StockAdjustment StockAdjustment { get; private set; } = null!;
 
-        [Required]
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
-        public Product Product { get; set; } = null!;
+        public int ProductId { get; private set; }
+        public Product Product { get; private set; } = null!;
 
-        [ForeignKey("StockLot")]
-        public int? StockLotId { get; set; }
-        public StockLot? StockLot { get; set; }
+        public int? StockLotId { get; private set; }
+        public StockLot? StockLot { get; private set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal Quantity { get; set; }
+        public decimal Quantity { get; private set; }
 
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal? UnitValue { get; set; }
+        public decimal? UnitValue { get; private set; }
+        public decimal? TotalValue { get; private set; }
 
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal? TotalValue { get; set; }
+        public string? Batch { get; private set; }
+        public string? Brand { get; private set; }
+        public DateTime? ExpiryDate { get; private set; }
 
-        public string? Batch { get; set; }
+        private StockAdjustmentItem() { }
 
-        public string? Brand { get; set; }
-
-        public DateTime? ExpiryDate { get; set; }
+        public StockAdjustmentItem(
+            int productId,
+            decimal quantity,
+            decimal? unitValue = null,
+            decimal? totalValue = null,
+            int? stockLotId = null)
+        {
+            ProductId = productId;
+            Quantity = quantity;
+            UnitValue = unitValue;
+            TotalValue = totalValue;
+            StockLotId = stockLotId;
+        }
     }
 }

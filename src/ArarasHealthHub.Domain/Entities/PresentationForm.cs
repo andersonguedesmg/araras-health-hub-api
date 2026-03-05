@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Forma de apresentação do produto (ex: Frasco, Ampola, Comprimido)")]
     public class PresentationForm : BaseEntity
     {
-        [Required, MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
 
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public ICollection<Product> Products { get; private set; } = new List<Product>();
+
+        private PresentationForm() { }
+
+        public PresentationForm(string name)
+        {
+            Name = name;
+        }
+
+        public void Update(string name)
+        {
+            Name = name;
+        }
     }
 }

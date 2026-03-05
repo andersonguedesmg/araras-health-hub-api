@@ -4,51 +4,40 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa o estoque detalhado de um produto por lote, valor e validade.")]
-    [Index(nameof(StockId), nameof(Batch), IsUnique = true)]
     public class StockLot : BaseEntity
     {
-        [Required]
-        [ForeignKey("Stock")]
-        [Comment("ID do registro consolidado de estoque (Stock) a que este lote pertence.")]
-        public int StockId { get; set; }
-        public Stock Stock { get; set; } = null!;
+        public int StockId { get; private set; }
+        public Stock Stock { get; private set; } = null!;
 
-        [NotMapped]
-        public int ProductId => Stock.ProductId;
+        public string Batch { get; private set; } = string.Empty;
+        public string Brand { get; private set; } = string.Empty;
+        public decimal UnitValue { get; private set; }
+        public DateTime ExpiryDate { get; private set; }
+        public decimal AvailableQuantity { get; private set; }
 
-        [Required]
-        [MaxLength(50)]
-        [Comment("Número/Código do lote do produto.")]
-        public string Batch { get; set; } = string.Empty;
+        public int? ReceivedItemId { get; private set; }
+        public ReceivedItem? ReceivedItem { get; private set; }
 
-        [Required]
-        [MaxLength(100)]
-        [Comment("Marca/Fabricante deste lote específico.")]
-        public string Brand { get; set; } = string.Empty;
+        protected StockLot() { }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        [Comment("Custo unitário deste lote (custo de entrada).")]
-        public decimal UnitValue { get; set; }
-
-        [Required]
-        [Comment("Data de vencimento deste lote.")]
-        public DateTime ExpiryDate { get; set; }
-
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        [Comment("Quantidade disponível em estoque para este lote.")]
-        public decimal AvailableQuantity { get; set; }
-
-        [ForeignKey("ReceivedItem")]
-        [Comment("Opcional: ID do Item do Recebimento que deu origem a este lote (para rastreio).")]
-        public int? ReceivedItemId { get; set; }
-        public ReceivedItem? ReceivedItem { get; set; }
+        public StockLot(
+            int stockId,
+            string batch,
+            string brand,
+            decimal unitValue,
+            DateTime expiryDate,
+            decimal quantity)
+        {
+            StockId = stockId;
+            Batch = batch;
+            Brand = brand;
+            UnitValue = unitValue;
+            ExpiryDate = expiryDate;
+            AvailableQuantity = quantity;
+        }
 
         public void AddQuantity(decimal quantity)
         {
@@ -61,9 +50,9 @@ namespace ArarasHealthHub.Domain.Entities
         {
             if (quantity <= 0) return;
             if (AvailableQuantity < quantity)
-            {
-                throw new ApplicationException($"Baixa de {quantity} excede a quantidade disponível ({AvailableQuantity}) neste lote ({Batch}).");
-            }
+                throw new ApplicationException(
+                    $"Baixa de {quantity} excede a quantidade disponível ({AvailableQuantity}) no lote {Batch}");
+
             AvailableQuantity -= quantity;
             SetUpdatedOn();
         }

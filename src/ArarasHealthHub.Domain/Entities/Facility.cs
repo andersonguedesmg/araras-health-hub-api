@@ -7,29 +7,34 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Domain.ValueObjects;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa uma unidade.")]
     public class Facility : BaseEntity
     {
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
+        public string Cnes { get; private set; } = string.Empty;
 
-        [Required]
-        [MaxLength(7)]
-        public string Cnes { get; set; } = string.Empty;
+        public Address Address { get; private set; } = null!;
+        public Contact Contact { get; private set; } = null!;
 
-        [Required]
-        public Address Address { get; set; } = new Address();
+        public ICollection<ApplicationUser> Accounts { get; private set; } = new List<ApplicationUser>();
 
-        [Required]
-        public Contact Contact { get; set; } = new Contact();
+        private Facility() { }
 
-        public ICollection<ApplicationUser> Accounts { get; set; } = new List<ApplicationUser>();
+        public Facility(string name, string cnes, Address address, Contact contact)
+        {
+            Name = name;
+            Cnes = cnes;
+            Address = address ?? throw new ArgumentNullException(nameof(address));
+            Contact = contact ?? throw new ArgumentNullException(nameof(contact));
+        }
 
-        public Facility() : base() { }
+        public void Update(string name, string cnes, Address address, Contact contact)
+        {
+            Name = name;
+            Cnes = cnes;
+            Address = address ?? throw new ArgumentNullException(nameof(address));
+            Contact = contact ?? throw new ArgumentNullException(nameof(contact));
+        }
     }
 }

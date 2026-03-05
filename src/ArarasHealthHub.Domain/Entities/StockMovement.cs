@@ -4,51 +4,51 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa uma entrada ou saída de itens do estoque.")]
     public class StockMovement : BaseEntity
     {
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal Quantity { get; set; }
+        public decimal Quantity { get; private set; }
 
-        [Required]
-        public MovementTypeEnum Type { get; set; }
+        public MovementTypeEnum Type { get; private set; }
 
-        [Required]
-        [Comment("Data em que a movimentação de estoque ocorreu.")]
-        public DateTime MovementDate { get; set; }
+        public DateTime MovementDate { get; private set; }
 
-        [Required]
-        [Comment("ID do documento de origem (ex: OrderId, ReceivingId).")]
-        public int SourceDocumentId { get; set; }
+        public int SourceDocumentId { get; private set; }
 
-        [Required]
-        [MaxLength(50)]
-        [Comment("Tipo do documento de origem (ex: 'Order', 'Receiving').")]
-        public string SourceDocumentType { get; set; } = string.Empty;
+        public string SourceDocumentType { get; private set; } = string.Empty;
 
-        [Required]
-        [ForeignKey("Responsible")]
-        public int ResponsibleId { get; set; }
-        public Employee Responsible { get; set; } = null!;
+        public int ResponsibleId { get; private set; }
+        public Employee Responsible { get; private set; } = null!;
 
-        [Required]
-        [ForeignKey("StockLot")]
-        [Comment("ID do Lote de Estoque afetado pela movimentação.")]
-        public int StockLotId { get; set; }
-        public StockLot StockLot { get; set; } = null!;
+        public int StockLotId { get; private set; }
+        public StockLot StockLot { get; private set; } = null!;
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        [Comment("O custo financeiro da quantidade movimentada.")]
-        public decimal MovementCost { get; set; }
+        public decimal MovementCost { get; private set; }
 
-        [NotMapped]
-        public int ProductId => StockLot.Stock.ProductId;
+        private StockMovement() { }
+
+        public StockMovement(
+            decimal quantity,
+            MovementTypeEnum type,
+            DateTime movementDate,
+            int sourceDocumentId,
+            string sourceDocumentType,
+            int responsibleId,
+            int stockLotId,
+            decimal movementCost)
+        {
+            Quantity = quantity;
+            Type = type;
+            MovementDate = movementDate;
+            SourceDocumentId = sourceDocumentId;
+            SourceDocumentType = sourceDocumentType;
+            ResponsibleId = responsibleId;
+            StockLotId = stockLotId;
+            MovementCost = movementCost;
+        }
     }
 }

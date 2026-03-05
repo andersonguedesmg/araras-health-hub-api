@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using ArarasHealthHub.Domain.Entities;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
+{
+    public class StockMovementConfiguration : BaseEntityConfiguration<StockMovement>
+    {
+        public override void Configure(EntityTypeBuilder<StockMovement> builder)
+        {
+            base.Configure(builder);
+
+            builder.ToTable("StockMovements", t =>
+                t.HasComment("Representa uma entrada ou saída de itens do estoque"));
+
+            builder.Property(x => x.Quantity)
+                .HasPrecision(18, 3)
+                .IsRequired();
+
+            builder.Property(x => x.MovementCost)
+                .HasPrecision(18, 2)
+                .IsRequired();
+
+            builder.Property(x => x.SourceDocumentType)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            builder.HasOne(x => x.Responsible)
+                .WithMany()
+                .HasForeignKey(x => x.ResponsibleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.StockLot)
+                .WithMany()
+                .HasForeignKey(x => x.StockLotId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+}

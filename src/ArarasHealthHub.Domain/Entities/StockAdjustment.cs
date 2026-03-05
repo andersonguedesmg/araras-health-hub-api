@@ -4,39 +4,51 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa um ajuste manual na quantidade do estoque.")]
     public class StockAdjustment : BaseEntity
     {
-        public StockAdjustmentType Type { get; set; }
+        public StockAdjustmentType Type { get; private set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string Reason { get; set; } = string.Empty;
+        public string Reason { get; private set; } = string.Empty;
+        public string? Observation { get; private set; }
 
-        [MaxLength(200)]
-        public string? Observation { get; set; } = string.Empty;
+        public DateTime AdjustmentDate { get; private set; }
 
-        [Required]
-        public DateTime AdjustmentDate { get; set; }
+        public int ResponsibleId { get; private set; }
+        public Employee Responsible { get; private set; } = null!;
 
-        [Required]
-        [ForeignKey("Responsible")]
-        public int ResponsibleId { get; set; }
+        public int AccountId { get; private set; }
+        public ApplicationUser Account { get; private set; } = null!;
 
-        public Employee? Responsible { get; set; }
+        private readonly List<StockAdjustmentItem> _items = new();
+        public IReadOnlyCollection<StockAdjustmentItem> AdjustmentItems => _items;
 
-        [Required]
-        [ForeignKey("Account")]
-        public int AccountId { get; set; }
+        private StockAdjustment() { }
 
-        public ApplicationUser? Account { get; set; }
+        public StockAdjustment(
+            StockAdjustmentType type,
+            string reason,
+            DateTime adjustmentDate,
+            int responsibleId,
+            int accountId,
+            string? observation = null)
+        {
+            Type = type;
+            Reason = reason;
+            AdjustmentDate = adjustmentDate;
+            ResponsibleId = responsibleId;
+            AccountId = accountId;
+            Observation = observation;
+        }
 
-        public ICollection<StockAdjustmentItem> AdjustmentItems { get; set; } = new List<StockAdjustmentItem>();
+        public void AddItem(StockAdjustmentItem item)
+        {
+            _items.Add(item);
+        }
     }
 }

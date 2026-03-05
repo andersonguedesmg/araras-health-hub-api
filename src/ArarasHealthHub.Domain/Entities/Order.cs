@@ -4,95 +4,70 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Identity;
 
 namespace ArarasHealthHub.Domain.Entities
 {
     public class Order : BaseEntity
     {
-        [MaxLength(200)]
-        public string? Observation { get; set; } = string.Empty;
+        public string? Observation { get; private set; }
 
-        public List<OrderItem> OrderItems { get; set; } = new();
+        public int OrderFacilityId { get; private set; }
+        public Facility OrderFacility { get; private set; } = null!;
 
-        [Required]
-        [ForeignKey("OrderFacility")]
-        public int OrderFacilityId { get; set; }
+        public int OrderStatusId { get; private set; }
+        public OrderStatus OrderStatus { get; private set; } = null!;
 
-        public Facility? OrderFacility { get; set; }
+        public DateTime CreatedAt { get; private set; }
 
-        [Required]
-        public int OrderStatusId { get; set; }
+        public int CreatedByEmployeeId { get; private set; }
+        public Employee CreatedByEmployee { get; private set; } = null!;
 
-        public OrderStatus? OrderStatus { get; set; }
+        public int CreatedByAccountId { get; private set; }
+        public ApplicationUser CreatedByAccount { get; private set; } = null!;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? ApprovedAt { get; private set; }
+        public int? ApprovedByEmployeeId { get; private set; }
+        public int? ApprovedByAccountId { get; private set; }
 
-        [Required]
-        [ForeignKey("CreatedByEmployee")]
-        public int CreatedByEmployeeId { get; set; }
+        public DateTime? SeparatedAt { get; private set; }
+        public int? SeparatedByEmployeeId { get; private set; }
+        public int? SeparatedByAccountId { get; private set; }
 
-        public Employee? CreatedByEmployee { get; set; }
+        public DateTime? FinalizedAt { get; private set; }
+        public int? FinalizedByEmployeeId { get; private set; }
+        public int? FinalizedByAccountId { get; private set; }
 
-        [Required]
-        [ForeignKey("CreatedByAccount")]
-        public int CreatedByAccountId { get; set; }
+        public DateTime? CanceledAt { get; private set; }
+        public int? CanceledByEmployeeId { get; private set; }
+        public int? CanceledByAccountId { get; private set; }
 
-        public ApplicationUser? CreatedByAccount { get; set; }
+        public string? CancellationReason { get; private set; }
 
+        private readonly List<OrderItem> _items = new();
+        public IReadOnlyCollection<OrderItem> OrderItems => _items;
 
-        public DateTime? ApprovedAt { get; set; }
+        private Order() { }
 
-        [ForeignKey("ApprovedByEmployee")]
-        public int? ApprovedByEmployeeId { get; set; }
+        public Order(
+            int facilityId,
+            int statusId,
+            int employeeId,
+            int accountId,
+            string? observation = null)
+        {
+            OrderFacilityId = facilityId;
+            OrderStatusId = statusId;
+            CreatedByEmployeeId = employeeId;
+            CreatedByAccountId = accountId;
+            Observation = observation;
+            CreatedAt = DateTime.UtcNow;
+        }
 
-        public Employee? ApprovedByEmployee { get; set; }
-
-        [ForeignKey("ApprovedByAccount")]
-        public int? ApprovedByAccountId { get; set; }
-
-        public ApplicationUser? ApprovedByAccount { get; set; }
-
-
-        public DateTime? SeparatedAt { get; set; }
-
-        [ForeignKey("SeparatedByEmployee")]
-        public int? SeparatedByEmployeeId { get; set; }
-
-        public Employee? SeparatedByEmployee { get; set; }
-
-        [ForeignKey("SeparatedByAccount")]
-        public int? SeparatedByAccountId { get; set; }
-
-        public ApplicationUser? SeparatedByAccount { get; set; }
-
-
-        public DateTime? FinalizedAt { get; set; }
-
-        [ForeignKey("FinalizedByEmployee")]
-        public int? FinalizedByEmployeeId { get; set; }
-
-        public Employee? FinalizedByEmployee { get; set; }
-
-        [ForeignKey("FinalizedByAccount")]
-        public int? FinalizedByAccountId { get; set; }
-
-        public ApplicationUser? FinalizedByAccount { get; set; }
-
-
-        public DateTime? CanceledAt { get; set; }
-
-        [ForeignKey("CanceledByEmployee")]
-        public int? CanceledByEmployeeId { get; set; }
-
-        public Employee? CanceledByEmployee { get; set; }
-
-        [ForeignKey("CanceledByAccount")]
-        public int? CanceledByAccountId { get; set; }
-
-        public ApplicationUser? CanceledByAccount { get; set; }
-
-        [MaxLength(500)]
-        public string? CancellationReason { get; set; }
+        public void AddItem(OrderItem item)
+        {
+            _items.Add(item);
+        }
     }
 }

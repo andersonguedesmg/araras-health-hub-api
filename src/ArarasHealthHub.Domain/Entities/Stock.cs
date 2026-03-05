@@ -4,40 +4,41 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa o estoque atual de um produto (visão consolidada).")]
-    [Index(nameof(ProductId), IsUnique = true)]
     public class Stock : BaseEntity
     {
-        [Required]
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
-        public Product Product { get; set; } = null!;
+        public int ProductId { get; private set; }
+        public Product Product { get; private set; } = null!;
 
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        [Comment("Quantidade total disponível de todas as validades e lotes.")]
-        public decimal CurrentQuantity { get; set; }
+        public decimal CurrentQuantity { get; private set; }
+        public decimal ReservedQuantity { get; private set; }
+        public decimal AvailableQuantity { get; private set; }
+        public decimal MinQuantity { get; private set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        [Comment("Quantidade que está reservada para pedidos pendentes/aprovados.")]
-        public decimal ReservedQuantity { get; set; }
+        public StockCost? StockCost { get; private set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        [Comment("Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity).")]
-        public decimal AvailableQuantity { get; set; }
+        private readonly List<StockLot> _lots = new();
+        public IReadOnlyCollection<StockLot> Lots => _lots;
 
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal MinQuantity { get; set; }
+        protected Stock() { }
 
-        public StockCost? StockCost { get; set; }
+        public Stock(int productId, decimal minQuantity)
+        {
+            ProductId = productId;
+            MinQuantity = minQuantity;
+            CurrentQuantity = 0;
+            ReservedQuantity = 0;
+            AvailableQuantity = 0;
+        }
 
-        public ICollection<StockLot> Lots { get; set; } = new List<StockLot>();
+        public void UpdateQuantities(decimal current, decimal reserved)
+        {
+            CurrentQuantity = current;
+            ReservedQuantity = reserved;
+            AvailableQuantity = current - reserved;
+            SetUpdatedOn();
+        }
     }
 }

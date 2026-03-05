@@ -7,33 +7,33 @@ using System.Threading.Tasks;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    public class OrderItem
+    public class OrderItem : BaseEntity
     {
-        public int Id { get; set; }
+        public decimal RequestedQuantity { get; private set; }
+        public decimal ApprovedQuantity { get; private set; }
+        public decimal ReservedQuantity { get; private set; }
+        public decimal ActualQuantity { get; private set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal RequestedQuantity { get; set; }
+        public int ProductId { get; private set; }
+        public Product Product { get; private set; } = null!;
 
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal ApprovedQuantity { get; set; }
+        public int OrderId { get; private set; }
+        public Order Order { get; private set; } = null!;
 
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal ReservedQuantity { get; set; }
+        private readonly List<OrderItemLot> _lots = new();
+        public IReadOnlyCollection<OrderItemLot> OrderItemLots => _lots;
 
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal ActualQuantity { get; set; }
+        private OrderItem() { }
 
-        [Required]
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
-        public Product? Product { get; set; }
+        public OrderItem(int productId, decimal requestedQuantity)
+        {
+            ProductId = productId;
+            RequestedQuantity = requestedQuantity;
+        }
 
-        [Required]
-        [ForeignKey("Order")]
-        public int OrderId { get; set; }
-        public Order? Order { get; set; }
-
-        public List<OrderItemLot> OrderItemLots { get; set; } = new();
+        public void AddLot(OrderItemLot lot)
+        {
+            _lots.Add(lot);
+        }
     }
 }

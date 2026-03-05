@@ -8,14 +8,13 @@ namespace ArarasHealthHub.Domain.Entities
 {
     public abstract class BaseEntity
     {
-        [Key]
-        public int Id { get; private set; }
+        public int Id { get; protected set; }
 
-        public DateTime CreatedOn { get; private set; }
+        public DateTime CreatedOn { get; protected set; }
 
-        public DateTime? UpdatedOn { get; private set; }
+        public DateTime? UpdatedOn { get; protected set; }
 
-        public bool IsActive { get; private set; }
+        public bool IsActive { get; protected set; }
 
         protected BaseEntity()
         {
@@ -23,7 +22,7 @@ namespace ArarasHealthHub.Domain.Entities
             IsActive = true;
         }
 
-        public void SetUpdatedOn()
+        protected void SetUpdatedOn()
         {
             UpdatedOn = DateTime.UtcNow;
         }

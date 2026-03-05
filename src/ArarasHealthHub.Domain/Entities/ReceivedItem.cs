@@ -4,46 +4,47 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa um item específico de um recebimento.")]
     public class ReceivedItem : BaseEntity
     {
-        [Required]
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal Quantity { get; set; }
+        public decimal Quantity { get; private set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal UnitValue { get; set; }
+        public decimal UnitValue { get; private set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalValue { get; set; }
+        public decimal TotalValue { get; private set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string Batch { get; set; } = string.Empty;
+        public string Batch { get; private set; } = string.Empty;
 
-        [Required]
-        [MaxLength(100)]
-        public string Brand { get; set; } = string.Empty;
+        public string Brand { get; private set; } = string.Empty;
 
-        [Required]
-        public DateTime ExpiryDate { get; set; }
+        public DateTime ExpiryDate { get; private set; }
 
-        [Required]
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
+        public int ProductId { get; private set; }
+        public Product Product { get; private set; } = null!;
 
-        public Product Product { get; set; } = null!;
+        public int ReceivingId { get; private set; }
+        public Receiving Receiving { get; private set; } = null!;
 
-        [Required]
-        [ForeignKey("Receiving")]
-        public int ReceivingId { get; set; }
+        private ReceivedItem() { }
 
-        public Receiving Receiving { get; set; } = null!;
+        public ReceivedItem(
+            int productId,
+            decimal quantity,
+            decimal unitValue,
+            decimal totalValue,
+            string batch,
+            string brand,
+            DateTime expiryDate)
+        {
+            ProductId = productId;
+            Quantity = quantity;
+            UnitValue = unitValue;
+            TotalValue = totalValue;
+            Batch = batch;
+            Brand = brand;
+            ExpiryDate = expiryDate;
+        }
     }
 }

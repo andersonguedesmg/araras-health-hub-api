@@ -4,50 +4,54 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Domain.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Domain.Entities
 {
-    [Comment("Representa o registro de entrada no estoque.")]
     public class Receiving : BaseEntity
     {
-        [Required]
-        [MaxLength(50)]
-        public string InvoiceNumber { get; set; } = string.Empty;
+        public string InvoiceNumber { get; private set; } = string.Empty;
 
-        [Required]
-        [MaxLength(50)]
-        public string SupplyAuthorization { get; set; } = string.Empty;
+        public string SupplyAuthorization { get; private set; } = string.Empty;
 
-        [MaxLength(200)]
-        public string? Observation { get; set; } = string.Empty;
+        public string? Observation { get; private set; }
 
-        [Required]
-        public DateTime ReceivingDate { get; set; }
+        public DateTime ReceivingDate { get; private set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalValue { get; set; }
+        public decimal TotalValue { get; private set; }
 
-        [Required]
-        [ForeignKey("Supplier")]
-        public int SupplierId { get; set; }
+        public int SupplierId { get; private set; }
+        public Supplier Supplier { get; private set; } = null!;
 
-        public Supplier? Supplier { get; set; }
+        public int ResponsibleId { get; private set; }
+        public Employee Responsible { get; private set; } = null!;
 
-        [Required]
-        [ForeignKey("Responsible")]
-        public int ResponsibleId { get; set; }
+        public int AccountId { get; private set; }
+        public ApplicationUser Account { get; private set; } = null!;
 
-        public Employee? Responsible { get; set; }
+        public ICollection<ReceivedItem> ReceivedItems { get; private set; } = new List<ReceivedItem>();
 
-        [Required]
-        [ForeignKey("Account")]
-        public int AccountId { get; set; }
+        private Receiving() { }
 
-        public ApplicationUser? Account { get; set; }
-
-        public List<ReceivedItem> ReceivedItem { get; set; } = new();
+        public Receiving(
+            string invoiceNumber,
+            string supplyAuthorization,
+            DateTime receivingDate,
+            decimal totalValue,
+            int supplierId,
+            int responsibleId,
+            int accountId,
+            string? observation)
+        {
+            InvoiceNumber = invoiceNumber;
+            SupplyAuthorization = supplyAuthorization;
+            ReceivingDate = receivingDate;
+            TotalValue = totalValue;
+            SupplierId = supplierId;
+            ResponsibleId = responsibleId;
+            AccountId = accountId;
+            Observation = observation;
+        }
     }
 }
