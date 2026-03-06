@@ -39,10 +39,20 @@ namespace ArarasHealthHub.Domain.Entities
             PresentationFormId = presentationFormId;
         }
 
-        public void Update(string name, string description)
+        public void Update(
+            string name,
+            string description,
+            int mainCategoryId,
+            int subCategoryId,
+            int presentationFormId)
         {
-            Name = name;
-            Description = description;
+            Name = name.Trim();
+            Description = description.Trim();
+            MainCategoryId = mainCategoryId;
+            SubCategoryId = subCategoryId;
+            PresentationFormId = presentationFormId;
+
+            SetUpdatedOn();
         }
     }
 }

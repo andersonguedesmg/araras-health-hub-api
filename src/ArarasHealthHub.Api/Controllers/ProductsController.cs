@@ -10,14 +10,13 @@ using ArarasHealthHub.Application.Features.Products.Commands.ActivateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.DeactivateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
-using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Features.Products.Queries.ExportProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductById;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdown;
-using ArarasHealthHub.Shared.Dtos;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Application.Features.Products.Responses;
 using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,61 +30,74 @@ namespace ArarasHealthHub.Api.Controllers
     {
         [HttpGet]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<ProductDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQuery query)
+        [ProducesResponseType(typeof(PagedResult<ProductListItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQuery query, CancellationToken cancellationToken)
         {
-            return await Send(query);
+            return await Send(query, cancellationToken);
         }
 
         [HttpGet("{id:int}")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(ApiResponse<ProductDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int id)
+        [ProducesResponseType(typeof(Result<ProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            return await Send(new GetProductByIdQuery(0).WithId(id));
+            return await Send(new GetProductByIdQuery(id), cancellationToken);
         }
 
         [HttpPost]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create(CreateProductCommand command)
+        [ProducesResponseType(typeof(Result<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Create(CreateProductCommand command, CancellationToken cancellationToken)
         {
-            return await Send(command);
+            return await SendCreated(
+                command,
+                nameof(GetById),
+                id => new { id },
+                cancellationToken);
         }
 
         [HttpPut("{id:int}")]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(int id, UpdateProductCommand command)
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Update(int id, UpdateProductCommand command, CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id));
+            return await Send(command.WithId(id), cancellationToken);
         }
 
         [HttpPatch("{id:int}/activate")]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Activate(int id, ActivateProductCommand command)
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Activate(int id, CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id));
+            return await Send(new ActivateProductCommand(id), cancellationToken);
         }
 
         [HttpPatch("{id:int}/deactivate")]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Deactivate(int id, DeactivateProductCommand command)
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Deactivate(int id, CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id));
+            return await Send(new DeactivateProductCommand(id), cancellationToken);
         }
 
         [HttpGet("dropdown")]
-        [ProducesResponseType(typeof(PagedResponse<DropdownItemDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDropdown([FromQuery] GetProductDropdownQuery query)
+        [ProducesResponseType(typeof(PagedResult<DropdownItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetDropdown([FromQuery] GetProductDropdownQuery query, CancellationToken cancellationToken)
         {
-            return await Send(query);
+            return await Send(query, cancellationToken);
         }
 
         [HttpGet("export")]

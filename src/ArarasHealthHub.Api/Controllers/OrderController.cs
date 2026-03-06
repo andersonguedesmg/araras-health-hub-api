@@ -16,6 +16,8 @@ using ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails;
 using ArarasHealthHub.Application.Interfaces.Services;
+using ArarasHealthHub.Shared;
+using ArarasHealthHub.Shared.Messages;
 using ArarasHealthHub.Shared.Responses;
 
 using MediatR;

@@ -22,7 +22,7 @@ namespace ArarasHealthHub.Domain.Entities
             IsActive = true;
         }
 
-        protected void SetUpdatedOn()
+        public void SetUpdatedOn()
         {
             UpdatedOn = DateTime.UtcNow;
         }
