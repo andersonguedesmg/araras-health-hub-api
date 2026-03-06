@@ -4,16 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.SubCategories.Commands.DeactivateSubCategory
 {
-    public class DeactivateSubCategoryCommandHandler : IRequestHandler<DeactivateSubCategoryCommand, ApiResponse<object>>
+    public class DeactivateSubCategoryCommandHandler : IRequestHandler<DeactivateSubCategoryCommand, Result>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
 
@@ -23,36 +21,26 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.Deactivate
             _subCategoryRepository = subCategoryRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             DeactivateSubCategoryCommand command,
             CancellationToken cancellationToken)
         {
-            var subCategory =
-                await _subCategoryRepository.GetByIdAsync(command.Id, cancellationToken);
+            var subCategory = await _subCategoryRepository
+                .GetByIdAsync(command.Id, cancellationToken);
 
             if (subCategory is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.SubCategory)
-                );
-            }
+                throw new NotFoundException("Subcategoria não foi encontrada.");
 
             if (!subCategory.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyInactive(EntityNames.SubCategory)
-            );
-            }
+                throw new BusinessRuleException("A subcategoria já está inativa.");
 
             subCategory.Deactivate();
-            await _subCategoryRepository.UpdateAsync(subCategory, cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityDeactivated(EntityNames.SubCategory)
-            );
+            await _subCategoryRepository.UpdateAsync(
+                subCategory,
+                cancellationToken);
+
+            return Result.Success("Subcategoria desativada com sucesso.");
         }
     }
 }

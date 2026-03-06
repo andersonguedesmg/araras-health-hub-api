@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -13,7 +13,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubC
         int Id,
         string Name,
         int MainCategoryId
-    ) : IRequest<ApiResponse<object>>
+    ) : IRequest<Result>
     {
         public UpdateSubCategoryCommand WithId(int id)
             => this with { Id = id };

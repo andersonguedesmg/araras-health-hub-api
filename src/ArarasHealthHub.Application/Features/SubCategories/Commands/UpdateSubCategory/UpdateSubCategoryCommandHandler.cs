@@ -4,82 +4,69 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubCategory
 {
-    public class UpdateSubCategoryCommandHandler : IRequestHandler<UpdateSubCategoryCommand, ApiResponse<object>>
+    public class UpdateSubCategoryCommandHandler : IRequestHandler<UpdateSubCategoryCommand, Result>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
         private readonly ISubCategoryRepository _subCategoryRepository;
-        private readonly IMapper _mapper;
 
         public UpdateSubCategoryCommandHandler(
             ISubCategoryRepository subCategoryRepository,
-            IMainCategoryRepository mainCategoryRepository,
-            IMapper mapper)
+            IMainCategoryRepository mainCategoryRepository)
         {
             _mainCategoryRepository = mainCategoryRepository;
             _subCategoryRepository = subCategoryRepository;
-            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             UpdateSubCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var subCategory = await _subCategoryRepository
-                .GetByIdAsync(request.Id, cancellationToken);
+            var subCategory =
+                await _subCategoryRepository.GetByIdAsync(
+                    request.Id,
+                    cancellationToken);
 
             if (subCategory is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.SubCategory)
-                );
-            }
+                throw new NotFoundException("Subcategoria não encontrada.");
 
-            var mainCategory = await _mainCategoryRepository
-                .GetByIdAsync(request.MainCategoryId, cancellationToken);
+            var normalizedName = request.Name.Trim();
 
-            if (mainCategory is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
-                );
-            }
-
-            var duplicate = await _subCategoryRepository
-                .GetBySubCategoryNameAndMainCategoryIdAsync(
-                    request.Name,
+            var subCategoryWithSameName =
+                await _subCategoryRepository.GetBySubCategoryNameAndMainCategoryIdAsync(
+                    normalizedName,
                     request.MainCategoryId,
                     cancellationToken);
 
-            if (duplicate is not null && duplicate.Id != request.Id)
+            if (subCategoryWithSameName is not null &&
+                subCategoryWithSameName.Id != subCategory.Id)
             {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyExists(EntityNames.SubCategory)
-                );
+                throw new BusinessRuleException("Já existe uma subcategoria com o nome informado.");
             }
 
-            _mapper.Map(request, subCategory);
-            subCategory.SetUpdatedOn();
+            var mainCategory =
+                await _mainCategoryRepository.GetByIdAsync(
+                    request.MainCategoryId,
+                    cancellationToken);
 
-            await _subCategoryRepository.UpdateAsync(subCategory, cancellationToken);
+            if (mainCategory is null || !mainCategory.IsActive)
+                throw new BusinessRuleException("Categoria principal inválida ou inativa.");
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityUpdated(EntityNames.SubCategory)
-            );
+            subCategory.Update(
+                normalizedName,
+                request.MainCategoryId);
+
+            await _subCategoryRepository.UpdateAsync(
+                subCategory,
+                cancellationToken);
+
+            return Result.Success("Subcategoria atualizada com sucesso.");
         }
     }
 }

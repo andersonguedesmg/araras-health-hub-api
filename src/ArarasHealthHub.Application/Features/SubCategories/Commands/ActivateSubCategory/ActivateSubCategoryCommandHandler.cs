@@ -4,16 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSubCategory
 {
-    public class ActivateSubCategoryCommandHandler : IRequestHandler<ActivateSubCategoryCommand, ApiResponse<object>>
+    public class ActivateSubCategoryCommandHandler : IRequestHandler<ActivateSubCategoryCommand, Result>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly IMainCategoryRepository _mainCategoryRepository;
@@ -26,7 +24,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
             _mainCategoryRepository = mainCategoryRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             ActivateSubCategoryCommand command,
             CancellationToken cancellationToken)
         {
@@ -34,49 +32,27 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSu
                 .GetByIdAsync(command.Id, cancellationToken);
 
             if (subCategory is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.SubCategory)
-                );
-            }
+                throw new NotFoundException("Subcategoria não foi encontrada.");
 
             if (subCategory.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyActive(EntityNames.SubCategory)
-                );
-            }
+                throw new BusinessRuleException("A subcategoria já está ativa.");
 
             var mainCategory = await _mainCategoryRepository
                 .GetByIdAsync(subCategory.MainCategoryId, cancellationToken);
 
             if (mainCategory is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.MainCategory)
-                );
-            }
+                throw new NotFoundException("Categoria principal não foi encontrada.");
 
             if (!mainCategory.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.CannotActivateBecauseInactive(
-                        EntityNames.SubCategory,
-                        EntityNames.MainCategory)
-                );
-            }
+                throw new BusinessRuleException("Não é possível ativar uma subcategoria de uma categoria principal inativa.");
 
             subCategory.Activate();
-            await _subCategoryRepository.UpdateAsync(subCategory, cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityActivated(EntityNames.SubCategory)
-            );
+            await _subCategoryRepository.UpdateAsync(
+                subCategory,
+                cancellationToken);
+
+            return Result.Success("Subcategoria ativada com sucesso.");
         }
     }
 }
