@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
-using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
-using ArarasHealthHub.Application.Features.Products.Dtos;
+using ArarasHealthHub.Application.Features.Products.Responses;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Responses;
 
 using AutoMapper;
 
@@ -17,15 +15,23 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public ProductProfile()
         {
-            CreateMap<Product, DropdownItemDto>();
+            CreateMap<Product, DropdownItemResponse>();
 
-            CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.MainCategoryName, opt => opt.MapFrom(src => src.MainCategory!.Name))
-                .ForMember(dest => dest.SubCategoryName, opt => opt.MapFrom(src => src.SubCategory!.Name))
-                .ForMember(dest => dest.PresentationFormName, opt => opt.MapFrom(src => src.PresentationForm!.Name));
+            CreateMap<Product, ProductResponse>()
+                .ForMember(dest => dest.MainCategoryName,
+                    opt => opt.MapFrom(src => src.MainCategory!.Name))
+                .ForMember(dest => dest.SubCategoryName,
+                    opt => opt.MapFrom(src => src.SubCategory!.Name))
+                .ForMember(dest => dest.PresentationFormName,
+                    opt => opt.MapFrom(src => src.PresentationForm!.Name));
 
-            CreateMap<CreateProductCommand, Product>();
-            CreateMap<UpdateProductCommand, Product>();
+            CreateMap<Product, ProductListItemResponse>()
+                .ForMember(dest => dest.MainCategoryName,
+                    opt => opt.MapFrom(src => src.MainCategory!.Name))
+                .ForMember(dest => dest.SubCategoryName,
+                    opt => opt.MapFrom(src => src.SubCategory!.Name))
+                .ForMember(dest => dest.PresentationFormName,
+                    opt => opt.MapFrom(src => src.PresentationForm!.Name));
         }
     }
 }

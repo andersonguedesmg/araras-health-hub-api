@@ -10,7 +10,6 @@ using ArarasHealthHub.Application.Features.Products.Commands.ActivateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.CreateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.DeactivateProduct;
 using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
-using ArarasHealthHub.Application.Features.Products.Queries.ExportProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductById;
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdown;
@@ -98,23 +97,6 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> GetDropdown([FromQuery] GetProductDropdownQuery query, CancellationToken cancellationToken)
         {
             return await Send(query, cancellationToken);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Export([FromQuery] ExportProductsQuery query)
-        {
-            var response = await Mediator.Send(query);
-
-            if (!response.Success || response.Data == null)
-                return StatusCode(response.StatusCode, response);
-
-            return File(
-                response.Data.Content,
-                response.Data.ContentType,
-                response.Data.FileName
-            );
         }
     }
 }
