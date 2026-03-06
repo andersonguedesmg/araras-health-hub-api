@@ -24,9 +24,10 @@ namespace ArarasHealthHub.Domain.Entities
             MainCategoryId = mainCategoryId;
         }
 
-        public void Update(string name)
+        public void Update(string name, int mainCategoryId)
         {
             Name = name;
+            MainCategoryId = mainCategoryId;
         }
     }
 }

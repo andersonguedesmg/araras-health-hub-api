@@ -9,7 +9,6 @@ using ArarasHealthHub.Application.Features.SubCategories.Commands.ActivateSubCat
 using ArarasHealthHub.Application.Features.SubCategories.Commands.CreateSubCategory;
 using ArarasHealthHub.Application.Features.SubCategories.Commands.DeactivateSubCategory;
 using ArarasHealthHub.Application.Features.SubCategories.Commands.UpdateSubCategory;
-using ArarasHealthHub.Application.Features.SubCategories.Queries.ExportSubCategories;
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCategories;
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryById;
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryDropdown;
@@ -96,23 +95,6 @@ namespace araras_health_hub_api.Controllers
         public async Task<IActionResult> GetDropdown([FromQuery] GetSubCategoryDropdownQuery query, CancellationToken cancellationToken)
         {
             return await Send(query, cancellationToken);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Export([FromQuery] ExportSubCategoriesQuery query)
-        {
-            var response = await Mediator.Send(query);
-
-            if (!response.Success || response.Data == null)
-                return StatusCode(response.StatusCode, response);
-
-            return File(
-                response.Data.Content,
-                response.Data.ContentType,
-                response.Data.FileName
-            );
         }
     }
 }
