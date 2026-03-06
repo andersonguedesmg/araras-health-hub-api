@@ -4,25 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Products.Queries.GetProductById;
-using ArarasHealthHub.Application.Interfaces.Contexts;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Products.Validation
 {
     public class GetProductByIdQueryValidator : AbstractValidator<GetProductByIdQuery>
     {
-        public GetProductByIdQueryValidator(IApplicationDbContext context)
+        public GetProductByIdQueryValidator()
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
-                    .WithMessage(ValidationMessages.InvalidId)
-                .MustAsync(async (id, ct) =>
-                    await context.Products.AnyAsync(e => e.Id == id, ct))
-                    .WithMessage(ApiMessages.EntityNotFound(EntityNames.Product));
+                .WithMessage("Identificador inválido.");
         }
     }
 }

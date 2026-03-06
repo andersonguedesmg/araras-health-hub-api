@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
-using ArarasHealthHub.Shared.Messages;
 using ArarasHealthHub.Shared.Pagination;
 
 using FluentValidation;
@@ -17,8 +16,11 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
         {
             RuleFor(x => x.OrderBy)
                 .Must(x => x is null ||
-                           x.ToLower() is "name" or "maincategory" or "subcategory" or "presentationform")
-                .WithMessage(ValidationMessages.InvalidOrderBy);
+                           x.Equals("name", StringComparison.OrdinalIgnoreCase) ||
+                           x.Equals("maincategory", StringComparison.OrdinalIgnoreCase) ||
+                           x.Equals("subcategory", StringComparison.OrdinalIgnoreCase) ||
+                           x.Equals("presentationform", StringComparison.OrdinalIgnoreCase))
+                .WithMessage("Campo de ordenação inválido.");
         }
     }
 }
