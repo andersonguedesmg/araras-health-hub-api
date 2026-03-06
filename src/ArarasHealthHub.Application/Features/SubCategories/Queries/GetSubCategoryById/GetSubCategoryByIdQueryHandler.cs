@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.SubCategories.Dtos;
+using ArarasHealthHub.Application.Features.SubCategories.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryById
 {
-    public class GetSubCategoryByIdQueryHandler : IRequestHandler<GetSubCategoryByIdQuery, ApiResponse<SubCategoryDto>>
+    public class GetSubCategoryByIdQueryHandler : IRequestHandler<GetSubCategoryByIdQuery, Result<SubCategoryResponse>>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly IMapper _mapper;
@@ -30,7 +29,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<SubCategoryDto>> Handle(
+        public async Task<Result<SubCategoryResponse>> Handle(
             GetSubCategoryByIdQuery request,
             CancellationToken cancellationToken)
         {
@@ -41,20 +40,13 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
                     cancellationToken);
 
             if (subCategory is null)
-            {
-                return ApiResponse<SubCategoryDto>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.SubCategory)
-                );
-            }
+                throw new NotFoundException("Subcategoria não encontrada.");
 
-            var dto = _mapper.Map<SubCategoryDto>(subCategory);
+            var response = _mapper.Map<SubCategoryResponse>(subCategory);
 
-            return ApiResponse<SubCategoryDto>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.OperationSuccessful,
-                dto
-            );
+            return Result<SubCategoryResponse>.Success(
+                response,
+                "Subcategoria encontrada com sucesso.");
         }
     }
 }

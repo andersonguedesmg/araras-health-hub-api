@@ -4,12 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.SubCategories.Dtos;
+using ArarasHealthHub.Application.Features.SubCategories.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Pagination;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -17,25 +15,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCategories
 {
-    public class GetAllSubCategoriesQueryHandler : IRequestHandler<GetAllSubCategoriesQuery, PagedResponse<SubCategoryDto>>
+    public class GetAllSubCategoriesQueryHandler : IRequestHandler<GetAllSubCategoriesQuery, PagedResult<SubCategoryListItemResponse>>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
-        private readonly IMapper _mapper;
 
         public GetAllSubCategoriesQueryHandler(
-            ISubCategoryRepository subCategoryRepository,
-            IMapper mapper)
+            ISubCategoryRepository subCategoryRepository)
         {
             _subCategoryRepository = subCategoryRepository;
-            _mapper = mapper;
         }
 
-        public async Task<PagedResponse<SubCategoryDto>> Handle(
+        public async Task<PagedResult<SubCategoryListItemResponse>> Handle(
             GetAllSubCategoriesQuery request,
             CancellationToken cancellationToken)
         {
-            IQueryable<SubCategory> query = _subCategoryRepository
-                .AsQueryableWithMainCategory();
+            var query = _subCategoryRepository
+                .AsQueryableWithMainCategory()
+                .AsNoTracking();
 
             if (request.MainCategoryId > 0)
             {
@@ -45,37 +41,45 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCa
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim();
 
                 query = query.Where(sc =>
-                    sc.Name.ToLower().Contains(term) ||
-                    sc.MainCategory!.Name.ToLower().Contains(term));
+                    EF.Functions.Like(sc.Name, $"%{term}%") ||
+                    EF.Functions.Like(sc.MainCategory!.Name, $"%{term}%"));
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
 
-            query = query.ApplyOrdering(
-                request.OrderBy?.ToLower(),
-                request.SortOrder.ToLower(),
-                new Dictionary<string, Expression<Func<SubCategory, object>>>
-                {
-                    ["name"] = sc => sc.Name,
-                    ["maincategory"] = sc => sc.MainCategory!.Name,
-                    ["isactive"] = sc => sc.IsActive
-                });
+            query = request.OrderBy?.ToLower() switch
+            {
+                "name" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(sc => sc.Name)
+                    : query.OrderBy(sc => sc.Name),
+
+                "maincategory" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(sc => sc.MainCategory!.Name)
+                    : query.OrderBy(sc => sc.MainCategory!.Name),
+
+                _ => query.OrderBy(sc => sc.Name)
+            };
 
             var items = await query
-                .ApplyPagination(request.PageNumber, request.PageSize)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(sc => new SubCategoryListItemResponse(
+                    sc.Id,
+                    sc.Name,
+                    sc.MainCategoryId,
+                    sc.MainCategory!.Name,
+                    sc.IsActive))
                 .ToListAsync(cancellationToken);
 
-            var dtoList = _mapper.Map<IReadOnlyList<SubCategoryDto>>(items);
-
-            return PagedResponse<SubCategoryDto>.SuccessPaged(
+            return PagedResult<SubCategoryListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                dtoList
-            );
+                "Subcategorias listadas com sucesso.");
         }
     }
 }

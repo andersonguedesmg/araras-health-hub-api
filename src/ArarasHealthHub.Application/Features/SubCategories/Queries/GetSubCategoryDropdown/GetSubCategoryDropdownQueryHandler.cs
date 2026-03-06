@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Dtos;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCategoryDropdown
 {
-    public class GetSubCategoryDropdownQueryHandler : IRequestHandler<GetSubCategoryDropdownQuery, PagedResponse<DropdownItemDto>>
+    public class GetSubCategoryDropdownQueryHandler : IRequestHandler<GetSubCategoryDropdownQuery, PagedResult<DropdownItemResponse>>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
 
@@ -23,45 +23,42 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
             _subCategoryRepository = subCategoryRepository;
         }
 
-        public async Task<PagedResponse<DropdownItemDto>> Handle(
+        public async Task<PagedResult<DropdownItemResponse>> Handle(
             GetSubCategoryDropdownQuery request,
             CancellationToken cancellationToken)
         {
             var query = _subCategoryRepository
-                .AsQueryableWithMainCategory()
-                .Where(x => x.IsActive);
-
-            if (request.MainCategoryId > 0)
-            {
-                query = query.Where(x => x.MainCategoryId == request.MainCategoryId);
-            }
+                .AsQueryable()
+                .AsNoTracking()
+                .Where(x =>
+                    x.IsActive &&
+                    x.MainCategoryId == request.MainCategoryId);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim();
 
                 query = query.Where(x =>
-                    x.Name.ToLower().Contains(term));
+                    EF.Functions.Like(x.Name, $"%{term}%"));
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
 
             var items = await query
-                .OrderBy(x => x.Name)
-                .ApplyPagination(request.PageNumber, request.PageSize)
-                .Select(x => new DropdownItemDto
-                {
-                    Id = x.Id,
-                    Label = x.Name
-                })
+                .OrderBy(sc => sc.Name)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(sc => new DropdownItemResponse(
+                    sc.Id,
+                    sc.Name))
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<DropdownItemDto>.SuccessPaged(
+            return PagedResult<DropdownItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                items
-            );
+                "Subcategorias listadas para seleção.");
         }
     }
 }
