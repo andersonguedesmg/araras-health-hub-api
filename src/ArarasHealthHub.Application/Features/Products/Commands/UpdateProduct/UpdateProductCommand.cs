@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -16,7 +16,7 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
         int MainCategoryId,
         int SubCategoryId,
         int PresentationFormId
-    ) : IRequest<ApiResponse<object>>
+    ) : IRequest<Result>
     {
         public UpdateProductCommand WithId(int id)
             => this with { Id = id };

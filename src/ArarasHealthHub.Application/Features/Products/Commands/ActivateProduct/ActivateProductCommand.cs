@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Products.Commands.ActivateProduct
 {
-    public record ActivateProductCommand(int Id) : IRequest<ApiResponse<object>>
-    {
-        public ActivateProductCommand WithId(int id)
-            => this with { Id = id };
-    }
+    public sealed record ActivateProductCommand(int Id) : IRequest<Result>;
 }

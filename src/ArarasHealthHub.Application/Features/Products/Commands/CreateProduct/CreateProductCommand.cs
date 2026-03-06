@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -15,5 +15,5 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
         int MainCategoryId,
         int SubCategoryId,
         int PresentationFormId
-    ) : IRequest<ApiResponse<int>>;
+    ) : IRequest<Result<int>>;
 }

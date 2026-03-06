@@ -4,16 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Products.Commands.ActivateProduct
 {
-    public class ActivateProductCommandHandler : IRequestHandler<ActivateProductCommand, ApiResponse<object>>
+    public class ActivateProductCommandHandler : IRequestHandler<ActivateProductCommand, Result>
     {
         private readonly IProductRepository _productRepository;
 
@@ -23,35 +21,25 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.ActivateProduct
             _productRepository = productRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             ActivateProductCommand request,
             CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
+            var product = await _productRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (product is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Product)
-                );
-            }
+                throw new NotFoundException("Produto não foi encontrado.");
 
             if (product.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyActive(EntityNames.Product)
-                );
-            }
+                throw new BusinessRuleException("O produto já está ativo.");
 
             product.Activate();
-            await _productRepository.UpdateAsync(product, cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityActivated(EntityNames.Product)
-            );
+            await _productRepository
+                .UpdateAsync(product, cancellationToken);
+
+            return Result.Success("Produto ativado com sucesso.");
         }
     }
 }

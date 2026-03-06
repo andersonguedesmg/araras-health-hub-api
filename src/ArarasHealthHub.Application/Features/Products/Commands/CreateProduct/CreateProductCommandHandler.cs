@@ -5,54 +5,86 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
 {
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ApiResponse<int>>
+    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Result<int>>
     {
         private readonly IProductRepository _productRepository;
-        private readonly IMapper _mapper;
+        private readonly IMainCategoryRepository _mainCategoryRepository;
+        private readonly ISubCategoryRepository _subCategoryRepository;
+        private readonly IPresentationFormRepository _presentationFormRepository;
 
         public CreateProductCommandHandler(
             IProductRepository productRepository,
-            IMapper mapper)
+            IMainCategoryRepository mainCategoryRepository,
+            ISubCategoryRepository subCategoryRepository,
+            IPresentationFormRepository presentationFormRepository)
         {
             _productRepository = productRepository;
-            _mapper = mapper;
+            _mainCategoryRepository = mainCategoryRepository;
+            _subCategoryRepository = subCategoryRepository;
+            _presentationFormRepository = presentationFormRepository;
         }
 
-        public async Task<ApiResponse<int>> Handle(
+        public async Task<Result<int>> Handle(
             CreateProductCommand request,
             CancellationToken cancellationToken)
         {
-            var existingProduct =
-                await _productRepository.GetByProductNameAsync(request.Name, cancellationToken);
+            var normalizedName = request.Name.Trim();
 
-            if (existingProduct is not null)
-            {
-                return ApiResponse<int>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyExists(EntityNames.Product)
-                );
-            }
+            var productWithSameName =
+                await _productRepository.GetByProductNameAsync(
+                    normalizedName,
+                    cancellationToken);
 
-            var product = _mapper.Map<Product>(request);
+            if (productWithSameName is not null)
+                throw new BusinessRuleException("Já existe um produto com o nome informado.");
+
+            var mainCategory =
+                await _mainCategoryRepository.GetByIdAsync(
+                    request.MainCategoryId,
+                    cancellationToken);
+
+            if (mainCategory is null || !mainCategory.IsActive)
+                throw new BusinessRuleException("Categoria principal inválida ou inativa.");
+
+            var subCategory =
+                await _subCategoryRepository.GetByIdAsync(
+                    request.SubCategoryId,
+                    cancellationToken);
+
+            if (subCategory is null || !subCategory.IsActive)
+                throw new BusinessRuleException("Subcategoria inválida ou inativa.");
+
+            if (subCategory.MainCategoryId != request.MainCategoryId)
+                throw new BusinessRuleException("A subcategoria não pertence à categoria informada.");
+
+            var presentationForm =
+                await _presentationFormRepository.GetByIdAsync(
+                    request.PresentationFormId,
+                    cancellationToken);
+
+            if (presentationForm is null || !presentationForm.IsActive)
+                throw new BusinessRuleException("Forma de apresentação inválida ou inativa.");
+
+            var product = new Product(
+                request.Name,
+                request.Description,
+                request.MainCategoryId,
+                request.SubCategoryId,
+                request.PresentationFormId
+            );
 
             await _productRepository.AddAsync(product, cancellationToken);
 
-            return ApiResponse<int>.SuccessResponse(
-                StatusCodes.Status201Created,
-                ApiMessages.EntityCreated(EntityNames.Product),
-                product.Id
-            );
+            return Result<int>.Success(
+                product.Id,
+                "Produto criado com sucesso.");
         }
     }
 }

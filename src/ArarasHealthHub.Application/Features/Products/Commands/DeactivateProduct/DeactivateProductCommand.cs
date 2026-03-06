@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Products.Commands.DeactivateProduct
 {
-    public record DeactivateProductCommand(int Id) : IRequest<ApiResponse<object>>
-    {
-        public DeactivateProductCommand WithId(int id)
-            => this with { Id = id };
-    }
+    public sealed record DeactivateProductCommand(int Id) : IRequest<Result>;
 }
