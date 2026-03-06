@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Products.Dtos;
+using ArarasHealthHub.Application.Features.Products.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
 {
-    public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ApiResponse<ProductDto>>
+    public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, Result<ProductResponse>>
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
@@ -29,27 +27,22 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse<ProductDto>> Handle(
+        public async Task<Result<ProductResponse>> Handle(
             GetProductByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
+
+            var product = await _productRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (product is null)
-            {
-                return ApiResponse<ProductDto>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Product)
-                );
-            }
+                throw new NotFoundException("Produto não foi encontrado.");
 
-            var productDto = _mapper.Map<ProductDto>(product);
+            var response = _mapper.Map<ProductResponse>(product);
 
-            return ApiResponse<ProductDto>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.OperationSuccessful,
-                productDto
-            );
+            return Result<ProductResponse>.Success(
+                response,
+                "Produto encontrado com sucesso.");
         }
     }
 }

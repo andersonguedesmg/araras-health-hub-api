@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Dtos;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdown
 {
-    public class GetProductDropdownQueryHandler : IRequestHandler<GetProductDropdownQuery, PagedResponse<DropdownItemDto>>
+    public class GetProductDropdownQueryHandler : IRequestHandler<GetProductDropdownQuery, PagedResult<DropdownItemResponse>>
     {
         private readonly IProductRepository _productRepository;
 
@@ -22,43 +22,40 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdo
             _productRepository = productRepository;
         }
 
-        public async Task<PagedResponse<DropdownItemDto>> Handle(
+        public async Task<PagedResult<DropdownItemResponse>> Handle(
             GetProductDropdownQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _productRepository
-                .AsQueryableWithIncludes()
-                .Where(p => p.IsActive);
+            var query = _productRepository
+                .AsQueryable()
+                .AsNoTracking()
+                .Where(e => e.IsActive);
 
-            var term = request.SearchTerm?.Trim();
-
-            if (!string.IsNullOrWhiteSpace(term))
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var search = term.ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(p =>
-                    p.Name.ToLower().Contains(search)
-                );
+                query = query.Where(p =>
+                    EF.Functions.Like(p.Name, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var items = await queryable
-                .OrderBy(x => x.Name)
-                .ApplyPagination(request.PageNumber, request.PageSize)
-                .Select(x => new DropdownItemDto
-                {
-                    Id = x.Id,
-                    Label = x.Name
-                })
+            var items = await query
+                .OrderBy(e => e.Name)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(p => new DropdownItemResponse(
+                    p.Id,
+                    p.Name))
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<DropdownItemDto>.SuccessPaged(
+            return PagedResult<DropdownItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                items
-            );
+                "Produtos listados para seleção.");
         }
     }
 }
