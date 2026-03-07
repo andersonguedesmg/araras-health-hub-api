@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Domain.ValueObjects;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Domain.Entities
 {
     public class Supplier : BaseEntity

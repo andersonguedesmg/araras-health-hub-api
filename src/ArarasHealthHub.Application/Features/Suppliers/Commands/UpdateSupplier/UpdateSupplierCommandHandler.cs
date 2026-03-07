@@ -3,41 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.ValueObjects;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
 {
     public class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplierCommand, Result>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISupplierRepository _supplierRepository;
 
-        public UpdateSupplierCommandHandler(IApplicationDbContext context)
+        public UpdateSupplierCommandHandler(ISupplierRepository supplierRepository)
         {
-            _context = context;
+            _supplierRepository = supplierRepository;
         }
 
         public async Task<Result> Handle(
             UpdateSupplierCommand request,
             CancellationToken cancellationToken)
         {
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
+            var supplier = await _supplierRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (supplier is null)
                 throw new NotFoundException("Fornecedor não encontrado.");
 
-            var duplicate = await _context.Suppliers
-                .AnyAsync(s => s.Cnpj == request.Cnpj && s.Id != request.Id, cancellationToken);
+            var duplicate = await _supplierRepository
+                .ExistsByCnpjAsync(request.Cnpj, request.Id, cancellationToken);
 
             if (duplicate)
-                throw new DomainException("Já existe fornecedor com este CNPJ.");
+                throw new BusinessRuleException("Já existe fornecedor com este CNPJ.");
 
             supplier.Update(
                 request.LegalName,
@@ -57,7 +55,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier
                 )
             );
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _supplierRepository.UpdateAsync(supplier, cancellationToken);
 
             return Result.Success("Fornecedor atualizado com sucesso.");
         }

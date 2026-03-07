@@ -47,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
                 .Take(request.PageSize)
                 .Select(s => new DropdownItemResponse(
                     s.Id,
-                    s.LegalName))
+                    s.TradeName))
                 .ToListAsync(cancellationToken);
 
             return PagedResult<DropdownItemResponse>.Success(

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.ValueObjects;
 using ArarasHealthHub.Shared.Exceptions;
@@ -11,28 +11,26 @@ using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
 {
     public class CreateSupplierCommandHandler : IRequestHandler<CreateSupplierCommand, Result<int>>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISupplierRepository _supplierRepository;
 
-        public CreateSupplierCommandHandler(IApplicationDbContext context)
+        public CreateSupplierCommandHandler(ISupplierRepository supplierRepository)
         {
-            _context = context;
+            _supplierRepository = supplierRepository;
         }
 
         public async Task<Result<int>> Handle(
             CreateSupplierCommand request,
             CancellationToken cancellationToken)
         {
-            var exists = await _context.Suppliers
-                .AnyAsync(s => s.Cnpj == request.Cnpj, cancellationToken);
+            var existingSupplier = await _supplierRepository
+                .ExistsByCnpjAsync(request.Cnpj, null, cancellationToken);
 
-            if (exists)
-                throw new DomainException("Já existe fornecedor com este CNPJ.");
+            if (existingSupplier)
+                throw new BusinessRuleException("Já existe fornecedor com este CNPJ.");
 
             var supplier = new Supplier(
                 request.LegalName,
@@ -53,13 +51,11 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier
                 )
             );
 
-            _context.Suppliers.Add(supplier);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _supplierRepository.AddAsync(supplier, cancellationToken);
 
             return Result<int>.Success(
                 supplier.Id,
-                "Fornecedor criado com sucesso."
-            );
+                "Fornecedor criado com sucesso.");
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Common.Responses;
 using ArarasHealthHub.Application.Features.SubCategories.Responses;
-using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
@@ -17,18 +17,19 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById
 {
     public class GetSupplierByIdQueryHandler : IRequestHandler<GetSupplierByIdQuery, Result<SupplierResponse>>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISupplierRepository _supplierRepository;
 
-        public GetSupplierByIdQueryHandler(IApplicationDbContext context)
+        public GetSupplierByIdQueryHandler(ISupplierRepository supplierRepository)
         {
-            _context = context;
+            _supplierRepository = supplierRepository;
         }
 
         public async Task<Result<SupplierResponse>> Handle(
             GetSupplierByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var supplier = await _context.Suppliers
+            var supplier = await _supplierRepository
+                .AsQueryable()
                 .AsNoTracking()
                 .Where(s => s.Id == request.Id)
                 .Select(s => new SupplierResponse(
@@ -60,8 +61,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById
 
             return Result<SupplierResponse>.Success(
                 supplier,
-                "Fornecedor encontrado com sucesso."
-            );
+                "Fornecedor encontrado com sucesso.");
         }
     }
 }

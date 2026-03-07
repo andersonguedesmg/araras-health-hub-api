@@ -29,17 +29,17 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Commands.DeactivateSupp
                 .GetByIdAsync(request.Id, cancellationToken);
 
             if (supplier is null)
-                throw new NotFoundException("Funcionário não foi encontrado.");
+                throw new NotFoundException("Fornecedor não foi encontrado.");
 
             if (!supplier.IsActive)
-                throw new BusinessRuleException("O funcionário já está inativo.");
+                throw new BusinessRuleException("O fornecedor já está inativo.");
 
             supplier.Deactivate();
 
             await _supplierRepository
                 .UpdateAsync(supplier, cancellationToken);
 
-            return Result.Success("Funcionário desativado com sucesso.");
+            return Result.Success("Fornecedor desativado com sucesso.");
         }
     }
 }

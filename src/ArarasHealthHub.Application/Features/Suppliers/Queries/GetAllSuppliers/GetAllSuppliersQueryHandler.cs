@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Common.Responses;
 using ArarasHealthHub.Application.Features.SubCategories.Responses;
-using ArarasHealthHub.Application.Interfaces.Contexts;
+using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Results;
 
 using MediatR;
@@ -17,18 +17,19 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
 {
     public class GetAllSuppliersQueryHandler : IRequestHandler<GetAllSuppliersQuery, PagedResult<SupplierListItemResponse>>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly ISupplierRepository _supplierRepository;
 
-        public GetAllSuppliersQueryHandler(IApplicationDbContext context)
+        public GetAllSuppliersQueryHandler(ISupplierRepository supplierRepository)
         {
-            _context = context;
+            _supplierRepository = supplierRepository;
         }
 
         public async Task<PagedResult<SupplierListItemResponse>> Handle(
             GetAllSuppliersQuery request,
             CancellationToken cancellationToken)
         {
-            var query = _context.Suppliers
+            var query = _supplierRepository
+                .AsQueryable()
                 .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
@@ -36,9 +37,9 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
                 var term = request.SearchTerm.Trim();
 
                 query = query.Where(s =>
-                    s.LegalName.Contains(term) ||
-                    s.TradeName.Contains(term) ||
-                    s.Cnpj.Contains(term));
+                    EF.Functions.Like(s.LegalName, $"%{term}%") ||
+                    EF.Functions.Like(s.TradeName, $"%{term}%") ||
+                    EF.Functions.Like(s.Cnpj, $"%{term}%"));
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
@@ -90,8 +91,7 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                "Fornecedores listados com sucesso."
-            );
+                "Fornecedores listados com sucesso.");
         }
     }
 }

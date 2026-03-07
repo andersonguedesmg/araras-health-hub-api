@@ -11,6 +11,6 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
     {
         Task<Supplier?> GetByCnpjAsync(string cnpj, CancellationToken cancellationToken);
 
-        Task<bool> SupplierExists(int id);
+        Task<bool> ExistsByCnpjAsync(string cnpj, int? ignoreId, CancellationToken cancellationToken);
     }
 }
