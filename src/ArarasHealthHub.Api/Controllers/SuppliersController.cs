@@ -11,7 +11,6 @@ using ArarasHealthHub.Application.Features.Suppliers.Commands.ActivateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.CreateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.DeactivateSupplier;
 using ArarasHealthHub.Application.Features.Suppliers.Commands.UpdateSupplier;
-using ArarasHealthHub.Application.Features.Suppliers.Queries.ExportSuppliers;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierById;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdown;
@@ -118,23 +117,6 @@ namespace ArarasHealthHub.Api.Controllers
             CancellationToken cancellationToken)
         {
             return await Send(query, cancellationToken);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Export([FromQuery] ExportSuppliersQuery query)
-        {
-            var response = await Mediator.Send(query);
-
-            if (!response.Success || response.Data == null)
-                return StatusCode(response.StatusCode, response);
-
-            return File(
-                response.Data.Content,
-                response.Data.ContentType,
-                response.Data.FileName
-            );
         }
     }
 }
