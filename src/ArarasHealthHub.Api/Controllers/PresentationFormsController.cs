@@ -9,7 +9,6 @@ using ArarasHealthHub.Application.Features.PresentationForms.Commands.ActivatePr
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.CreatePresentationForm;
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.DeactivatePresentationForm;
 using ArarasHealthHub.Application.Features.PresentationForms.Commands.UpdatePresentationForm;
-using ArarasHealthHub.Application.Features.PresentationForms.Queries.ExportPresentationForms;
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetAllPresentationForms;
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormById;
 using ArarasHealthHub.Application.Features.PresentationForms.Queries.GetPresentationFormDropdown;
@@ -117,23 +116,6 @@ namespace araras_health_hub_api.Controllers
             CancellationToken cancellationToken)
         {
             return await Send(query, cancellationToken);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Export([FromQuery] ExportPresentationFormsQuery query)
-        {
-            var response = await Mediator.Send(query);
-
-            if (!response.Success || response.Data == null)
-                return StatusCode(response.StatusCode, response);
-
-            return File(
-                response.Data.Content,
-                response.Data.ContentType,
-                response.Data.FileName
-            );
         }
     }
 }
