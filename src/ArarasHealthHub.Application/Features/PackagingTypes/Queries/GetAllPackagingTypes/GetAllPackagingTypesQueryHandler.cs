@@ -16,14 +16,11 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetAllPack
     public class GetAllPackagingTypesQueryHandler : IRequestHandler<GetAllPackagingTypesQuery, PagedResult<PackagingTypeListItemResponse>>
     {
         private readonly IPackagingTypeRepository _packagingTypeRepository;
-        private readonly IMapper _mapper;
 
         public GetAllPackagingTypesQueryHandler(
-            IPackagingTypeRepository packagingTypeRepository,
-            IMapper mapper)
+            IPackagingTypeRepository packagingTypeRepository)
         {
             _packagingTypeRepository = packagingTypeRepository;
-            _mapper = mapper;
         }
 
         public async Task<PagedResult<PackagingTypeListItemResponse>> Handle(
@@ -56,12 +53,14 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetAllPack
             var items = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(sc => new PackagingTypeListItemResponse(
+                    sc.Id,
+                    sc.Name,
+                    sc.IsActive))
                 .ToListAsync(cancellationToken);
 
-            var response = _mapper.Map<List<PackagingTypeListItemResponse>>(items);
-
             return PagedResult<PackagingTypeListItemResponse>.Success(
-                response,
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

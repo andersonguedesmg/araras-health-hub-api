@@ -16,14 +16,11 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetPackagi
     public class GetPackagingTypeDropdownQueryHandler : IRequestHandler<GetPackagingTypeDropdownQuery, PagedResult<DropdownItemResponse>>
     {
         private readonly IPackagingTypeRepository _packagingTypeRepository;
-        private readonly IMapper _mapper;
 
         public GetPackagingTypeDropdownQueryHandler(
-            IPackagingTypeRepository packagingTypeRepository,
-            IMapper mapper)
+            IPackagingTypeRepository packagingTypeRepository)
         {
             _packagingTypeRepository = packagingTypeRepository;
-            _mapper = mapper;
         }
 
         public async Task<PagedResult<DropdownItemResponse>> Handle(
@@ -49,12 +46,13 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetPackagi
                 .OrderBy(p => p.Name)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(p => new DropdownItemResponse(
+                    p.Id,
+                    p.Name))
                 .ToListAsync(cancellationToken);
 
-            var response = _mapper.Map<List<DropdownItemResponse>>(items);
-
             return PagedResult<DropdownItemResponse>.Success(
-                response,
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,

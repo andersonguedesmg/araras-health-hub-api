@@ -7,8 +7,6 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
-using AutoMapper;
-
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory
@@ -16,35 +14,36 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMai
     public class UpdateMainCategoryCommandHandler : IRequestHandler<UpdateMainCategoryCommand, Result>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
-        private readonly IMapper _mapper;
 
         public UpdateMainCategoryCommandHandler(
-            IMainCategoryRepository mainCategoryRepository,
-            IMapper mapper)
+            IMainCategoryRepository mainCategoryRepository)
         {
             _mainCategoryRepository = mainCategoryRepository;
-            _mapper = mapper;
         }
 
         public async Task<Result> Handle(
             UpdateMainCategoryCommand request,
             CancellationToken cancellationToken)
         {
-            var existingMainCategory =
+            var mainCategory =
                 await _mainCategoryRepository.GetByIdAsync(
                     request.Id,
                     cancellationToken);
 
-            if (existingMainCategory is null)
+            if (mainCategory is null)
                 throw new NotFoundException("Categoria principal não foi encontrada.");
 
+            var normalizedName = request.Name.Trim();
 
-            _mapper.Map(request, existingMainCategory);
-            existingMainCategory.SetUpdatedOn();
+            var existing = await _mainCategoryRepository
+                .GetByMainCategoryNameAsync(normalizedName, cancellationToken);
 
-            await _mainCategoryRepository.UpdateAsync(
-                existingMainCategory,
-                cancellationToken);
+            if (existing is not null && existing.Id != request.Id)
+                throw new BusinessRuleException("Já existe uma categoria principal com o nome informado.");
+
+            mainCategory.Update(normalizedName);
+
+            await _mainCategoryRepository.UpdateAsync(mainCategory, cancellationToken);
 
             return Result.Success("Categoria principal atualizada com sucesso.");
         }

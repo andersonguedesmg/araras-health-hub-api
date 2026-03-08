@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.SubCategories.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Results;
 
 using MediatR;

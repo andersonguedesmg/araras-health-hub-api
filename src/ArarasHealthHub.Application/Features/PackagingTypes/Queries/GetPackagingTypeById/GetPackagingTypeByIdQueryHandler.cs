@@ -8,6 +8,8 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
+using AutoMapper;
+
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetPackagingTypeById
