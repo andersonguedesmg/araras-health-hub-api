@@ -10,14 +10,13 @@ using ArarasHealthHub.Application.Features.Facilities.Commands.ActivateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.DeactivateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdown;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityProfile;
-using ArarasHealthHub.Shared.Dtos;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,69 +30,101 @@ namespace ArarasHealthHub.Api.Controllers
     {
         [HttpGet]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponse<FacilityDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllFacilitiesQuery query)
+        [ProducesResponseType(typeof(PagedResult<FacilityListItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllFacilitiesQuery query,
+            CancellationToken cancellationToken)
         {
-            return await Send(query);
+            return await Send(query, cancellationToken);
         }
 
         [HttpGet("{id:int}")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(ApiResponse<FacilityDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int id)
+        [ProducesResponseType(typeof(Result<FacilityResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(
+            int id,
+            CancellationToken cancellationToken)
         {
-            return await Send(new GetFacilityByIdQuery(0).WithId(id));
+            return await Send(new GetFacilityByIdQuery(id), cancellationToken);
         }
 
         [HttpPost]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create(CreateFacilityCommand command)
+        [ProducesResponseType(typeof(Result<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Create(
+            CreateFacilityCommand command,
+            CancellationToken cancellationToken)
         {
-            return await Send(command);
+            return await SendCreated(
+                command,
+                nameof(GetById),
+                id => new { id },
+                cancellationToken);
         }
 
         [HttpPut("{id:int}")]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(int id, UpdateFacilityCommand command)
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Update(
+            int id,
+            UpdateFacilityCommand command,
+            CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id));
+            return await Send(
+                command.WithId(id),
+                cancellationToken);
         }
 
         [HttpPatch("{id:int}/activate")]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Activate(int id, ActivateFacilityCommand command)
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Activate(
+            int id,
+            CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id));
+            return await Send(
+                new ActivateFacilityCommand(id),
+                cancellationToken);
         }
 
         [HttpPatch("{id:int}/deactivate")]
         [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Deactivate(int id, DeactivateFacilityCommand command)
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Deactivate(
+            int id,
+            CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id));
+            return await Send(
+                new DeactivateFacilityCommand(id),
+                cancellationToken);
         }
 
         [HttpGet("dropdown")]
-        [ProducesResponseType(typeof(PagedResponse<DropdownItemDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDropdown([FromQuery] GetFacilityDropdownQuery query)
+        [ProducesResponseType(typeof(PagedResult<DropdownItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetDropdown(
+            [FromQuery] GetFacilityDropdownQuery query,
+            CancellationToken cancellationToken)
         {
-            return await Send(query);
+            return await Send(query, cancellationToken);
         }
 
         [HttpGet("profile")]
-        [ProducesResponseType(typeof(ApiResponse<FacilityProfileDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFacilityProfile([FromQuery] GetFacilityProfileQuery query)
+        public async Task<IActionResult> GetFacilityProfile(CancellationToken cancellationToken)
         {
-            return await Send(query);
+            return await Send(new GetFacilityProfileQuery(), cancellationToken);
         }
     }
 }
