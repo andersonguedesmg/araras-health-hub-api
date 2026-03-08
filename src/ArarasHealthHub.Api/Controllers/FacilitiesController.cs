@@ -11,7 +11,6 @@ using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.DeactivateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility;
 using ArarasHealthHub.Application.Features.Facilities.Dtos;
-using ArarasHealthHub.Application.Features.Facilities.Queries.ExportFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdown;
@@ -87,23 +86,6 @@ namespace ArarasHealthHub.Api.Controllers
         public async Task<IActionResult> GetDropdown([FromQuery] GetFacilityDropdownQuery query)
         {
             return await Send(query);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Export([FromQuery] ExportFacilitiesQuery query)
-        {
-            var response = await Mediator.Send(query);
-
-            if (!response.Success || response.Data == null)
-                return StatusCode(response.StatusCode, response);
-
-            return File(
-                response.Data.Content,
-                response.Data.ContentType,
-                response.Data.FileName
-            );
         }
 
         [HttpGet("profile")]
