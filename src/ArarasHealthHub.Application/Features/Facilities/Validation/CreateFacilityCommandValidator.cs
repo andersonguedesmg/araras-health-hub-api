@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Common.Validation;
 using ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -14,45 +12,24 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
 {
     public class CreateFacilityCommandValidator : AbstractValidator<CreateFacilityCommand>
     {
-        private readonly IFacilityRepository _facilityRepository;
-
-        public CreateFacilityCommandValidator(IFacilityRepository facilityRepository)
+        public CreateFacilityCommandValidator()
         {
-            _facilityRepository = facilityRepository;
-
             RuleFor(x => x.Name)
-                .NotEmpty()
-                    .WithName("Nome")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(100)
-                    .WithMessage(ValidationMessages.MaxLengthField(100))
-                .MustAsync(BeUniqueName)
-                    .WithMessage("Já existe uma unidade cadastrada com este nome.");
+                .NotEmpty().WithMessage("Nome é obrigatório.")
+                .MinimumLength(3).WithMessage("Nome deve ter pelo menos 3 caracteres.")
+                .MaximumLength(100).WithMessage("Nome não pode exceder 100 caracteres.");
 
             RuleFor(x => x.Cnes)
-                .NotEmpty()
-                    .WithName("CNES")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MaximumLength(7)
-                    .WithMessage(ValidationMessages.MaxLengthField(7));
+                .NotEmpty().WithMessage("Código CNES é obrigatório.")
+                .MaximumLength(7).WithMessage("Código CNES não pode exceder 7 caracteres.");
 
             RuleFor(x => x.Address)
-                .NotNull()
-                    .WithName("endereço")
-                    .WithMessage(ValidationMessages.RequiredObject)
-                .SetValidator(new AddressDtoValidator());
+                .NotNull().WithMessage("O endereço é obrigatório.")
+                .SetValidator(new AddressRequestValidator());
 
             RuleFor(x => x.Contact)
-                .NotNull()
-                    .WithName("contato")
-                    .WithMessage(ValidationMessages.RequiredObject)
-                .SetValidator(new ContactDtoValidator());
-        }
-
-        private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
-        {
-            var existingFacility = await _facilityRepository.GetByNameAsync(name, cancellationToken);
-            return existingFacility == null;
+                .NotNull().WithMessage("O contato é obrigatório.")
+                .SetValidator(new ContactRequestValidator());
         }
     }
 }

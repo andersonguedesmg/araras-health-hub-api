@@ -16,8 +16,9 @@ namespace ArarasHealthHub.Application.Features.Facilities.Validation
         {
             RuleFor(x => x.OrderBy)
                 .Must(x => x is null ||
-                           x.ToLower() is "name" or "cnes")
-                .WithMessage("O campo de ordenação informado não é válido.");
+                        x.Equals("name", StringComparison.OrdinalIgnoreCase) ||
+                        x.Equals("cnes", StringComparison.OrdinalIgnoreCase))
+                .WithMessage("Campo de ordenação inválido.");
         }
     }
 }
