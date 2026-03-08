@@ -3,53 +3,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Common.Responses;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityById
 {
-    public class GetFacilityByIdQueryHandler : IRequestHandler<GetFacilityByIdQuery, ApiResponse<FacilityDto>>
+    public class GetFacilityByIdQueryHandler : IRequestHandler<GetFacilityByIdQuery, Result<FacilityResponse>>
     {
         private readonly IFacilityRepository _facilityRepository;
-        private readonly IMapper _mapper;
 
         public GetFacilityByIdQueryHandler(
-            IFacilityRepository facilityRepository,
-            IMapper mapper)
+            IFacilityRepository facilityRepository)
         {
             _facilityRepository = facilityRepository;
-            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<FacilityDto>> Handle(
+        public async Task<Result<FacilityResponse>> Handle(
             GetFacilityByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var facility = await _facilityRepository.GetByIdAsync(request.Id, cancellationToken);
+            var facility = await _facilityRepository
+                .AsQueryable()
+                .AsNoTracking()
+                .Where(s => s.Id == request.Id)
+                .Select(s => new FacilityResponse(
+                    s.Id,
+                    s.Name,
+                    s.Cnes,
+                    new AddressResponse(
+                        s.Address.Street,
+                        s.Address.Number,
+                        s.Address.Complement,
+                        s.Address.Neighborhood,
+                        s.Address.City,
+                        s.Address.State,
+                        s.Address.Cep
+                    ),
+                    new ContactResponse(
+                        s.Contact.Email,
+                        s.Contact.Phone
+                    ),
+                    s.CreatedOn,
+                    s.UpdatedOn,
+                    s.IsActive
+                ))
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (facility is null)
-            {
-                return ApiResponse<FacilityDto>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.NotFound("Unidade")
-                );
-            }
+                throw new NotFoundException("Unidade não encontrada.");
 
-            var facilityDto = _mapper.Map<FacilityDto>(facility);
-
-            return ApiResponse<FacilityDto>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.FoundSuccessfully("Unidade"),
-                facilityDto
-            );
+            return Result<FacilityResponse>.Success(
+                facility,
+                "Unidade encontrada com sucesso.");
         }
     }
 }

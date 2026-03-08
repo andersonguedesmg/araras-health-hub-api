@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Dtos;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDropdown
 {
-    public class GetFacilityDropdownQueryHandler : IRequestHandler<GetFacilityDropdownQuery, PagedResponse<DropdownItemDto>>
+    public class GetFacilityDropdownQueryHandler : IRequestHandler<GetFacilityDropdownQuery, PagedResult<DropdownItemResponse>>
     {
         private readonly IFacilityRepository _facilityRepository;
 
@@ -23,43 +23,40 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDro
             _facilityRepository = facilityRepository;
         }
 
-        public async Task<PagedResponse<DropdownItemDto>> Handle(
+        public async Task<PagedResult<DropdownItemResponse>> Handle(
             GetFacilityDropdownQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _facilityRepository
+            var query = _facilityRepository
                 .AsQueryable()
-                .Where(e => e.IsActive);
+                .AsNoTracking()
+                .Where(f => f.IsActive);
 
-            var term = request.SearchTerm?.Trim();
-
-            if (!string.IsNullOrWhiteSpace(term))
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var search = term.ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(f =>
-                    f.Name.ToLower().Contains(search)
-                );
+                query = query.Where(f =>
+                    EF.Functions.Like(f.Name, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var items = await queryable
-                .OrderBy(x => x.Name)
-                .ApplyPagination(request.PageNumber, request.PageSize)
-                .Select(x => new DropdownItemDto
-                {
-                    Id = x.Id,
-                    Label = x.Name
-                })
+            var items = await query
+                .OrderBy(f => f.Name)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(f => new DropdownItemResponse(
+                    f.Id,
+                    f.Name))
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<DropdownItemDto>.SuccessPaged(
+            return PagedResult<DropdownItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                items
-            );
+                "Unidades listadas para seleção.");
         }
     }
 }

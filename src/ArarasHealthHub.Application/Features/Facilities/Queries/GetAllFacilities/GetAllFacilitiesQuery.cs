@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities
 {
-    public class GetAllFacilitiesQuery : PagedRequest, IRequest<PagedResponse<FacilityDto>> { }
+    public class GetAllFacilitiesQuery : PagedRequest, IRequest<PagedResult<FacilityListItemResponse>> { }
 }

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Common.Responses;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -20,71 +18,84 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityProfile
 {
-    public class GetFacilityProfileQueryHandler : IRequestHandler<GetFacilityProfileQuery, ApiResponse<FacilityProfileDto>>
+    public class GetFacilityProfileQueryHandler : IRequestHandler<GetFacilityProfileQuery, Result<FacilityProfileResponse>>
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IApplicationDbContext _dbContext;
+        private readonly IApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public GetFacilityProfileQueryHandler(
-            UserManager<ApplicationUser> userManager,
-            IApplicationDbContext dbContext,
+            IApplicationDbContext context,
             IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
-            _dbContext = dbContext;
+            _context = context;
             _httpContextAccessor = httpContextAccessor;
-            _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public async Task<ApiResponse<FacilityProfileDto>> Handle(GetFacilityProfileQuery request, CancellationToken cancellationToken)
+        public async Task<Result<FacilityProfileResponse>> Handle(
+            GetFacilityProfileQuery request,
+            CancellationToken cancellationToken)
         {
-            // var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+            var currentUser =
+                await _userManager.GetUserAsync(
+                    _httpContextAccessor.HttpContext!.User);
 
-            // if (currentUser == null)
-            // {
-            //     return new ApiResponse<FacilityProfileDto>(StatusCodes.Status401Unauthorized, ApiMessages.AuthorizationRequired, false);
-            // }
+            if (currentUser is null)
+                throw new UnauthorizedException();
 
-            // var facilityId = currentUser.FacilityId;
-            // var facility = await _dbContext.Facilities
-            //     .AsNoTracking()
-            //     .FirstOrDefaultAsync(f => f.Id == facilityId, cancellationToken);
+            var facilityId = currentUser.FacilityId;
 
-            // if (facility == null)
-            // {
-            //     return new ApiResponse<FacilityProfileDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Unidade"), null!);
-            // }
+            var facility =
+                await _context.Facilities
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(
+                        f => f.Id == facilityId,
+                        cancellationToken);
 
-            // var users = await _dbContext.Users
-            //     .AsNoTracking()
-            //     .Where(u => u.FacilityId == facilityId)
-            //     .ToListAsync(cancellationToken);
+            if (facility is null)
+                throw new NotFoundException("Unidade não encontrada.");
 
-            // var profileDto = _mapper.Map<FacilityProfileDto>(facility);
+            var accounts =
+                await _context.ApplicationUsers
+                    .AsNoTracking()
+                    .Where(u => u.FacilityId == facilityId)
+                    .Select(u => new FacilityAccountResponse(
+                        u.Id,
+                        u.UserName!,
+                        u.IsActive,
+                        u.Scope,
+                        u.Role,
+                        u.CreatedOn,
+                        u.UpdatedOn
+                    ))
+                    .ToListAsync(cancellationToken);
 
-            // var accountDetailsList = new List<AccountDetailsDto>();
-            // foreach (var user in users)
-            // {
-            //     var roles = await _userManager.GetRolesAsync(user);
+            var response = new FacilityProfileResponse(
+                facility.Id,
+                facility.Name,
+                facility.Cnes,
+                new AddressResponse(
+                    facility.Address.Cep,
+                    facility.Address.Street,
+                    facility.Address.Number,
+                    facility.Address.Neighborhood,
+                    facility.Address.City,
+                    facility.Address.State,
+                    facility.Address.Complement!
+                ),
+                new ContactResponse(
+                    facility.Contact.Email,
+                    facility.Contact.Phone
+                ),
+                facility.CreatedOn,
+                facility.UpdatedOn,
+                facility.IsActive,
+                accounts
+            );
 
-            //     var isUserActive = !user.LockoutEnd.HasValue || user.LockoutEnd.Value.ToUniversalTime() < DateTime.UtcNow;
-
-            //     accountDetailsList.Add(new AccountDetailsDto
-            //     {
-            //         UserId = user.Id,
-            //         UserName = user.UserName!,
-            //         IsActive = user.IsActive,
-            //         Scope = user.Scope,
-            //         Roles = roles.ToList()
-            //     });
-            // }
-
-            // profileDto.FacilityAccounts = accountDetailsList;
-            return null!;
-            // return new ApiResponse<FacilityProfileDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Perfil da Unidade"), profileDto);
+            return Result<FacilityProfileResponse>.Success(response);
         }
     }
 }

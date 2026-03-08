@@ -4,12 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Common.Responses;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Pagination;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -17,73 +15,78 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities
 {
-    public class GetAllFacilitiesQueryHandler : IRequestHandler<GetAllFacilitiesQuery, PagedResponse<FacilityDto>>
+    public class GetAllFacilitiesQueryHandler : IRequestHandler<GetAllFacilitiesQuery, PagedResult<FacilityListItemResponse>>
     {
         private readonly IFacilityRepository _facilityRepository;
-        private readonly IMapper _mapper;
 
         public GetAllFacilitiesQueryHandler(
-            IFacilityRepository facilityRepository,
-            IMapper mapper)
+            IFacilityRepository facilityRepository)
         {
             _facilityRepository = facilityRepository;
-            _mapper = mapper;
         }
 
-        public async Task<PagedResponse<FacilityDto>> Handle(
+        public async Task<PagedResult<FacilityListItemResponse>> Handle(
             GetAllFacilitiesQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _facilityRepository.AsQueryable();
-            queryable = queryable.Include(f => f.Accounts);
+            var query = _facilityRepository
+                .AsQueryable()
+                .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(f =>
-                    f.Name.ToLower().Contains(term) ||
-                    f.Cnes.ToLower().Contains(term) ||
-                    f.Address.Street.ToLower().Contains(term) ||
-                    f.Address.Number.ToLower().Contains(term) ||
-                    f.Address.Neighborhood.ToLower().Contains(term) ||
-                    f.Address.City.ToLower().Contains(term) ||
-                    f.Address.State.ToLower().Contains(term) ||
-                    f.Address.Cep.ToLower().Contains(term) ||
-                    f.Contact.Email.ToLower().Contains(term) ||
-                    f.Contact.Phone.ToLower().Contains(term)
-                );
+                query = query.Where(s =>
+                    EF.Functions.Like(s.Name, $"%{term}%") ||
+                    EF.Functions.Like(s.Cnes, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var orderingColumns = new Dictionary<string, Expression<Func<Facility, object>>>
+            query = request.OrderBy?.ToLower() switch
             {
-                ["name"] = f => f.Name,
-                ["cnes"] = f => f.Cnes,
+                "name" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Name)
+                    : query.OrderBy(x => x.Name),
+
+                "cnes" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Cnes)
+                    : query.OrderBy(x => x.Cnes),
+
+                _ => query.OrderBy(x => x.Name)
             };
 
-            queryable = queryable.ApplyOrdering(
-                request.OrderBy?.ToLower(),
-                request.SortOrder?.ToLower() ?? "asc",
-                orderingColumns
-            );
+            var items = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(s => new FacilityListItemResponse(
+                    s.Id,
+                    s.Name,
+                    s.Cnes,
+                    new AddressResponse(
+                        s.Address.Street,
+                        s.Address.Number,
+                        s.Address.Complement,
+                        s.Address.Neighborhood,
+                        s.Address.City,
+                        s.Address.State,
+                        s.Address.Cep
+                    ),
+                    new ContactResponse(
+                        s.Contact.Email,
+                        s.Contact.Phone
+                    ),
+                    s.IsActive
+                ))
+                .ToListAsync(cancellationToken);
 
-            queryable = queryable.ApplyPagination(
-                request.PageNumber,
-                request.PageSize
-            );
-
-            var items = await queryable.ToListAsync(cancellationToken);
-
-            var dtoList = _mapper.Map<IReadOnlyList<FacilityDto>>(items);
-
-            return PagedResponse<FacilityDto>.SuccessPaged(
+            return PagedResult<FacilityListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                dtoList
-            );
+                "Unidades listadas com sucesso.");
         }
     }
 }
