@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockAdjustments
@@ -35,7 +39,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockAdjustm
                         .ThenInclude(p => p.SubCategory)
                 .Include(a => a.AdjustmentItems)
                     .ThenInclude(ai => ai.Product)
-                        .ThenInclude(p => p.PresentationForm)
+                        .ThenInclude(p => p.PackagingType)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))

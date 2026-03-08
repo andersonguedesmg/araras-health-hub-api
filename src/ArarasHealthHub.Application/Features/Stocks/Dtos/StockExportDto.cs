@@ -11,7 +11,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Dtos
         public string ProductName { get; set; } = string.Empty;
         public string MainCategory { get; set; } = string.Empty;
         public string SubCategory { get; set; } = string.Empty;
-        public string PresentationForm { get; set; } = string.Empty;
+        public string PackagingType { get; set; } = string.Empty;
         public decimal CurrentQuantity { get; set; }
         public decimal ReservedQuantity { get; set; }
         public decimal AvailableQuantity { get; set; }

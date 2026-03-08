@@ -41,7 +41,7 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
                     EF.Functions.Like(p.Description, $"%{term}%") ||
                     EF.Functions.Like(p.MainCategory!.Name, $"%{term}%") ||
                     EF.Functions.Like(p.SubCategory!.Name, $"%{term}%") ||
-                    EF.Functions.Like(p.PresentationForm!.Name, $"%{term}%"));
+                    EF.Functions.Like(p.PackagingType!.Name, $"%{term}%"));
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
@@ -64,9 +64,9 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
                     ? query.OrderByDescending(p => p.SubCategory!.Name)
                     : query.OrderBy(p => p.SubCategory!.Name),
 
-                "presentationform" => request.SortOrder == "desc"
-                    ? query.OrderByDescending(p => p.PresentationForm!.Name)
-                    : query.OrderBy(p => p.PresentationForm!.Name),
+                "packagingtype" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(p => p.PackagingType!.Name)
+                    : query.OrderBy(p => p.PackagingType!.Name),
 
                 _ => query.OrderBy(p => p.Name)
             };
@@ -82,8 +82,8 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts
                     p.MainCategory!.Name,
                     p.SubCategoryId,
                     p.SubCategory!.Name,
-                    p.PresentationFormId,
-                    p.PresentationForm!.Name,
+                    p.PackagingTypeId,
+                    p.PackagingType!.Name,
                     p.IsActive))
                 .ToListAsync(cancellationToken);
 

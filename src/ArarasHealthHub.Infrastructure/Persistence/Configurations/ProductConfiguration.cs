@@ -41,9 +41,9 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .HasForeignKey(p => p.SubCategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(p => p.PresentationForm)
+            builder.HasOne(p => p.PackagingType)
                 .WithMany(f => f.Products)
-                .HasForeignKey(p => p.PresentationFormId)
+                .HasForeignKey(p => p.PackagingTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

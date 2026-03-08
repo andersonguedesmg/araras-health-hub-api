@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStockOverview
@@ -28,7 +31,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStoc
                 .Include(s => s.Product)
                     .ThenInclude(p => p.SubCategory)
                 .Include(s => s.Product)
-                    .ThenInclude(p => p.PresentationForm)
+                    .ThenInclude(p => p.PackagingType)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
@@ -40,7 +43,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStoc
                     s.Product.Description.ToLower().Contains(searchTerm) ||
                     s.Product.MainCategory!.Name.ToLower().Contains(searchTerm) ||
                     s.Product.SubCategory!.Name.ToLower().Contains(searchTerm) ||
-                    s.Product.PresentationForm!.Name.ToLower().Contains(searchTerm)
+                    s.Product.PackagingType!.Name.ToLower().Contains(searchTerm)
                 );
             }
 
@@ -52,7 +55,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportCriticalStoc
                     ProductName = s.Product.Name,
                     MainCategory = s.Product.MainCategory != null ? s.Product.MainCategory.Name : string.Empty,
                     SubCategory = s.Product.SubCategory != null ? s.Product.SubCategory.Name : string.Empty,
-                    PresentationForm = s.Product.PresentationForm != null ? s.Product.PresentationForm.Name : string.Empty,
+                    PackagingType = s.Product.PackagingType != null ? s.Product.PackagingType.Name : string.Empty,
                     CurrentQuantity = s.CurrentQuantity,
                     ReservedQuantity = s.ReservedQuantity,
                     AvailableQuantity = s.AvailableQuantity,

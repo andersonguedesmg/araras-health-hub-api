@@ -16,18 +16,18 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
         private readonly IProductRepository _productRepository;
         private readonly IMainCategoryRepository _mainCategoryRepository;
         private readonly ISubCategoryRepository _subCategoryRepository;
-        private readonly IPresentationFormRepository _presentationFormRepository;
+        private readonly IPackagingTypeRepository _packagingTypeRepository;
 
         public UpdateProductCommandHandler(
             IProductRepository productRepository,
             IMainCategoryRepository mainCategoryRepository,
             ISubCategoryRepository subCategoryRepository,
-            IPresentationFormRepository presentationFormRepository)
+            IPackagingTypeRepository packagingTypeRepository)
         {
             _productRepository = productRepository;
             _mainCategoryRepository = mainCategoryRepository;
             _subCategoryRepository = subCategoryRepository;
-            _presentationFormRepository = presentationFormRepository;
+            _packagingTypeRepository = packagingTypeRepository;
         }
 
         public async Task<Result> Handle(
@@ -71,20 +71,20 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct
             if (subCategory.MainCategoryId != request.MainCategoryId)
                 throw new BusinessRuleException("A subcategoria não pertence à categoria informada.");
 
-            var presentationForm =
-                await _presentationFormRepository.GetByIdAsync(
-                    request.PresentationFormId,
+            var packagingType =
+                await _packagingTypeRepository.GetByIdAsync(
+                    request.PackagingTypeId,
                     cancellationToken);
 
-            if (presentationForm is null || !presentationForm.IsActive)
-                throw new BusinessRuleException("Forma de apresentação inválida ou inativa.");
+            if (packagingType is null || !packagingType.IsActive)
+                throw new BusinessRuleException("Tipo de embalagem inválida ou inativa.");
 
             product.Update(
                 normalizedName,
                 request.Description,
                 request.MainCategoryId,
                 request.SubCategoryId,
-                request.PresentationFormId);
+                request.PackagingTypeId);
 
             await _productRepository.UpdateAsync(product, cancellationToken);
 

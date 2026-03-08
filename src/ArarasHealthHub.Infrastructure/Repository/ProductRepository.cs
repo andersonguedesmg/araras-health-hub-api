@@ -40,7 +40,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
             return await _dbContext.Products
                 .Include(p => p.MainCategory)
                 .Include(p => p.SubCategory)
-                .Include(p => p.PresentationForm)
+                .Include(p => p.PackagingTypeId)
                 .Include(p => p.Stock)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -51,7 +51,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
             return _dbContext.Products
                 .Include(p => p.MainCategory)
                 .Include(p => p.SubCategory)
-                .Include(p => p.PresentationForm)
+                .Include(p => p.PackagingTypeId)
                 .AsNoTracking();
         }
     }

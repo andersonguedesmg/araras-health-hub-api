@@ -42,7 +42,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockAdjustment
                         .ThenInclude(p => p.SubCategory)
                 .Include(a => a.AdjustmentItems)
                     .ThenInclude(ai => ai.Product)
-                        .ThenInclude(p => p.PresentationForm)
+                        .ThenInclude(p => p.PackagingType)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 

@@ -19,7 +19,7 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
                            x.Equals("name", StringComparison.OrdinalIgnoreCase) ||
                            x.Equals("maincategory", StringComparison.OrdinalIgnoreCase) ||
                            x.Equals("subcategory", StringComparison.OrdinalIgnoreCase) ||
-                           x.Equals("presentationform", StringComparison.OrdinalIgnoreCase))
+                           x.Equals("packagingtype", StringComparison.OrdinalIgnoreCase))
                 .WithMessage("Campo de ordenação inválido.");
         }
     }

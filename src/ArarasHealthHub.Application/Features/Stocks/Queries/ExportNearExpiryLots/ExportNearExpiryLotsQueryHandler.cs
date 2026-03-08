@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Common.Interfaces;
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportNearExpiryLots
@@ -43,7 +47,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportNearExpiryLo
                         .ThenInclude(p => p.SubCategory)
                 .Include(sl => sl.Stock)
                     .ThenInclude(s => s.Product)
-                        .ThenInclude(p => p.PresentationForm)
+                        .ThenInclude(p => p.PackagingType)
                 .Where(sl => sl.AvailableQuantity > 0 && sl.ExpiryDate.Date <= expiryLimitDate)
                 .AsQueryable();
 

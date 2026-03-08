@@ -14,6 +14,6 @@ namespace ArarasHealthHub.Application.Features.Products.Commands.CreateProduct
         string Description,
         int MainCategoryId,
         int SubCategoryId,
-        int PresentationFormId
+        int PackagingTypeId
     ) : IRequest<Result<int>>;
 }

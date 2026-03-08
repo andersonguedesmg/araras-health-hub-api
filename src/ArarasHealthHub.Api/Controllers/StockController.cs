@@ -190,7 +190,7 @@ namespace ArarasHealthHub.Api.Controllers
                 sb.Append($"{stock.ProductName}, ");
                 sb.Append($"{stock.MainCategory}, ");
                 sb.Append($"{stock.SubCategory}, ");
-                sb.Append($"{stock.PresentationForm}, ");
+                sb.Append($"{stock.PackagingType}, ");
                 sb.Append($"{stock.CurrentQuantity.ToString("F3", culture)}, ");
                 sb.Append($"{stock.ReservedQuantity.ToString("F3", culture)}, ");
                 sb.Append($"{stock.AvailableQuantity.ToString("F3", culture)}, ");
@@ -235,7 +235,7 @@ namespace ArarasHealthHub.Api.Controllers
                     $"{stock.ProductName}, " +
                     $"{stock.MainCategory}, " +
                     $"{stock.SubCategory}, " +
-                    $"{stock.PresentationForm}, " +
+                    $"{stock.PackagingType}, " +
                     $"{stock.CurrentQuantity.ToString("F3", culture)}, " +
                     $"{stock.ReservedQuantity.ToString("F3", culture)}, " +
                     $"{stock.AvailableQuantity.ToString("F3", culture)}, " +
@@ -278,7 +278,7 @@ namespace ArarasHealthHub.Api.Controllers
                 sb.Append(
                     $"{lot.Product.Name.Replace(";", "")}, " +
                     $"{lot.Product.Description.Replace(";", "")}, " +
-                    $"{lot.Product.PresentationFormName}, " +
+                    $"{lot.Product.PackagingTypeName}, " +
                     $"{lot.Batch}, " +
                     $"{lot.Brand.Replace(";", "")}, " +
                     $"{lot.AvailableQuantity.ToString("F3", culture)}, " +
@@ -379,7 +379,7 @@ namespace ArarasHealthHub.Api.Controllers
                     sb.Append($"{CleanField(item.Product?.Name)}{separator}");
                     sb.Append($"{CleanField(item.Product?.MainCategoryName)}{separator}");
                     sb.Append($"{CleanField(item.Product?.SubCategoryName)}{separator}");
-                    sb.Append($"{CleanField(item.Product?.PresentationFormName)}{separator}");
+                    sb.Append($"{CleanField(item.Product?.PackagingTypeName)}{separator}");
                     sb.Append($"{CleanField(item.Batch)}{separator}");
                     sb.Append($"{item.ExpiryDate?.ToString("dd/MM/yyyy") ?? ""}{separator}");
                     sb.Append($"{item.Quantity.ToString("F3", culture)}{separator}");

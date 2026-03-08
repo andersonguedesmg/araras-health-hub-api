@@ -40,7 +40,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots
                         .ThenInclude(p => p.SubCategory)
                 .Include(sl => sl.Stock)
                     .ThenInclude(s => s.Product)
-                        .ThenInclude(p => p.PresentationForm)
+                        .ThenInclude(p => p.PackagingType)
                 .Where(sl => sl.AvailableQuantity > 0)
                 .AsQueryable();
 
@@ -54,7 +54,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetActiveStockLots
                     sl.Stock.Product.Name.ToLower().Contains(searchTerm) ||
                     sl.Stock.Product.MainCategory!.Name.ToLower().Contains(searchTerm) ||
                     sl.Stock.Product.SubCategory!.Name.ToLower().Contains(searchTerm) ||
-                    sl.Stock.Product.PresentationForm!.Name.ToLower().Contains(searchTerm)
+                    sl.Stock.Product.PackagingType!.Name.ToLower().Contains(searchTerm)
                 );
             }
 

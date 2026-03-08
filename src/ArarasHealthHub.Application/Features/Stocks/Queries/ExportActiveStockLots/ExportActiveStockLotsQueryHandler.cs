@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Products.Dtos;
 using ArarasHealthHub.Application.Features.Stocks.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportActiveStockLots
@@ -34,7 +38,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportActiveStockL
                         .ThenInclude(p => p.SubCategory)
                 .Include(sl => sl.Stock)
                     .ThenInclude(s => s.Product)
-                        .ThenInclude(p => p.PresentationForm)
+                        .ThenInclude(p => p.PackagingType)
                 .Where(sl => sl.AvailableQuantity > 0)
                 .AsQueryable();
 

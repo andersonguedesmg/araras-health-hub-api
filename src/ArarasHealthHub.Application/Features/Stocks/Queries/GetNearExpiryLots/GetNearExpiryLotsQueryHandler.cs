@@ -49,7 +49,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots
                         .ThenInclude(p => p.SubCategory)
                 .Include(sl => sl.Stock)
                     .ThenInclude(s => s.Product)
-                        .ThenInclude(p => p.PresentationForm)
+                        .ThenInclude(p => p.PackagingType)
                 .Where(sl => sl.AvailableQuantity > 0 && sl.ExpiryDate.Date <= expiryLimitDate)
                 .AsQueryable();
 
@@ -63,7 +63,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetNearExpiryLots
                     sl.Stock.Product.Name.ToLower().Contains(searchTerm) ||
                     sl.Stock.Product.MainCategory!.Name.ToLower().Contains(searchTerm) ||
                     sl.Stock.Product.SubCategory!.Name.ToLower().Contains(searchTerm) ||
-                    sl.Stock.Product.PresentationForm!.Name.ToLower().Contains(searchTerm)
+                    sl.Stock.Product.PackagingType!.Name.ToLower().Contains(searchTerm)
                 );
             }
 

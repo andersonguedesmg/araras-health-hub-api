@@ -13,7 +13,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Dtos
         public string ProductName { get; set; } = string.Empty;
         public string ProductMainCategory { get; set; } = string.Empty;
         public string ProductSubCategory { get; set; } = string.Empty;
-        public string ProductPresentationForm { get; set; } = string.Empty;
+        public string ProductPackagingType { get; set; } = string.Empty;
         public bool ProductIsActive { get; set; }
     }
 }

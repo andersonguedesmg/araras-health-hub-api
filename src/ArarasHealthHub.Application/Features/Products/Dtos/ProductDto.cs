@@ -13,11 +13,11 @@ namespace ArarasHealthHub.Application.Features.Products.Dtos
 
         public int MainCategoryId { get; set; }
         public int SubCategoryId { get; set; }
-        public int PresentationFormId { get; set; }
+        public int PackagingTypeId { get; set; }
 
         public string MainCategoryName { get; set; } = string.Empty;
         public string SubCategoryName { get; set; } = string.Empty;
-        public string PresentationFormName { get; set; } = string.Empty;
+        public string PackagingTypeName { get; set; } = string.Empty;
 
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }

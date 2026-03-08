@@ -22,16 +22,16 @@ namespace ArarasHealthHub.Application.Profiles
                     opt => opt.MapFrom(src => src.MainCategory!.Name))
                 .ForMember(dest => dest.SubCategoryName,
                     opt => opt.MapFrom(src => src.SubCategory!.Name))
-                .ForMember(dest => dest.PresentationFormName,
-                    opt => opt.MapFrom(src => src.PresentationForm!.Name));
+                .ForMember(dest => dest.PackagingTypeName,
+                    opt => opt.MapFrom(src => src.PackagingType!.Name));
 
             CreateMap<Product, ProductListItemResponse>()
                 .ForMember(dest => dest.MainCategoryName,
                     opt => opt.MapFrom(src => src.MainCategory!.Name))
                 .ForMember(dest => dest.SubCategoryName,
                     opt => opt.MapFrom(src => src.SubCategory!.Name))
-                .ForMember(dest => dest.PresentationFormName,
-                    opt => opt.MapFrom(src => src.PresentationForm!.Name));
+                .ForMember(dest => dest.PackagingTypeName,
+                    opt => opt.MapFrom(src => src.PackagingType!.Name));
         }
     }
 }

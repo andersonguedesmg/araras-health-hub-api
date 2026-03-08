@@ -28,7 +28,7 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<Product> Products => Set<Product>();
         public DbSet<MainCategory> MainCategories => Set<MainCategory>();
         public DbSet<SubCategory> SubCategories => Set<SubCategory>();
-        public DbSet<PresentationForm> PresentationForms => Set<PresentationForm>();
+        public DbSet<PackagingType> PackagingTypes => Set<PackagingType>();
         public DbSet<Receiving> Receivings => Set<Receiving>();
         public DbSet<ReceivedItem> ReceivedItems => Set<ReceivedItem>();
         public DbSet<Stock> Stocks => Set<Stock>();

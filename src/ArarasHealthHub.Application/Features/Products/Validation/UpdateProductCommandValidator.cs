@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Products.Commands.UpdateProduct;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -37,9 +36,9 @@ namespace ArarasHealthHub.Application.Features.Products.Validation
                 .GreaterThan(0)
                 .WithMessage("Subcategoria inválida.");
 
-            RuleFor(x => x.PresentationFormId)
+            RuleFor(x => x.PackagingTypeId)
                 .GreaterThan(0)
-                .WithMessage("Forma de Apresentação inválida.");
+                .WithMessage("Tipo de embalagem inválida.");
         }
     }
 }

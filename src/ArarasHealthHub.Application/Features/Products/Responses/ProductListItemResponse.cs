@@ -13,8 +13,8 @@ namespace ArarasHealthHub.Application.Features.Products.Responses
         string MainCategoryName,
         int SubCategoryId,
         string SubCategoryName,
-        int PresentationFormId,
-        string PresentationFormName,
+        int PackagingTypeId,
+        string PackagingTypeName,
         bool IsActive
     );
 }

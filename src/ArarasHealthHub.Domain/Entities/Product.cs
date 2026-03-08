@@ -18,8 +18,8 @@ namespace ArarasHealthHub.Domain.Entities
         public int SubCategoryId { get; private set; }
         public SubCategory? SubCategory { get; private set; }
 
-        public int PresentationFormId { get; private set; }
-        public PresentationForm? PresentationForm { get; private set; }
+        public int PackagingTypeId { get; private set; }
+        public PackagingType? PackagingType { get; private set; }
 
         public Stock? Stock { get; private set; }
 
@@ -30,13 +30,13 @@ namespace ArarasHealthHub.Domain.Entities
             string description,
             int mainCategoryId,
             int subCategoryId,
-            int presentationFormId)
+            int packagingTypeId)
         {
             Name = name;
             Description = description;
             MainCategoryId = mainCategoryId;
             SubCategoryId = subCategoryId;
-            PresentationFormId = presentationFormId;
+            PackagingTypeId = packagingTypeId;
         }
 
         public void Update(
@@ -44,13 +44,13 @@ namespace ArarasHealthHub.Domain.Entities
             string description,
             int mainCategoryId,
             int subCategoryId,
-            int presentationFormId)
+            int packagingTypeId)
         {
             Name = name.Trim();
             Description = description.Trim();
             MainCategoryId = mainCategoryId;
             SubCategoryId = subCategoryId;
-            PresentationFormId = presentationFormId;
+            PackagingTypeId = packagingTypeId;
 
             SetUpdatedOn();
         }

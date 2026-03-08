@@ -20,7 +20,7 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
         DbSet<Product> Products { get; }
         DbSet<MainCategory> MainCategories { get; }
         DbSet<SubCategory> SubCategories { get; }
-        DbSet<PresentationForm> PresentationForms { get; }
+        DbSet<PackagingType> PackagingTypes { get; }
         DbSet<Receiving> Receivings { get; }
         DbSet<ReceivedItem> ReceivedItems { get; }
         DbSet<Stock> Stocks { get; }

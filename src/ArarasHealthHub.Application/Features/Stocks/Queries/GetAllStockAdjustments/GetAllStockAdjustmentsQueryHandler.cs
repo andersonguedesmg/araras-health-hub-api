@@ -37,7 +37,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustm
                         .ThenInclude(p => p.MainCategory)
                 .Include(a => a.AdjustmentItems)
                     .ThenInclude(ai => ai.Product)
-                        .ThenInclude(p => p.PresentationForm)
+                        .ThenInclude(p => p.PackagingType)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
