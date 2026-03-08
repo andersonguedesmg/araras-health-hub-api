@@ -9,7 +9,6 @@ using ArarasHealthHub.Application.Features.MainCategories.Commands.ActivateMainC
 using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.DeactivateMainCategory;
 using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
-using ArarasHealthHub.Application.Features.MainCategories.Queries.ExportMainCategories;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCategories;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryById;
 using ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryDropdown;
@@ -117,23 +116,6 @@ namespace araras_health_hub_api.Controllers
             CancellationToken cancellationToken)
         {
             return await Send(query, cancellationToken);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Export([FromQuery] ExportMainCategoriesQuery query)
-        {
-            var response = await Mediator.Send(query);
-
-            if (!response.Success || response.Data == null)
-                return StatusCode(response.StatusCode, response);
-
-            return File(
-                response.Data.Content,
-                response.Data.ContentType,
-                response.Data.FileName
-            );
         }
     }
 }

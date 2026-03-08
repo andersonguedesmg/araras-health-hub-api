@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.MainCategories.Commands.CreateMainCategory;
-using ArarasHealthHub.Application.Features.MainCategories.Commands.UpdateMainCategory;
+using ArarasHealthHub.Application.Features.MainCategories.Responses;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Responses;
 
 using AutoMapper;
 
@@ -15,16 +15,11 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public MainCategoryProfile()
         {
-            CreateMap<CreateMainCategoryCommand, MainCategory>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.IsActive, opt => opt.Ignore());
+            CreateMap<MainCategory, MainCategoryResponse>();
 
-            CreateMap<UpdateMainCategoryCommand, MainCategory>()
-                .ForMember(dest => dest.CreatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedOn, opt => opt.Ignore())
-                .ForMember(dest => dest.IsActive, opt => opt.Ignore());
+            CreateMap<MainCategory, MainCategoryListItemResponse>();
+
+            CreateMap<MainCategory, DropdownItemResponse>();
         }
     }
 }
