@@ -4,16 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.ActivateFacility
 {
-    public class ActivateFacilityCommandHandler : IRequestHandler<ActivateFacilityCommand, ApiResponse<object>>
+    public class ActivateFacilityCommandHandler : IRequestHandler<ActivateFacilityCommand, Result>
     {
         private readonly IFacilityRepository _facilityRepository;
 
@@ -23,35 +21,25 @@ namespace ArarasHealthHub.Application.Features.Facilities.Commands.ActivateFacil
             _facilityRepository = facilityRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             ActivateFacilityCommand request,
             CancellationToken cancellationToken)
         {
-            var facility = await _facilityRepository.GetByIdAsync(request.Id, cancellationToken);
+            var facility = await _facilityRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (facility is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Facility)
-                );
-            }
+                throw new NotFoundException("Unidade não foi encontrada.");
 
             if (facility.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyActive(EntityNames.Facility)
-                );
-            }
+                throw new BusinessRuleException("O unidade já está ativa.");
 
             facility.Activate();
-            await _facilityRepository.UpdateAsync(facility, cancellationToken);
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityActivated(EntityNames.Facility)
-            );
+            await _facilityRepository
+                .UpdateAsync(facility, cancellationToken);
+
+            return Result.Success("Unidade ativada com sucesso.");
         }
     }
 }

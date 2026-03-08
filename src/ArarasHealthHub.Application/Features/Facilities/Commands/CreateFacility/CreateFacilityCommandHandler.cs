@@ -5,54 +5,57 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Domain.ValueObjects;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.CreateFacility
 {
-    public class CreateFacilityCommandHandler : IRequestHandler<CreateFacilityCommand, ApiResponse<int>>
+    public class CreateFacilityCommandHandler : IRequestHandler<CreateFacilityCommand, Result<int>>
     {
         private readonly IFacilityRepository _facilityRepository;
-        private readonly IMapper _mapper;
 
         public CreateFacilityCommandHandler(
-            IFacilityRepository facilityRepository,
-            IMapper mapper)
+            IFacilityRepository facilityRepository)
         {
             _facilityRepository = facilityRepository;
-            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<int>> Handle(
+        public async Task<Result<int>> Handle(
             CreateFacilityCommand request,
             CancellationToken cancellationToken)
         {
-            var existingFacility =
-                await _facilityRepository.GetByNameAsync(request.Name, cancellationToken);
+            var existingSupplier = await _facilityRepository
+                    .ExistsByCnesAsync(request.Cnes, null, cancellationToken);
 
-            if (existingFacility is not null)
-            {
-                return ApiResponse<int>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyExists(EntityNames.Facility)
-                );
-            }
+            if (existingSupplier)
+                throw new BusinessRuleException("Já existe uma unidade com este CNES.");
 
-            var facility = _mapper.Map<Facility>(request);
+            var facility = new Facility(
+                request.Name,
+                request.Cnes,
+                new Address(
+                    request.Address.Cep,
+                    request.Address.Street,
+                    request.Address.Number,
+                    request.Address.Neighborhood,
+                    request.Address.City,
+                    request.Address.State,
+                    request.Address.Complement
+                ),
+                new Contact(
+                    request.Contact.Email,
+                    request.Contact.Phone
+                )
+            );
 
             await _facilityRepository.AddAsync(facility, cancellationToken);
 
-            return ApiResponse<int>.SuccessResponse(
-                StatusCodes.Status201Created,
-                ApiMessages.EntityCreated(EntityNames.Facility),
-                facility.Id
-            );
+            return Result<int>.Success(
+                facility.Id,
+                "Unidade criada com sucesso.");
         }
     }
 }

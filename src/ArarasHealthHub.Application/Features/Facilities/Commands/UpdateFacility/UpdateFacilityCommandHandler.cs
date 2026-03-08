@@ -4,54 +4,62 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Domain.ValueObjects;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Facilities.Commands.UpdateFacility
 {
-    public class UpdateFacilityCommandHandler : IRequestHandler<UpdateFacilityCommand, ApiResponse<object>>
+    public class UpdateFacilityCommandHandler : IRequestHandler<UpdateFacilityCommand, Result>
     {
         private readonly IFacilityRepository _facilityRepository;
-        private readonly IMapper _mapper;
 
         public UpdateFacilityCommandHandler(
-            IFacilityRepository facilityRepository,
-            IMapper mapper)
+            IFacilityRepository facilityRepository)
         {
             _facilityRepository = facilityRepository;
-            _mapper = mapper;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             UpdateFacilityCommand request,
             CancellationToken cancellationToken)
         {
-            var existingFacility =
-                await _facilityRepository.GetByIdAsync(request.Id, cancellationToken);
+            var existingFacility = await _facilityRepository
+                .GetByIdAsync(request.Id, cancellationToken);
 
             if (existingFacility is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Facility)
-                );
-            }
+                throw new NotFoundException("Unidade não encontrada.");
 
-            _mapper.Map(request, existingFacility);
-            existingFacility.SetUpdatedOn();
+            var duplicate = await _facilityRepository
+                .ExistsByCnesAsync(request.Cnes, null, cancellationToken);
 
-            await _facilityRepository.UpdateAsync(existingFacility, cancellationToken);
+            if (duplicate)
+                throw new BusinessRuleException("Já existe uma unidade com este CNES.");
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityUpdated(EntityNames.Facility)
+            var facility = new Facility(
+                request.Name,
+                request.Cnes,
+                new Address(
+                    request.Address.Cep,
+                    request.Address.Street,
+                    request.Address.Number,
+                    request.Address.Neighborhood,
+                    request.Address.City,
+                    request.Address.State,
+                    request.Address.Complement
+                ),
+                new Contact(
+                    request.Contact.Email,
+                    request.Contact.Phone
+                )
             );
+
+            await _facilityRepository.UpdateAsync(facility, cancellationToken);
+
+            return Result.Success("Unidade atualizada com sucesso.");
         }
     }
 }
