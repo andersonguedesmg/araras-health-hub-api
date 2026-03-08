@@ -8,22 +8,18 @@ using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
-using AutoMapper;
-
 using MediatR;
+
 namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
 {
     public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Result<int>>
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IMapper _mapper;
 
         public CreateEmployeeCommandHandler(
-            IEmployeeRepository employeeRepository,
-            IMapper mapper)
+            IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
-            _mapper = mapper;
         }
 
         public async Task<Result<int>> Handle(
@@ -38,7 +34,12 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee
             if (existingEmployee is not null)
                 throw new BusinessRuleException("Já existe um funcionário com o CPF informado.");
 
-            var employee = _mapper.Map<Employee>(request);
+            var employee = new Employee(
+                request.Name,
+                request.Cpf,
+                request.Function,
+                request.Phone
+            );
 
             await _employeeRepository.AddAsync(employee, cancellationToken);
 

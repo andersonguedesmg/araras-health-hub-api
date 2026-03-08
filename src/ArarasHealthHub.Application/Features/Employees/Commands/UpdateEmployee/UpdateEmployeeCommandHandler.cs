@@ -7,8 +7,6 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
-using AutoMapper;
-
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
@@ -16,14 +14,11 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
     public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, Result>
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IMapper _mapper;
 
         public UpdateEmployeeCommandHandler(
-            IEmployeeRepository employeeRepository,
-            IMapper mapper)
+            IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
-            _mapper = mapper;
         }
 
         public async Task<Result> Handle(
@@ -48,8 +43,10 @@ namespace ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee
                 throw new BusinessRuleException(
                     "Já existe um funcionário com o CPF informado.");
 
-            _mapper.Map(request, existingEmployee);
-            existingEmployee.SetUpdatedOn();
+            existingEmployee.Update(
+                request.Name,
+                request.Function,
+                request.Phone);
 
             await _employeeRepository.UpdateAsync(
                 existingEmployee,
