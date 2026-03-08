@@ -9,7 +9,6 @@ using ArarasHealthHub.Application.Features.Employees.Commands.ActivateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.CreateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.DeactivateEmployee;
 using ArarasHealthHub.Application.Features.Employees.Commands.UpdateEmployee;
-using ArarasHealthHub.Application.Features.Employees.Queries.ExportEmployees;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDropdown;
@@ -117,23 +116,6 @@ namespace ArarasHealthHub.Api.Controllers
             CancellationToken cancellationToken)
         {
             return await Send(query, cancellationToken);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Export([FromQuery] ExportEmployeesQuery query)
-        {
-            var response = await Mediator.Send(query);
-
-            if (!response.Success || response.Data == null)
-                return StatusCode(response.StatusCode, response);
-
-            return File(
-                response.Data.Content,
-                response.Data.ContentType,
-                response.Data.FileName
-            );
         }
     }
 }
