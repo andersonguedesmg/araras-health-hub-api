@@ -31,6 +31,14 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
         }
 
+        public async Task<bool> ExistsByCnesAsync(string cnes, int? ignoreId, CancellationToken cancellationToken)
+        {
+            return await _dbSet.AnyAsync(f =>
+                f.Cnes == cnes &&
+                (!ignoreId.HasValue || f.Id != ignoreId.Value),
+                cancellationToken);
+        }
+
         public async Task<Facility?> GetByIdWithAccountsAsync(int id, CancellationToken cancellationToken)
         {
             return await _dbSet

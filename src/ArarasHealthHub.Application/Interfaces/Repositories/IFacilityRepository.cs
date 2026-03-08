@@ -13,6 +13,8 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
 
         Task<Facility?> GetByNameAsync(string name, CancellationToken cancellationToken);
 
+        Task<bool> ExistsByCnesAsync(string cnes, int? ignoreId, CancellationToken cancellationToken);
+
         Task<Facility?> GetByIdWithAccountsAsync(int id, CancellationToken cancellationToken);
     }
 }

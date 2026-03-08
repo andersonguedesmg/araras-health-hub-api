@@ -22,6 +22,7 @@ namespace ArarasHealthHub.Infrastructure.Data
 
         public new DatabaseFacade Database => base.Database;
 
+        public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<Facility> Facilities => Set<Facility>();
         public DbSet<Supplier> Suppliers => Set<Supplier>();
         public DbSet<Employee> Employees => Set<Employee>();

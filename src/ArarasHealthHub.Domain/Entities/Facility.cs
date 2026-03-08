@@ -35,6 +35,8 @@ namespace ArarasHealthHub.Domain.Entities
             Cnes = cnes;
             Address = address ?? throw new ArgumentNullException(nameof(address));
             Contact = contact ?? throw new ArgumentNullException(nameof(contact));
+
+            SetUpdatedOn();
         }
     }
 }

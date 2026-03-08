@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Domain.Identity;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -14,6 +15,7 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
     {
         DatabaseFacade Database { get; }
 
+        DbSet<ApplicationUser> ApplicationUsers { get; }
         DbSet<Facility> Facilities { get; }
         DbSet<Supplier> Suppliers { get; }
         DbSet<Employee> Employees { get; }
