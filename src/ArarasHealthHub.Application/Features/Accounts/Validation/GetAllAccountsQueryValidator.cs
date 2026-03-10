@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
-using ArarasHealthHub.Shared.Messages;
 using ArarasHealthHub.Shared.Pagination;
 
 using FluentValidation;
@@ -17,8 +16,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
         {
             RuleFor(x => x.OrderBy)
                 .Must(x => x is null ||
-                    x.ToLower() is "id" or "username" or "scope" or "role" or "createdon")
-                .WithMessage(ValidationMessages.InvalidOrderBy);
+                        x.Equals("username", StringComparison.OrdinalIgnoreCase) ||
+                        x.Equals("scope", StringComparison.OrdinalIgnoreCase) ||
+                        x.Equals("role", StringComparison.OrdinalIgnoreCase))
+                .WithMessage("Campo de ordenação inválido.");
         }
     }
 }

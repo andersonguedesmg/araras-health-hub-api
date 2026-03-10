@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Commands.DeactivateAccount;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -16,7 +15,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
-                    .WithMessage(ValidationMessages.InvalidId);
+                .WithMessage("Identificador inválido.");
         }
     }
 }

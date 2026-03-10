@@ -16,7 +16,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
         {
             RuleFor(x => x.TargetUserId)
                 .GreaterThan(0)
-                    .WithMessage(ValidationMessages.InvalidId);
+                .WithMessage("Identificador inválido.");
 
             RuleFor(x => x.NewPassword)
                 .NotEmpty()

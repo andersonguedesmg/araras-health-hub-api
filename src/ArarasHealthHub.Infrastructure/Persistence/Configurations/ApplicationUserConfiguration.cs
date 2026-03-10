@@ -20,9 +20,6 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             builder.Property(x => x.UserName)
                 .HasMaxLength(256);
 
-            builder.Property(x => x.Email)
-                .HasMaxLength(256);
-
             builder.Property(x => x.Scope)
                 .IsRequired()
                 .HasComment("Escopo da conta no sistema.");
