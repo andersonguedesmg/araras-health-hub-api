@@ -188,7 +188,7 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
       ) AS T (Name, IsActive)
 )
 
-INSERT INTO [dbo].[PresentationForms]
+INSERT INTO [dbo].[PackagingTypes]
             ([Name]
             ,[CreatedOn]
             ,[UpdatedOn]
@@ -423,20 +423,20 @@ DECLARE @MaxDate DATETIME = '20250117'
 DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
-      Name, Cnes, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive, CreatedOn, UpdatedOn
+      Name, Cnes, Cep, Street, Number, Neighborhood, City, State, Complement, Email, Phone, IsActive, CreatedOn, UpdatedOn
 ) AS (
       SELECT
             T.Name,
             T.Cnes,
-            T.Address_Cep,
-            T.Address_Street,
-            T.Address_Complement,
-            T.Address_Number,
-            T.Address_Neighborhood,
-            T.Address_City,
-            T.Address_State,
-            T.Contact_Email,
-            T.Contact_Phone,
+            T.Cep,
+            T.Street,
+            T.Number,
+            T.Neighborhood,
+            T.City,
+            T.State,
+            T.Complement,
+            T.Email,
+            T.Phone,
             T.IsActive,
 
             -- 'CreatedOn'
@@ -458,7 +458,7 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
             END AS UpdatedOn
       FROM (
             VALUES
-               -- ('Name',                                                             'Cnes',     'Address_Cep',  'Address_Street',                                'Address_Complement',                'Address_Number',  'Address_Neighborhood',                                        'Address_City',  'Address_State',  'Contact_Email',                                 'Contact_Phone',  'IsActive')
+               -- ('Name',                                                             'Cnes',     'Cep',          'Street',                                        'Complement',                        'Number',          'Neighborhood',                                                'City',          'State',          'Email',                                         'Phone',          'IsActive')
                -- ('Secretária Municipal da Saúde - Dr. João Geraldo Noronha',         '6345921',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'saude@araras.sp.gov.br',                        '(19) 3543-1522',  1),
                   ('Centro de Distribuição de Medicamentos Ricardo Francisco Vechin',  '1',        '13600-710',    'Rua Brasília',                                  '',                                  '295',             'Centro',                                                      'Araras',        'SP',             'dispensario@araras.sp.gov.br',                  '(19) 3544-3353',  1),
                   ('UBS Ênio Vitalli',                                                 '2067048',  '13604-066',    'Rua Franca',                                    '',                                  '99',              'Jardim Piratininga',                                          'Araras',        'SP',             'enio_vitalli@araras.sp.gov.br',                 '(19) 3544-4280',  1),
@@ -514,36 +514,36 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
                   ('Consultório na Rua',                                               '4662571',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'consultorio_rua@araras.sp.gov.br',              '(19) 3543-1522',  0),
                   ('Centro de Distribuição de Imunobiológicos de Araras',              '0500836',  '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'distribuicao_imunobiologico@araras.sp.gov.br',  '(19) 3543-1522',  0),
                   ('Endemias',                                                         '33',       '13601-111',    'Rua Campos Sales',                              '',                                  '33',              'Jardim Belvedere',                                            'Araras',        'SP',             'endemias@araras.sp.gov.br',                     '(19) 3551-5840',  1)
-      ) AS T (Name, Cnes, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive)
+      ) AS T (Name, Cnes, Cep, Street, Complement, Number, Neighborhood, City, State, Email, Phone, IsActive)
 )
 
 INSERT INTO [dbo].[Facilities]
             ([Name]
             ,[Cnes]
-            ,[Address_Cep]
-            ,[Address_Street]
-            ,[Address_Complement]
-            ,[Address_Number]
-            ,[Address_Neighborhood]
-            ,[Address_City]
-            ,[Address_State]
-            ,[Contact_Email]
-            ,[Contact_Phone]
+            ,[Cep]
+            ,[Street]
+            ,[Number]
+            ,[Neighborhood]
+            ,[City]
+            ,[State]
+            ,[Complement]
+            ,[Email]
+            ,[Phone]
             ,[CreatedOn]
             ,[UpdatedOn]
             ,[IsActive])
 SELECT
       Name,
       Cnes,
-      Address_Cep,
-      Address_Street,
-      Address_Complement,
-      Address_Number,
-      Address_Neighborhood,
-      Address_City,
-      Address_State,
-      Contact_Email,
-      Contact_Phone,
+      Cep,
+      Street,
+      Number,
+      Neighborhood,
+      City,
+      State,
+      Complement,
+      Email,
+      Phone,
       CreatedOn,
       UpdatedOn,
       IsActive
@@ -559,20 +559,21 @@ DECLARE @MaxDate DATETIME = '20250215'
 DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
-      Name, Cnpj, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive, CreatedOn, UpdatedOn
+      LegalName, TradeName, Cnpj, Cep, Street, Number, Neighborhood, City, State, Complement, Email, Phone, IsActive, CreatedOn, UpdatedOn
 ) AS (
       SELECT
-            T.Name,
+            T.LegalName,
+            T.TradeName,
             T.Cnpj,
-            T.Address_Cep,
-            T.Address_Street,
-            T.Address_Complement,
-            T.Address_Number,
-            T.Address_Neighborhood,
-            T.Address_City,
-            T.Address_State,
-            T.Contact_Email,
-            T.Contact_Phone,
+            T.Cep,
+            T.Street,
+            T.Number,
+            T.Neighborhood,
+            T.City,
+            T.State,
+            T.Complement,
+            T.Email,
+            T.Phone,
             T.IsActive,
 
             -- 'CreatedOn'
@@ -594,118 +595,120 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
             END AS UpdatedOn
       FROM (
             VALUES
-               -- ('Name',                                       'Cnpj',                'Address_Cep',  'Address_Street',                                'Address_Complement'                   'Address_Number',    'Address_Neighborhood',                 'Address_City',       'Address_State',  'Contact_Email',                        'Contact_Phone',   'IsActive')
-                  ('Droga Raia',                                 '44.177.977/0001-83',  '13607-280',    'Avenida Melvin Jones',                          'de 921 a 1699 - lado ímpar',          '1335',              'Centro',                               'Araras',             'SP',             'sac@droga-raia.com.br',                '(19) 3541-0038',   1),
-                  ('Farmais Distribuidora',                      '11.582.072/0001-12',  '04152-040',    'Avenida Maria Conceição',                       '',                                    '1050',              'Jardim da Saúde',                      'São Paulo',          'SP',             'comercial@farmais.com.br',             '(11) 5075-9911',   1),
-                  ('Ultrafarma',                                 '06.862.412/0001-08',  '02751-000',    'Rua dos Três Irmãos',                           '',                                    '122',               'Vila Progredior',                      'São Paulo',          'SP',             'atendimento@ultrafarma.com.br',        '(11) 4003-4116',   1),
-                  ('AstraZeneca Brasil',                         '60.582.059/0001-44',  '01000-000',    'Avenida Pasteur',                               '',                                    '500',               'Jardim Botânico',                      'São Paulo',          'SP',             'contato@astrazeneca.com',              '(11) 3463-5000',   1),
-                  ('Biolab Sanus Farma',                         '59.471.376/0001-39',  '05001-200',    'Avenida Francisco Matarazzo',                   '',                                    '1510',              'Lapa',                                 'São Paulo',          'SP',             'atendimento@biolab.com.br',            '(11) 3616-0800',   1),
-                  ('Farmácia Avenida Araras',                    '44.214.385/0001-65',  '13607-061',    'Avenida da Saudade',                            '',                                    '174',               'Jardim Nossa Senhora de Fátima',       'Araras',             'SP',             'contato@avenida.com.br',               '(19) 3541-2345',   1),
-                  ('Aché Laboratórios',                          '60.115.279/0001-18',  '07034-904',    'Rodovia Presidente Dutra',                      'km 222,2',                            'S/N',               'Porto da Igreja',                      'Guarulhos',          'SP',             'atendimento@ache.com.br',              '(11) 3278-1000',   1),
-                  ('Marjan Farma',                               '59.514.229/0001-49',  '04755-070',    'Rua Gibraltar',                                 '',                                    '195',               'Santo Amaro',                          'São Paulo',          'SP',             'marjan@marjan.com.br',                 '(11) 3078-3122',   0),
-                  ('Ava Distribuidora de Produtos de Limpeza',   '11.880.018/0001-41',  '07739-095',    'Rua Alvarenga Peixoto',                         '(Vl S Gonçalo)',                      '143',               'Laranjeiras',                          'Caieiras',           'SP',             'atendimento@avadistribuidora.com.br',  '(11) 2952-2220',   1),
-                  ('Laboratório Valeant',                        '60.610.038/0001-06',  '02058-000',    'Rua do Forte',                                  '',                                    '102',               'Centro',                               'São Paulo',          'SP',             'atendimento@valeant.com.br',           '(11) 3178-4000',   0),
-                  ('Central Farma Araras',                       '09.334.790/0001-27',  '13600-070',    'Rua Tiradentes',                                'até 630/631',                         '243',               'Centro',                               'Araras',             'SP',             'contato@centralfarma.com.br',          '(19) 3541-3131',   1),
-                  ('Laboratório Daudt',                          '60.215.498/0001-65',  '21540-100',    'Rua Simões da Mota',                            '',                                    '57',                'Turiaçu',                              'Rio de Janeiro',     'RJ',             'sac@daudt.com.br',                     '(21) 3369-8500',   1),
-                  ('Apsen Farmacêutica',                         '60.535.417/0001-80',  '04753-001',    'Rua Barão do Rio Branco',                       'de 462/463 ao fim',                   '835',               'Santo Amaro',                          'São Paulo',          'SP',             'apsen@apsen.com.br',                   '(11) 5645-5011',   1),
-                  ('Cimed Indústria Farmacêutica',               '02.814.497/0001-07',  '01228-200',    'Avenida Angélica',                              'de 1698 ao fim - lado par',           '2248',              'Consolação',                           'São Paulo',          'SP',             'tributario@grupocimed.com.br',         '(11) 3544-7200',   1),
-                  ('Eurofarma Laboratórios',                     '62.579.262/0001-70',  '04603-903',    'Avenida Vereador José Diniz',                   '',                                    '3465',              'Santo Amaro',                          'São Paulo',          'SP',             'contato@eurofarma.com.br',             '(11) 3848-5000',   1),
-                  ('EMS',                                        '61.442.807/0001-09',  '13186-901',    'Rodovia Jornalista Francisco Aguirre Proença',  'Km 08',                               'S/N',               'Chácaras Assay',                       'Hortolândia',        'SP',             'sac@ems.com.br',                       '(19) 3866-2000',   1),
-                  ('Blau Farmacêutica',                          '02.438.344/0001-40',  '06705-030',    'Rodovia Raposo Tavares',                        'do km 28,002 ao km 31,000 - lado p',  '2833',              'Jardim do Rio Cotia',                  'Cotia',              'SP',             'contato@blaufarma.com.br',             '(11) 4615-9400',   1),
-                  ('Center Cópias',                              '54.298.978/0001-00',  '13600-060',    'Rua Júlio Mesquita',                            'até 628/629',                         '376',               'Centro',                               'Araras',             'SP',             'contato@centercopias.com.br',          '(19) 3544-7016',   1),
-                  ('Cristália Produtos Químicos Farmacêuticos',  '47.283.136/0001-20',  '05413-002',    'Av. Eugênio de Medeiros',                       '',                                    '1205',              'Pinheiros',                            'São Paulo',          'SP',             'contato@cristalia.com.br',             '(11) 3083-2000',   1),
-                  ('União Química Farmacêutica Nacional',        '61.104.342/0001-40',  '04552-000',    'Rua do Rocio',                                  '',                                    '2400',              'Vila Olímpia',                         'São Paulo',          'SP',             'contato@uniaofarmaceutica.com.br',     '(11) 3046-3300',   1),
-                  ('Drogaria Romana',                            '52.935.954/0001-90',  '13603-004',    'Avenida Romana Ometto',                         '',                                    '231',               'Jardim Cândida',                       'Araras',             'SP',             'romana@sac.com.br',                    '(19) 3541-8910',   1),
-                  ('Hypera Pharma',                              '16.438.820/0001-97',  '05676-120',    'Avenida Magalhães de Castro',                   'de 1287/1288 ao fim',                 '4800',              'Cidade Jardim',                        'São Paulo',          'SP',             'sac@hypera.com.br',                    '(19) 3805-5000',   1),
-                  ('Drogaria São Paulo',                         '74.248.725/0001-30',  '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',    '1454',              'Centro',                               'Araras',             'SP',             'araras1@drogariasaopaulo.com.br',      '(19) 99724-9873',  1),
-                  ('Bayer Pharma',                               '57.418.315/0001-14',  '04551-010',    'Rua Fidêncio Ramos',                            '',                                    '302',               'Vila Olímpia',                         'São Paulo',          'SP',             'contato@bayer.com.br',                 '(11) 3167-7000',   1),
-                  ('Pfizer Brasil',                              '33.202.663/0001-07',  '04583-905',    'Av. Dr. Chucri Zaidan',                         '',                                    '920',               'Vila Cordeiro',                        'São Paulo',          'SP',             'sac.brasil@pfizer.com',                '(11) 2127-7000',   1),
-                  ('Sanofi Medley',                              '33.557.704/0001-09',  '03071-000',    'Rua Humberto de Campos',                        '',                                    '400',               'Parque São Jorge',                     'São Paulo',          'SP',             'sac@medley.com.br',                    '(11) 2659-4000',   1),
-                  ('Farmad',                                     '04.503.891/0001-33',  '13600-040',    'Praça Barão de Araras',                         '',                                    '418',               'Centro',                               'Araras',             'SP',             'araras@farmad.com.br',                 '(19) 3542-9876',   1),
-                  ('Multilab Indústria Farmacêutica',            '57.232.247/0001-15',  '03330-000',    'Rua São Jorge',                                 '',                                    '125',               'Jardim São Jorge',                     'São Paulo',          'SP',             'contato@multilab.com.br',              '(11) 2688-3000',   0),
-                  ('Legrand Indústria Química e Farmacêutica',   '61.123.456/0001-08',  '01415-000',    'Rua das Acácias',                               '',                                    '500',               'Jardim América',                       'São Paulo',          'SP',             'contato@legrand.com.br',               '(11) 3815-6000',   1),
-                  ('Neo Química Produtos Farmacêuticos',         '00.721.114/0001-60',  '04123-020',    'Rua dos Trabalhadores',                         '',                                    '500',               'Vila Mariana',                         'São Paulo',          'SP',             'sac@neoquimica.com.br',                '(11) 3134-7000',   1),
-                  ('Sandoz Farmacêutica',                        '33.222.111/0001-30',  '01449-000',    'Av. Europa',                                    '',                                    '123',               'Jardim Europa',                        'São Paulo',          'SP',             'contato@sandoz.com.br',                '(11) 3897-9000',   1),
-                  ('Drogaria Ultra Popular',                     '34.038.090/0001-21',  '13600-060',    'Rua Júlio Mesquita',                            'até 628/629',                         '466',               'Centro',                               'Araras',             'SP',             'info@ultrapopular.com.br',             '(19) 3541-1234',   1),
-                  ('Farmácia Ararense',                          '44.206.845/0001-03',  '13600-680',    'Praça Martinico Prado',                         '',                                    '38',                'Centro',                               'Araras',             'SP',             'sac@ararenese.com.br',                 '(19) 3541-5678',   1),
-                  ('Farmácia Drogal',                            '44.556.778/0001-52',  '13601-298',    'Avenida Padre Alarico Zacharias',               'de 841 ao fim - lado ímpar',          '1057',              'Jardim Nova Araras',                   'Araras',             'SP',             'drogalararas1@drogal.com.br',          '(19) 3542-6142',   1),
-                  ('Drogaria Total',                             '10.234.891/0001-40',  '13600-970',    'Rua Tiradentes',                                '336',                                 '610',               'Centro',                               'Araras',             'SP',             'atendimento@drogariatotal.com.br',     '(19) 3542-1212',   1),
-                  ('Farmácia Aquarius',                          '62.493.837/0001-18',  '13601-430',    'Avenida Presidente Café Filho',                 '',                                    '262',               'Conjunto Habitacional Narciso Gomes',  'Araras',             'SP',             'sac@farmaciaaquarius.com.br',          '(19) 3352-5135',   1),
-                  ('Farma Conde Araras',                         '01.838.443/0001-57',  '13600-060',    'Rua Júlio Mesquita',                            'até 628/629',                         '466',               'Centro',                               'Araras',             'SP',             'contato@farmaconde.com.br',            '(19) 3542-5197',   1),
-                  ('Laboratório Baldacci',                       '60.672.246/0001-49',  '04507-000',    'Rua Pedro Antônio de Magalhães',                '',                                    '640',               'Vila Nova Conceição',                  'São Paulo',          'SP',             'contato@baldacci.com.br',              '(11) 5082-1100',   0),
-                  ('Papelaria 2000',                             '85.866.786/0001-87',  '13600-110',    'Rua Marechal Deodoro',                          '',                                    '611',               'Centro',                               'Araras',             'SP',             'contato@papelaria2000.com.br',         '(19) 3541-1276',   1),
-                  ('Farmácia Belvedere',                         '02.872.781/0001-92',  '13601-100',    'Avenida Padre Atílio',                          '',                                    '144',               'Jardim Belvedere',                     'Araras',             'SP',             'vendas@farmaciabelvedere.com.br',      '(19) 3541-6666',   1),
-                  ('Drogaria Santa Cândida',                     '63.223.431/0001-45',  '13603-017',    'Rua Oswaldo Russo',                             '',                                    '190',               'Jardim Cândida',                       'Araras',             'SP',             'santacandida@araras.com.br',           '(19) 3542-4545',   1),
-                  ('Drogaria Copacabana',                        '41.002.112/0001-76',  '13609-317',    'Rua João Melari',                               '',                                    '329',               'Jardim Copacabana',                    'Araras',             'SP',             'copacabana@drogaria.com.br',           '(19) 3541-7170',   1),
-                  ('Casa da Limpeza',                            '05.432.109/0001-32',  '13600-569',    'Avenida Capitão Arthur dos Santos',             '',                                    '459',               'Vila Bressan',                         'Araras',             'SP',             'vendas@casadalimpezaararas.com',       '(19) 3351-1434',   1),
-                  ('Phármakon Farmácia de Manipulação',          '29.334.112/0001-55',  '13600-040',    'Praça Barão de Araras',                         '',                                    '67',                'Centro',                               'Araras',             'SP',             'biosaudeararas@farmacia.com.br',       '(19) 99910-9043',  0),
-                  ('Farmácia Ararense - Loja 2',                 '07.999.123/0001-81',  '13607-200',    'Avenida Loreto',                                'até 1298 - lado par',                 '1380',              'Jardim São João',                      'Araras',             'SP',             'sac@ararenese.com.br',                 '(19) 3544-8097',   1),
-                  ('Droga Raia',                                 '08.445.678/0001-10',  '13600-200',    'Rua Tiradentes',                                'até 630/631',                         '501',               'Centro',                               'Araras',             'SP',             'sac@droga-raia.com.br',                '(19) 3547-8165',   1),
-                  ('Diffucap Chemobras',                         '45.161.472/0001-00',  '07024-000',    'Rua São Paulo',                                 '',                                    '200',               'Centro',                               'Guarulhos',          'SP',             'contato@diffucap.com.br',              '(11) 2440-1000',   0),
-                  ('Farmácia Drogal',                            '33.556.778/0001-09',  '13606-010',    'Rua Tiradentes',                                'até 630/631',                         '480',               'Centro',                               'Araras',             'SP',             'drogalararas2@drogal.com.br',          '(19) 3551-0202',   1),
-                  ('Nova Era Farmácia Homeopatia',               '27.334.225/0001-13',  '13600-070',    'Rua Tiradentes',                                'até 630/631',                         '59',                'Centro',                               'Araras',             'SP',             'orcamento@farmacianovaera.com.br',     '(19) 3541-3419',   0),
-                  ('Comercial Sabbadini',                        '61.777.888/0001-02',  '13600-120',    'Rua Benedita Nogueira',                         '',                                    '150',               'Centro',                               'Araras',             'SP',             'orcamento@comercialsabbadini.com.br',  '(19) 3541-5221',   1),
-                  ('Drogaria Bem Viver',                         '65.334.225/0001-26',  '13601-200',    'Avenida Padre Alarico Zacharias',               '',                                    '70',                'Jardim Belvedere',                     'Araras',             'SP',             'bemviver@farmacia.com.br',             '(19) 3541-9797',   1),
-                  ('Farmácia Drogal',                            '17.112.334/0001-90',  '13607-213',    'Avenida José Marques da Silva',                 '',                                    '1565',              'Jardim das Flores',                    'Araras',             'SP',             'drogalararas2@drogal.com.br',          '(19) 3352-5915',   1),
-                  ('Mantecorp Farmasa',                          '61.082.426/0002-07',  '06465-134',    'Rua Bonnard (Green Valley I)',                  '',                                    '980',               'Alphaville Empresarial',               'Barueri',            'SP',             'daniel.almeida@hypera.com.br',         '(62) 3878-8150',   0),
-                  ('Germed Farmacêutica',                        '45.992.062/0001-65',  '13186-901',    'Rodovia Jornalista Francisco Aguirre Proença',  '',                                    'S/N KM 08',         'Chácara Assay',                        'Hortolândia',        'SP',             'contabil.holding@ems.com.br',          '(19) 3887-9800',   1),
-                  ('FQM Farmoquímica',                           '21.136.918/0001-32',  '04530-001',    'Rua Doutor Renato Paes de Barros',              'de 631/632 ao fim',                   '750',               'Itaim Bibi',                           'São Paulo',          'SP',             'sac@fqm.com.br',                       '(11) 4000-0000',   1),
-                  ('Drogaria Tiradentes',                        '60.772.002/0001-92',  '13606-620',    'Rua Laerte Tognasca',                           '',                                    '462',               'Parque Tiradentes',                    'Araras',             'SP',             'tiradentes@drogaria.com.br',           '(19) 97818-4796',  1),
-                  ('Laboratório Teuto Brasileiro',               '97.033.645/0001-62',  '05307-000',    'Rua Major Paladino',                            'até 469/470',                         '128',               'Vila Ribeiro de Barros',               'São Paulo',          'SP',             'contato@teuto.com.br',                 '(11) 3645-0871',   1),
-                  ('Geolab Indústria Farmacêutica',              '36.889.126/0001-06',  '74000-000',    'Rua dos Laboratórios',                          '',                                    '200',               'Polo Industrial',                      'Goiânia',            'GO',             'contato@geolab.com.br',                '(62) 3900-0000',   1),
-                  ('Drogasil Araras',                            '37.724.212/0001-21',  '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',    '2345',              'Centro',                               'Araras',             'SP',             'araras@drogasil.com.br',               '(19) 3541-4545',   1),
-                  ('X-Data Papelaria',                           '42.144.710/0001-35',  '13600-140',    'Rua José Bonifácio',                            '',                                    '717',               'Centro',                               'Araras',             'SP',             'vendas@xdata.com.br',                  '(19) 3543-2000',   1),
-                  ('Dimebrás Distribuidora Farmacêutica',        '42.545.039/0001-34',  '88133-560',    'Rua Cecília do Rego Almeida',                   '',                                    '300',               'Jardim Eldorado',                      'Palhoça',            'SC',             'dimebras@dimebras.com.br',             '(48) 3224-1834',   1),
-                  ('Medmais Distribuidora',                      '54.223.019/0001-26',  '48400-000',    'Rua João Fernandes da Gama',                    '',                                    '160',               'Centro',                               'Ribeira do Pombal',  'BA',             'medmais@medmais.com.br',               '(75) 9904-7884',   1),
-                  ('VPA Atacadista',                             '57.929.071/0001-90',  '03031-000',    'Rua Tiers',                                     '',                                    '505',               'Pari',                                 'Pari',               'SP',             'falecom@vpa.com.br',                   '(11) 3328-1145',   1),
-                  ('Torrent Pharma',                             '33.197.886/0001-00',  '01155-060',    'Rua Doutor Alfredo de Castro',                  '',                                    '200',               'Barra Funda',                          'São Paulo',          'SP',             'contato@torrentpharma.com.br',         '(11) 3874-9000',   1),
-                  ('Libbs Farmacêutica',                         '42.332.686/0001-68',  '05036-040',    'Avenida Marquês de São Vicente',                'de 2200/2201 ao fim',                 '2219',              'Água Branca',                          'São Paulo',          'SP',             'contato@libbs.com.br',                 '(11) 3874-9000',   1),
-                  ('Tecnofarma',                                 '35.897.853/0001-52',  '13000-000',    'Avenida Marechal Deodoro',                      '',                                    '789',               'Centro',                               'Campinas',           'SP',             'contato@tecnofarma.com.br',            '(19) 3232-4444',   0),
-                  ('Boehringer Ingelheim Brasil',                '60.846.120/0001-00',  '04794-000',    'Avenida das Nações Unidas',                     'lado ímpar',                          '13797',             'Vila Gertrudes',                       'São Paulo',          'SP',             'contato@boehringer-ingelheim.com.br',  '(11) 4949-4700',   1),
-                  ('Biosintética Farmacêutica',                  '61.272.164/0001-80',  '02055-000',    'Rua Doutor José Bernardo Pinto',                '',                                    '333',               'Vila Guilherme',                       'São Paulo',          'SP',             'contato@biosintetica.com.br',          '(11) 2171-8000',   0),
-                  ('Pharma Total Zona Leste',                    '46.112.334/0001-34',  '13606-360',    'Avenida Presidente Vargas',                     'até 799 - lado ímpar',                '599',               'Jardim José Ometto II',                'Araras',             'SP',             'pharmatotalzl@farmacia.com.br',        '(19) 3544-3072',   1),
-                  ('Biobrás',                                    '30.136.215/0001-85',  '39400-000',    'Avenida Caxingui',                              '',                                    '25',                'Jardim Everest',                       'Montes Claros',      'MG',             'contato@biobras.com.br',               '(38) 3218-1000',   0),
-                  ('Meizler-UCB Biopharma',                      '61.123.456/0001-09',  '04543-011',    'Avenida Presidente Juscelino Kubitschek',       'de 953 ao fim - lado ímpar',          '1327',              'Vila Nova Conceição',                  'São Paulo',          'SP',             'contato@meizler.com.br',               '(11) 3847-1700',   1),
-                  ('Momenta Farmacêutica',                       '05.679.548/0001-90',  '02911-000',    'Rua Enéas Luís Carlos Barbanti',                '',                                    '216',               'Freguesia do Ó',                       'São Paulo',          'SP',             'sac@momentafarma.com.br',              '(11) 3977-9000',   1),
-                  ('Mafra Hospitalar',                           '80.006.136/0001-80',  '80730-000',    'Rua Padre Anchieta',                            '',                                    '2050',              'Bigorrilho',                           'Curitiba',           'PR',             'contato@mafra.com.br',                 '(41) 3218-5000',   1),
-                  ('Zambon Laboratórios',                        '61.189.789/0001-00',  '04794-000',    'Avenida das Nações Unidas',                     'lado ímpar',                          '14401',             'Vila Gertrudes',                       'São Paulo',          'SP',             'sac@zambon.com.br',                    '(11) 2110-4000',   1),
-                  ('Drogaria Araras Farma',                      '24.112.334/0001-11',  '13606-510',    'Rua Antonia Gomes da Silva Malvestiti',         '',                                    '165',               'Jardim Morumbi',                       'Araras',             'SP',             'sac@drogariaararasfarma.com.br',       '(19) 3541-0753',   1),
-                  ('Laboratório Farmacêutico Arboris',           '11.223.344/0001-91',  '18087-000',    'Rua das Indústrias',                            '',                                    '50',                'Distrito Industrial',                  'Sorocaba',           'SP',             'contato@arboris.com.br',               '(15) 3211-5000',   0),
-                  ('Reval Atacado de Papelaria',                 '05.678.910/0001-12',  '17232-232',    'Rua Santo Antonio',                             '',                                    '1699',              'Distrito Industrial',                  'Itapuí',             'SP',             'vendas@reval.com.br',                  '(14) 3664-9811',   1),
-                  ('Laboratório Catarinense',                    '84.683.746/0001-86',  '89204-000',    'Rua Doutor João Colin',                         '',                                    '1000',              'América',                              'Joinville',          'SC',             'contato@labcatarinense.com.br',        '(47) 3451-2000',   0),
-                  ('Lanlimp',                                    '22.334.556/0001-12',  '26373-280',    'Rua Minas Gerais',                              '',                                    '1300',              'Distrito Industrial',                  'Rio de Janeiro',     'RJ',             'atendimento@lanlimp.com.br',           '(24) 2106-9420',   1),
-                  ('Drogaria Samval',                            '18.772.001/0001-88',  '13603-027',    'Rua Ciro Lagazzi',                              'até 798/799',                         '630',               'Jardim Cândida',                       'Araras',             'SP',             'sac@drogariasamval.com.br',            '(19) 3541-5832',   1),
-                  ('Distribuidora Alfa Saúde',                   '33.445.667/0001-01',  '13210-000',    'Rua das Mangueiras',                            '',                                    '321',               'Bairro Novo',                          'Jundiaí',            'SP',             'vendas@alfasaude.com.br',              '(11) 4588-9900',   0)
-      ) AS T (Name, Cnpj, Address_Cep, Address_Street, Address_Complement, Address_Number, Address_Neighborhood, Address_City, Address_State, Contact_Email, Contact_Phone, IsActive)
+               -- ('LegalName',                                  'TradeName',        'Cnpj',                'Cep',          'Street',                                        'Complement'                           'Number',            'Neighborhood',                         'City',               'State',          'Email',                                'Phone',           'IsActive')
+                  ('Droga Raia',                                 '',                 '44.177.977/0001-83',  '13607-280',    'Avenida Melvin Jones',                          'de 921 a 1699 - lado ímpar',          '1335',              'Centro',                               'Araras',             'SP',             'sac@droga-raia.com.br',                '(19) 3541-0038',   1),
+                  ('Farmais Distribuidora',                      '',                 '11.582.072/0001-12',  '04152-040',    'Avenida Maria Conceição',                       '',                                    '1050',              'Jardim da Saúde',                      'São Paulo',          'SP',             'comercial@farmais.com.br',             '(11) 5075-9911',   1),
+                  ('Ultrafarma',                                 '',                 '06.862.412/0001-08',  '02751-000',    'Rua dos Três Irmãos',                           '',                                    '122',               'Vila Progredior',                      'São Paulo',          'SP',             'atendimento@ultrafarma.com.br',        '(11) 4003-4116',   1),
+                  ('AstraZeneca Brasil',                         '',                 '60.582.059/0001-44',  '01000-000',    'Avenida Pasteur',                               '',                                    '500',               'Jardim Botânico',                      'São Paulo',          'SP',             'contato@astrazeneca.com',              '(11) 3463-5000',   1),
+                  ('Biolab Sanus Farma',                         '',                 '59.471.376/0001-39',  '05001-200',    'Avenida Francisco Matarazzo',                   '',                                    '1510',              'Lapa',                                 'São Paulo',          'SP',             'atendimento@biolab.com.br',            '(11) 3616-0800',   1),
+                  ('Farmácia Avenida Araras',                    '',                 '44.214.385/0001-65',  '13607-061',    'Avenida da Saudade',                            '',                                    '174',               'Jardim Nossa Senhora de Fátima',       'Araras',             'SP',             'contato@avenida.com.br',               '(19) 3541-2345',   1),
+                  ('Aché Laboratórios',                          '',                 '60.115.279/0001-18',  '07034-904',    'Rodovia Presidente Dutra',                      'km 222,2',                            'S/N',               'Porto da Igreja',                      'Guarulhos',          'SP',             'atendimento@ache.com.br',              '(11) 3278-1000',   1),
+                  ('Marjan Farma',                               '',                 '59.514.229/0001-49',  '04755-070',    'Rua Gibraltar',                                 '',                                    '195',               'Santo Amaro',                          'São Paulo',          'SP',             'marjan@marjan.com.br',                 '(11) 3078-3122',   0),
+                  ('Ava Distribuidora de Produtos de Limpeza',   '',                 '11.880.018/0001-41',  '07739-095',    'Rua Alvarenga Peixoto',                         '(Vl S Gonçalo)',                      '143',               'Laranjeiras',                          'Caieiras',           'SP',             'atendimento@avadistribuidora.com.br',  '(11) 2952-2220',   1),
+                  ('Laboratório Valeant',                        '',                 '60.610.038/0001-06',  '02058-000',    'Rua do Forte',                                  '',                                    '102',               'Centro',                               'São Paulo',          'SP',             'atendimento@valeant.com.br',           '(11) 3178-4000',   0),
+                  ('Central Farma Araras',                       '',                 '09.334.790/0001-27',  '13600-070',    'Rua Tiradentes',                                'até 630/631',                         '243',               'Centro',                               'Araras',             'SP',             'contato@centralfarma.com.br',          '(19) 3541-3131',   1),
+                  ('Laboratório Daudt',                          '',                 '60.215.498/0001-65',  '21540-100',    'Rua Simões da Mota',                            '',                                    '57',                'Turiaçu',                              'Rio de Janeiro',     'RJ',             'sac@daudt.com.br',                     '(21) 3369-8500',   1),
+                  ('Apsen Farmacêutica',                         '',                 '60.535.417/0001-80',  '04753-001',    'Rua Barão do Rio Branco',                       'de 462/463 ao fim',                   '835',               'Santo Amaro',                          'São Paulo',          'SP',             'apsen@apsen.com.br',                   '(11) 5645-5011',   1),
+                  ('Cimed Indústria Farmacêutica',               '',                 '02.814.497/0001-07',  '01228-200',    'Avenida Angélica',                              'de 1698 ao fim - lado par',           '2248',              'Consolação',                           'São Paulo',          'SP',             'tributario@grupocimed.com.br',         '(11) 3544-7200',   1),
+                  ('Eurofarma Laboratórios',                     '',                 '62.579.262/0001-70',  '04603-903',    'Avenida Vereador José Diniz',                   '',                                    '3465',              'Santo Amaro',                          'São Paulo',          'SP',             'contato@eurofarma.com.br',             '(11) 3848-5000',   1),
+                  ('EMS',                                        '',                 '61.442.807/0001-09',  '13186-901',    'Rodovia Jornalista Francisco Aguirre Proença',  'Km 08',                               'S/N',               'Chácaras Assay',                       'Hortolândia',        'SP',             'sac@ems.com.br',                       '(19) 3866-2000',   1),
+                  ('Blau Farmacêutica',                          '',                 '02.438.344/0001-40',  '06705-030',    'Rodovia Raposo Tavares',                        'do km 28,002 ao km 31,000 - lado p',  '2833',              'Jardim do Rio Cotia',                  'Cotia',              'SP',             'contato@blaufarma.com.br',             '(11) 4615-9400',   1),
+                  ('Center Cópias',                              '',                 '54.298.978/0001-00',  '13600-060',    'Rua Júlio Mesquita',                            'até 628/629',                         '376',               'Centro',                               'Araras',             'SP',             'contato@centercopias.com.br',          '(19) 3544-7016',   1),
+                  ('Cristália Produtos Químicos Farmacêuticos',  '',                 '47.283.136/0001-20',  '05413-002',    'Av. Eugênio de Medeiros',                       '',                                    '1205',              'Pinheiros',                            'São Paulo',          'SP',             'contato@cristalia.com.br',             '(11) 3083-2000',   1),
+                  ('União Química Farmacêutica Nacional',        '',                 '61.104.342/0001-40',  '04552-000',    'Rua do Rocio',                                  '',                                    '2400',              'Vila Olímpia',                         'São Paulo',          'SP',             'contato@uniaofarmaceutica.com.br',     '(11) 3046-3300',   1),
+                  ('Drogaria Romana',                            '',                 '52.935.954/0001-90',  '13603-004',    'Avenida Romana Ometto',                         '',                                    '231',               'Jardim Cândida',                       'Araras',             'SP',             'romana@sac.com.br',                    '(19) 3541-8910',   1),
+                  ('Hypera Pharma',                              '',                 '16.438.820/0001-97',  '05676-120',    'Avenida Magalhães de Castro',                   'de 1287/1288 ao fim',                 '4800',              'Cidade Jardim',                        'São Paulo',          'SP',             'sac@hypera.com.br',                    '(19) 3805-5000',   1),
+                  ('Drogaria São Paulo',                         '',                 '74.248.725/0001-30',  '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',    '1454',              'Centro',                               'Araras',             'SP',             'araras1@drogariasaopaulo.com.br',      '(19) 99724-9873',  1),
+                  ('Bayer Pharma',                               '',                 '57.418.315/0001-14',  '04551-010',    'Rua Fidêncio Ramos',                            '',                                    '302',               'Vila Olímpia',                         'São Paulo',          'SP',             'contato@bayer.com.br',                 '(11) 3167-7000',   1),
+                  ('Pfizer Brasil',                              '',                 '33.202.663/0001-07',  '04583-905',    'Av. Dr. Chucri Zaidan',                         '',                                    '920',               'Vila Cordeiro',                        'São Paulo',          'SP',             'sac.brasil@pfizer.com',                '(11) 2127-7000',   1),
+                  ('Sanofi Medley',                              '',                 '33.557.704/0001-09',  '03071-000',    'Rua Humberto de Campos',                        '',                                    '400',               'Parque São Jorge',                     'São Paulo',          'SP',             'sac@medley.com.br',                    '(11) 2659-4000',   1),
+                  ('Farmad',                                     '',                 '04.503.891/0001-33',  '13600-040',    'Praça Barão de Araras',                         '',                                    '418',               'Centro',                               'Araras',             'SP',             'araras@farmad.com.br',                 '(19) 3542-9876',   1),
+                  ('Multilab Indústria Farmacêutica',            '',                 '57.232.247/0001-15',  '03330-000',    'Rua São Jorge',                                 '',                                    '125',               'Jardim São Jorge',                     'São Paulo',          'SP',             'contato@multilab.com.br',              '(11) 2688-3000',   0),
+                  ('Legrand Indústria Química e Farmacêutica',   '',                 '61.123.456/0001-08',  '01415-000',    'Rua das Acácias',                               '',                                    '500',               'Jardim América',                       'São Paulo',          'SP',             'contato@legrand.com.br',               '(11) 3815-6000',   1),
+                  ('Neo Química Produtos Farmacêuticos',         '',                 '00.721.114/0001-60',  '04123-020',    'Rua dos Trabalhadores',                         '',                                    '500',               'Vila Mariana',                         'São Paulo',          'SP',             'sac@neoquimica.com.br',                '(11) 3134-7000',   1),
+                  ('Sandoz Farmacêutica',                        '',                 '33.222.111/0001-30',  '01449-000',    'Av. Europa',                                    '',                                    '123',               'Jardim Europa',                        'São Paulo',          'SP',             'contato@sandoz.com.br',                '(11) 3897-9000',   1),
+                  ('Drogaria Ultra Popular',                     '',                 '34.038.090/0001-21',  '13600-060',    'Rua Júlio Mesquita',                            'até 628/629',                         '466',               'Centro',                               'Araras',             'SP',             'info@ultrapopular.com.br',             '(19) 3541-1234',   1),
+                  ('Farmácia Ararense',                          '',                 '44.206.845/0001-03',  '13600-680',    'Praça Martinico Prado',                         '',                                    '38',                'Centro',                               'Araras',             'SP',             'sac@ararenese.com.br',                 '(19) 3541-5678',   1),
+                  ('Farmácia Drogal',                            '',                 '44.556.778/0001-52',  '13601-298',    'Avenida Padre Alarico Zacharias',               'de 841 ao fim - lado ímpar',          '1057',              'Jardim Nova Araras',                   'Araras',             'SP',             'drogalararas1@drogal.com.br',          '(19) 3542-6142',   1),
+                  ('Drogaria Total',                             '',                 '10.234.891/0001-40',  '13600-970',    'Rua Tiradentes',                                '336',                                 '610',               'Centro',                               'Araras',             'SP',             'atendimento@drogariatotal.com.br',     '(19) 3542-1212',   1),
+                  ('Farmácia Aquarius',                          '',                 '62.493.837/0001-18',  '13601-430',    'Avenida Presidente Café Filho',                 '',                                    '262',               'Conjunto Habitacional Narciso Gomes',  'Araras',             'SP',             'sac@farmaciaaquarius.com.br',          '(19) 3352-5135',   1),
+                  ('Farma Conde Araras',                         '',                 '01.838.443/0001-57',  '13600-060',    'Rua Júlio Mesquita',                            'até 628/629',                         '466',               'Centro',                               'Araras',             'SP',             'contato@farmaconde.com.br',            '(19) 3542-5197',   1),
+                  ('Laboratório Baldacci',                       '',                 '60.672.246/0001-49',  '04507-000',    'Rua Pedro Antônio de Magalhães',                '',                                    '640',               'Vila Nova Conceição',                  'São Paulo',          'SP',             'contato@baldacci.com.br',              '(11) 5082-1100',   0),
+                  ('Papelaria 2000',                             '',                 '85.866.786/0001-87',  '13600-110',    'Rua Marechal Deodoro',                          '',                                    '611',               'Centro',                               'Araras',             'SP',             'contato@papelaria2000.com.br',         '(19) 3541-1276',   1),
+                  ('Farmácia Belvedere',                         '',                 '02.872.781/0001-92',  '13601-100',    'Avenida Padre Atílio',                          '',                                    '144',               'Jardim Belvedere',                     'Araras',             'SP',             'vendas@farmaciabelvedere.com.br',      '(19) 3541-6666',   1),
+                  ('Drogaria Santa Cândida',                     '',                 '63.223.431/0001-45',  '13603-017',    'Rua Oswaldo Russo',                             '',                                    '190',               'Jardim Cândida',                       'Araras',             'SP',             'santacandida@araras.com.br',           '(19) 3542-4545',   1),
+                  ('Drogaria Copacabana',                        '',                 '41.002.112/0001-76',  '13609-317',    'Rua João Melari',                               '',                                    '329',               'Jardim Copacabana',                    'Araras',             'SP',             'copacabana@drogaria.com.br',           '(19) 3541-7170',   1),
+                  ('Casa da Limpeza',                            '',                 '05.432.109/0001-32',  '13600-569',    'Avenida Capitão Arthur dos Santos',             '',                                    '459',               'Vila Bressan',                         'Araras',             'SP',             'vendas@casadalimpezaararas.com',       '(19) 3351-1434',   1),
+                  ('Phármakon Farmácia de Manipulação',          '',                 '29.334.112/0001-55',  '13600-040',    'Praça Barão de Araras',                         '',                                    '67',                'Centro',                               'Araras',             'SP',             'biosaudeararas@farmacia.com.br',       '(19) 99910-9043',  0),
+                  ('Farmácia Ararense - Loja 2',                 '',                 '07.999.123/0001-81',  '13607-200',    'Avenida Loreto',                                'até 1298 - lado par',                 '1380',              'Jardim São João',                      'Araras',             'SP',             'sac@ararenese.com.br',                 '(19) 3544-8097',   1),
+                  ('Droga Raia',                                 '',                 '08.445.678/0001-10',  '13600-200',    'Rua Tiradentes',                                'até 630/631',                         '501',               'Centro',                               'Araras',             'SP',             'sac@droga-raia.com.br',                '(19) 3547-8165',   1),
+                  ('Diffucap Chemobras',                         '',                 '45.161.472/0001-00',  '07024-000',    'Rua São Paulo',                                 '',                                    '200',               'Centro',                               'Guarulhos',          'SP',             'contato@diffucap.com.br',              '(11) 2440-1000',   0),
+                  ('Farmácia Drogal',                            '',                 '33.556.778/0001-09',  '13606-010',    'Rua Tiradentes',                                'até 630/631',                         '480',               'Centro',                               'Araras',             'SP',             'drogalararas2@drogal.com.br',          '(19) 3551-0202',   1),
+                  ('Nova Era Farmácia Homeopatia',               '',                 '27.334.225/0001-13',  '13600-070',    'Rua Tiradentes',                                'até 630/631',                         '59',                'Centro',                               'Araras',             'SP',             'orcamento@farmacianovaera.com.br',     '(19) 3541-3419',   0),
+                  ('Comercial Sabbadini',                        '',                 '61.777.888/0001-02',  '13600-120',    'Rua Benedita Nogueira',                         '',                                    '150',               'Centro',                               'Araras',             'SP',             'orcamento@comercialsabbadini.com.br',  '(19) 3541-5221',   1),
+                  ('Drogaria Bem Viver',                         '',                 '65.334.225/0001-26',  '13601-200',    'Avenida Padre Alarico Zacharias',               '',                                    '70',                'Jardim Belvedere',                     'Araras',             'SP',             'bemviver@farmacia.com.br',             '(19) 3541-9797',   1),
+                  ('Farmácia Drogal',                            '',                 '17.112.334/0001-90',  '13607-213',    'Avenida José Marques da Silva',                 '',                                    '1565',              'Jardim das Flores',                    'Araras',             'SP',             'drogalararas2@drogal.com.br',          '(19) 3352-5915',   1),
+                  ('Mantecorp Farmasa',                          '',                 '61.082.426/0002-07',  '06465-134',    'Rua Bonnard (Green Valley I)',                  '',                                    '980',               'Alphaville Empresarial',               'Barueri',            'SP',             'daniel.almeida@hypera.com.br',         '(62) 3878-8150',   0),
+                  ('Germed Farmacêutica',                        '',                 '45.992.062/0001-65',  '13186-901',    'Rodovia Jornalista Francisco Aguirre Proença',  '',                                    'S/N KM 08',         'Chácara Assay',                        'Hortolândia',        'SP',             'contabil.holding@ems.com.br',          '(19) 3887-9800',   1),
+                  ('FQM Farmoquímica',                           '',                 '21.136.918/0001-32',  '04530-001',    'Rua Doutor Renato Paes de Barros',              'de 631/632 ao fim',                   '750',               'Itaim Bibi',                           'São Paulo',          'SP',             'sac@fqm.com.br',                       '(11) 4000-0000',   1),
+                  ('Drogaria Tiradentes',                        '',                 '60.772.002/0001-92',  '13606-620',    'Rua Laerte Tognasca',                           '',                                    '462',               'Parque Tiradentes',                    'Araras',             'SP',             'tiradentes@drogaria.com.br',           '(19) 97818-4796',  1),
+                  ('Laboratório Teuto Brasileiro',               '',                 '97.033.645/0001-62',  '05307-000',    'Rua Major Paladino',                            'até 469/470',                         '128',               'Vila Ribeiro de Barros',               'São Paulo',          'SP',             'contato@teuto.com.br',                 '(11) 3645-0871',   1),
+                  ('Geolab Indústria Farmacêutica',              '',                 '36.889.126/0001-06',  '74000-000',    'Rua dos Laboratórios',                          '',                                    '200',               'Polo Industrial',                      'Goiânia',            'GO',             'contato@geolab.com.br',                '(62) 3900-0000',   1),
+                  ('Drogasil Araras',                            '',                 '37.724.212/0001-21',  '13600-001',    'Avenida Dona Renata',                           'Norte - de 268 a 2732 - lado par',    '2345',              'Centro',                               'Araras',             'SP',             'araras@drogasil.com.br',               '(19) 3541-4545',   1),
+                  ('X-Data Papelaria',                           '',                 '42.144.710/0001-35',  '13600-140',    'Rua José Bonifácio',                            '',                                    '717',               'Centro',                               'Araras',             'SP',             'vendas@xdata.com.br',                  '(19) 3543-2000',   1),
+                  ('Dimebrás Distribuidora Farmacêutica',        '',                 '42.545.039/0001-34',  '88133-560',    'Rua Cecília do Rego Almeida',                   '',                                    '300',               'Jardim Eldorado',                      'Palhoça',            'SC',             'dimebras@dimebras.com.br',             '(48) 3224-1834',   1),
+                  ('Medmais Distribuidora',                      '',                 '54.223.019/0001-26',  '48400-000',    'Rua João Fernandes da Gama',                    '',                                    '160',               'Centro',                               'Ribeira do Pombal',  'BA',             'medmais@medmais.com.br',               '(75) 9904-7884',   1),
+                  ('VPA Atacadista',                             '',                 '57.929.071/0001-90',  '03031-000',    'Rua Tiers',                                     '',                                    '505',               'Pari',                                 'Pari',               'SP',             'falecom@vpa.com.br',                   '(11) 3328-1145',   1),
+                  ('Torrent Pharma',                             '',                 '33.197.886/0001-00',  '01155-060',    'Rua Doutor Alfredo de Castro',                  '',                                    '200',               'Barra Funda',                          'São Paulo',          'SP',             'contato@torrentpharma.com.br',         '(11) 3874-9000',   1),
+                  ('Libbs Farmacêutica',                         '',                 '42.332.686/0001-68',  '05036-040',    'Avenida Marquês de São Vicente',                'de 2200/2201 ao fim',                 '2219',              'Água Branca',                          'São Paulo',          'SP',             'contato@libbs.com.br',                 '(11) 3874-9000',   1),
+                  ('Tecnofarma',                                 '',                 '35.897.853/0001-52',  '13000-000',    'Avenida Marechal Deodoro',                      '',                                    '789',               'Centro',                               'Campinas',           'SP',             'contato@tecnofarma.com.br',            '(19) 3232-4444',   0),
+                  ('Boehringer Ingelheim Brasil',                '',                 '60.846.120/0001-00',  '04794-000',    'Avenida das Nações Unidas',                     'lado ímpar',                          '13797',             'Vila Gertrudes',                       'São Paulo',          'SP',             'contato@boehringer-ingelheim.com.br',  '(11) 4949-4700',   1),
+                  ('Biosintética Farmacêutica',                  '',                 '61.272.164/0001-80',  '02055-000',    'Rua Doutor José Bernardo Pinto',                '',                                    '333',               'Vila Guilherme',                       'São Paulo',          'SP',             'contato@biosintetica.com.br',          '(11) 2171-8000',   0),
+                  ('Pharma Total Zona Leste',                    '',                 '46.112.334/0001-34',  '13606-360',    'Avenida Presidente Vargas',                     'até 799 - lado ímpar',                '599',               'Jardim José Ometto II',                'Araras',             'SP',             'pharmatotalzl@farmacia.com.br',        '(19) 3544-3072',   1),
+                  ('Biobrás',                                    '',                 '30.136.215/0001-85',  '39400-000',    'Avenida Caxingui',                              '',                                    '25',                'Jardim Everest',                       'Montes Claros',      'MG',             'contato@biobras.com.br',               '(38) 3218-1000',   0),
+                  ('Meizler-UCB Biopharma',                      '',                 '61.123.456/0001-09',  '04543-011',    'Avenida Presidente Juscelino Kubitschek',       'de 953 ao fim - lado ímpar',          '1327',              'Vila Nova Conceição',                  'São Paulo',          'SP',             'contato@meizler.com.br',               '(11) 3847-1700',   1),
+                  ('Momenta Farmacêutica',                       '',                 '05.679.548/0001-90',  '02911-000',    'Rua Enéas Luís Carlos Barbanti',                '',                                    '216',               'Freguesia do Ó',                       'São Paulo',          'SP',             'sac@momentafarma.com.br',              '(11) 3977-9000',   1),
+                  ('Mafra Hospitalar',                           '',                 '80.006.136/0001-80',  '80730-000',    'Rua Padre Anchieta',                            '',                                    '2050',              'Bigorrilho',                           'Curitiba',           'PR',             'contato@mafra.com.br',                 '(41) 3218-5000',   1),
+                  ('Zambon Laboratórios',                        '',                 '61.189.789/0001-00',  '04794-000',    'Avenida das Nações Unidas',                     'lado ímpar',                          '14401',             'Vila Gertrudes',                       'São Paulo',          'SP',             'sac@zambon.com.br',                    '(11) 2110-4000',   1),
+                  ('Drogaria Araras Farma',                      '',                 '24.112.334/0001-11',  '13606-510',    'Rua Antonia Gomes da Silva Malvestiti',         '',                                    '165',               'Jardim Morumbi',                       'Araras',             'SP',             'sac@drogariaararasfarma.com.br',       '(19) 3541-0753',   1),
+                  ('Laboratório Farmacêutico Arboris',           '',                 '11.223.344/0001-91',  '18087-000',    'Rua das Indústrias',                            '',                                    '50',                'Distrito Industrial',                  'Sorocaba',           'SP',             'contato@arboris.com.br',               '(15) 3211-5000',   0),
+                  ('Reval Atacado de Papelaria',                 '',                 '05.678.910/0001-12',  '17232-232',    'Rua Santo Antonio',                             '',                                    '1699',              'Distrito Industrial',                  'Itapuí',             'SP',             'vendas@reval.com.br',                  '(14) 3664-9811',   1),
+                  ('Laboratório Catarinense',                    '',                 '84.683.746/0001-86',  '89204-000',    'Rua Doutor João Colin',                         '',                                    '1000',              'América',                              'Joinville',          'SC',             'contato@labcatarinense.com.br',        '(47) 3451-2000',   0),
+                  ('Lanlimp',                                    '',                 '22.334.556/0001-12',  '26373-280',    'Rua Minas Gerais',                              '',                                    '1300',              'Distrito Industrial',                  'Rio de Janeiro',     'RJ',             'atendimento@lanlimp.com.br',           '(24) 2106-9420',   1),
+                  ('Drogaria Samval',                            '',                 '18.772.001/0001-88',  '13603-027',    'Rua Ciro Lagazzi',                              'até 798/799',                         '630',               'Jardim Cândida',                       'Araras',             'SP',             'sac@drogariasamval.com.br',            '(19) 3541-5832',   1),
+                  ('Distribuidora Alfa Saúde',                   '',                 '33.445.667/0001-01',  '13210-000',    'Rua das Mangueiras',                            '',                                    '321',               'Bairro Novo',                          'Jundiaí',            'SP',             'vendas@alfasaude.com.br',              '(11) 4588-9900',   0)
+      ) AS T (LegalName, TradeName, Cnpj, Cep, Street, Complement, Number, Neighborhood, City, State, Email, Phone, IsActive)
 )
 
 INSERT INTO [dbo].[Suppliers]
-            ([Name]
+            ([LegalName]
+            ,[TradeName]
             ,[Cnpj]
-            ,[Address_Cep]
-            ,[Address_Street]
-            ,[Address_Complement]
-            ,[Address_Number]
-            ,[Address_Neighborhood]
-            ,[Address_City]
-            ,[Address_State]
-            ,[Contact_Email]
-            ,[Contact_Phone]
+            ,[Cep]
+            ,[Street]
+            ,[Number]
+            ,[Neighborhood]
+            ,[City]
+            ,[State]
+            ,[Complement]
+            ,[Email]
+            ,[Phone]
             ,[CreatedOn]
             ,[UpdatedOn]
             ,[IsActive])
 SELECT
-      Name,
+      LegalName,
+      TradeName,
       Cnpj,
-      Address_Cep,
-      Address_Street,
-      Address_Complement,
-      Address_Number,
-      Address_Neighborhood,
-      Address_City,
-      Address_State,
-      Contact_Email,
-      Contact_Phone,
+      Cep,
+      Street,
+      Number,
+      Neighborhood,
+      City,
+      State,
+      Complement,
+      Email,
+      Phone,
       CreatedOn,
       UpdatedOn,
       IsActive
@@ -721,14 +724,14 @@ DECLARE @MaxDate DATETIME = '20250215'
 DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
-      Name, Description, MainCategoryId, SubCategoryId, PresentationFormId, IsActive, CreatedOn, UpdatedOn
+      Name, Description, MainCategoryId, SubCategoryId, PackagingTypeId, IsActive, CreatedOn, UpdatedOn
 ) AS (
       SELECT
             T.Name,
             T.Description,
             T.MainCategoryId,
             T.SubCategoryId,
-            T.PresentationFormId,
+            T.PackagingTypeId,
             T.IsActive,
 
             -- 'CreatedOn'
@@ -750,7 +753,7 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
             END AS UpdatedOn
       FROM (
             VALUES
-         -- ('Name',                                            'Description',                                                                      MainCategoryId',  'SubCategoryId',  'PresentationFormId',  'IsActive')
+         -- ('Name',                                            'Description',                                                                      MainCategoryId',  'SubCategoryId',  'PackagingTypeId',     'IsActive')
             ('Dipirona 500mg',                                  'Analgésico e antitérmico.',                                                        2,                 29,               1,                     1),
             ('Paracetamol 750mg',                               'Analgésico e antitérmico.',                                                        2,                 29,               1,                     1),
             ('Ibuprofeno 300mg',                                'AINE para dor e febre.',                                                           2,                 4,                1,                     1),
@@ -1144,7 +1147,7 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
             ('Equipo Macrogotas com Injetor Lateral',           'Dispositivo para infusão de soluções parenterais por gravidade.',                  4,                 65,               3,                     1),
             ('Equipo Microgotas com Látex',                     'Equipo microgotas com conector látex.',                                            4,                 65,               3,                     1),
             ('Fita Adesiva Branca',                             'Fita de papel/plástico para marcações gerais.',                                    6,                 63,               23,                    1)
-      ) AS T (Name, Description, MainCategoryId, SubCategoryId, PresentationFormId, IsActive)
+      ) AS T (Name, Description, MainCategoryId, SubCategoryId, PackagingTypeId, IsActive)
 )
 
 INSERT INTO [dbo].[Products]
@@ -1152,7 +1155,7 @@ INSERT INTO [dbo].[Products]
             ,[Description]
             ,[MainCategoryId]
             ,[SubCategoryId]
-            ,[PresentationFormId]
+            ,[PackagingTypeId]
             ,[CreatedOn]
             ,[UpdatedOn]
             ,[IsActive])
@@ -1161,7 +1164,7 @@ SELECT
       Description,
       MainCategoryId,
       SubCategoryId,
-      PresentationFormId,
+      PackagingTypeId,
       CreatedOn,
       UpdatedOn,
       IsActive
@@ -1177,11 +1180,12 @@ DECLARE @MaxDate DATETIME = '20250215'
 DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
 
 ;WITH RandomDates (
-      FacilityId, Scope, IsActive, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, CreatedOn, UpdatedOn
+      FacilityId, Scope, Role, IsActive, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, CreatedOn, UpdatedOn
 ) AS (
       SELECT
             T.FacilityId,
             T.Scope,
+            T.Role,
             T.IsActive,
             T.UserName,
             T.NormalizedUserName,
@@ -1217,129 +1221,130 @@ DECLARE @RangeSeconds INT = DATEDIFF(SECOND, @MinDate, @MaxDate)
             END AS UpdatedOn
       FROM (
             VALUES
-               -- ('FacilityId', 'Scope', 'IsActive', 'UserName',                           'NormalizedUserName',                 'Email', 'NormalizedEmail', 'EmailConfirmed', 'PasswordHash',                                                                        'SecurityStamp', 'ConcurrencyStamp', 'PhoneNumber', 'PhoneNumberConfirmed', 'TwoFactorEnabled', 'LockoutEnd', 'LockoutEnabled', 'AccessFailedCount')
-               -- (1,             1,       1,         'saude_master',                       'SAUDE_MASTER',                        NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (1,             1,       1,         'saude_admin',                        'SAUDE_ADMIN',                         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELrbTaOsjU/nSbwwor8wr2irt9ZJhh26FRn0Fpwse8Yqwc/XQ7B3KR9AAYNPh65/7w==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (1,             1,       1,         'saude_user',                         'SAUDE_USER',                          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDR5p/FDbjAZWg8GmxSkqYBjbxoUS3Pnctb69y51r/JkRQYObcr+A67yTVm6TS9fYA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (1,             1,       0,         'saude2_user',                        'SAUDE2_USER',                         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDR5p/FDbjAZWg8GmxSkqYBjbxoUS3Pnctb69y51r/JkRQYObcr+A67yTVm6TS9fYA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (2,             1,       1,         'dispensario_master',                 'DISPENSARIO_MASTER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDgZorTwRiBt+jaGuACqXQEaqsge9wX/yUrEAINreRN8HxEAmmgV5j8xtk8hX9P8vg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (2,             1,       1,         'dispensario_admin',                  'DISPENSARIO_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEC3tHi0zyN8zMRirOzKEzXsqx/QRsuPNEazbbdZhvX6Pj+vUpH8MXcxUILtIBw0x2A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (2,             1,       1,         'dispensario_user',                   'DISPENSARIO_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEG3wsZnFjqrLpEEr1riCXtf66MaQiJLlMwrCQw1rTseC4LmTqi6KxGJdnQacQoDs+A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (2,             1,       1,         'dispensario2_user',                  'DISPENSARIO2_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBjwkJTYyjHFP36i76CYr2wgEPioZOiOapk8vnBx2xFh4ez+paR4+7ZTEQo4I2EwMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (2,             1,       1,         'dispensario3_user',                  'DISPENSARIO3_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBjwkJTYyjHFP36i76CYr2wgEPioZOiOapk8vnBx2xFh4ez+paR4+7ZTEQo4I2EwMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (2,             1,       0,         'dispensario4_user',                  'DISPENSARIO4_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBjwkJTYyjHFP36i76CYr2wgEPioZOiOapk8vnBx2xFh4ez+paR4+7ZTEQo4I2EwMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (3,             2,       1,         'enio_vitalli_admin',                 'ENIO_VITALLI_ADMIN',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEN35ulBBEEMdYsGe+Dr7rRhlVJbgreodBOY+cp3TbhMIO6+Wh9QeoW/4JAVZBC+zPg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (3,             2,       1,         'enio_vitalli_user',                  'ENIO_VITALLI_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELbjypAfD7G2SU6v0ZVh9LeedEMh4PTKuFayYudQL3O8qCaPpHuVib7/RBqjqjf8Fw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (4,             2,       1,         'elisa_franchozza_admin',             'ELISA_FRANCHOZZA_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEPH+BChfALUyi+RjRLk2vAb79jj6WM2Qtt3I4uoQwZiI02sRqWaBMq8KhFbWTt2txA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (4,             2,       1,         'elisa_franchozza_user',              'ELISA_FRANCHOZZA_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBzVzrKy6v5xX+GjxJG4j3niaI2MTSzkGybeJVeSy95y1vqsnffwrLhNzSFr5BbDLw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (5,             2,       1,         'alto_custo_admin',                   'ALTO_CUSTO_ADMIN',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEGxoWPSzzmuqfXMBV2tJLoT4ZWmAbwfGuBspfSRZEaAUKi7hXKN4sa+LBrEjx4bk0A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (5,             2,       1,         'alto_custo_user',                    'ALTO_CUSTO_USER',                     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJp1Na9cUFhHrwz7GN+HugdN6761k5rYkS2Of4FgxPF0MywZtueJ7vNvDTg/L0I3ww==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (6,             2,       1,         'samu_admin',                         'SAMU_ADMIN',                          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEGJdbUKsGVD/G7yYWPYb82YDdZ4/ZBxkODzQZp7WcPYtNV/SCHC71uNUxVsoOOp+pA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (6,             2,       1,         'samu_user',                          'SAMU_USER',                           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAaMeanAynQIdnL/lhr1dcSbthu1mah7NhN4k+Ap1pMv5ug4Y1GurFUC7yaAfrmvxA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (7,             2,       1,         'edmundo_ulson_admin',                'EDMUNDO_ULSON_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMGW9L9w2cJs7rptSIqeSrs7BXLCuUqS6Dht2WDOUcwLMk8rLYHcaFJtgBCstZ/vIQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (7,             2,       1,         'edmundo_ulson_user',                 'EDMUNDO_ULSON_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJlhIrDYynGAjjhdBGXTQFcek1fdNV0UbHjI6N1MYEf5XTjNp+oDcDohNwPZx4QFMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (8,             2,       1,         'nilton_lollo_admin',                 'NILTON_LOLLO_ADMIN',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEfenVMhf32yrobWPKimmegSZUvB7/LelT8oyOIQni/irgb053F/Qx7t6RWaX1lyFg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (8,             2,       1,         'nilton_lollo_user',                  'NILTON_LOLLO_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKhmianNIvwaus1nubY3RL9jBrlgJQPYW72b+9mkhpN3SgbZrg8ME0AMCV22xfRCjw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (9,             2,       1,         'melhor_casa_admin',                  'MELHOR_CASA_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEA6Te8vIUWZnb2Nmx4197fIErzWuMKtxgMe3Mxg3aRHCY3OZDB2oCl+BXbU4UlhwCw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (9,             2,       1,         'melhor_casa_user',                   'MELHOR_CASA_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOrV65A44ugH+d3+fLdNSZkwX0Od4p9J4Fi6Zf+eXEUAl/cc6M9WbTwp11H80G2fQQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (10,            2,       1,         'jose_fiori_admin',                   'JOSE_FIORI_ADMIN',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFgYqO74PFN+hg3jCnqYThjMqe3q/t1d8vPDj6dHKE6jZ1rlkxS9bLNxbU68/KSzOA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (10,            2,       1,         'jose_fiori_user',                    'JOSE_FIORI_USER',                     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENc9ihwYOGcD4geaiJ3bKjY4zTiUrqaB5hcGrev/A6RKGtzMqHOg8IJgfyd3ZLey8g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (11,            2,       1,         'caem_nelson_salome_admin',           'CAEM_NELSON_SALOME_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEP42qRqIgquEENAXkhy83LXOxJwd5kIGg0oorANzyAb347P7QJwMh1xcTSFT1Pq7Tg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (11,            2,       1,         'caem_nelson_salome_user',            'CAEM_NELSON_SALOME_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDzFiUC5fF3KrLFPFWQv7LQ0SCSrokUOKjHLFdLpc91E9FNXIu1JL75FRwzns4NvPA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (12,            2,       1,         'agnaldo_bianchini_admin',            'AGNALDO_BIANCHINI_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEHmOJB0MuhFDB2Vo4StmKBn+H5ojOB+6w5uG1nCQdIODwkfmqtGufhK5PVFkLPCMyw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (12,            2,       1,         'agnaldo_bianchini_user',             'AGNALDO_BIANCHINI_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAD/7uqisMnoBWf7noJT6wto/yd/S9sW7fFBvkdcI9yFdzTi/Qtrw1Rh7K2o/d8d6Q==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (13,            2,       1,         'caps_arceu_scanavini_admin',         'CAPS_ARCEU_SCANAVINI_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELf9f+aBTfDYkPem7vkscjqEYgN7zUEHcYHWDRHrYPMdgAhzPI90CSFh3O56oL8eeg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (13,            2,       1,         'caps_arceu_scanavini_user',          'CAPS_ARCEU_SCANAVINI_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEB6dXFwLmGfOXpXkBUXNO1mJVe7iyG29kJJXiMz9kgVYF+8PjdapFQ5/fupEMuCfSA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (14,            2,       1,         'controle_zoonoses_admin',            'CONTROLE_ZOONOSES_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECWPaVYScJtNwx+WBYJJBBXdAwpFtGhZcX9CVBhzYhPot1HBDW+QqMLYQJuGE75kbA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (14,            2,       1,         'controle_zoonoses_user',             'CONTROLE_ZOONOSES_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAf0HS/1Kaakil7wN1pI3Ab9Cp4qAMPyYH1LvETWdxqvoDLmcgZWPGxsMWm1LLMuzw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (15,            2,       0,         'solon_oliveira_admin',               'SOLON_OLIVEIRA_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEGqalT3NMD/gcz6fwwS4az3kowlAhzMItmGPx7tUy/DNz8HYrmgllmHCYmy6IFI4NA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (15,            2,       0,         'solon_oliveira_user',                'SOLON_OLIVEIRA_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENIGuS/kKaTVHh9i0b3AMhhcNNVCDgNR291eu/dAtn4Rjy9B1olJxazW4Y6ZARuxuQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (16,            2,       1,         'vigilancia_sanitaria_admin',         'VIGILANCIA_SANITARIA_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIdW+Sito6knIRmzlirKRSpAdtmLdBzi9i2qyITeOytMlf3LsgxXXAQe1sCQWQ9pBg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (16,            2,       1,         'vigilancia_sanitaria_user',          'VIGILANCIA_SANITARIA_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIOx/Mt1etL7C2KGBvClIymx2TQ3jE6j44Kzmr2c3t8RqmJFLevY2q9mdnkoFLnUQQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (17,            2,       0,         'unidade_movel_odonto_admin',         'UNIDADE_MOVEL_ODONTO_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMz17gHOKJOZcll5gvbNde+I19vyRFuveNOIhf/Pe/dZtQcexjn9D0mwNSYqX+VgCg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (17,            2,       0,         'unidade_movel_odonto_user',          'UNIDADE_MOVEL_ODONTO_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECxH7N5T+uef3Sy1UD04gon+576U6aTgIUIwte3Jg6HghWip+JcrTwNBYhvspUstgQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (18,            2,       1,         'vigilancia_epidemiologica_admin',    'VIGILANCIA_EPIDEMIOLOGICA_ADMIN',     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAED7pWOjnRGf09WbltfZvH37rtEj8F1q9m7tPD1Cc2gQonBgUN6L7wBUexLwtR8pm3Q==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (18,            2,       1,         'vigilancia_epidemiologica_user',     'VIGILANCIA_EPIDEMIOLOGICA_USER',      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEK1Sp7mUn5wLWS0iJlAhlw5vrccaCH0SkfHKCskpltTxIrabnY0R/KyVF0rGTr5PYw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (19,            2,       1,         'osvaldo_devitte_admin',              'OSVALDO_DEVITTE_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDMRy7IL8ZrYW4K5ppID9EXcYWF9N0OOL3QGn23PqXRPxEBAT5BPBKE94V8Azj3aSg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (19,            2,       1,         'osvaldo_devitte_user',               'OSVALDO_DEVITTE_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECaKEkZdRsQexYC/YpSbqaEDonAZt3H9fZr6agiDO320d7mPPjdwN6ST2/U1OslB+A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (20,            2,       1,         'humberto_junior_admin',              'HUMBERTO_JUNIOR_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEClI2cFIDFDYbKW51LNZ4s2W62vO+he6cglzxD12tKVsGhTxit4lPaINk3QfiNJvNA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (20,            2,       1,         'humberto_junior_user',               'HUMBERTO_JUNIOR_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEN9Eea+2DZHj8mqLqJeh8ziy+rA538oi8EjVFnlWp8S+Nq+eMMAwcUnXVlC3uUk5tw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (21,            2,       1,         'emerson_mercatelli_admin',           'EMERSON_MERCATELLI_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOfdXxkBREwxS4VMcnhxpeMyQ8uVXSedLnH9cP6ttmGJ1Qa2sRY2YETYbcUsbWy1xA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (21,            2,       1,         'emerson_mercatelli_user',            'EMERSON_MERCATELLI_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEPNk6binzSWicXhphUs4PTTbrEd5M+Z2RPNTPkMwplUZ9nru4soC4TVBMNhxMLxUGQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (22,            2,       0,         'antonio_simoes_pontes_admin',        'ANTONIO_SIMOES_PONTES_ADMIN',         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEODC9pjkbtr12UzU80e6S6tcDu50H2rN8mJHzZ8hsRqJ7ocqrA2CMN/ifxQvlx8HZg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (22,            2,       0,         'antonio_simoes_pontes_user',         'ANTONIO_SIMOES_PONTES_USER',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEABNrdHXiBF67z+i+5ScB3d+77dafaLLwJVEVRdOe0yFklmhH4bQvdXLQ2eVgcjGDQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (23,            2,       1,         'antonio_fabricio_admin',             'ANTONIO_FABRICIO_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIHpwKNvwRCf7r9WRhGcI393VP8LdCaT3C1u9XLRr0L0v+nUK1xlh/6bIMFczRMc4Q==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (23,            2,       1,         'antonio_fabricio_user',              'ANTONIO_FABRICIO_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOUdi5vKKcFNHtHpv+xuxccn6XbIlM0f4bXPXzc6M7dK6g4hkPN7GYcmxuKmaYuz5A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (24,            2,       1,         'alberto_franzini_admin',             'ALBERTO_FRANZINI_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBSX80VMHrcffGF/lD/FIzapIygQA8VlscFsMhrMbwoW8vFTjtaG7oiQiD25Wd10aQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (24,            2,       1,         'alberto_franzini_user',              'ALBERTO_FRANZINI_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEENCLOPCWQGozKQXxWwV/4jWm2w0TSoVeyedsHSRIvTeO8RHSqcmEIJwWSmN7CIUCQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (25,            2,       0,         'alcides_oliveira_admin',             'ALCIDES_OLIVEIRA_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEImFHsOVLe9HXjlKD8lpFNVUMQ84OAmTin8rriSIJUfqJK6zbUsCiXvpiz7GE239Gg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (25,            2,       0,         'alcides_oliveira_user',              'ALCIDES_OLIVEIRA_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOR0CDzLdqB1oipoVmmA/uGKaZx+cPwjyMhd0a84uH/RmpUjoTptdcvaVNXj4oZdLQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (26,            2,       1,         'adalgisa_goncalves_admin',           'ADALGISA_GONCALVES_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMWTcZxQXqOF498KRCKWrptmx5G6wTxtTp8fJE781jcm1IaA3dL0bxF2fNUiCDY+nA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (26,            2,       1,         'adalgisa_goncalves_user',            'ADALGISA_GONCALVES_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENz3CzLPv0LrC/3ra2Yqt6TMcJFQOswSMTivRlz58kkZnjEqqU+UqZ2fguGXGRnvHw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (27,            2,       0,         'eva_cruz_admin',                     'EVA_CRUZ_ADMIN',                      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE88tNQrj3L3StrsdsYNkUtmnYjUX2e1o9lymnQcTz+Wx6cvbMAhfSsK/fbKLqaovA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (27,            2,       0,         'eva_cruz_user',                      'EVA_CRUZ_USER',                       NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECvkeJyFJEtbPOCHVRGocxsAYCzRX5PPI0cbQqcKNGijzdlHvKhFwF/VjADgBSUjog==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (28,            2,       1,         'guerino_bertolini_admin',            'GUERINO_BERTOLINI_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMLV1vh5IIne6aCnMPp2IEVI/snNvaZMzBVb6FFtsXQ7EwJKGUDwZUzl9P1SqOlwzA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (28,            2,       1,         'guerino_bertolini_user',             'GUERINO_BERTOLINI_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJppkLl/GRLS5dl/LXXkucaQu06igZ0Z4ld8reYzGbsh5C37YFQIJOen5QIzjDC8qQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (29,            2,       1,         'farmacia_processos_admin',           'FARMACIA_PROCESSOS_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDwJmsC1VqzrVIf1um8n4Vy6SxUo7b1tR8A1kc6AUEXzGE84N6kWWw0KYJSgn8sjig==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (29,            2,       1,         'farmacia_processos_user',            'FARMACIA_PROCESSOS_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEINSTaDrCnHzIQP9N58xdfWYgjQpLTF8c+Iz/JaCBEuvTmFsbV4pqFwkFsMX5bvVew==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (30,            2,       1,         'vital_homem_admin',                  'VITAL_HOMEM_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKk9EilNuzNDgzGVmsp94PZPvoWyQ+aFCQHQicO+UM2hLJ10nS1x52QpYe4rrVuY5g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (30,            2,       1,         'vital_homem_user',                   'VITAL_HOMEM_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEN2gpT/sY3zzBw5GQQFSqVfg52agPIzZuXZ5u9hPUskCPzW45fTB8z7WW/5YnhasaA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (31,            2,       0,         'hospital_covid_admin',               'HOSPITAL_COVID_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECz+Pl22l4/rre1So56FAWpbfEjCgEYfGnBfn/mRCsRuBPnOp3hIsqOH/hDT5LCA+A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (31,            2,       0,         'hospital_covid_user',                'HOSPITAL_COVID_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAErhhQdnKP5Xt7vmYDfax4aDWcOnCiUIHYuu8Bx/PGbGgR8/2y3TqnT3htovR7I4A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (32,            2,       1,         'orlando_zaniboni_admin',             'ORLANDO_ZANIBONI_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFDpcberLid53T0HfYhuHWbFveHVYji9btXDVDb2Hn1zek9w95leEbPtOJc0CY7d7g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (32,            2,       1,         'orlando_zaniboni_user',              'ORLANDO_ZANIBONI_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOUxAAQe8qz7IpTKDsEMzjmFmNHDa03/fIsr8ofPGX5XCXaVK5uhvHI7sfxyUALHFg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (33,            2,       0,         'jair_mourao_admin',                  'JAIR_MOURAO_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENYZK47bcJHa3F3ZrmFVA5qeT3aFignT5K5Q+Gjrw6CSRkN2mD5hO8pisg1F1qNnxA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (33,            2,       0,         'jair_mourao_user',                   'JAIR_MOURAO_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE1y3EoyayrWkljaTpONEAQ3DNcpoQFU1AOQsd2pzlfszIBUztYsdft1vLza5mTmaA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (34,            2,       1,         'francisco_cascelli_admin',           'FRANCISCO_CASCELLI_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELR59iriPH2Y9u6ieExWGekd4/meyB4UFteACXssClmTm2PFSxkyNRuh/Quw/8sIqg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (34,            2,       1,         'francisco_cascelli_user',            'FRANCISCO_CASCELLI_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECTUhYOj17/YWoBf64o5usn1Ns4/SbDzyzJO7IPXJz5RAM7ctLBrRXftoDvqlhs8og==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (35,            2,       1,         'jeronymo_ometto_admin',              'JERONYMO_OMETTO_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJ9ZP5f07g/59PIoKfwfNks8AQiI9wCgsxApz8z959wmbapsjDUfZwWa+JGf2lXobw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (35,            2,       1,         'jeronymo_ometto_user',               'JERONYMO_OMETTO_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEM2EfzhYjilXQHGJqvyp4LwKH/1CTwVyuj/C/X7OmVUxHkOy74FXoH5cczReqZyouA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (36,            2,       1,         'lucia_meneghetti_admin',             'LUCIA_MENEGHETTI_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEB4QlTnoETLczEyC3f6rJurnUGLMMe2zyzd65cdaEj4K6wp3whfPjjV+Z9K+npVyZQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (36,            2,       1,         'lucia_meneghetti_user',              'LUCIA_MENEGHETTI_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFlAM/TvYVPL1wL9AzSjSZWQLWByuHwV25OEfCuxc3aRGOp17KE3UHWrGB5YXqeHtg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (37,            2,       1,         'madre_carla_admin',                  'MADRE_CARLA_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELE0Cp3ppu4TWByST0/MwjUiXsfkWwgWgh3dBa+23h5pcAwpL10JMErWZytjATIIAA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (37,            2,       1,         'madre_carla_user',                   'MADRE_CARLA_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELixgyLmUk8pcWeB35zJ6URdH40s4dUnE+z8pOBFkNT4a8Krkls8IzZbKnmD1UjhMQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (38,            2,       1,         'narciso_gomes_admin',                'NARCISO_GOMES_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAED/RzSL8j2BLAulbZohRGsAF42PS5Co79ptsBoQEicZSod8r79WOJ4vOGYQeicE1kw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (38,            2,       1,         'narciso_gomes_user',                 'NARCISO_GOMES_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAAljIl8WD1wCJrPU9ggK9SJMir3rIs7ziWm+ib0nGeTTLHctDUxxsQhsJP8tTdlAg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (39,            2,       1,         'ophelia_pesse_admin',                'OPHELIA_PESSE_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAupG/M5XDxWL1ZQz9iTVXo2d1rdpYFc7qGSGs2Hj4oToURMWiTn24hZGCQq9dyemw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (39,            2,       1,         'ophelia_pesse_user',                 'OPHELIA_PESSE_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBYgz9F2D5oSeziduOA7VxLPOPM36ODwTXV72tYdBx+XquGxnCXjySjQS9IJgHJ9Eg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (40,            2,       1,         'otavio_breda_admin',                 'OTAVIO_BREDA_ADMIN',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFG98BeYflT5UoFzApJnS023phmn0mwsjPO0jnHzdXwOUUccrdYYW6Bw+GfPhvoGRw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (40,            2,       1,         'otavio_breda_user',                  'OTAVIO_BREDA_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENUUW4gdhEh7DJKw0fH6w7watwT1r+X1D/pZZ/9K6c5P2ck1UD0yH7S/zJPhO874OA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (41,            2,       1,         'fermin_vianna_admin',                'FERMIN_VIANNA_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEO5rFlb9O36UeV47+o7FEMqEuUTPul4GjTvxX/C74ZE3W6App72LcByovi8ZOV+0hQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (41,            2,       1,         'fermin_vianna_user',                 'FERMIN_VIANNA_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKO151w7ySdteP1tmaOhm4Jta0t0SeJMjl5co/nsIlXunQV96fbTVZp5L+JNGQLodw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (42,            2,       1,         'bento_feres_admin',                  'BENTO_FERES_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELLDPpeir15UlZ7KBj/6uZ+fNH7/3Z2wr1MQwov43LqVZupc3Rrzx6r7wngRlFSILA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (42,            2,       1,         'bento_feres_user',                   'BENTO_FERES_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEi+G8YlbQdC3/xi9mu7tH3WjhCEHxWcanVMUdQHE3S9cNdwkyavw4bxABqlbr24tw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (43,            2,       1,         'antonio_pontes_admin',               'ANTONIO_PONTES_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEyA0fjr2Lrnak2Nc47q/Aiw4LfUCInSswQeSGmfrnBOMj6+fG/7FCJbedUNpCWqhA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (43,            2,       1,         'antonio_pontes_user',                'ANTONIO_PONTES_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENAIaJfu5jYakIAn9uEnvZWSPg19LTQL1ias/5/qXJERqFmBN7MSrw2+GTn1X4sbaw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (44,            2,       0,         'solon_oliveira_odonto_admin',        'SOLON_OLIVEIRA_ODONTO_ADMIN',         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIbkGLpMG3FRXXPfXKoAueuJFaBL3Wv1IIXghVw2RBVr+WR7CFxc/y0RDod2/IozqA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (44,            2,       0,         'solon_oliveira_odonto_user',         'SOLON_OLIVEIRA_ODONTO_USER',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMWPpTQG49O+LAPXAO0K4x+mdY7Zd6CaBlhsdjRus0Yfvb3odB+7VQc8aUygKCWNtQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (45,            2,       0,         'irma_diva_patarra_admin',            'IRMA_DIVA_PATARRA_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJJTLGbNwf1KwHn6xsN7VAUCxZpGfU7qj/tO+AG6ae2KCd08PfIV2fYpKxBizPcfvQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (45,            2,       0,         'irma_diva_patarra_user',             'IRMA_DIVA_PATARRA_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEINH+fq2L/Q1ScuW8WzDnHfk/3qDeu6cEEwQhopFG58xPVOBUUpkSt3BOhoE9XBc7A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (46,            2,       1,         'centro_infantil_hercio_admin',       'CENTRO_INFANTIL_HERCIO_ADMIN',        NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEP2KLrwFKJqC5q2q3va/1RyuO0TFVGFu8JIr+E6EsEDj/4LPVigo0cBBu5LVLIKd2w==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (46,            2,       1,         'centro_infantil_hercio_user',        'CENTRO_INFANTIL_HERCIO_USER',         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECTaMb56SFZmN0I7QuMxLcc7BiYi3fy3wX3cfSykG0xDFHJmMGU6BvMzRFBnU3/6CQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (47,            2,       1,         'rosa_teixeira_admin',                'ROSA_TEIXEIRA_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEF6e7kCt1IXrF6uppR2lJ0QC1m/CiNk153AiSE0auMN2FIzdaBsJWye8EhMLEsN+cw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (47,            2,       1,         'rosa_teixeira_user',                 'ROSA_TEIXEIRA_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEB7l0HdYOx0719/TzgHZSi/MSiXO50r+wsGPAOXv2LeY9KUtUaNvPmdRvumn3ZcHnA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (48,            2,       1,         'jandira_duarte_admin',               'JANDIRA_DUARTE_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE9rhH8Qet7DtebCZuqY9dhV72ODgqKM9I4T+S7Oc7tRmna2Q565hxuwv+fgKeD9BA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (48,            2,       1,         'jandira_duarte_user',                'JANDIRA_DUARTE_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIa1cvqZU9hUZdFleF5GM0jYBTecIRQTJtM35XPh8pbIVvWqpgabrlp/zBP7I5OO+g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (49,            2,       0,         'imagem_radiologica_admin',           'IMAGEM_RADIOLOGICA_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAgUUTyxnUO+SeP1wqR9xFVGOjiBpZyzWNQk99iwDNme4ELRVMIyNltdahkZwZQWLQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (49,            2,       0,         'imagem_radiologica_user',            'IMAGEM_RADIOLOGICA_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEChDjkqWQlh8pjzAcYFoDhIERqZJjl5iN/p5ynNnh8KRec6WwJ1yNpAvB9KjvK3qAg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (50,            2,       1,         'caps_infanto_juvenil_admin',         'CAPS_INFANTO_JUVENIL_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKaarSg41ZUXAgk4lgvBnvOblwbRV8tIfrBSsCeFUifXGXRuQpDz1DA5y0ofssFCFA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (50,            2,       1,         'caps_infanto_juvenil_user',          'CAPS_INFANTO_JUVENIL_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE9wylBXK19SMMmqvtrwutChbxNBCP2Kn1hdBMKEfdPg3l9rpDw2MLr2023KlbXHVw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (51,            2,       1,         'caps_idalina_victorello_admin',      'CAPS_IDALINA_VICTORELLO_ADMIN',       NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDVxdAN9GLSPdsTnjRMtMacMVkb62SASVz6fHzGx+KYbMxoDKDk6ycA7lAOqLliEDg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (51,            2,       1,         'caps_idalina_victorello_user',       'CAPS_IDALINA_VICTORELLO_USER',        NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEHpmkGXdAmfRtzzw5bgtnSxr4honedh/p6kurP94Ni09nu0Ow+PH9mZRNx/2icKt8w==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (52,            2,       1,         'transporte_intermunicipal_admin',    'TRANSPORTE_INTERMUNICIPAL_ADMIN',     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJLNLl0px54ELyKVV0lloFJbnlaM45VGFhSkTc4d5dR+Fwg75PMHSs9XXsRWk7gbRQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (52,            2,       1,         'transporte_intermunicipal_user',     'TRANSPORTE_INTERMUNICIPAL_USER',      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOWBjhb1rdKgF5rU2l3DTa+hypIJgiU9mesofoD8lkTb617jve/G2aVlNJrH6cUDYQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (53,            2,       0,         'consultorio_rua_admin',              'CONSULTORIO_RUA_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDHFso++6mDy0SVr7yQzeDmVdtl2V91sXS7VU+bjkEic+rmSvhZO8E6dxQajGXyX0g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (53,            2,       0,         'consultorio_rua_user',               'CONSULTORIO_RUA_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFgJ1Eguus+oX10oOOGdqmNPkicBEZCtmXXGXByXxA1FcMCj1ZyKjE1b94hcoog/LQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (54,            2,       0,         'distribuicao_imunobiologico_admin',  'DISTRIBUICAO_IMUNOBIOLOGICO_ADMIN',   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBqOQ5x/GHXEAyUZGLw/iD6Mqpyk/ma9MOsl2ZY/R//x5hqjL+0598XGLcm6wqBEWw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (54,            2,       0,         'distribuicao_imunobiologico_user',   'DISTRIBUICAO_IMUNOBIOLOGICO_USER',    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAW5H1r+gd+rJ3zr308+2Fxo9IvgFa5ZguUGDJjDWK2ZX2f+tvVFJHpL/irOp6fycw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (55,            2,       1,         'endemias_admin',                     'ENDEMIAS_ADMIN',                      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEM5ayTOMDaxjjL9OTMgtXZMLRBx5NNZWbdjk0PabppFLI3rUp/QPGc034gGzlzoB2g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
-                  (55,            2,       1,         'endemias_user',                      'ENDEMIAS_USER',                       NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECVdCsPDxq2+1K5LuhvwBCBP9CQ+12LYX745OqQg3eVnO5SvPmNi0F7MlHQPfjSYLQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0)
-      ) AS T (FacilityId, Scope, IsActive, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount)
+               -- ('FacilityId', 'Scope', 'Role', 'IsActive', 'UserName',                           'NormalizedUserName',                 'Email', 'NormalizedEmail', 'EmailConfirmed', 'PasswordHash',                                                                        'SecurityStamp', 'ConcurrencyStamp', 'PhoneNumber', 'PhoneNumberConfirmed', 'TwoFactorEnabled', 'LockoutEnd', 'LockoutEnabled', 'AccessFailedCount')
+               -- (1,             1,       1,      1,         'saude_master',                       'SAUDE_MASTER',                        NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (1,             1,       2,      1,         'saude_admin',                        'SAUDE_ADMIN',                         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELrbTaOsjU/nSbwwor8wr2irt9ZJhh26FRn0Fpwse8Yqwc/XQ7B3KR9AAYNPh65/7w==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (1,             1,       3,      1,         'saude_user',                         'SAUDE_USER',                          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDR5p/FDbjAZWg8GmxSkqYBjbxoUS3Pnctb69y51r/JkRQYObcr+A67yTVm6TS9fYA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (1,             1,       3,      0,         'saude2_user',                        'SAUDE2_USER',                         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDR5p/FDbjAZWg8GmxSkqYBjbxoUS3Pnctb69y51r/JkRQYObcr+A67yTVm6TS9fYA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (2,             1,       1,      1,         'dispensario_master',                 'DISPENSARIO_MASTER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDgZorTwRiBt+jaGuACqXQEaqsge9wX/yUrEAINreRN8HxEAmmgV5j8xtk8hX9P8vg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (2,             1,       2,      1,         'dispensario_admin',                  'DISPENSARIO_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEC3tHi0zyN8zMRirOzKEzXsqx/QRsuPNEazbbdZhvX6Pj+vUpH8MXcxUILtIBw0x2A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (2,             1,       3,      1,         'dispensario_user',                   'DISPENSARIO_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEG3wsZnFjqrLpEEr1riCXtf66MaQiJLlMwrCQw1rTseC4LmTqi6KxGJdnQacQoDs+A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (2,             1,       3,      1,         'dispensario2_user',                  'DISPENSARIO2_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBjwkJTYyjHFP36i76CYr2wgEPioZOiOapk8vnBx2xFh4ez+paR4+7ZTEQo4I2EwMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (2,             1,       3,      1,         'dispensario3_user',                  'DISPENSARIO3_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBjwkJTYyjHFP36i76CYr2wgEPioZOiOapk8vnBx2xFh4ez+paR4+7ZTEQo4I2EwMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (2,             1,       3,      0,         'dispensario4_user',                  'DISPENSARIO4_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBjwkJTYyjHFP36i76CYr2wgEPioZOiOapk8vnBx2xFh4ez+paR4+7ZTEQo4I2EwMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (3,             2,       2,      1,         'enio_vitalli_admin',                 'ENIO_VITALLI_ADMIN',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEN35ulBBEEMdYsGe+Dr7rRhlVJbgreodBOY+cp3TbhMIO6+Wh9QeoW/4JAVZBC+zPg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (3,             2,       3,      1,         'enio_vitalli_user',                  'ENIO_VITALLI_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELbjypAfD7G2SU6v0ZVh9LeedEMh4PTKuFayYudQL3O8qCaPpHuVib7/RBqjqjf8Fw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (4,             2,       2,      1,         'elisa_franchozza_admin',             'ELISA_FRANCHOZZA_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEPH+BChfALUyi+RjRLk2vAb79jj6WM2Qtt3I4uoQwZiI02sRqWaBMq8KhFbWTt2txA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (4,             2,       3,      1,         'elisa_franchozza_user',              'ELISA_FRANCHOZZA_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBzVzrKy6v5xX+GjxJG4j3niaI2MTSzkGybeJVeSy95y1vqsnffwrLhNzSFr5BbDLw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (5,             2,       2,      1,         'alto_custo_admin',                   'ALTO_CUSTO_ADMIN',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEGxoWPSzzmuqfXMBV2tJLoT4ZWmAbwfGuBspfSRZEaAUKi7hXKN4sa+LBrEjx4bk0A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (5,             2,       3,      1,         'alto_custo_user',                    'ALTO_CUSTO_USER',                     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJp1Na9cUFhHrwz7GN+HugdN6761k5rYkS2Of4FgxPF0MywZtueJ7vNvDTg/L0I3ww==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (6,             2,       2,      1,         'samu_admin',                         'SAMU_ADMIN',                          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEGJdbUKsGVD/G7yYWPYb82YDdZ4/ZBxkODzQZp7WcPYtNV/SCHC71uNUxVsoOOp+pA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (6,             2,       3,      1,         'samu_user',                          'SAMU_USER',                           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAaMeanAynQIdnL/lhr1dcSbthu1mah7NhN4k+Ap1pMv5ug4Y1GurFUC7yaAfrmvxA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (7,             2,       2,      1,         'edmundo_ulson_admin',                'EDMUNDO_ULSON_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMGW9L9w2cJs7rptSIqeSrs7BXLCuUqS6Dht2WDOUcwLMk8rLYHcaFJtgBCstZ/vIQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (7,             2,       3,      1,         'edmundo_ulson_user',                 'EDMUNDO_ULSON_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJlhIrDYynGAjjhdBGXTQFcek1fdNV0UbHjI6N1MYEf5XTjNp+oDcDohNwPZx4QFMw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (8,             2,       2,      1,         'nilton_lollo_admin',                 'NILTON_LOLLO_ADMIN',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEfenVMhf32yrobWPKimmegSZUvB7/LelT8oyOIQni/irgb053F/Qx7t6RWaX1lyFg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (8,             2,       3,      1,         'nilton_lollo_user',                  'NILTON_LOLLO_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKhmianNIvwaus1nubY3RL9jBrlgJQPYW72b+9mkhpN3SgbZrg8ME0AMCV22xfRCjw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (9,             2,       2,      1,         'melhor_casa_admin',                  'MELHOR_CASA_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEA6Te8vIUWZnb2Nmx4197fIErzWuMKtxgMe3Mxg3aRHCY3OZDB2oCl+BXbU4UlhwCw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (9,             2,       3,      1,         'melhor_casa_user',                   'MELHOR_CASA_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOrV65A44ugH+d3+fLdNSZkwX0Od4p9J4Fi6Zf+eXEUAl/cc6M9WbTwp11H80G2fQQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (10,            2,       2,      1,         'jose_fiori_admin',                   'JOSE_FIORI_ADMIN',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFgYqO74PFN+hg3jCnqYThjMqe3q/t1d8vPDj6dHKE6jZ1rlkxS9bLNxbU68/KSzOA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (10,            2,       3,      1,         'jose_fiori_user',                    'JOSE_FIORI_USER',                     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENc9ihwYOGcD4geaiJ3bKjY4zTiUrqaB5hcGrev/A6RKGtzMqHOg8IJgfyd3ZLey8g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (11,            2,       2,      1,         'caem_nelson_salome_admin',           'CAEM_NELSON_SALOME_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEP42qRqIgquEENAXkhy83LXOxJwd5kIGg0oorANzyAb347P7QJwMh1xcTSFT1Pq7Tg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (11,            2,       3,      1,         'caem_nelson_salome_user',            'CAEM_NELSON_SALOME_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDzFiUC5fF3KrLFPFWQv7LQ0SCSrokUOKjHLFdLpc91E9FNXIu1JL75FRwzns4NvPA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (12,            2,       2,      1,         'agnaldo_bianchini_admin',            'AGNALDO_BIANCHINI_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEHmOJB0MuhFDB2Vo4StmKBn+H5ojOB+6w5uG1nCQdIODwkfmqtGufhK5PVFkLPCMyw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (12,            2,       3,      1,         'agnaldo_bianchini_user',             'AGNALDO_BIANCHINI_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAD/7uqisMnoBWf7noJT6wto/yd/S9sW7fFBvkdcI9yFdzTi/Qtrw1Rh7K2o/d8d6Q==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (13,            2,       2,      1,         'caps_arceu_scanavini_admin',         'CAPS_ARCEU_SCANAVINI_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELf9f+aBTfDYkPem7vkscjqEYgN7zUEHcYHWDRHrYPMdgAhzPI90CSFh3O56oL8eeg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (13,            2,       3,      1,         'caps_arceu_scanavini_user',          'CAPS_ARCEU_SCANAVINI_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEB6dXFwLmGfOXpXkBUXNO1mJVe7iyG29kJJXiMz9kgVYF+8PjdapFQ5/fupEMuCfSA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (14,            2,       2,      1,         'controle_zoonoses_admin',            'CONTROLE_ZOONOSES_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECWPaVYScJtNwx+WBYJJBBXdAwpFtGhZcX9CVBhzYhPot1HBDW+QqMLYQJuGE75kbA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (14,            2,       3,      1,         'controle_zoonoses_user',             'CONTROLE_ZOONOSES_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAf0HS/1Kaakil7wN1pI3Ab9Cp4qAMPyYH1LvETWdxqvoDLmcgZWPGxsMWm1LLMuzw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (15,            2,       2,      0,         'solon_oliveira_admin',               'SOLON_OLIVEIRA_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEGqalT3NMD/gcz6fwwS4az3kowlAhzMItmGPx7tUy/DNz8HYrmgllmHCYmy6IFI4NA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (15,            2,       3,      0,         'solon_oliveira_user',                'SOLON_OLIVEIRA_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENIGuS/kKaTVHh9i0b3AMhhcNNVCDgNR291eu/dAtn4Rjy9B1olJxazW4Y6ZARuxuQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (16,            2,       2,      1,         'vigilancia_sanitaria_admin',         'VIGILANCIA_SANITARIA_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIdW+Sito6knIRmzlirKRSpAdtmLdBzi9i2qyITeOytMlf3LsgxXXAQe1sCQWQ9pBg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (16,            2,       3,      1,         'vigilancia_sanitaria_user',          'VIGILANCIA_SANITARIA_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIOx/Mt1etL7C2KGBvClIymx2TQ3jE6j44Kzmr2c3t8RqmJFLevY2q9mdnkoFLnUQQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (17,            2,       2,      0,         'unidade_movel_odonto_admin',         'UNIDADE_MOVEL_ODONTO_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMz17gHOKJOZcll5gvbNde+I19vyRFuveNOIhf/Pe/dZtQcexjn9D0mwNSYqX+VgCg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (17,            2,       3,      0,         'unidade_movel_odonto_user',          'UNIDADE_MOVEL_ODONTO_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECxH7N5T+uef3Sy1UD04gon+576U6aTgIUIwte3Jg6HghWip+JcrTwNBYhvspUstgQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (18,            2,       2,      1,         'vigilancia_epidemiologica_admin',    'VIGILANCIA_EPIDEMIOLOGICA_ADMIN',     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAED7pWOjnRGf09WbltfZvH37rtEj8F1q9m7tPD1Cc2gQonBgUN6L7wBUexLwtR8pm3Q==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (18,            2,       3,      1,         'vigilancia_epidemiologica_user',     'VIGILANCIA_EPIDEMIOLOGICA_USER',      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEK1Sp7mUn5wLWS0iJlAhlw5vrccaCH0SkfHKCskpltTxIrabnY0R/KyVF0rGTr5PYw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (19,            2,       2,      1,         'osvaldo_devitte_admin',              'OSVALDO_DEVITTE_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDMRy7IL8ZrYW4K5ppID9EXcYWF9N0OOL3QGn23PqXRPxEBAT5BPBKE94V8Azj3aSg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (19,            2,       3,      1,         'osvaldo_devitte_user',               'OSVALDO_DEVITTE_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECaKEkZdRsQexYC/YpSbqaEDonAZt3H9fZr6agiDO320d7mPPjdwN6ST2/U1OslB+A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (20,            2,       2,      1,         'humberto_junior_admin',              'HUMBERTO_JUNIOR_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEClI2cFIDFDYbKW51LNZ4s2W62vO+he6cglzxD12tKVsGhTxit4lPaINk3QfiNJvNA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (20,            2,       3,      1,         'humberto_junior_user',               'HUMBERTO_JUNIOR_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEN9Eea+2DZHj8mqLqJeh8ziy+rA538oi8EjVFnlWp8S+Nq+eMMAwcUnXVlC3uUk5tw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (21,            2,       2,      1,         'emerson_mercatelli_admin',           'EMERSON_MERCATELLI_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOfdXxkBREwxS4VMcnhxpeMyQ8uVXSedLnH9cP6ttmGJ1Qa2sRY2YETYbcUsbWy1xA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (21,            2,       3,      1,         'emerson_mercatelli_user',            'EMERSON_MERCATELLI_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEPNk6binzSWicXhphUs4PTTbrEd5M+Z2RPNTPkMwplUZ9nru4soC4TVBMNhxMLxUGQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (22,            2,       2,      0,         'antonio_simoes_pontes_admin',        'ANTONIO_SIMOES_PONTES_ADMIN',         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEODC9pjkbtr12UzU80e6S6tcDu50H2rN8mJHzZ8hsRqJ7ocqrA2CMN/ifxQvlx8HZg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (22,            2,       3,      0,         'antonio_simoes_pontes_user',         'ANTONIO_SIMOES_PONTES_USER',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEABNrdHXiBF67z+i+5ScB3d+77dafaLLwJVEVRdOe0yFklmhH4bQvdXLQ2eVgcjGDQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (23,            2,       2,      1,         'antonio_fabricio_admin',             'ANTONIO_FABRICIO_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIHpwKNvwRCf7r9WRhGcI393VP8LdCaT3C1u9XLRr0L0v+nUK1xlh/6bIMFczRMc4Q==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (23,            2,       3,      1,         'antonio_fabricio_user',              'ANTONIO_FABRICIO_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOUdi5vKKcFNHtHpv+xuxccn6XbIlM0f4bXPXzc6M7dK6g4hkPN7GYcmxuKmaYuz5A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (24,            2,       2,      1,         'alberto_franzini_admin',             'ALBERTO_FRANZINI_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBSX80VMHrcffGF/lD/FIzapIygQA8VlscFsMhrMbwoW8vFTjtaG7oiQiD25Wd10aQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (24,            2,       3,      1,         'alberto_franzini_user',              'ALBERTO_FRANZINI_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEENCLOPCWQGozKQXxWwV/4jWm2w0TSoVeyedsHSRIvTeO8RHSqcmEIJwWSmN7CIUCQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (25,            2,       2,      0,         'alcides_oliveira_admin',             'ALCIDES_OLIVEIRA_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEImFHsOVLe9HXjlKD8lpFNVUMQ84OAmTin8rriSIJUfqJK6zbUsCiXvpiz7GE239Gg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (25,            2,       3,      0,         'alcides_oliveira_user',              'ALCIDES_OLIVEIRA_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOR0CDzLdqB1oipoVmmA/uGKaZx+cPwjyMhd0a84uH/RmpUjoTptdcvaVNXj4oZdLQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (26,            2,       2,      1,         'adalgisa_goncalves_admin',           'ADALGISA_GONCALVES_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMWTcZxQXqOF498KRCKWrptmx5G6wTxtTp8fJE781jcm1IaA3dL0bxF2fNUiCDY+nA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (26,            2,       3,      1,         'adalgisa_goncalves_user',            'ADALGISA_GONCALVES_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENz3CzLPv0LrC/3ra2Yqt6TMcJFQOswSMTivRlz58kkZnjEqqU+UqZ2fguGXGRnvHw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (27,            2,       2,      0,         'eva_cruz_admin',                     'EVA_CRUZ_ADMIN',                      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE88tNQrj3L3StrsdsYNkUtmnYjUX2e1o9lymnQcTz+Wx6cvbMAhfSsK/fbKLqaovA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (27,            2,       3,      0,         'eva_cruz_user',                      'EVA_CRUZ_USER',                       NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECvkeJyFJEtbPOCHVRGocxsAYCzRX5PPI0cbQqcKNGijzdlHvKhFwF/VjADgBSUjog==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (28,            2,       2,      1,         'guerino_bertolini_admin',            'GUERINO_BERTOLINI_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMLV1vh5IIne6aCnMPp2IEVI/snNvaZMzBVb6FFtsXQ7EwJKGUDwZUzl9P1SqOlwzA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (28,            2,       3,      1,         'guerino_bertolini_user',             'GUERINO_BERTOLINI_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJppkLl/GRLS5dl/LXXkucaQu06igZ0Z4ld8reYzGbsh5C37YFQIJOen5QIzjDC8qQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (29,            2,       2,      1,         'farmacia_processos_admin',           'FARMACIA_PROCESSOS_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDwJmsC1VqzrVIf1um8n4Vy6SxUo7b1tR8A1kc6AUEXzGE84N6kWWw0KYJSgn8sjig==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (29,            2,       3,      1,         'farmacia_processos_user',            'FARMACIA_PROCESSOS_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEINSTaDrCnHzIQP9N58xdfWYgjQpLTF8c+Iz/JaCBEuvTmFsbV4pqFwkFsMX5bvVew==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (30,            2,       2,      1,         'vital_homem_admin',                  'VITAL_HOMEM_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKk9EilNuzNDgzGVmsp94PZPvoWyQ+aFCQHQicO+UM2hLJ10nS1x52QpYe4rrVuY5g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (30,            2,       3,      1,         'vital_homem_user',                   'VITAL_HOMEM_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEN2gpT/sY3zzBw5GQQFSqVfg52agPIzZuXZ5u9hPUskCPzW45fTB8z7WW/5YnhasaA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (31,            2,       2,      0,         'hospital_covid_admin',               'HOSPITAL_COVID_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECz+Pl22l4/rre1So56FAWpbfEjCgEYfGnBfn/mRCsRuBPnOp3hIsqOH/hDT5LCA+A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (31,            2,       3,      0,         'hospital_covid_user',                'HOSPITAL_COVID_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAErhhQdnKP5Xt7vmYDfax4aDWcOnCiUIHYuu8Bx/PGbGgR8/2y3TqnT3htovR7I4A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (32,            2,       2,      1,         'orlando_zaniboni_admin',             'ORLANDO_ZANIBONI_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFDpcberLid53T0HfYhuHWbFveHVYji9btXDVDb2Hn1zek9w95leEbPtOJc0CY7d7g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (32,            2,       3,      1,         'orlando_zaniboni_user',              'ORLANDO_ZANIBONI_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOUxAAQe8qz7IpTKDsEMzjmFmNHDa03/fIsr8ofPGX5XCXaVK5uhvHI7sfxyUALHFg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (33,            2,       2,      0,         'jair_mourao_admin',                  'JAIR_MOURAO_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENYZK47bcJHa3F3ZrmFVA5qeT3aFignT5K5Q+Gjrw6CSRkN2mD5hO8pisg1F1qNnxA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (33,            2,       3,      0,         'jair_mourao_user',                   'JAIR_MOURAO_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE1y3EoyayrWkljaTpONEAQ3DNcpoQFU1AOQsd2pzlfszIBUztYsdft1vLza5mTmaA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (34,            2,       2,      1,         'francisco_cascelli_admin',           'FRANCISCO_CASCELLI_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELR59iriPH2Y9u6ieExWGekd4/meyB4UFteACXssClmTm2PFSxkyNRuh/Quw/8sIqg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (34,            2,       3,      1,         'francisco_cascelli_user',            'FRANCISCO_CASCELLI_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECTUhYOj17/YWoBf64o5usn1Ns4/SbDzyzJO7IPXJz5RAM7ctLBrRXftoDvqlhs8og==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (35,            2,       2,      1,         'jeronymo_ometto_admin',              'JERONYMO_OMETTO_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJ9ZP5f07g/59PIoKfwfNks8AQiI9wCgsxApz8z959wmbapsjDUfZwWa+JGf2lXobw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (35,            2,       3,      1,         'jeronymo_ometto_user',               'JERONYMO_OMETTO_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEM2EfzhYjilXQHGJqvyp4LwKH/1CTwVyuj/C/X7OmVUxHkOy74FXoH5cczReqZyouA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (36,            2,       2,      1,         'lucia_meneghetti_admin',             'LUCIA_MENEGHETTI_ADMIN',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEB4QlTnoETLczEyC3f6rJurnUGLMMe2zyzd65cdaEj4K6wp3whfPjjV+Z9K+npVyZQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (36,            2,       3,      1,         'lucia_meneghetti_user',              'LUCIA_MENEGHETTI_USER',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFlAM/TvYVPL1wL9AzSjSZWQLWByuHwV25OEfCuxc3aRGOp17KE3UHWrGB5YXqeHtg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (37,            2,       2,      1,         'madre_carla_admin',                  'MADRE_CARLA_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELE0Cp3ppu4TWByST0/MwjUiXsfkWwgWgh3dBa+23h5pcAwpL10JMErWZytjATIIAA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (37,            2,       3,      1,         'madre_carla_user',                   'MADRE_CARLA_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELixgyLmUk8pcWeB35zJ6URdH40s4dUnE+z8pOBFkNT4a8Krkls8IzZbKnmD1UjhMQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (38,            2,       2,      1,         'narciso_gomes_admin',                'NARCISO_GOMES_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAED/RzSL8j2BLAulbZohRGsAF42PS5Co79ptsBoQEicZSod8r79WOJ4vOGYQeicE1kw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (38,            2,       3,      1,         'narciso_gomes_user',                 'NARCISO_GOMES_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAAljIl8WD1wCJrPU9ggK9SJMir3rIs7ziWm+ib0nGeTTLHctDUxxsQhsJP8tTdlAg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (39,            2,       2,      1,         'ophelia_pesse_admin',                'OPHELIA_PESSE_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAupG/M5XDxWL1ZQz9iTVXo2d1rdpYFc7qGSGs2Hj4oToURMWiTn24hZGCQq9dyemw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (39,            2,       3,      1,         'ophelia_pesse_user',                 'OPHELIA_PESSE_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBYgz9F2D5oSeziduOA7VxLPOPM36ODwTXV72tYdBx+XquGxnCXjySjQS9IJgHJ9Eg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (40,            2,       2,      1,         'otavio_breda_admin',                 'OTAVIO_BREDA_ADMIN',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFG98BeYflT5UoFzApJnS023phmn0mwsjPO0jnHzdXwOUUccrdYYW6Bw+GfPhvoGRw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (40,            2,       3,      1,         'otavio_breda_user',                  'OTAVIO_BREDA_USER',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENUUW4gdhEh7DJKw0fH6w7watwT1r+X1D/pZZ/9K6c5P2ck1UD0yH7S/zJPhO874OA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (41,            2,       2,      1,         'fermin_vianna_admin',                'FERMIN_VIANNA_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEO5rFlb9O36UeV47+o7FEMqEuUTPul4GjTvxX/C74ZE3W6App72LcByovi8ZOV+0hQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (41,            2,       3,      1,         'fermin_vianna_user',                 'FERMIN_VIANNA_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKO151w7ySdteP1tmaOhm4Jta0t0SeJMjl5co/nsIlXunQV96fbTVZp5L+JNGQLodw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (42,            2,       2,      1,         'bento_feres_admin',                  'BENTO_FERES_ADMIN',                   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAELLDPpeir15UlZ7KBj/6uZ+fNH7/3Z2wr1MQwov43LqVZupc3Rrzx6r7wngRlFSILA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (42,            2,       3,      1,         'bento_feres_user',                   'BENTO_FERES_USER',                    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEi+G8YlbQdC3/xi9mu7tH3WjhCEHxWcanVMUdQHE3S9cNdwkyavw4bxABqlbr24tw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (43,            2,       2,      1,         'antonio_pontes_admin',               'ANTONIO_PONTES_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEEyA0fjr2Lrnak2Nc47q/Aiw4LfUCInSswQeSGmfrnBOMj6+fG/7FCJbedUNpCWqhA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (43,            2,       3,      1,         'antonio_pontes_user',                'ANTONIO_PONTES_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAENAIaJfu5jYakIAn9uEnvZWSPg19LTQL1ias/5/qXJERqFmBN7MSrw2+GTn1X4sbaw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (44,            2,       2,      0,         'solon_oliveira_odonto_admin',        'SOLON_OLIVEIRA_ODONTO_ADMIN',         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIbkGLpMG3FRXXPfXKoAueuJFaBL3Wv1IIXghVw2RBVr+WR7CFxc/y0RDod2/IozqA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (44,            2,       3,      0,         'solon_oliveira_odonto_user',         'SOLON_OLIVEIRA_ODONTO_USER',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEMWPpTQG49O+LAPXAO0K4x+mdY7Zd6CaBlhsdjRus0Yfvb3odB+7VQc8aUygKCWNtQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (45,            2,       2,      0,         'irma_diva_patarra_admin',            'IRMA_DIVA_PATARRA_ADMIN',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJJTLGbNwf1KwHn6xsN7VAUCxZpGfU7qj/tO+AG6ae2KCd08PfIV2fYpKxBizPcfvQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (45,            2,       3,      0,         'irma_diva_patarra_user',             'IRMA_DIVA_PATARRA_USER',              NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEINH+fq2L/Q1ScuW8WzDnHfk/3qDeu6cEEwQhopFG58xPVOBUUpkSt3BOhoE9XBc7A==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (46,            2,       2,      1,         'centro_infantil_hercio_admin',       'CENTRO_INFANTIL_HERCIO_ADMIN',        NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEP2KLrwFKJqC5q2q3va/1RyuO0TFVGFu8JIr+E6EsEDj/4LPVigo0cBBu5LVLIKd2w==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (46,            2,       3,      1,         'centro_infantil_hercio_user',        'CENTRO_INFANTIL_HERCIO_USER',         NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECTaMb56SFZmN0I7QuMxLcc7BiYi3fy3wX3cfSykG0xDFHJmMGU6BvMzRFBnU3/6CQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (47,            2,       2,      1,         'rosa_teixeira_admin',                'ROSA_TEIXEIRA_ADMIN',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEF6e7kCt1IXrF6uppR2lJ0QC1m/CiNk153AiSE0auMN2FIzdaBsJWye8EhMLEsN+cw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (47,            2,       3,      1,         'rosa_teixeira_user',                 'ROSA_TEIXEIRA_USER',                  NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEB7l0HdYOx0719/TzgHZSi/MSiXO50r+wsGPAOXv2LeY9KUtUaNvPmdRvumn3ZcHnA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (48,            2,       2,      1,         'jandira_duarte_admin',               'JANDIRA_DUARTE_ADMIN',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE9rhH8Qet7DtebCZuqY9dhV72ODgqKM9I4T+S7Oc7tRmna2Q565hxuwv+fgKeD9BA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (48,            2,       3,      1,         'jandira_duarte_user',                'JANDIRA_DUARTE_USER',                 NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEIa1cvqZU9hUZdFleF5GM0jYBTecIRQTJtM35XPh8pbIVvWqpgabrlp/zBP7I5OO+g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (49,            2,       2,      0,         'imagem_radiologica_admin',           'IMAGEM_RADIOLOGICA_ADMIN',            NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAgUUTyxnUO+SeP1wqR9xFVGOjiBpZyzWNQk99iwDNme4ELRVMIyNltdahkZwZQWLQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (49,            2,       3,      0,         'imagem_radiologica_user',            'IMAGEM_RADIOLOGICA_USER',             NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEChDjkqWQlh8pjzAcYFoDhIERqZJjl5iN/p5ynNnh8KRec6WwJ1yNpAvB9KjvK3qAg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (50,            2,       2,      1,         'caps_infanto_juvenil_admin',         'CAPS_INFANTO_JUVENIL_ADMIN',          NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEKaarSg41ZUXAgk4lgvBnvOblwbRV8tIfrBSsCeFUifXGXRuQpDz1DA5y0ofssFCFA==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (50,            2,       3,      1,         'caps_infanto_juvenil_user',          'CAPS_INFANTO_JUVENIL_USER',           NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEE9wylBXK19SMMmqvtrwutChbxNBCP2Kn1hdBMKEfdPg3l9rpDw2MLr2023KlbXHVw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (51,            2,       2,      1,         'caps_idalina_victorello_admin',      'CAPS_IDALINA_VICTORELLO_ADMIN',       NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDVxdAN9GLSPdsTnjRMtMacMVkb62SASVz6fHzGx+KYbMxoDKDk6ycA7lAOqLliEDg==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (51,            2,       3,      1,         'caps_idalina_victorello_user',       'CAPS_IDALINA_VICTORELLO_USER',        NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEHpmkGXdAmfRtzzw5bgtnSxr4honedh/p6kurP94Ni09nu0Ow+PH9mZRNx/2icKt8w==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (52,            2,       2,      1,         'transporte_intermunicipal_admin',    'TRANSPORTE_INTERMUNICIPAL_ADMIN',     NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEJLNLl0px54ELyKVV0lloFJbnlaM45VGFhSkTc4d5dR+Fwg75PMHSs9XXsRWk7gbRQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (52,            2,       3,      1,         'transporte_intermunicipal_user',     'TRANSPORTE_INTERMUNICIPAL_USER',      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEOWBjhb1rdKgF5rU2l3DTa+hypIJgiU9mesofoD8lkTb617jve/G2aVlNJrH6cUDYQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (53,            2,       2,      0,         'consultorio_rua_admin',              'CONSULTORIO_RUA_ADMIN',               NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEDHFso++6mDy0SVr7yQzeDmVdtl2V91sXS7VU+bjkEic+rmSvhZO8E6dxQajGXyX0g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (53,            2,       3,      0,         'consultorio_rua_user',               'CONSULTORIO_RUA_USER',                NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEFgJ1Eguus+oX10oOOGdqmNPkicBEZCtmXXGXByXxA1FcMCj1ZyKjE1b94hcoog/LQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (54,            2,       2,      0,         'distribuicao_imunobiologico_admin',  'DISTRIBUICAO_IMUNOBIOLOGICO_ADMIN',   NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEBqOQ5x/GHXEAyUZGLw/iD6Mqpyk/ma9MOsl2ZY/R//x5hqjL+0598XGLcm6wqBEWw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (54,            2,       3,      0,         'distribuicao_imunobiologico_user',   'DISTRIBUICAO_IMUNOBIOLOGICO_USER',    NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEAW5H1r+gd+rJ3zr308+2Fxo9IvgFa5ZguUGDJjDWK2ZX2f+tvVFJHpL/irOp6fycw==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (55,            2,       2,      1,         'endemias_admin',                     'ENDEMIAS_ADMIN',                      NULL,    NULL,              0,               'AQAAAAIAAYagAAAAEM5ayTOMDaxjjL9OTMgtXZMLRBx5NNZWbdjk0PabppFLI3rUp/QPGc034gGzlzoB2g==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0),
+                  (55,            2,       3,      1,         'endemias_user',                      'ENDEMIAS_USER',                       NULL,    NULL,              0,               'AQAAAAIAAYagAAAAECVdCsPDxq2+1K5LuhvwBCBP9CQ+12LYX745OqQg3eVnO5SvPmNi0F7MlHQPfjSYLQ==', NEWID(),         NEWID(),            NULL,          0,                      0,                  NULL,         0,                0)
+      ) AS T (FacilityId, Scope, Role, IsActive, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount)
 )
 
-INSERT INTO [dbo].[AspNetUsers]
+INSERT INTO [dbo].[ApplicationUsers]
             ([FacilityId]
             ,[Scope]
+            ,[Role]
             ,[CreatedOn]
             ,[UpdatedOn]
             ,[IsActive]
@@ -1360,6 +1365,7 @@ INSERT INTO [dbo].[AspNetUsers]
 SELECT
       FacilityId,
       Scope,
+      Role,
       CreatedOn,
       UpdatedOn,
       IsActive,
@@ -1378,187 +1384,6 @@ SELECT
       LockoutEnabled,
       AccessFailedCount
 FROM  RandomDates;
-GO
-
--- ==================================================================================================================================
-USE [ararashealthhub]
-GO
-
-INSERT INTO [dbo].[AspNetUserRoles]
-            ([UserId]
-            ,[RoleId])
-      VALUES
-         -- ('UserId', 'RoleId'),
-         -- (1, 1),
-            (2, 2),
-            (3, 3),
-            (4, 3),
-
-            (5, 1),
-            (6, 2),
-            (7, 3),
-            (8, 3),
-            (9, 3),
-            (10, 3),
-
-            (11, 2),
-            (12, 3),
-
-            (13, 2),
-            (14, 3),
-
-            (15, 2),
-            (16, 3),
-
-            (17, 2),
-            (18, 3),
-
-            (19, 2),
-            (20, 3),
-
-            (21, 2),
-            (22, 3),
-
-            (23, 2),
-            (24, 3),
-
-            (25, 2),
-            (26, 3),
-
-            (27, 2),
-            (28, 3),
-
-            (29, 2),
-            (30, 3),
-
-            (31, 2),
-            (32, 3),
-
-            (33, 2),
-            (34, 3),
-
-            (35, 2),
-            (36, 3),
-
-            (37, 2),
-            (38, 3),
-
-            (39, 2),
-            (40, 3),
-
-            (41, 2),
-            (42, 3),
-
-            (43, 2),
-            (44, 3),
-
-            (45, 2),
-            (46, 3),
-
-            (47, 2),
-            (48, 3),
-
-            (49, 2),
-            (50, 3),
-
-            (51, 2),
-            (52, 3),
-
-            (53, 2),
-            (54, 3),
-
-            (55, 2),
-            (56, 3),
-
-            (57, 2),
-            (58, 3),
-
-            (59, 2),
-            (60, 3),
-
-            (61, 2),
-            (62, 3),
-
-            (63, 2),
-            (64, 3),
-
-            (65, 2),
-            (66, 3),
-
-            (67, 2),
-            (68, 3),
-
-            (69, 2),
-            (70, 3),
-
-            (71, 2),
-            (72, 3),
-
-            (73, 2),
-            (74, 3),
-
-            (75, 2),
-            (76, 3),
-
-            (77, 2),
-            (78, 3),
-
-            (79, 2),
-            (80, 3),
-
-            (81, 2),
-            (82, 3),
-
-            (83, 2),
-            (84, 3),
-
-            (85, 2),
-            (86, 3),
-
-            (87, 2),
-            (88, 3),
-
-            (89, 2),
-            (90, 3),
-
-            (91, 2),
-            (92, 3),
-
-            (93, 2),
-            (94, 3),
-
-            (95, 2),
-            (96, 3),
-
-            (97, 2),
-            (98, 3),
-
-            (99, 2),
-            (100, 3),
-
-            (101, 2),
-            (102, 3),
-
-            (103, 2),
-            (104, 3),
-
-            (105, 2),
-            (106, 3),
-
-            (107, 2),
-            (108, 3),
-
-            (109, 2),
-            (110, 3),
-
-            (111, 2),
-            (112, 3),
-
-            (113, 2),
-            (114, 3),
-
-            (115, 2),
-            (116, 3);
 GO
 
 -- ==================================================================================================================================
