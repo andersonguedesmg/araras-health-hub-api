@@ -10,12 +10,12 @@ using ArarasHealthHub.Application.Features.Accounts.Commands.CreateAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.DeactivateAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount;
 using ArarasHealthHub.Application.Features.Accounts.Commands.UpdateAccount;
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacility;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
 using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,16 +28,23 @@ namespace ArarasHealthHub.Api.Controllers
     public class AccountController : BaseApiController
     {
         [HttpPost]
-        [AuthorizeAccountManagement]
-        [ProducesResponseType(typeof(ApiResponse<AccountCreatedResponse>), StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create([FromBody] CreateAccountCommand command, CancellationToken cancellationToken)
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(Result<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Create(CreateAccountCommand command, CancellationToken cancellationToken)
         {
-            return await Send(command, cancellationToken);
+            return await SendCreated(
+                command,
+                nameof(GetById),
+                id => new { id },
+                cancellationToken);
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(ApiResponse<LoginAccountResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<LoginAccountResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginAccountCommand command, CancellationToken cancellationToken)
         {
             return await Send(command, cancellationToken);
@@ -45,59 +52,71 @@ namespace ArarasHealthHub.Api.Controllers
 
         [HttpPatch("{id:int}/change-password")]
         [AuthorizeAccountManagement]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
         public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangeAccountPasswordCommand command, CancellationToken cancellationToken)
         {
-            return await Send(command with { TargetUserId = id }, cancellationToken);
+            var result = await Send(command with { TargetUserId = id }, cancellationToken);
+
+            return Ok(result);
         }
 
         [HttpGet]
-        [AuthorizeAccountManagement]
-        [ProducesResponseType(typeof(PagedResponse<AccountListItemResponse>), StatusCodes.Status200OK)]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(PagedResult<AccountListItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllAccountsQuery query, CancellationToken cancellationToken)
         {
             return await Send(query, cancellationToken);
         }
 
         [HttpGet("{id:int}")]
-        [AuthorizeAccountManagement]
-        [ProducesResponseType(typeof(ApiResponse<GetAccountByIdResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<GetAccountByIdResponse>), StatusCodes.Status404NotFound)]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(Result<AccountResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
             return await Send(new GetAccountByIdQuery(id), cancellationToken);
         }
 
-        [HttpGet("facility/{facilityId:int}")]
+        [HttpGet("by-facility/{facilityId:int}")]
         [AuthorizeAccountManagement]
-        [ProducesResponseType(typeof(ApiResponse<List<GetAccountsByFacilityResponse>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<List<GetAccountsByFacilityResponse>>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Result<List<AccountResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<List<AccountResponse>>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAccountsByFacility(int facilityId, CancellationToken cancellationToken)
         {
             return await Send(new GetAccountsByFacilityQuery(facilityId), cancellationToken);
         }
 
         [HttpPut("{id:int}")]
-        [AuthorizeAccountManagement]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateAccountCommand command, CancellationToken cancellationToken)
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Update(int id, UpdateAccountCommand command, CancellationToken cancellationToken)
         {
             return await Send(command.WithId(id), cancellationToken);
         }
 
         [HttpPatch("{id:int}/activate")]
-        [AuthorizeAccountManagement]
-        public async Task<IActionResult> Activate(int id, ActivateAccountCommand command, CancellationToken cancellationToken)
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Activate(int id, CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id), cancellationToken);
+            return await Send(new ActivateAccountCommand(id), cancellationToken);
         }
 
         [HttpPatch("{id:int}/deactivate")]
-        [AuthorizeAccountManagement]
-        public async Task<IActionResult> Deactivate(int id, DeactivateAccountCommand command, CancellationToken cancellationToken)
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Deactivate(int id, CancellationToken cancellationToken)
         {
-            return await Send(command.WithId(id), cancellationToken);
+            return await Send(new DeactivateAccountCommand(id), cancellationToken);
         }
     }
 }
