@@ -43,9 +43,9 @@ namespace ArarasHealthHub.Application.Features.Receivings.Validation
                 .NotEmpty().WithMessage("A data de recebimento é obrigatória.")
                 .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("A data de recebimento não pode ser futura.");
 
-            RuleFor(r => r.SupplierId)
-                .NotEmpty().WithMessage("O ID do fornecedor é obrigatório.")
-                .MustAsync(SupplierExists).WithMessage("Fornecedor não encontrado.");
+            // RuleFor(r => r.SupplierId)
+            //     .NotEmpty().WithMessage("O ID do fornecedor é obrigatório.")
+            //     .MustAsync(SupplierExists).WithMessage("Fornecedor não encontrado.");
 
             RuleFor(r => r.ResponsibleId)
                 .NotEmpty().WithMessage("O ID do responsável é obrigatório.")
@@ -61,10 +61,10 @@ namespace ArarasHealthHub.Application.Features.Receivings.Validation
             RuleForEach(r => r.ReceivedItems).SetValidator(new CreateReceivedItemCommandValidator(_productRepository));
         }
 
-        private async Task<bool> SupplierExists(int supplierId, CancellationToken cancellationToken)
-        {
-            return await _supplierRepository.SupplierExists(supplierId);
-        }
+        // private async Task<bool> SupplierExists(int supplierId, CancellationToken cancellationToken)
+        // {
+        //     return await _supplierRepository.SupplierExists(supplierId);
+        // }
 
         private async Task<bool> EmployeeExists(int employeeId, CancellationToken cancellationToken)
         {

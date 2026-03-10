@@ -19,11 +19,9 @@ namespace ArarasHealthHub.Application.Features.Accounts.Validation
                 .WithMessage("Identificador inválido.");
 
             RuleFor(x => x.NewPassword)
-                .NotEmpty()
-                    .WithName("Senha")
-                    .WithMessage(ValidationMessages.RequiredField)
-                .MinimumLength(8)
-                    .WithMessage(ValidationMessages.MinLengthField(8))
+                .NotEmpty().WithMessage("Senha é obrigatória.")
+                .MinimumLength(8).WithMessage("Senha deve ter pelo menos 8 caracteres.")
+                .MaximumLength(256).WithMessage("Senha não pode exceder 256 caracteres.")
                 .Matches("[A-Z]")
                     .WithMessage("A senha deve conter pelo menos uma letra maiúscula.")
                 .Matches("[a-z]")

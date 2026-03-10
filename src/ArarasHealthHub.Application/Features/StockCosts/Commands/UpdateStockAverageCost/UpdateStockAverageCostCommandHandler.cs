@@ -30,62 +30,62 @@ namespace ArarasHealthHub.Application.Features.StockCosts.Commands.UpdateStockAv
 
         public async Task<ApiResponseO<StockCost>> Handle(UpdateStockAverageCostCommand request, CancellationToken cancellationToken)
         {
-            if (request.EntryQuantity <= 0)
-            {
-                return new ApiResponseO<StockCost>(StatusCodes.Status400BadRequest, ApiMessages.TheQuantityMustBeGreaterThanZero, false);
-            }
+            // if (request.EntryQuantity <= 0)
+            // {
+            //     return new ApiResponseO<StockCost>(StatusCodes.Status400BadRequest, ApiMessages.TheQuantityMustBeGreaterThanZero, false);
+            // }
 
-            if (request.EntryUnitValue < 0)
-            {
-                return new ApiResponseO<StockCost>(StatusCodes.Status400BadRequest, ApiMessages.TheUnitValueCannotBeNegative, false);
-            }
+            // if (request.EntryUnitValue < 0)
+            // {
+            //     return new ApiResponseO<StockCost>(StatusCodes.Status400BadRequest, ApiMessages.TheUnitValueCannotBeNegative, false);
+            // }
 
-            var currentStockQuantity = request.UpdatedStockQuantity;
+            // var currentStockQuantity = request.UpdatedStockQuantity;
 
-            var stockCost = await _dbContext.StockCosts
-                .FirstOrDefaultAsync(sc => sc.StockId == request.StockId, cancellationToken);
+            // var stockCost = await _dbContext.StockCosts
+            //     .FirstOrDefaultAsync(sc => sc.StockId == request.StockId, cancellationToken);
 
-            if (stockCost == null)
-            {
-                stockCost = new StockCost
-                {
-                    StockId = request.StockId,
-                    AverageUnitCost = request.EntryUnitValue,
-                    CurrentTotalCost = request.EntryQuantity * request.EntryUnitValue
-                };
+            // if (stockCost == null)
+            // {
+            //     stockCost = new StockCost
+            //     {
+            //         StockId = request.StockId,
+            //         AverageUnitCost = request.EntryUnitValue,
+            //         CurrentTotalCost = request.EntryQuantity * request.EntryUnitValue
+            //     };
 
-                await _dbContext.StockCosts.AddAsync(stockCost, cancellationToken);
+            //     await _dbContext.StockCosts.AddAsync(stockCost, cancellationToken);
 
-                await _dbContext.SaveChangesAsync(cancellationToken);
+            //     await _dbContext.SaveChangesAsync(cancellationToken);
 
-                return new ApiResponseO<StockCost>(StatusCodes.Status200OK, ApiMessages.CostOfInventoryInitializedAndSavedSuccessfully, stockCost);
-            }
+            //     return new ApiResponseO<StockCost>(StatusCodes.Status200OK, ApiMessages.CostOfInventoryInitializedAndSavedSuccessfully, stockCost);
+            // }
 
-            stockCost.Stock = null!;
+            // stockCost.Stock = null!;
 
-            var oldQuantity = currentStockQuantity - request.EntryQuantity;
+            // var oldQuantity = currentStockQuantity - request.EntryQuantity;
 
-            if (oldQuantity <= 0)
-            {
-                stockCost.AverageUnitCost = request.EntryUnitValue;
-                stockCost.CurrentTotalCost = request.EntryQuantity * request.EntryUnitValue;
-            }
-            else
-            {
-                var oldTotalCost = stockCost.CurrentTotalCost;
-                var entryTotalCost = request.EntryQuantity * request.EntryUnitValue;
-                var newTotalCost = oldTotalCost + entryTotalCost;
-                var newQuantity = currentStockQuantity;
+            // if (oldQuantity <= 0)
+            // {
+            //     stockCost.AverageUnitCost = request.EntryUnitValue;
+            //     stockCost.CurrentTotalCost = request.EntryQuantity * request.EntryUnitValue;
+            // }
+            // else
+            // {
+            //     var oldTotalCost = stockCost.CurrentTotalCost;
+            //     var entryTotalCost = request.EntryQuantity * request.EntryUnitValue;
+            //     var newTotalCost = oldTotalCost + entryTotalCost;
+            //     var newQuantity = currentStockQuantity;
 
-                stockCost.AverageUnitCost = newTotalCost / newQuantity;
-                stockCost.CurrentTotalCost = newTotalCost;
-            }
+            //     stockCost.AverageUnitCost = newTotalCost / newQuantity;
+            //     stockCost.CurrentTotalCost = newTotalCost;
+            // }
 
-            _dbContext.StockCosts.Update(stockCost);
+            // _dbContext.StockCosts.Update(stockCost);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            // await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return new ApiResponseO<StockCost>(StatusCodes.Status200OK, ApiMessages.WeightedAverageCostSuccessfullyUpdated, stockCost);
+            return new ApiResponseO<StockCost>(StatusCodes.Status200OK, ApiMessages.WeightedAverageCostSuccessfullyUpdated, null); //stockCost
         }
     }
 }

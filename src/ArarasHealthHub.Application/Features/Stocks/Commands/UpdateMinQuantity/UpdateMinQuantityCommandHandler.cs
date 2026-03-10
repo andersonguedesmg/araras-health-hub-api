@@ -31,26 +31,26 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.UpdateMinQuantity
 
         public async Task<ApiResponseO<StockDto>> Handle(UpdateMinQuantityCommand request, CancellationToken cancellationToken)
         {
-            var stock = await _dbContext.Stocks
-                .Include(s => s.Product)
-                .FirstOrDefaultAsync(s => s.ProductId == request.ProductId, cancellationToken);
+            // var stock = await _dbContext.Stocks
+            //     .Include(s => s.Product)
+            //     .FirstOrDefaultAsync(s => s.ProductId == request.ProductId, cancellationToken);
 
-            if (stock == null)
-            {
-                return new ApiResponseO<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
-            }
+            // if (stock == null)
+            // {
+            //     return new ApiResponseO<StockDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Estoque para o produto", request.ProductId), false);
+            // }
 
-            if (request.NewMinQuantity < 0)
-            {
-                return new ApiResponseO<StockDto>(StatusCodes.Status404NotFound, ApiMessages.MinimumQuantityCannotBeNegative, false);
-            }
+            // if (request.NewMinQuantity < 0)
+            // {
+            //     return new ApiResponseO<StockDto>(StatusCodes.Status404NotFound, ApiMessages.MinimumQuantityCannotBeNegative, false);
+            // }
 
-            stock.MinQuantity = request.NewMinQuantity;
+            // stock.MinQuantity = request.NewMinQuantity;
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            // await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var stockDto = _mapper.Map<StockDto>(stock);
-            return new ApiResponseO<StockDto>(StatusCodes.Status200OK, ApiMessages.MinimumQuantityUpdatedSuccessfully, stockDto);
+            // var stockDto = _mapper.Map<StockDto>(stock);
+            return new ApiResponseO<StockDto>(StatusCodes.Status200OK, ApiMessages.MinimumQuantityUpdatedSuccessfully, null); //stockDto
         }
     }
 }

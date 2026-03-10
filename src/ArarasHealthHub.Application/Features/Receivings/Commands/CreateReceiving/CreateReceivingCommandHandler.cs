@@ -41,115 +41,115 @@ namespace ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceivi
 
         public async Task<ApiResponseO<ReceivingDto>> Handle(CreateReceivingCommand request, CancellationToken cancellationToken)
         {
-            var receiving = _mapper.Map<Receiving>(request);
+            // var receiving = _mapper.Map<Receiving>(request);
 
-            receiving.Supplier = await _dbContext.Suppliers.FindAsync(request.SupplierId);
-            if (receiving.Supplier == null)
-            {
-                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Fornecedor", request.SupplierId), null);
-            }
-
-            receiving.Responsible = await _dbContext.Employees.FindAsync(request.ResponsibleId);
-            if (receiving.Responsible == null)
-            {
-                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.ResponsibleId), false);
-            }
-
-            // var account = await _dbContext.Users.FindAsync(request.AccountId);
-            // if (account == null)
+            // receiving.Supplier = await _dbContext.Suppliers.FindAsync(request.SupplierId);
+            // if (receiving.Supplier == null)
             // {
-            //     return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.AccountId), false);
+            //     return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Fornecedor", request.SupplierId), null);
             // }
 
-            decimal totalCalculatedValue = 0;
-            var newReceivedItems = new List<ReceivedItem>();
+            // receiving.Responsible = await _dbContext.Employees.FindAsync(request.ResponsibleId);
+            // if (receiving.Responsible == null)
+            // {
+            //     return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Funcionário", request.ResponsibleId), false);
+            // }
 
-            foreach (var itemCommand in request.ReceivedItems)
-            {
-                var product = await _dbContext.Products.FindAsync(itemCommand.ProductId);
-                if (product == null)
-                {
-                    return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, $"{ApiMessages.NotFoundWithId("Produto", itemCommand.ProductId)} para o item.", false);
-                }
+            // // var account = await _dbContext.Users.FindAsync(request.AccountId);
+            // // if (account == null)
+            // // {
+            // //     return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Conta", request.AccountId), false);
+            // // }
 
-                var receivedItems = _mapper.Map<ReceivedItem>(itemCommand);
-                receivedItems.Product = product;
-                receivedItems.TotalValue = receivedItems.Quantity * receivedItems.UnitValue;
+            // decimal totalCalculatedValue = 0;
+            // var newReceivedItems = new List<ReceivedItem>();
 
-                newReceivedItems.Add(receivedItems);
-                totalCalculatedValue += receivedItems.TotalValue;
-            }
+            // foreach (var itemCommand in request.ReceivedItems)
+            // {
+            //     var product = await _dbContext.Products.FindAsync(itemCommand.ProductId);
+            //     if (product == null)
+            //     {
+            //         return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, $"{ApiMessages.NotFoundWithId("Produto", itemCommand.ProductId)} para o item.", false);
+            //     }
 
-            receiving.ReceivedItem = newReceivedItems;
-            receiving.TotalValue = totalCalculatedValue;
+            //     var receivedItems = _mapper.Map<ReceivedItem>(itemCommand);
+            //     receivedItems.Product = product;
+            //     receivedItems.TotalValue = receivedItems.Quantity * receivedItems.UnitValue;
 
-            await _dbContext.Receivings.AddAsync(receiving, cancellationToken);
+            //     newReceivedItems.Add(receivedItems);
+            //     totalCalculatedValue += receivedItems.TotalValue;
+            // }
 
-            foreach (var item in receiving.ReceivedItem)
-            {
-                var updateStockCommand = new UpdateProductStockCommand(
-                    ProductId: item.ProductId,
-                    Quantity: item.Quantity,
-                    OperationType: StockOperationTypeEnum.Receipt
-                );
-                var stockResult = await _mediator.Send(updateStockCommand, cancellationToken);
+            // receiving.ReceivedItem = newReceivedItems;
+            // receiving.TotalValue = totalCalculatedValue;
 
-                if (!stockResult.Success || stockResult.Data == null)
-                {
-                    throw new InvalidOperationException($"Falha ao atualizar o estoque consolidado para o produto {item.ProductId}. Erro: {stockResult.Message}");
-                }
+            // await _dbContext.Receivings.AddAsync(receiving, cancellationToken);
 
-                var updatedStock = stockResult.Data;
+            // foreach (var item in receiving.ReceivedItem)
+            // {
+            //     var updateStockCommand = new UpdateProductStockCommand(
+            //         ProductId: item.ProductId,
+            //         Quantity: item.Quantity,
+            //         OperationType: StockOperationTypeEnum.Receipt
+            //     );
+            //     var stockResult = await _mediator.Send(updateStockCommand, cancellationToken);
 
-                var updateLotCommand = new UpdateStockLotCommand(
-                    StockId: updatedStock.Id,
-                    Quantity: item.Quantity,
-                    Batch: item.Batch,
-                    Brand: item.Brand,
-                    UnitValue: item.UnitValue,
-                    ExpiryDate: item.ExpiryDate,
-                    SourceDocumentId: receiving.Id,
-                    SourceDocumentType: nameof(Receiving)
-                );
-                var lotResult = await _mediator.Send(updateLotCommand, cancellationToken);
+            //     if (!stockResult.Success || stockResult.Data == null)
+            //     {
+            //         throw new InvalidOperationException($"Falha ao atualizar o estoque consolidado para o produto {item.ProductId}. Erro: {stockResult.Message}");
+            //     }
 
-                if (!lotResult.Success || lotResult.Data == null)
-                {
-                    throw new InvalidOperationException($"Falha ao atualizar o lote para o produto {item.ProductId}. Erro: {lotResult.Message}");
-                }
+            //     var updatedStock = stockResult.Data;
 
-                var stockLot = lotResult.Data;
+            //     var updateLotCommand = new UpdateStockLotCommand(
+            //         StockId: updatedStock.Id,
+            //         Quantity: item.Quantity,
+            //         Batch: item.Batch,
+            //         Brand: item.Brand,
+            //         UnitValue: item.UnitValue,
+            //         ExpiryDate: item.ExpiryDate,
+            //         SourceDocumentId: receiving.Id,
+            //         SourceDocumentType: nameof(Receiving)
+            //     );
+            //     var lotResult = await _mediator.Send(updateLotCommand, cancellationToken);
 
-                var updateCostCommand = new UpdateStockAverageCostCommand(
-                    StockId: updatedStock.Id,
-                    EntryQuantity: item.Quantity,
-                    EntryUnitValue: item.UnitValue,
-                    UpdatedStockQuantity: updatedStock.CurrentQuantity
-                );
-                var costResult = await _mediator.Send(updateCostCommand, cancellationToken);
+            //     if (!lotResult.Success || lotResult.Data == null)
+            //     {
+            //         throw new InvalidOperationException($"Falha ao atualizar o lote para o produto {item.ProductId}. Erro: {lotResult.Message}");
+            //     }
 
-                if (!costResult.Success)
-                {
-                    throw new InvalidOperationException($"Falha ao recalcular o CMP para o produto {item.ProductId}. Erro: {costResult.Message}");
-                }
+            //     var stockLot = lotResult.Data;
 
-                var createMovementCommand = new CreateStockMovementCommand(
-                    ProductId: item.ProductId,
-                    Quantity: item.Quantity,
-                    StockLotId: stockLot.Id,
-                    SourceDocumentId: receiving.Id,
-                    SourceDocumentType: nameof(Receiving),
-                    ResponsibleId: receiving.ResponsibleId,
-                    MovementType: MovementTypeEnum.Entry,
-                    MovementCost: item.UnitValue * item.Quantity,
-                    MovementDate: receiving.ReceivingDate
-                );
-                await _mediator.Send(createMovementCommand, cancellationToken);
-            }
+            //     var updateCostCommand = new UpdateStockAverageCostCommand(
+            //         StockId: updatedStock.Id,
+            //         EntryQuantity: item.Quantity,
+            //         EntryUnitValue: item.UnitValue,
+            //         UpdatedStockQuantity: updatedStock.CurrentQuantity
+            //     );
+            //     var costResult = await _mediator.Send(updateCostCommand, cancellationToken);
 
-            var receivingDto = _mapper.Map<ReceivingDto>(receiving);
+            //     if (!costResult.Success)
+            //     {
+            //         throw new InvalidOperationException($"Falha ao recalcular o CMP para o produto {item.ProductId}. Erro: {costResult.Message}");
+            //     }
 
-            return new ApiResponseO<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.ReceivingAndStockMovementsCreatedSuccessfully, receivingDto);
+            //     var createMovementCommand = new CreateStockMovementCommand(
+            //         ProductId: item.ProductId,
+            //         Quantity: item.Quantity,
+            //         StockLotId: stockLot.Id,
+            //         SourceDocumentId: receiving.Id,
+            //         SourceDocumentType: nameof(Receiving),
+            //         ResponsibleId: receiving.ResponsibleId,
+            //         MovementType: MovementTypeEnum.Entry,
+            //         MovementCost: item.UnitValue * item.Quantity,
+            //         MovementDate: receiving.ReceivingDate
+            //     );
+            //     await _mediator.Send(createMovementCommand, cancellationToken);
+            // }
+
+            // var receivingDto = _mapper.Map<ReceivingDto>(receiving);
+
+            return new ApiResponseO<ReceivingDto>(StatusCodes.Status201Created, ApiMessages.ReceivingAndStockMovementsCreatedSuccessfully, null); //receivingDto
         }
     }
 }

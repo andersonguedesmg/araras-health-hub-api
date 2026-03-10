@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
@@ -23,18 +25,18 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(o => o.CreatedByEmployee)
                 .Include(o => o.CreatedByAccount)
                     .ThenInclude(a => a!.Facility)
-                .Include(o => o.ApprovedByEmployee)
-                .Include(o => o.ApprovedByAccount)
-                    .ThenInclude(a => a!.Facility)
-                .Include(o => o.SeparatedByEmployee)
-                .Include(o => o.SeparatedByAccount)
-                    .ThenInclude(a => a!.Facility)
-                .Include(o => o.FinalizedByEmployee)
-                .Include(o => o.FinalizedByAccount)
-                    .ThenInclude(a => a!.Facility)
-                .Include(o => o.CanceledByEmployee)
-                .Include(o => o.CanceledByAccount)
-                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.ApprovedByEmployeeId)
+                .Include(o => o.ApprovedByAccountId)
+                // .ThenInclude(a => a!.Facility)
+                .Include(o => o.SeparatedByEmployeeId)
+                .Include(o => o.SeparatedByAccountId)
+                // .ThenInclude(a => a!.Facility)
+                .Include(o => o.FinalizedByEmployeeId)
+                .Include(o => o.FinalizedByAccountId)
+                // .ThenInclude(a => a!.Facility)
+                .Include(o => o.CanceledByEmployeeId)
+                .Include(o => o.CanceledByAccountId)
+                // .ThenInclude(a => a!.Facility)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
@@ -60,18 +62,18 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(o => o.CreatedByEmployee)
                 .Include(o => o.CreatedByAccount)
                     .ThenInclude(a => a!.Facility)
-                .Include(o => o.ApprovedByEmployee)
-                .Include(o => o.ApprovedByAccount)
-                    .ThenInclude(a => a!.Facility)
-                .Include(o => o.SeparatedByEmployee)
-                .Include(o => o.SeparatedByAccount)
-                    .ThenInclude(a => a!.Facility)
-                .Include(o => o.FinalizedByEmployee)
-                .Include(o => o.FinalizedByAccount)
-                    .ThenInclude(a => a!.Facility)
-                .Include(o => o.CanceledByEmployee)
-                .Include(o => o.CanceledByAccount)
-                    .ThenInclude(a => a!.Facility)
+                .Include(o => o.ApprovedByEmployeeId)
+                .Include(o => o.ApprovedByAccountId)
+                // .ThenInclude(a => a!.Facility)
+                .Include(o => o.SeparatedByEmployeeId)
+                .Include(o => o.SeparatedByAccountId)
+                // .ThenInclude(a => a!.Facility)
+                .Include(o => o.FinalizedByEmployeeId)
+                .Include(o => o.FinalizedByAccountId)
+                // .ThenInclude(a => a!.Facility)
+                .Include(o => o.CanceledByEmployeeId)
+                .Include(o => o.CanceledByAccountId)
+                // .ThenInclude(a => a!.Facility)
                 .AsSplitQuery()
                 .AsQueryable();
 

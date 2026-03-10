@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Dtos;
+using ArarasHealthHub.Shared.Responses;
 
 using AutoMapper;
 
@@ -18,8 +17,8 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public OrderProfile()
         {
-            CreateMap<Employee, DropdownItemDto>();
-            CreateMap<Facility, DropdownItemDto>();
+            CreateMap<Employee, DropdownItemResponse>();
+            CreateMap<Facility, DropdownItemResponse>();
             CreateMap<ApplicationUser, AccountMinimalDto>();
             CreateMap<OrderStatus, OrderStatusDto>();
 
@@ -38,14 +37,14 @@ namespace ArarasHealthHub.Application.Profiles
                 .ForMember(dest => dest.OrderFacility, opt => opt.MapFrom(src => src.OrderFacility))
                 .ForMember(dest => dest.CreatedByEmployee, opt => opt.MapFrom(src => src.CreatedByEmployee))
                 .ForMember(dest => dest.CreatedByAccount, opt => opt.MapFrom(src => src.CreatedByAccount))
-                .ForMember(dest => dest.ApprovedByEmployee, opt => opt.MapFrom(src => src.ApprovedByEmployee))
-                .ForMember(dest => dest.ApprovedByAccount, opt => opt.MapFrom(src => src.ApprovedByAccount))
-                .ForMember(dest => dest.SeparatedByEmployee, opt => opt.MapFrom(src => src.SeparatedByEmployee))
-                .ForMember(dest => dest.SeparatedByAccount, opt => opt.MapFrom(src => src.SeparatedByAccount))
-                .ForMember(dest => dest.FinalizedByEmployee, opt => opt.MapFrom(src => src.FinalizedByEmployee))
-                .ForMember(dest => dest.FinalizedByAccount, opt => opt.MapFrom(src => src.FinalizedByAccount))
-                .ForMember(dest => dest.FinalizedByEmployee, opt => opt.MapFrom(src => src.CanceledByEmployee))
-                .ForMember(dest => dest.FinalizedByAccount, opt => opt.MapFrom(src => src.CanceledByAccount));
+                .ForMember(dest => dest.ApprovedByEmployee, opt => opt.MapFrom(src => src.ApprovedByEmployeeId))
+                .ForMember(dest => dest.ApprovedByAccount, opt => opt.MapFrom(src => src.ApprovedByAccountId))
+                .ForMember(dest => dest.SeparatedByEmployee, opt => opt.MapFrom(src => src.SeparatedByEmployeeId))
+                .ForMember(dest => dest.SeparatedByAccount, opt => opt.MapFrom(src => src.SeparatedByAccountId))
+                .ForMember(dest => dest.FinalizedByEmployee, opt => opt.MapFrom(src => src.FinalizedByEmployeeId))
+                .ForMember(dest => dest.FinalizedByAccount, opt => opt.MapFrom(src => src.FinalizedByAccountId))
+                .ForMember(dest => dest.FinalizedByEmployee, opt => opt.MapFrom(src => src.CanceledByEmployeeId))
+                .ForMember(dest => dest.FinalizedByAccount, opt => opt.MapFrom(src => src.CanceledByAccountId));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItem)
+                .Include(r => r.ReceivedItems)
                     .ThenInclude(ri => ri.Product);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
@@ -54,7 +54,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivin
                     (r.Responsible != null && r.Responsible.Name.ToLower().Contains(searchTermLower)) ||
                     (r.Account != null && r.Account.UserName!.ToLower().Contains(searchTermLower)) ||
 
-                    r.ReceivedItem.Any(ri =>
+                    r.ReceivedItems.Any(ri =>
                         ri.Batch.ToLower().Contains(searchTermLower) ||
                         ri.Brand.ToLower().Contains(searchTermLower) ||
                         ri.Product.Name.ToLower().Contains(searchTermLower)

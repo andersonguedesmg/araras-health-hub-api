@@ -105,42 +105,42 @@ namespace ArarasHealthHub.Application.Services.StockAllocation
         {
             var movements = new List<StockMovement>();
 
-            if (!allocationResult.LotDetails.Any()) return movements;
+            // if (!allocationResult.LotDetails.Any()) return movements;
 
-            var stock = await _stockRepo.GetByProductIdAsync(allocationResult.ProductId);
+            // var stock = await _stockRepo.GetByProductIdAsync(allocationResult.ProductId);
 
-            if (stock == null) throw new ApplicationException($"Falha crítica: Estoque consolidado não encontrado para o Produto {allocationResult.ProductId}.");
+            // if (stock == null) throw new ApplicationException($"Falha crítica: Estoque consolidado não encontrado para o Produto {allocationResult.ProductId}.");
 
-            decimal totalQuantityToMove = 0;
+            // decimal totalQuantityToMove = 0;
 
-            foreach (var detail in allocationResult.LotDetails)
-            {
-                var lot = await _stockLotRepo.GetByIdAsync(detail.StockLotId, cancellationToken);
+            // foreach (var detail in allocationResult.LotDetails)
+            // {
+            //     var lot = await _stockLotRepo.GetByIdAsync(detail.StockLotId, cancellationToken);
 
-                if (lot == null) throw new ApplicationException($"Falha crítica: Lote de estoque (ID: {detail.StockLotId}) não encontrado durante a baixa.");
+            //     if (lot == null) throw new ApplicationException($"Falha crítica: Lote de estoque (ID: {detail.StockLotId}) não encontrado durante a baixa.");
 
-                lot.RemoveQuantity(detail.QuantityAllocated);
-                _stockLotRepo.UpdateWithoutSaving(lot);
+            //     lot.RemoveQuantity(detail.QuantityAllocated);
+            //     _stockLotRepo.UpdateWithoutSaving(lot);
 
-                movements.Add(new StockMovement
-                {
-                    StockLotId = lot.Id,
-                    Quantity = detail.QuantityAllocated,
-                    Type = MovementTypeEnum.Exit,
-                    SourceDocumentId = sourceDocumentId,
-                    SourceDocumentType = sourceDocumentType,
-                    ResponsibleId = responsibleId
-                });
+            //     movements.Add(new StockMovement
+            //     {
+            //         StockLotId = lot.Id,
+            //         Quantity = detail.QuantityAllocated,
+            //         Type = MovementTypeEnum.Exit,
+            //         SourceDocumentId = sourceDocumentId,
+            //         SourceDocumentType = sourceDocumentType,
+            //         ResponsibleId = responsibleId
+            //     });
 
-                totalQuantityToMove += detail.QuantityAllocated;
-            }
+            //     totalQuantityToMove += detail.QuantityAllocated;
+            // }
 
-            stock.CurrentQuantity -= totalQuantityToMove;
-            stock.AvailableQuantity -= totalQuantityToMove;
-            stock.SetUpdatedOn();
+            // stock.CurrentQuantity -= totalQuantityToMove;
+            // stock.AvailableQuantity -= totalQuantityToMove;
+            // stock.SetUpdatedOn();
 
-            _stockRepo.UpdateWithoutSaving(stock);
-            _stockMovementRepo.AddRangeWithoutSaving(movements);
+            // _stockRepo.UpdateWithoutSaving(stock);
+            // _stockMovementRepo.AddRangeWithoutSaving(movements);
 
             return movements;
         }

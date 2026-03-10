@@ -35,7 +35,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingBy
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItem)
+                .Include(r => r.ReceivedItems)
                     .ThenInclude(ri => ri.Product)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);

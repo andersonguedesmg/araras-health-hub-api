@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Infrastructure.Repository
@@ -20,7 +22,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItem)
+                .Include(r => r.ReceivedItems)
                     .ThenInclude(ri => ri.Product)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
@@ -31,7 +33,7 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItem)
+                .Include(r => r.ReceivedItems)
                     .ThenInclude(ri => ri.Product)
                 .ToListAsync();
         }

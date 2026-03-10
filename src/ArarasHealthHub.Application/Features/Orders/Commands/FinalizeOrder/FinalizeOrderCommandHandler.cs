@@ -45,55 +45,55 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
 
         public async Task<ApiResponseO<OrderDto>> Handle(FinalizeOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
+            // var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
 
-            if (order == null)
-            {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
-            }
+            // if (order == null)
+            // {
+            //     return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
+            // }
 
-            if (order.OrderStatusId != (int)OrderStatusEnum.ReadyForFinalization)
-            {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeCompleted, false);
-            }
+            // if (order.OrderStatusId != (int)OrderStatusEnum.ReadyForFinalization)
+            // {
+            //     return new ApiResponseO<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeCompleted, false);
+            // }
 
-            var responsible = await _employeeRepo.GetByIdAsync(request.FinalizedByEmployeeId, cancellationToken);
-            if (responsible == null)
-            {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
-            }
+            // var responsible = await _employeeRepo.GetByIdAsync(request.FinalizedByEmployeeId, cancellationToken);
+            // if (responsible == null)
+            // {
+            //     return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
+            // }
 
-            var applicationUser = await _userManager.FindByIdAsync(request.FinalizedByAccountId.ToString());
+            // var applicationUser = await _userManager.FindByIdAsync(request.FinalizedByAccountId.ToString());
 
-            if (applicationUser == null)
-            {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
-            }
+            // if (applicationUser == null)
+            // {
+            //     return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Conta"), false);
+            // }
 
-            var currentUser = _httpContextAccessor.HttpContext?.User;
-            var userFacilityClaim = currentUser?.FindFirst("FacilityId");
+            // var currentUser = _httpContextAccessor.HttpContext?.User;
+            // var userFacilityClaim = currentUser?.FindFirst("FacilityId");
 
-            if (userFacilityClaim == null)
-            {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
-            }
+            // if (userFacilityClaim == null)
+            // {
+            //     return new ApiResponseO<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.InsufficientPermissions, false);
+            // }
 
-            if (order.OrderFacilityId != applicationUser.FacilityId)
-            {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.OperationRestrictedToFacility, false);
-            }
+            // if (order.OrderFacilityId != applicationUser.FacilityId)
+            // {
+            //     return new ApiResponseO<OrderDto>(StatusCodes.Status403Forbidden, ApiMessages.OperationRestrictedToFacility, false);
+            // }
 
-            order.OrderStatusId = (int)OrderStatusEnum.Completed;
-            order.FinalizedByEmployeeId = request.FinalizedByEmployeeId;
-            order.FinalizedByAccountId = request.FinalizedByAccountId;
-            order.FinalizedAt = DateTime.UtcNow;
-            order.SetUpdatedOn();
+            // order.OrderStatusId = (int)OrderStatusEnum.Completed;
+            // order.FinalizedByEmployeeId = request.FinalizedByEmployeeId;
+            // order.FinalizedByAccountId = request.FinalizedByAccountId;
+            // order.FinalizedAt = DateTime.UtcNow;
+            // order.SetUpdatedOn();
 
-            _orderRepo.UpdateWithoutSaving(order);
-            await _orderRepo.SaveAllAsync(cancellationToken);
-            var orderDto = _mapper.Map<OrderDto>(order);
+            // _orderRepo.UpdateWithoutSaving(order);
+            // await _orderRepo.SaveAllAsync(cancellationToken);
+            // var orderDto = _mapper.Map<OrderDto>(order);
 
-            return new ApiResponseO<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("finalizado"), orderDto);
+            return new ApiResponseO<OrderDto>(StatusCodes.Status200OK, ApiMessages.OrderSuccessfully("finalizado"), null); //orderDto
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Dtos;
 using ArarasHealthHub.Application.Features.Employees.Responses;
-using ArarasHealthHub.Application.Features.Suppliers.Dtos;
+using ArarasHealthHub.Application.Features.SubCategories.Responses;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Dtos
 {
@@ -22,7 +22,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Dtos
         public int ResponsibleId { get; set; }
         public int AccountId { get; set; }
 
-        public SupplierDto? Supplier { get; set; }
+        public SupplierResponse? Supplier { get; set; }
         public EmployeeResponse? Responsible { get; set; }
         public AccountMinimalDto? Account { get; set; }
 

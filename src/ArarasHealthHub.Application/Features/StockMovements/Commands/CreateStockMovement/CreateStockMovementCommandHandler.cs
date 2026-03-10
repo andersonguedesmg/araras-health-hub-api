@@ -34,22 +34,22 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Commands.CreateSto
 
         public async Task<ApiResponseO<StockMovementDto>> Handle(CreateStockMovementCommand request, CancellationToken cancellationToken)
         {
-            var stockMovement = new StockMovement
-            {
-                Quantity = request.Quantity,
-                Type = request.MovementType,
-                StockLotId = request.StockLotId,
-                SourceDocumentId = request.SourceDocumentId,
-                SourceDocumentType = request.SourceDocumentType,
-                ResponsibleId = request.ResponsibleId,
-                MovementCost = request.MovementCost,
-                MovementDate = request.MovementDate,
-            };
+            // var stockMovement = new StockMovement
+            // {
+            //     Quantity = request.Quantity,
+            //     Type = request.MovementType,
+            //     StockLotId = request.StockLotId,
+            //     SourceDocumentId = request.SourceDocumentId,
+            //     SourceDocumentType = request.SourceDocumentType,
+            //     ResponsibleId = request.ResponsibleId,
+            //     MovementCost = request.MovementCost,
+            //     MovementDate = request.MovementDate,
+            // };
 
-            await _stockMovementRepository.AddWithoutSavingAsync(stockMovement, cancellationToken);
+            // await _stockMovementRepository.AddWithoutSavingAsync(stockMovement, cancellationToken);
 
-            var stockMovementDto = _mapper.Map<StockMovementDto>(stockMovement);
-            return new ApiResponseO<StockMovementDto>(StatusCodes.Status201Created, ApiMessages.RegisteredSuccessfully("Entrada de estoque"), stockMovementDto);
+            // var stockMovementDto = _mapper.Map<StockMovementDto>(stockMovement);
+            return new ApiResponseO<StockMovementDto>(StatusCodes.Status201Created, ApiMessages.RegisteredSuccessfully("Entrada de estoque"), null); //stockMovementDto
         }
     }
 }

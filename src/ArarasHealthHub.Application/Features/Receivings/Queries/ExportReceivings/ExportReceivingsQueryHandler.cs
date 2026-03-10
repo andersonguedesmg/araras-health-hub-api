@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ArarasHealthHub.Application.Features.Receivings.Dtos;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+
 using AutoMapper;
+
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivings
@@ -25,7 +29,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivin
             query = query
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
-                .Include(r => r.ReceivedItem)
+                .Include(r => r.ReceivedItems)
                     .ThenInclude(ri => ri.Product);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
@@ -44,7 +48,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivin
                     (r.Responsible != null && r.Responsible.Name.ToLower().Contains(searchTermLower)) ||
                     (r.Account != null && r.Account.UserName!.ToLower().Contains(searchTermLower)) ||
 
-                    r.ReceivedItem.Any(ri =>
+                    r.ReceivedItems.Any(ri =>
                         ri.Batch.ToLower().Contains(searchTermLower) ||
                         ri.Brand.ToLower().Contains(searchTermLower) ||
                         ri.Product.Name.ToLower().Contains(searchTermLower)
@@ -53,7 +57,7 @@ namespace ArarasHealthHub.Application.Features.Receivings.Queries.ExportReceivin
             }
 
             var flatListQuery = query
-                .SelectMany(r => r.ReceivedItem, (r, ri) => new ReceivingExportDetailDto
+                .SelectMany(r => r.ReceivedItems, (r, ri) => new ReceivingExportDetailDto
                 {
                     ReceivingId = r.Id,
                     InvoiceNumber = r.InvoiceNumber,
