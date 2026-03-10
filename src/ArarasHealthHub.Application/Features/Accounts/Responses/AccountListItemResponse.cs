@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Domain.Enums;
 
-namespace ArarasHealthHub.Application.Features.Accounts.Dtos
+namespace ArarasHealthHub.Application.Features.Accounts.Responses
 {
-    public sealed record GetAccountsByFacilityResponse(
-        int UserId,
+    public sealed record AccountListItemResponse(
+        int Id,
         string UserName,
         bool IsActive,
         AccountScopeEnum Scope,

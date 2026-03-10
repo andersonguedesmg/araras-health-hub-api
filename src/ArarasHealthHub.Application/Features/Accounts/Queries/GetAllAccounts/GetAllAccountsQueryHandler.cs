@@ -4,11 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Common.Responses;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Pagination;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -16,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
 {
-    public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, PagedResponse<AccountListItemResponse>>
+    public class GetAllAccountsQueryHandler : IRequestHandler<GetAllAccountsQuery, PagedResult<AccountListItemResponse>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -25,50 +26,42 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
             _context = context;
         }
 
-        public async Task<PagedResponse<AccountListItemResponse>> Handle(
+        public async Task<PagedResult<AccountListItemResponse>> Handle(
             GetAllAccountsQuery request,
             CancellationToken cancellationToken)
         {
-            var queryable = _context.Set<ApplicationUser>()
+            var query = _context.Set<ApplicationUser>()
                 .AsNoTracking()
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var term = request.SearchTerm.Trim().ToLower();
+                var term = request.SearchTerm.Trim();
 
-                queryable = queryable.Where(a =>
-                    a.Id.ToString().Contains(term) ||
-                    a.UserName!.ToLower().Contains(term) ||
-                    a.Scope.ToString().ToLower().Contains(term) ||
-                    a.Role.ToString().ToLower().Contains(term) ||
-                    a.Facility.Name.ToLower().Contains(term)
-                );
+                query = query.Where(s =>
+                    EF.Functions.Like(s.UserName, $"%{term}%"));
             }
 
-            var totalCount = await queryable.CountAsync(cancellationToken);
+            var totalCount = await query.CountAsync(cancellationToken);
 
-            var orderingColumns = new Dictionary<string, Expression<Func<ApplicationUser, object>>>
+            query = request.OrderBy?.ToLower() switch
             {
-                ["id"] = a => a.Id,
-                ["username"] = a => a.UserName!,
-                ["scope"] = a => a.Scope,
-                ["role"] = a => a.Role,
-                ["createdon"] = a => a.CreatedOn
+                "username" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.UserName)
+                    : query.OrderBy(x => x.UserName),
+
+                "scope" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Scope)
+                    : query.OrderBy(x => x.Scope),
+
+                "role" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Role)
+                    : query.OrderBy(x => x.Role),
+
+                _ => query.OrderBy(x => x.UserName)
             };
 
-            queryable = queryable.ApplyOrdering(
-                request.OrderBy?.ToLower(),
-                request.SortOrder?.ToLower() ?? "asc",
-                orderingColumns
-            );
-
-            queryable = queryable.ApplyPagination(
-                request.PageNumber,
-                request.PageSize
-            );
-
-            var items = await queryable
+            var items = await query
                 .Select(a => new AccountListItemResponse(
                     a.Id,
                     a.UserName!,
@@ -81,25 +74,32 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                         a.Facility.Id,
                         a.Facility.Name,
                         a.Facility.Cnes,
-                        a.Facility.Address.Cep,
-                        a.Facility.Address.Street,
-                        a.Facility.Address.Number,
-                        a.Facility.Address.Complement,
-                        a.Facility.Address.Neighborhood,
-                        a.Facility.Address.City,
-                        a.Facility.Address.State,
-                        a.Facility.Contact.Email,
-                        a.Facility.Contact.Phone
+                        new AddressResponse(
+                            a.Facility.Address.Street,
+                            a.Facility.Address.Number,
+                            a.Facility.Address.Complement,
+                            a.Facility.Address.Neighborhood,
+                            a.Facility.Address.City,
+                            a.Facility.Address.State,
+                            a.Facility.Address.Cep
+                        ),
+                        new ContactResponse(
+                            a.Facility.Contact.Email,
+                            a.Facility.Contact.Phone
+                        ),
+                        a.CreatedOn,
+                        a.UpdatedOn,
+                        a.IsActive
                     )
                 ))
                 .ToListAsync(cancellationToken);
 
-            return PagedResponse<AccountListItemResponse>.SuccessPaged(
+            return PagedResult<AccountListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                items
-            );
+                "Contas listadas com sucesso.");
         }
     }
 }

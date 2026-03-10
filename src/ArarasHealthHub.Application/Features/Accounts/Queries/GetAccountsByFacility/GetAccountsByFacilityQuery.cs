@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -12,5 +12,5 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
 {
     public sealed record GetAccountsByFacilityQuery(
         int FacilityId
-    ) : IRequest<ApiResponse<List<GetAccountsByFacilityResponse>>>;
+    ) : IRequest<Result<List<AccountResponse>>>;
 }

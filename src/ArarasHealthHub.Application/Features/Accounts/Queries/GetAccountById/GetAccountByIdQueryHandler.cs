@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Common.Responses;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
 {
-    public class GetAccountByIdQueryHandler : IRequestHandler<GetAccountByIdQuery, ApiResponse<GetAccountByIdResponse>>
+    public class GetAccountByIdQueryHandler : IRequestHandler<GetAccountByIdQuery, Result<AccountResponse>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -26,13 +26,13 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
             _context = context;
         }
 
-        public async Task<ApiResponse<GetAccountByIdResponse>> Handle(
+        public async Task<Result<AccountResponse>> Handle(
             GetAccountByIdQuery request,
             CancellationToken cancellationToken)
         {
             var account = await _context.Set<ApplicationUser>()
                 .Where(a => a.Id == request.UserId)
-                .Select(a => new GetAccountByIdResponse(
+                .Select(a => new AccountResponse(
                     a.Id,
                     a.UserName!,
                     a.IsActive,
@@ -44,31 +44,31 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountById
                         a.Facility.Id,
                         a.Facility.Name,
                         a.Facility.Cnes,
-                        a.Facility.Address.Cep,
-                        a.Facility.Address.Street,
-                        a.Facility.Address.Number,
-                        a.Facility.Address.Complement,
-                        a.Facility.Address.Neighborhood,
-                        a.Facility.Address.City,
-                        a.Facility.Address.State,
-                        a.Facility.Contact.Email,
-                        a.Facility.Contact.Phone
+                        new AddressResponse(
+                            a.Facility.Address.Street,
+                            a.Facility.Address.Number,
+                            a.Facility.Address.Complement,
+                            a.Facility.Address.Neighborhood,
+                            a.Facility.Address.City,
+                            a.Facility.Address.State,
+                            a.Facility.Address.Cep
+                        ),
+                        new ContactResponse(
+                            a.Facility.Contact.Email,
+                            a.Facility.Contact.Phone
+                        ),
+                        a.CreatedOn,
+                        a.UpdatedOn,
+                        a.IsActive
                     )
                 ))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (account is null)
-            {
-                return ApiResponse<GetAccountByIdResponse>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Account));
-            }
+                throw new NotFoundException("Conta não encontrada.");
 
-            return ApiResponse<GetAccountByIdResponse>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.FoundSuccessfully(EntityNames.Account),
-                account);
+            return Result<AccountResponse>.Success(account);
         }
     }
 }

@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
-using ArarasHealthHub.Application.Features.Facilities.Dtos;
+using ArarasHealthHub.Application.Common.Responses;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
+using ArarasHealthHub.Application.Features.Facilities.Responses;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFacility
 {
-    public class GetAccountsByFacilityQueryHandler : IRequestHandler<GetAccountsByFacilityQuery, ApiResponse<List<GetAccountsByFacilityResponse>>>
+    public class GetAccountsByFacilityQueryHandler : IRequestHandler<GetAccountsByFacilityQuery, Result<List<AccountResponse>>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -26,7 +26,7 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
             _context = context;
         }
 
-        public async Task<ApiResponse<List<GetAccountsByFacilityResponse>>> Handle(
+        public async Task<Result<List<AccountResponse>>> Handle(
             GetAccountsByFacilityQuery request,
             CancellationToken cancellationToken)
         {
@@ -34,16 +34,12 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
                 .AnyAsync(f => f.Id == request.FacilityId, cancellationToken);
 
             if (!facilityExists)
-            {
-                return ApiResponse<List<GetAccountsByFacilityResponse>>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Facility));
-            }
+                throw new NotFoundException("Facility não encontrada.");
 
             var accounts = await _context.Set<ApplicationUser>()
                 .Where(a => a.FacilityId == request.FacilityId)
                 .AsNoTracking()
-                .Select(a => new GetAccountsByFacilityResponse(
+                .Select(a => new AccountResponse(
                     a.Id,
                     a.UserName!,
                     a.IsActive,
@@ -51,26 +47,31 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAccountsByFac
                     a.Role,
                     a.CreatedOn,
                     a.UpdatedOn,
-                        new FacilityResponse(
-                            a.Facility.Id,
-                            a.Facility.Name,
-                            a.Facility.Cnes,
-                            a.Facility.Address.Cep,
+                    new FacilityResponse(
+                        a.Facility.Id,
+                        a.Facility.Name,
+                        a.Facility.Cnes,
+                        new AddressResponse(
                             a.Facility.Address.Street,
                             a.Facility.Address.Number,
                             a.Facility.Address.Complement,
                             a.Facility.Address.Neighborhood,
                             a.Facility.Address.City,
                             a.Facility.Address.State,
+                            a.Facility.Address.Cep
+                        ),
+                        new ContactResponse(
                             a.Facility.Contact.Email,
                             a.Facility.Contact.Phone
-                )))
+                        ),
+                        a.CreatedOn,
+                        a.UpdatedOn,
+                        a.IsActive
+                    )
+                ))
                 .ToListAsync(cancellationToken);
 
-            return ApiResponse<List<GetAccountsByFacilityResponse>>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.OperationSuccessful,
-                accounts);
+            return Result<List<AccountResponse>>.Success(accounts);
         }
     }
 }
