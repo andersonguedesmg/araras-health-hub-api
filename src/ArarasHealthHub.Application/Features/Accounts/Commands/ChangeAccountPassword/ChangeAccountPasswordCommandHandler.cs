@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -15,7 +16,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeAccountPassword
 {
-    public class ChangeAccountPasswordCommandHandler : IRequestHandler<ChangeAccountPasswordCommand, ApiResponse<object>>
+    public class ChangeAccountPasswordCommandHandler : IRequestHandler<ChangeAccountPasswordCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -28,51 +29,40 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeAccountPa
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             ChangeAccountPasswordCommand request,
             CancellationToken cancellationToken)
         {
             var targetUser = await _userManager.FindByIdAsync(request.TargetUserId.ToString());
 
             if (targetUser is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Account)
-                );
-            }
+                throw new NotFoundException("Conta não encontrada.");
 
-            var currentUserPrincipal = _httpContextAccessor.HttpContext?.User;
+            var userPrincipal = _httpContextAccessor.HttpContext?.User;
 
-            if (currentUserPrincipal is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status401Unauthorized,
-                    ApiMessages.UnauthenticatedUser
-                );
-            }
+            if (userPrincipal is null)
+                throw new UnauthorizedAccessException("Usuário não autenticado.");
 
-            var currentRole = Enum.Parse<AccountRoleEnum>(
-                currentUserPrincipal.FindFirst("role")!.Value);
+            var roleClaim = userPrincipal.FindFirst(ClaimTypes.Role)?.Value;
+            var facilityClaim = userPrincipal.FindFirst("facilityId")?.Value;
 
-            var currentFacilityId = int.Parse(
-                currentUserPrincipal.FindFirst("facilityId")!.Value);
+            if (roleClaim is null)
+                throw new UnauthorizedAccessException("Claim de role não encontrada.");
+
+            var currentRole = Enum.Parse<AccountRoleEnum>(roleClaim);
 
             if (currentRole == AccountRoleEnum.User)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status403Forbidden,
-                    ApiMessages.InsufficientPermissions
-                );
-            }
+                throw new ForbiddenException("Você não tem permissão para alterar senhas.");
 
-            if (currentRole == AccountRoleEnum.Admin &&
-                targetUser.FacilityId != currentFacilityId)
+            if (currentRole == AccountRoleEnum.Admin)
             {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status403Forbidden,
-                    ApiMessages.InsufficientPermissions
-                );
+                if (facilityClaim is null)
+                    throw new UnauthorizedAccessException("FacilityId não encontrado.");
+
+                var currentFacilityId = int.Parse(facilityClaim);
+
+                if (targetUser.FacilityId != currentFacilityId)
+                    throw new ForbiddenException("Você não tem permissão para alterar a senha deste usuário.");
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(targetUser);
@@ -80,28 +70,17 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ChangeAccountPa
             var result = await _userManager.ResetPasswordAsync(
                 targetUser,
                 token,
-                request.NewPassword);
+                request.NewPassword
+            );
 
             if (!result.Succeeded)
             {
-                var errors = result.Errors
-                    .GroupBy(e => e.Code)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => (IReadOnlyList<string>)g.Select(e => e.Description).ToList()
-                    );
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
 
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status400BadRequest,
-                    ApiMessages.FailedToResetPassword,
-                    errors
-                );
+                throw new BusinessRuleException($"Falha ao redefinir senha: {errors}");
             }
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.PasswordResetSuccessfully
-            );
+            return Result.Success("Senha alterada com sucesso.");
         }
     }
 }

@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.CreateAccount
 {
-    public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, ApiResponse<AccountCreatedResponse>>
+    public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Result<AccountCreatedResponse>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFacilityRepository _facilityRepository;
@@ -29,62 +28,39 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.CreateAccount
             _facilityRepository = facilityRepository;
         }
 
-        public async Task<ApiResponse<AccountCreatedResponse>> Handle(
+        public async Task<Result<AccountCreatedResponse>> Handle(
             CreateAccountCommand request,
             CancellationToken cancellationToken)
         {
             var existingUser = await _userManager.FindByNameAsync(request.UserName);
 
             if (existingUser is not null)
-            {
-                return ApiResponse<AccountCreatedResponse>.FailureResponse(
-                    StatusCodes.Status400BadRequest,
-                    ApiMessages.AccountNameAlreadyInUse);
-            }
+                throw new BusinessRuleException("Nome de usuário já está em uso.");
 
             var facility = await _facilityRepository
                 .GetByIdAsync(request.FacilityId, cancellationToken);
 
             if (facility is null)
-            {
-                return ApiResponse<AccountCreatedResponse>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Facility));
-            }
+                throw new NotFoundException("Unidade não encontrada.");
 
             if (!facility.IsActive)
-            {
-                return ApiResponse<AccountCreatedResponse>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.CannotActivateBecauseInactive(
-                        EntityNames.Account,
-                        EntityNames.Facility)
-                );
-            }
+                throw new BusinessRuleException("Não é possível criar conta em unidade inativa.");
 
             var user = new ApplicationUser(
                 request.UserName,
+                request.UserName,
                 request.FacilityId,
                 request.Scope,
-                request.Role,
-                request.IsActive);
+                request.Role
+            );
 
-            var createResult = await _userManager.CreateAsync(user, request.Password);
+            if (!request.IsActive)
+                user.Deactivate();
 
-            if (!createResult.Succeeded)
-            {
-                var errors = createResult.Errors
-                    .GroupBy(e => e.Code)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => (IReadOnlyList<string>)g.Select(e => e.Description).ToList()
-                    );
+            var result = await _userManager.CreateAsync(user, request.Password);
 
-                return ApiResponse<AccountCreatedResponse>.FailureResponse(
-                    StatusCodes.Status400BadRequest,
-                    ApiMessages.FailedToCreateAccount,
-                    errors);
-            }
+            if (!result.Succeeded)
+                throw new BusinessRuleException("Erro ao criar conta.");
 
             var response = new AccountCreatedResponse(
                 user.Id,
@@ -92,12 +68,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.CreateAccount
                 user.Role,
                 user.Scope,
                 user.FacilityId,
-                user.IsActive);
+                user.IsActive
+            );
 
-            return ApiResponse<AccountCreatedResponse>.SuccessResponse(
-                StatusCodes.Status201Created,
-                ApiMessages.EntityCreated(EntityNames.Account),
-                response);
+            return Result<AccountCreatedResponse>.Success(response, "Conta criada com sucesso.");
         }
     }
 }

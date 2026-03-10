@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
 {
-    public class LoginAccountCommandHandler : IRequestHandler<LoginAccountCommand, ApiResponse<LoginAccountResponse>>
+    public class LoginAccountCommandHandler : IRequestHandler<LoginAccountCommand, Result<LoginAccountResponse>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokenService _tokenService;
@@ -29,34 +28,23 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
             _tokenService = tokenService;
         }
 
-        public async Task<ApiResponse<LoginAccountResponse>> Handle(
+        public async Task<Result<LoginAccountResponse>> Handle(
             LoginAccountCommand request,
             CancellationToken cancellationToken)
         {
             var account = await _userManager.FindByNameAsync(request.UserName);
 
             if (account is null)
-            {
-                return ApiResponse<LoginAccountResponse>.FailureResponse(
-                    StatusCodes.Status401Unauthorized,
-                    ApiMessages.AccountIncorrect);
-            }
+                throw new BusinessRuleException("Usuário ou senha inválidos.");
 
             if (!account.IsActive)
-            {
-                return ApiResponse<LoginAccountResponse>.FailureResponse(
-                    StatusCodes.Status403Forbidden,
-                    ApiMessages.AccountDisabled);
-            }
+                throw new BusinessRuleException("Conta desativada.");
 
-            var passwordValid = await _userManager.CheckPasswordAsync(account, request.Password);
+            var passwordValid = await _userManager
+                .CheckPasswordAsync(account, request.Password);
 
             if (!passwordValid)
-            {
-                return ApiResponse<LoginAccountResponse>.FailureResponse(
-                    StatusCodes.Status401Unauthorized,
-                    ApiMessages.AccountIncorrect);
-            }
+                throw new BusinessRuleException("Usuário ou senha inválidos.");
 
             var token = _tokenService.CreateToken(account);
 
@@ -67,12 +55,10 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.LoginAccount
                 account.FacilityId,
                 account.Scope,
                 account.Role,
-                token);
+                token
+            );
 
-            return ApiResponse<LoginAccountResponse>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.AccountLoginSuccessful,
-                response);
+            return Result<LoginAccountResponse>.Success(response, "Login realizado com sucesso.");
         }
     }
 }

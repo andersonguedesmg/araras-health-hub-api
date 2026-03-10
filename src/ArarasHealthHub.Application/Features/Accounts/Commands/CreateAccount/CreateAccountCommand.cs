@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Accounts.Dtos;
+using ArarasHealthHub.Application.Features.Accounts.Responses;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -18,5 +18,5 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.CreateAccount
         AccountScopeEnum Scope,
         AccountRoleEnum Role,
         bool IsActive = true
-    ) : IRequest<ApiResponse<AccountCreatedResponse>>;
+    ) : IRequest<Result<AccountCreatedResponse>>;
 }

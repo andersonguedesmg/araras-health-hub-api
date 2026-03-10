@@ -5,17 +5,16 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Domain.Identity;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Accounts.Commands.ActivateAccount
 {
-    public class ActivateAccountCommandHandler : IRequestHandler<ActivateAccountCommand, ApiResponse<object>>
+    public class ActivateAccountCommandHandler : IRequestHandler<ActivateAccountCommand, Result>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFacilityRepository _facilityRepository;
@@ -28,53 +27,32 @@ namespace ArarasHealthHub.Application.Features.Accounts.Commands.ActivateAccount
             _facilityRepository = facilityRepository;
         }
 
-        public async Task<ApiResponse<object>> Handle(
+        public async Task<Result> Handle(
             ActivateAccountCommand request,
             CancellationToken cancellationToken)
         {
             var account = await _userManager.FindByIdAsync(request.Id.ToString());
 
             if (account is null)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status404NotFound,
-                    ApiMessages.EntityNotFound(EntityNames.Account));
-            }
+                throw new NotFoundException("Conta não encontrada.");
 
             if (account.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.EntityAlreadyActive(EntityNames.Account));
-            }
+                throw new BusinessRuleException("A conta já está ativa.");
 
             var facility = await _facilityRepository
                 .GetByIdAsync(account.FacilityId, cancellationToken);
 
             if (facility is null || !facility.IsActive)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status409Conflict,
-                    ApiMessages.CannotActivateBecauseInactive(
-                        EntityNames.Account,
-                        EntityNames.Facility)
-                );
-            }
+                throw new BusinessRuleException("Não é possível ativar a conta pois a unidade está inativa.");
 
             account.Activate();
 
             var result = await _userManager.UpdateAsync(account);
 
             if (!result.Succeeded)
-            {
-                return ApiResponse<object>.FailureResponse(
-                    StatusCodes.Status500InternalServerError,
-                    ApiMessages.FailedToChangeAccountStatus);
-            }
+                throw new BusinessRuleException("Erro ao ativar a conta.");
 
-            return ApiResponse<object>.SuccessResponse(
-                StatusCodes.Status200OK,
-                ApiMessages.EntityActivated(EntityNames.Account));
+            return Result.Success("Conta ativada com sucesso.");
         }
     }
 }
