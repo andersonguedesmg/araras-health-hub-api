@@ -8,181 +8,149 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class a2h_110 : Migration
+    public partial class a2h_102 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Cpf = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
-                    Function = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Nome do funcionário"),
+                    Cpf = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false, comment: "CPF"),
+                    Function = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Função"),
+                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, comment: "Telefone"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
                 },
-                comment: "Representa um funcionário.");
+                comment: "Representa um funcionário");
 
             migrationBuilder.CreateTable(
                 name: "Facilities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Cnes = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
-                    Address_Cep = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Address_Street = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Address_Complement = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Address_Number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Address_Neighborhood = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Address_City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Address_State = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    Contact_Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Contact_Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Nome da unidade"),
+                    Cnes = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false, comment: "Código CNES"),
+                    Cep = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false, comment: "CEP"),
+                    Street = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Logradouro"),
+                    Number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, comment: "Número"),
+                    Neighborhood = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Bairro"),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Cidade"),
+                    State = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false, comment: "UF"),
+                    Complement = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, comment: "Complemento"),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "E-mail"),
+                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, comment: "Telefone"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Facilities", x => x.Id);
                 },
-                comment: "Representa uma unidade.");
+                comment: "Representa uma unidade");
 
             migrationBuilder.CreateTable(
                 name: "MainCategories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Nome da categoria principal"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MainCategories", x => x.Id);
                 },
-                comment: "Categoria principal de produtos (ex: Medicamento, Material Hospitalar, Material de Limpeza)");
+                comment: "Representa uma categoria principal de produtos (ex: Medicamento, Material Hospitalar, Material de Limpeza)");
 
             migrationBuilder.CreateTable(
                 name: "OrderStatuses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderStatuses", x => x.Id);
                 },
-                comment: "Tabela de lookup para os status possíveis de um pedido.");
+                comment: "Tabela de lookup para os status possíveis de um pedido");
 
             migrationBuilder.CreateTable(
-                name: "PresentationForms",
+                name: "PackagingTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Nome do tipo de embalagem"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PresentationForms", x => x.Id);
+                    table.PrimaryKey("PK_PackagingTypes", x => x.Id);
                 },
-                comment: "Forma de apresentação do produto (ex: Frasco, Ampola, Comprimido)");
+                comment: "Representa um tipo de embalagem do produto (ex: Frasco, Ampola, Comprimido)");
 
             migrationBuilder.CreateTable(
                 name: "Suppliers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LegalName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Razão Social."),
-                    TradeName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Nome Fantasia."),
-                    Cnpj = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: false),
-                    Address_Cep = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Address_Street = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Address_Complement = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Address_Number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Address_Neighborhood = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Address_City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Address_State = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    Contact_Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Contact_Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    LegalName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Razão Social"),
+                    TradeName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Nome Fantasia"),
+                    Cnpj = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: false, comment: "CNPJ"),
+                    Cep = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false, comment: "CEP"),
+                    Street = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Logradouro"),
+                    Number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, comment: "Número"),
+                    Neighborhood = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Bairro"),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Cidade"),
+                    State = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false, comment: "UF"),
+                    Complement = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, comment: "Complemento"),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "E-mail"),
+                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, comment: "Telefone"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Suppliers", x => x.Id);
                 },
-                comment: "Representa um fornecedor.");
+                comment: "Representa um fornecedor");
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "ApplicationUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FacilityId = table.Column<int>(type: "int", nullable: false),
-                    Scope = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Scope = table.Column<byte>(type: "tinyint", nullable: false, comment: "Escopo da conta no sistema."),
+                    Role = table.Column<byte>(type: "tinyint", nullable: false, comment: "Papel da conta no sistema."),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação da conta."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização da conta."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se a conta está ativa."),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -200,26 +168,27 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_ApplicationUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Facilities_FacilityId",
+                        name: "FK_ApplicationUsers_Facilities_FacilityId",
                         column: x => x.FacilityId,
                         principalTable: "Facilities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
+                },
+                comment: "Representa uma conta de usuário do sistema");
 
             migrationBuilder.CreateTable(
                 name: "SubCategories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Nome da subcategoria"),
                     MainCategoryId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -231,7 +200,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Subcategoria vinculada a uma categoria principal (ex: Antibiótico, Analgésico, Antialérgico)");
+                comment: "Representa uma subcategoria vinculada a categoria principal de produtos (ex: Antibiótico, Analgésico, Antialérgico)");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
@@ -247,9 +216,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        name: "FK_AspNetUserClaims_ApplicationUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -267,33 +236,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        name: "FK_AspNetUserLogins_ApplicationUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -311,9 +256,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        name: "FK_AspNetUserTokens_ApplicationUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -322,7 +267,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Observation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     OrderFacilityId = table.Column<int>(type: "int", nullable: false),
@@ -343,49 +288,19 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     CanceledByEmployeeId = table.Column<int>(type: "int", nullable: true),
                     CanceledByAccountId = table.Column<int>(type: "int", nullable: true),
                     CancellationReason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_ApprovedByAccountId",
-                        column: x => x.ApprovedByAccountId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_CanceledByAccountId",
-                        column: x => x.CanceledByAccountId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_CreatedByAccountId",
+                        name: "FK_Orders_ApplicationUsers_CreatedByAccountId",
                         column: x => x.CreatedByAccountId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_FinalizedByAccountId",
-                        column: x => x.FinalizedByAccountId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_SeparatedByAccountId",
-                        column: x => x.SeparatedByAccountId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_Employees_ApprovedByEmployeeId",
-                        column: x => x.ApprovedByEmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_Employees_CanceledByEmployeeId",
-                        column: x => x.CanceledByEmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Employees_CreatedByEmployeeId",
                         column: x => x.CreatedByEmployeeId,
@@ -393,54 +308,44 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Employees_FinalizedByEmployeeId",
-                        column: x => x.FinalizedByEmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_Employees_SeparatedByEmployeeId",
-                        column: x => x.SeparatedByEmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Orders_Facilities_OrderFacilityId",
                         column: x => x.OrderFacilityId,
                         principalTable: "Facilities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Orders_OrderStatuses_OrderStatusId",
                         column: x => x.OrderStatusId,
                         principalTable: "OrderStatuses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Receivings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InvoiceNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SupplyAuthorization = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Observation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Observation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReceivingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalValue = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     SupplierId = table.Column<int>(type: "int", nullable: false),
                     ResponsibleId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Receivings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Receivings_AspNetUsers_AccountId",
+                        name: "FK_Receivings_ApplicationUsers_AccountId",
                         column: x => x.AccountId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -456,13 +361,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Representa o registro de entrada no estoque.");
+                comment: "Representa o registro de entrada no estoque");
 
             migrationBuilder.CreateTable(
                 name: "StockAdjustments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Reason = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -470,42 +375,42 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     AdjustmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ResponsibleId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StockAdjustments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StockAdjustments_AspNetUsers_AccountId",
+                        name: "FK_StockAdjustments_ApplicationUsers_AccountId",
                         column: x => x.AccountId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StockAdjustments_Employees_ResponsibleId",
                         column: x => x.ResponsibleId,
                         principalTable: "Employees",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Representa um ajuste manual na quantidade do estoque.");
+                comment: "Representa um ajuste manual na quantidade do estoque");
 
             migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false, comment: "Nome do produto"),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Descrição do produto"),
                     MainCategoryId = table.Column<int>(type: "int", nullable: false),
                     SubCategoryId = table.Column<int>(type: "int", nullable: false),
-                    PresentationFormId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    PackagingTypeId = table.Column<int>(type: "int", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -517,9 +422,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Products_PresentationForms_PresentationFormId",
-                        column: x => x.PresentationFormId,
-                        principalTable: "PresentationForms",
+                        name: "FK_Products_PackagingTypes_PackagingTypeId",
+                        column: x => x.PackagingTypeId,
+                        principalTable: "PackagingTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -529,13 +434,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Representa um produto.");
+                comment: "Representa um produto");
 
             migrationBuilder.CreateTable(
                 name: "DispenseReturns",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OriginalOrderId = table.Column<int>(type: "int", nullable: false),
                     Reason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
@@ -543,25 +448,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     ReturnedByEmployeeId = table.Column<int>(type: "int", nullable: false),
                     ReturnedByAccountId = table.Column<int>(type: "int", nullable: false),
                     TotalReturnedValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DispenseReturns", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DispenseReturns_AspNetUsers_ReturnedByAccountId",
-                        column: x => x.ReturnedByAccountId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DispenseReturns_Employees_ReturnedByEmployeeId",
-                        column: x => x.ReturnedByEmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DispenseReturns_Orders_OriginalOrderId",
                         column: x => x.OriginalOrderId,
@@ -569,20 +462,24 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Representa uma devolução de itens dispensados de um pedido ao estoque.");
+                comment: "Representa uma devolução de itens dispensados de um pedido ao estoque");
 
             migrationBuilder.CreateTable(
                 name: "OrderItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RequestedQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     ApprovedQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     ReservedQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     ActualQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: false)
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    OrderId1 = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -594,18 +491,23 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId1",
+                        column: x => x.OrderId1,
+                        principalTable: "Orders",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_OrderItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ReceivedItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     UnitValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
@@ -615,9 +517,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     ReceivingId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -627,7 +529,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ReceivedItems_Receivings_ReceivingId",
                         column: x => x.ReceivingId,
@@ -635,22 +537,22 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Representa um item específico de um recebimento.");
+                comment: "Representa um item específico de um recebimento");
 
             migrationBuilder.CreateTable(
                 name: "Stocks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    CurrentQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade total disponível de todas as validades e lotes."),
-                    ReservedQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade que está reservada para pedidos pendentes/aprovados."),
-                    AvailableQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity)."),
+                    CurrentQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade total disponível."),
+                    ReservedQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    AvailableQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     MinQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -662,20 +564,20 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Representa o estoque atual de um produto (visão consolidada).");
+                comment: "Representa o estoque atual de um produto (visão consolidada)");
 
             migrationBuilder.CreateTable(
                 name: "StockCosts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StockId = table.Column<int>(type: "int", nullable: false),
                     AverageUnitCost = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
                     CurrentTotalCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -687,24 +589,24 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Armazena o custo médio unitário e o custo total atual do estoque consolidado.");
+                comment: "Armazena o custo médio unitário e o custo total atual do estoque consolidado");
 
             migrationBuilder.CreateTable(
                 name: "StockLots",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StockId = table.Column<int>(type: "int", nullable: false, comment: "ID do registro consolidado de estoque (Stock) a que este lote pertence."),
-                    Batch = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, comment: "Número/Código do lote do produto."),
-                    Brand = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Marca/Fabricante deste lote específico."),
-                    UnitValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "Custo unitário deste lote (custo de entrada)."),
-                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de vencimento deste lote."),
-                    AvailableQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade disponível em estoque para este lote."),
-                    ReceivedItemId = table.Column<int>(type: "int", nullable: true, comment: "Opcional: ID do Item do Recebimento que deu origem a este lote (para rastreio)."),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    StockId = table.Column<int>(type: "int", nullable: false),
+                    Batch = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, comment: "Número do lote"),
+                    Brand = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UnitValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AvailableQuantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    ReceivedItemId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -720,15 +622,15 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         column: x => x.StockId,
                         principalTable: "Stocks",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 },
-                comment: "Representa o estoque detalhado de um produto por lote, valor e validade.");
+                comment: "Representa o estoque detalhado de um produto por lote, valor e validade");
 
             migrationBuilder.CreateTable(
-                name: "DispenseReturnItem",
+                name: "DispenseReturnItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DispenseReturnId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
@@ -739,44 +641,54 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     Batch = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Brand = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    DispenseReturnId1 = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DispenseReturnItem", x => x.Id);
+                    table.PrimaryKey("PK_DispenseReturnItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DispenseReturnItem_DispenseReturns_DispenseReturnId",
+                        name: "FK_DispenseReturnItems_DispenseReturns_DispenseReturnId",
                         column: x => x.DispenseReturnId,
                         principalTable: "DispenseReturns",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DispenseReturnItem_Products_ProductId",
+                        name: "FK_DispenseReturnItems_DispenseReturns_DispenseReturnId1",
+                        column: x => x.DispenseReturnId1,
+                        principalTable: "DispenseReturns",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DispenseReturnItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_DispenseReturnItem_StockLots_StockLotId",
+                        name: "FK_DispenseReturnItems_StockLots_StockLotId",
                         column: x => x.StockLotId,
                         principalTable: "StockLots",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "OrderItemLots",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderItemId = table.Column<int>(type: "int", nullable: false),
                     StockLotId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false, comment: "Quantidade real baixada deste lote para atender o pedido."),
-                    UnitValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "Valor unitário do produto no momento da baixa, herdado do StockLot."),
-                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "Custo total do item (Quantity * UnitValue) para fins de relatório.")
+                    Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    UnitValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    OrderItemId1 = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -788,19 +700,24 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_OrderItemLots_OrderItems_OrderItemId1",
+                        column: x => x.OrderItemId1,
+                        principalTable: "OrderItems",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_OrderItemLots_StockLots_StockLotId",
                         column: x => x.StockLotId,
                         principalTable: "StockLots",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Registra os lotes específicos usados para atender um item de pedido durante a separação.");
+                comment: "Registra os lotes específicos usados para atender um item de pedido durante a separação");
 
             migrationBuilder.CreateTable(
-                name: "StockAdjustmentItem",
+                name: "StockAdjustmentItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StockAdjustmentId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
@@ -808,52 +725,60 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     UnitValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     TotalValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    Batch = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Batch = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Brand = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    StockAdjustmentId1 = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockAdjustmentItem", x => x.Id);
+                    table.PrimaryKey("PK_StockAdjustmentItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StockAdjustmentItem_Products_ProductId",
+                        name: "FK_StockAdjustmentItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_StockAdjustmentItem_StockAdjustments_StockAdjustmentId",
+                        name: "FK_StockAdjustmentItems_StockAdjustments_StockAdjustmentId",
                         column: x => x.StockAdjustmentId,
                         principalTable: "StockAdjustments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StockAdjustmentItem_StockLots_StockLotId",
+                        name: "FK_StockAdjustmentItems_StockAdjustments_StockAdjustmentId1",
+                        column: x => x.StockAdjustmentId1,
+                        principalTable: "StockAdjustments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StockAdjustmentItems_StockLots_StockLotId",
                         column: x => x.StockLotId,
                         principalTable: "StockLots",
-                        principalColumn: "Id");
-                });
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                },
+                comment: "Representa um item específico do ajuste manual na quantidade do estoque");
 
             migrationBuilder.CreateTable(
                 name: "StockMovements",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    MovementDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data em que a movimentação de estoque ocorreu."),
-                    SourceDocumentId = table.Column<int>(type: "int", nullable: false, comment: "ID do documento de origem (ex: OrderId, ReceivingId)."),
-                    SourceDocumentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, comment: "Tipo do documento de origem (ex: 'Order', 'Receiving')."),
+                    MovementDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SourceDocumentId = table.Column<int>(type: "int", nullable: false),
+                    SourceDocumentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ResponsibleId = table.Column<int>(type: "int", nullable: false),
-                    StockLotId = table.Column<int>(type: "int", nullable: false, comment: "ID do Lote de Estoque afetado pela movimentação."),
-                    MovementCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "O custo financeiro da quantidade movimentada."),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    StockLotId = table.Column<int>(type: "int", nullable: false),
+                    MovementCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
                 },
                 constraints: table =>
                 {
@@ -863,7 +788,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         column: x => x.ResponsibleId,
                         principalTable: "Employees",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StockMovements_StockLots_StockLotId",
                         column: x => x.StockLotId,
@@ -871,57 +796,47 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Representa uma entrada ou saída de itens do estoque.");
-
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { 1, "f2c9a0c0-7b1f-4e53-9b8a-3a0f1f4d8b11", "Master", "MASTER" },
-                    { 2, "9a6a4b78-0d51-4b4b-9d65-2a7a8bfc9e32", "Admin", "ADMIN" },
-                    { 3, "c7f9c1aa-1c9a-4c4e-b8fa-5c8a2c1f3a99", "User", "USER" }
-                });
+                comment: "Representa uma entrada ou saída de itens do estoque");
 
             migrationBuilder.InsertData(
                 table: "Facilities",
-                columns: new[] { "Id", "Cnes", "CreatedOn", "IsActive", "Name", "UpdatedOn", "Address_Cep", "Address_City", "Address_Complement", "Address_Neighborhood", "Address_Number", "Address_State", "Address_Street", "Contact_Email", "Contact_Phone" },
+                columns: new[] { "Id", "Cnes", "CreatedOn", "IsActive", "Name", "UpdatedOn", "Cep", "City", "Complement", "Neighborhood", "Number", "State", "Street", "Email", "Phone" },
                 values: new object[] { 1, "6345921", new DateTime(2025, 1, 2, 8, 35, 14, 0, DateTimeKind.Utc), true, "Secretária Municipal da Saúde - Dr. João Geraldo Noronha", null, "13601-111", "Araras", "", "Jardim Belvedere", "33", "SP", "Rua Campos Sales", "saude@araras.sp.gov.br", "(19) 3543-1522" });
 
             migrationBuilder.InsertData(
                 table: "OrderStatuses",
-                columns: new[] { "Id", "Description" },
+                columns: new[] { "Id", "CreatedOn", "Description", "IsActive", "UpdatedOn" },
                 values: new object[,]
                 {
-                    { 1, "Pendente de Aprovação" },
-                    { 2, "Pronto para Separação" },
-                    { 3, "Em Separação" },
-                    { 4, "Pronto para Envio/Finalização" },
-                    { 5, "Finalizado" },
-                    { 6, "Cancelado" }
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Pendente de Aprovação", true, null },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Pronto para Separação", true, null },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Em Separação", true, null },
+                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Pronto para Envio/Finalização", true, null },
+                    { 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Finalizado", true, null },
+                    { 6, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Cancelado", true, null }
                 });
 
             migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Scope", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
-                values: new object[] { 1, 0, "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99", new DateTime(2025, 1, 2, 9, 14, 35, 0, DateTimeKind.Utc), null, false, 1, true, false, null, null, "SAUDE_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, 1, "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11", false, null, "saude_master" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[] { 1, 1 });
+                table: "ApplicationUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedOn", "Email", "EmailConfirmed", "FacilityId", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Role", "Scope", "SecurityStamp", "TwoFactorEnabled", "UpdatedOn", "UserName" },
+                values: new object[] { 1, 0, "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "", false, 1, true, false, null, "", "SAUDE_MASTER", "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==", null, false, (byte)1, (byte)1, "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11", false, null, "saude_master" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
-                column: "RoleId");
+                name: "EmailIndex",
+                table: "ApplicationUsers",
+                column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "AspNetRoles",
-                column: "NormalizedName",
+                name: "IX_ApplicationUsers_FacilityId",
+                table: "ApplicationUsers",
+                column: "FacilityId");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "ApplicationUsers",
+                column: "NormalizedUserName",
                 unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -934,56 +849,29 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_FacilityId",
-                table: "AspNetUsers",
-                column: "FacilityId");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers",
-                column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturnItem_DispenseReturnId",
-                table: "DispenseReturnItem",
+                name: "IX_DispenseReturnItems_DispenseReturnId",
+                table: "DispenseReturnItems",
                 column: "DispenseReturnId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturnItem_ProductId",
-                table: "DispenseReturnItem",
+                name: "IX_DispenseReturnItems_DispenseReturnId1",
+                table: "DispenseReturnItems",
+                column: "DispenseReturnId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DispenseReturnItems_ProductId",
+                table: "DispenseReturnItems",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturnItem_StockLotId",
-                table: "DispenseReturnItem",
+                name: "IX_DispenseReturnItems_StockLotId",
+                table: "DispenseReturnItems",
                 column: "StockLotId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DispenseReturns_OriginalOrderId",
                 table: "DispenseReturns",
                 column: "OriginalOrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturns_ReturnedByAccountId",
-                table: "DispenseReturns",
-                column: "ReturnedByAccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturns_ReturnedByEmployeeId",
-                table: "DispenseReturns",
-                column: "ReturnedByEmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_Cpf",
@@ -1003,6 +891,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "OrderItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderItemLots_OrderItemId1",
+                table: "OrderItemLots",
+                column: "OrderItemId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItemLots_StockLotId",
                 table: "OrderItemLots",
                 column: "StockLotId");
@@ -1013,29 +906,14 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_OrderId1",
+                table: "OrderItems",
+                column: "OrderId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_ProductId",
                 table: "OrderItems",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_ApprovedByAccountId",
-                table: "Orders",
-                column: "ApprovedByAccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_ApprovedByEmployeeId",
-                table: "Orders",
-                column: "ApprovedByEmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_CanceledByAccountId",
-                table: "Orders",
-                column: "CanceledByAccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_CanceledByEmployeeId",
-                table: "Orders",
-                column: "CanceledByEmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CreatedByAccountId",
@@ -1048,16 +926,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "CreatedByEmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_FinalizedByAccountId",
-                table: "Orders",
-                column: "FinalizedByAccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_FinalizedByEmployeeId",
-                table: "Orders",
-                column: "FinalizedByEmployeeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Orders_OrderFacilityId",
                 table: "Orders",
                 column: "OrderFacilityId");
@@ -1068,18 +936,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "OrderStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_SeparatedByAccountId",
-                table: "Orders",
-                column: "SeparatedByAccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_SeparatedByEmployeeId",
-                table: "Orders",
-                column: "SeparatedByEmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PresentationForms_Name",
-                table: "PresentationForms",
+                name: "IX_PackagingTypes_Name",
+                table: "PackagingTypes",
                 column: "Name",
                 unique: true);
 
@@ -1089,9 +947,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "MainCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_PresentationFormId",
+                name: "IX_Products_PackagingTypeId",
                 table: "Products",
-                column: "PresentationFormId");
+                column: "PackagingTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SubCategoryId",
@@ -1124,18 +982,23 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "SupplierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockAdjustmentItem_ProductId",
-                table: "StockAdjustmentItem",
+                name: "IX_StockAdjustmentItems_ProductId",
+                table: "StockAdjustmentItems",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockAdjustmentItem_StockAdjustmentId",
-                table: "StockAdjustmentItem",
+                name: "IX_StockAdjustmentItems_StockAdjustmentId",
+                table: "StockAdjustmentItems",
                 column: "StockAdjustmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockAdjustmentItem_StockLotId",
-                table: "StockAdjustmentItem",
+                name: "IX_StockAdjustmentItems_StockAdjustmentId1",
+                table: "StockAdjustmentItems",
+                column: "StockAdjustmentId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockAdjustmentItems_StockLotId",
+                table: "StockAdjustmentItems",
                 column: "StockLotId");
 
             migrationBuilder.CreateIndex(
@@ -1192,37 +1055,28 @@ namespace ArarasHealthHub.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUserClaims");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserLogins");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "DispenseReturnItem");
+                name: "DispenseReturnItems");
 
             migrationBuilder.DropTable(
                 name: "OrderItemLots");
 
             migrationBuilder.DropTable(
-                name: "StockAdjustmentItem");
+                name: "StockAdjustmentItems");
 
             migrationBuilder.DropTable(
                 name: "StockCosts");
 
             migrationBuilder.DropTable(
                 name: "StockMovements");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "DispenseReturns");
@@ -1255,7 +1109,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "ApplicationUsers");
 
             migrationBuilder.DropTable(
                 name: "Employees");
@@ -1264,7 +1118,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "Suppliers");
 
             migrationBuilder.DropTable(
-                name: "PresentationForms");
+                name: "PackagingTypes");
 
             migrationBuilder.DropTable(
                 name: "SubCategories");

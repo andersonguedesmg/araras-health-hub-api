@@ -40,7 +40,7 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .WithMany()
                 .HasForeignKey(x => x.AccountId);
 
-            builder.HasMany(typeof(ReceivedItem), "_items")
+            builder.HasMany(x => x.ReceivedItems)
                 .WithOne(nameof(ReceivedItem.Receiving))
                 .HasForeignKey(nameof(ReceivedItem.ReceivingId));
         }

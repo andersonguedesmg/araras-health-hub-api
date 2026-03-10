@@ -26,15 +26,20 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("OriginalOrderId")
                         .HasColumnType("int");
@@ -58,19 +63,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OriginalOrderId");
 
-                    b.HasIndex("ReturnedByAccountId");
-
-                    b.HasIndex("ReturnedByEmployeeId");
-
-                    b.ToTable("DispenseReturns", t =>
+                    b.ToTable("DispenseReturns", null, t =>
                         {
-                            t.HasComment("Representa uma devolução de itens dispensados de um pedido ao estoque.");
+                            t.HasComment("Representa uma devolução de itens dispensados de um pedido ao estoque");
                         });
                 });
 
@@ -78,7 +80,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -93,16 +96,23 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<int>("DispenseReturnId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DispenseReturnId1")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -123,64 +133,77 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DispenseReturnId");
 
+                    b.HasIndex("DispenseReturnId1");
+
                     b.HasIndex("ProductId");
 
                     b.HasIndex("StockLotId");
 
-                    b.ToTable("DispenseReturnItem");
+                    b.ToTable("DispenseReturnItems", (string)null);
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cpf")
                         .IsRequired()
                         .HasMaxLength(14)
-                        .HasColumnType("nvarchar(14)");
+                        .HasColumnType("nvarchar(14)")
+                        .HasComment("CPF");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<string>("Function")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Função");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Nome do funcionário");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasComment("Telefone");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Cpf")
                         .IsUnique();
 
-                    b.ToTable("Employees", t =>
+                    b.ToTable("Employees", null, t =>
                         {
-                            t.HasComment("Representa um funcionário.");
+                            t.HasComment("Representa um funcionário");
                         });
                 });
 
@@ -188,34 +211,42 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cnes")
                         .IsRequired()
                         .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
+                        .HasColumnType("nvarchar(7)")
+                        .HasComment("Código CNES");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Nome da unidade");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facilities", t =>
+                    b.ToTable("Facilities", null, t =>
                         {
-                            t.HasComment("Representa uma unidade.");
+                            t.HasComment("Representa uma unidade");
                         });
 
                     b.HasData(
@@ -233,32 +264,39 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Nome da categoria principal");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("MainCategories", t =>
+                    b.ToTable("MainCategories", null, t =>
                         {
-                            t.HasComment("Categoria principal de produtos (ex: Medicamento, Material Hospitalar, Material de Limpeza)");
+                            t.HasComment("Representa uma categoria principal de produtos (ex: Medicamento, Material Hospitalar, Material de Limpeza)");
                         });
                 });
 
@@ -266,7 +304,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -302,7 +341,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<DateTime?>("FinalizedAt")
                         .HasColumnType("datetime2");
@@ -314,7 +354,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("Observation")
                         .HasMaxLength(200)
@@ -336,42 +379,28 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApprovedByAccountId");
-
-                    b.HasIndex("ApprovedByEmployeeId");
-
-                    b.HasIndex("CanceledByAccountId");
-
-                    b.HasIndex("CanceledByEmployeeId");
 
                     b.HasIndex("CreatedByAccountId");
 
                     b.HasIndex("CreatedByEmployeeId");
 
-                    b.HasIndex("FinalizedByAccountId");
-
-                    b.HasIndex("FinalizedByEmployeeId");
-
                     b.HasIndex("OrderFacilityId");
 
                     b.HasIndex("OrderStatusId");
 
-                    b.HasIndex("SeparatedByAccountId");
-
-                    b.HasIndex("SeparatedByEmployeeId");
-
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -383,7 +412,20 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
+
                     b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrderId1")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -397,53 +439,76 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
+                    b.HasIndex("OrderId1");
+
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItemLot", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("OrderItemId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("OrderItemId1")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasComment("Quantidade real baixada deste lote para atender o pedido.");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("StockLotId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalValue")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Custo total do item (Quantity * UnitValue) para fins de relatório.");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("UnitValue")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Valor unitário do produto no momento da baixa, herdado do StockLot.");
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderItemId");
 
+                    b.HasIndex("OrderItemId1");
+
                     b.HasIndex("StockLotId");
 
-                    b.ToTable("OrderItemLots", t =>
+                    b.ToTable("OrderItemLots", null, t =>
                         {
-                            t.HasComment("Registra os lotes específicos usados para atender um item de pedido durante a separação.");
+                            t.HasComment("Registra os lotes específicos usados para atender um item de pedido durante a separação");
                         });
                 });
 
@@ -451,85 +516,119 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
+
                     b.HasKey("Id");
 
-                    b.ToTable("OrderStatuses", t =>
+                    b.ToTable("OrderStatuses", null, t =>
                         {
-                            t.HasComment("Tabela de lookup para os status possíveis de um pedido.");
+                            t.HasComment("Tabela de lookup para os status possíveis de um pedido");
                         });
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Description = "Pendente de Aprovação"
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Pendente de Aprovação",
+                            IsActive = true
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Pronto para Separação"
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Pronto para Separação",
+                            IsActive = true
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Em Separação"
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Em Separação",
+                            IsActive = true
                         },
                         new
                         {
                             Id = 4,
-                            Description = "Pronto para Envio/Finalização"
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Pronto para Envio/Finalização",
+                            IsActive = true
                         },
                         new
                         {
                             Id = 5,
-                            Description = "Finalizado"
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Finalizado",
+                            IsActive = true
                         },
                         new
                         {
                             Id = 6,
-                            Description = "Cancelado"
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Cancelado",
+                            IsActive = true
                         });
                 });
 
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.PresentationForm", b =>
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.PackagingType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Nome do tipo de embalagem");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("PresentationForms", t =>
+                    b.ToTable("PackagingTypes", null, t =>
                         {
-                            t.HasComment("Forma de apresentação do produto (ex: Frasco, Ampola, Comprimido)");
+                            t.HasComment("Representa um tipo de embalagem do produto (ex: Frasco, Ampola, Comprimido)");
                         });
                 });
 
@@ -537,20 +636,26 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Descrição do produto");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("MainCategoryId")
                         .HasColumnType("int");
@@ -558,28 +663,30 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(150)")
+                        .HasComment("Nome do produto");
 
-                    b.Property<int>("PresentationFormId")
+                    b.Property<int>("PackagingTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("SubCategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MainCategoryId");
 
-                    b.HasIndex("PresentationFormId");
+                    b.HasIndex("PackagingTypeId");
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("Products", t =>
+                    b.ToTable("Products", null, t =>
                         {
-                            t.HasComment("Representa um produto.");
+                            t.HasComment("Representa um produto");
                         });
                 });
 
@@ -587,7 +694,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -602,13 +710,17 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -629,7 +741,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
@@ -637,9 +750,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("ReceivingId");
 
-                    b.ToTable("ReceivedItems", t =>
+                    b.ToTable("ReceivedItems", null, t =>
                         {
-                            t.HasComment("Representa um item específico de um recebimento.");
+                            t.HasComment("Representa um item específico de um recebimento");
                         });
                 });
 
@@ -647,7 +760,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -655,7 +769,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<string>("InvoiceNumber")
                         .IsRequired()
@@ -663,11 +778,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("Observation")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ReceivingDate")
                         .HasColumnType("datetime2");
@@ -684,11 +801,12 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("TotalValue")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
@@ -698,9 +816,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Receivings", t =>
+                    b.ToTable("Receivings", null, t =>
                         {
-                            t.HasComment("Representa o registro de entrada no estoque.");
+                            t.HasComment("Representa o registro de entrada no estoque");
                         });
                 });
 
@@ -708,25 +826,29 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AvailableQuantity")
                         .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasComment("Quantidade disponível para novas reservas (CurrentQuantity - ReservedQuantity).");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<decimal>("CurrentQuantity")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)")
-                        .HasComment("Quantidade total disponível de todas as validades e lotes.");
+                        .HasComment("Quantidade total disponível.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<decimal>("MinQuantity")
                         .HasPrecision(18, 3)
@@ -737,20 +859,20 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<decimal>("ReservedQuantity")
                         .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasComment("Quantidade que está reservada para pedidos pendentes/aprovados.");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("Stocks", t =>
+                    b.ToTable("Stocks", null, t =>
                         {
-                            t.HasComment("Representa o estoque atual de um produto (visão consolidada).");
+                            t.HasComment("Representa o estoque atual de um produto (visão consolidada)");
                         });
                 });
 
@@ -758,7 +880,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -769,10 +892,14 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("Observation")
                         .HasMaxLength(200)
@@ -790,7 +917,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
@@ -798,9 +926,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("ResponsibleId");
 
-                    b.ToTable("StockAdjustments", t =>
+                    b.ToTable("StockAdjustments", null, t =>
                         {
-                            t.HasComment("Representa um ajuste manual na quantidade do estoque.");
+                            t.HasComment("Representa um ajuste manual na quantidade do estoque");
                         });
                 });
 
@@ -808,24 +936,31 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Batch")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Brand")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -835,6 +970,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("decimal(18,3)");
 
                     b.Property<int>("StockAdjustmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StockAdjustmentId1")
                         .HasColumnType("int");
 
                     b.Property<int?>("StockLotId")
@@ -849,7 +987,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
@@ -857,16 +996,22 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("StockAdjustmentId");
 
+                    b.HasIndex("StockAdjustmentId1");
+
                     b.HasIndex("StockLotId");
 
-                    b.ToTable("StockAdjustmentItem");
+                    b.ToTable("StockAdjustmentItems", null, t =>
+                        {
+                            t.HasComment("Representa um item específico do ajuste manual na quantidade do estoque");
+                        });
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockCost", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -875,29 +1020,34 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<decimal>("CurrentTotalCost")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("StockId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("StockId")
                         .IsUnique();
 
-                    b.ToTable("StockCosts", t =>
+                    b.ToTable("StockCosts", null, t =>
                         {
-                            t.HasComment("Armazena o custo médio unitário e o custo total atual do estoque consolidado.");
+                            t.HasComment("Armazena o custo médio unitário e o custo total atual do estoque consolidado");
                         });
                 });
 
@@ -905,52 +1055,52 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AvailableQuantity")
                         .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)")
-                        .HasComment("Quantidade disponível em estoque para este lote.");
+                        .HasColumnType("decimal(18,3)");
 
                     b.Property<string>("Batch")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
-                        .HasComment("Número/Código do lote do produto.");
+                        .HasComment("Número do lote");
 
                     b.Property<string>("Brand")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasComment("Marca/Fabricante deste lote específico.");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2")
-                        .HasComment("Data de vencimento deste lote.");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int?>("ReceivedItemId")
-                        .HasColumnType("int")
-                        .HasComment("Opcional: ID do Item do Recebimento que deu origem a este lote (para rastreio).");
+                        .HasColumnType("int");
 
                     b.Property<int>("StockId")
-                        .HasColumnType("int")
-                        .HasComment("ID do registro consolidado de estoque (Stock) a que este lote pertence.");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("UnitValue")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Custo unitário deste lote (custo de entrada).");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
@@ -959,9 +1109,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasIndex("StockId", "Batch")
                         .IsUnique();
 
-                    b.ToTable("StockLots", t =>
+                    b.ToTable("StockLots", null, t =>
                         {
-                            t.HasComment("Representa o estoque detalhado de um produto por lote, valor e validade.");
+                            t.HasComment("Representa o estoque detalhado de um produto por lote, valor e validade");
                         });
                 });
 
@@ -969,24 +1119,27 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<decimal>("MovementCost")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("O custo financeiro da quantidade movimentada.");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("MovementDate")
-                        .HasColumnType("datetime2")
-                        .HasComment("Data em que a movimentação de estoque ocorreu.");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 3)
@@ -996,24 +1149,22 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("SourceDocumentId")
-                        .HasColumnType("int")
-                        .HasComment("ID do documento de origem (ex: OrderId, ReceivingId).");
+                        .HasColumnType("int");
 
                     b.Property<string>("SourceDocumentType")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasComment("Tipo do documento de origem (ex: 'Order', 'Receiving').");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("StockLotId")
-                        .HasColumnType("int")
-                        .HasComment("ID do Lote de Estoque afetado pela movimentação.");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
@@ -1021,9 +1172,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasIndex("StockLotId");
 
-                    b.ToTable("StockMovements", t =>
+                    b.ToTable("StockMovements", null, t =>
                         {
-                            t.HasComment("Representa uma entrada ou saída de itens do estoque.");
+                            t.HasComment("Representa uma entrada ou saída de itens do estoque");
                         });
                 });
 
@@ -1031,15 +1182,20 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<int>("MainCategoryId")
                         .HasColumnType("int");
@@ -1047,19 +1203,21 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Nome da subcategoria");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MainCategoryId", "Name")
                         .IsUnique();
 
-                    b.ToTable("SubCategories", t =>
+                    b.ToTable("SubCategories", null, t =>
                         {
-                            t.HasComment("Subcategoria vinculada a uma categoria principal (ex: Antibiótico, Analgésico, Antialérgico)");
+                            t.HasComment("Representa uma subcategoria vinculada a categoria principal de produtos (ex: Antibiótico, Analgésico, Antialérgico)");
                         });
                 });
 
@@ -1067,41 +1225,48 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cnpj")
                         .IsRequired()
                         .HasMaxLength(18)
-                        .HasColumnType("nvarchar(18)");
+                        .HasColumnType("nvarchar(18)")
+                        .HasComment("CNPJ");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
 
                     b.Property<string>("LegalName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasComment("Razão Social.");
+                        .HasComment("Razão Social");
 
                     b.Property<string>("TradeName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasComment("Nome Fantasia.");
+                        .HasComment("Nome Fantasia");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers", t =>
+                    b.ToTable("Suppliers", null, t =>
                         {
-                            t.HasComment("Representa um fornecedor.");
+                            t.HasComment("Representa um fornecedor");
                         });
                 });
 
@@ -1121,7 +1286,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação da conta.");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -1134,7 +1300,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se a conta está ativa.");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -1159,8 +1328,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Scope")
-                        .HasColumnType("int");
+                    b.Property<byte>("Role")
+                        .HasColumnType("tinyint")
+                        .HasComment("Papel da conta no sistema.");
+
+                    b.Property<byte>("Scope")
+                        .HasColumnType("tinyint")
+                        .HasComment("Escopo da conta no sistema.");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -1169,7 +1343,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização da conta.");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -1187,7 +1362,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("ApplicationUsers", null, t =>
+                        {
+                            t.HasComment("Representa uma conta de usuário do sistema");
+                        });
 
                     b.HasData(
                         new
@@ -1195,96 +1373,22 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "3F1C7B9A-1C8E-4E3B-A4F5-8C6B7F2E1D99",
-                            CreatedOn = new DateTime(2025, 1, 2, 9, 14, 35, 0, DateTimeKind.Utc),
+                            CreatedOn = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "",
                             EmailConfirmed = false,
                             FacilityId = 1,
                             IsActive = true,
                             LockoutEnabled = false,
+                            NormalizedEmail = "",
                             NormalizedUserName = "SAUDE_MASTER",
                             PasswordHash = "AQAAAAIAAYagAAAAEEqeBGF+Rvx70SKaJEf8a7fAWWMLi+icLvnqu5uiLw3uR23FB+X6dxnr0jBGFs2ZnA==",
                             PhoneNumberConfirmed = false,
-                            Scope = 1,
+                            Role = (byte)1,
+                            Scope = (byte)1,
                             SecurityStamp = "D8A2F6E1-7B32-4C6F-BB5A-91C3E62E8A11",
                             TwoFactorEnabled = false,
                             UserName = "saude_master"
                         });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ConcurrencyStamp = "f2c9a0c0-7b1f-4e53-9b8a-3a0f1f4d8b11",
-                            Name = "Master",
-                            NormalizedName = "MASTER"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ConcurrencyStamp = "9a6a4b78-0d51-4b4b-9d65-2a7a8bfc9e32",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ConcurrencyStamp = "c7f9c1aa-1c9a-4c4e-b8fa-5c8a2c1f3a99",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -1332,28 +1436,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            RoleId = 1
-                        });
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
@@ -1381,43 +1463,31 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "ReturnedByAccount")
-                        .WithMany()
-                        .HasForeignKey("ReturnedByAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "ReturnedByEmployee")
-                        .WithMany()
-                        .HasForeignKey("ReturnedByEmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("OriginalOrder");
-
-                    b.Navigation("ReturnedByAccount");
-
-                    b.Navigation("ReturnedByEmployee");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturnItem", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.DispenseReturn", "DispenseReturn")
-                        .WithMany("ReturnItems")
+                        .WithMany("_items")
                         .HasForeignKey("DispenseReturnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ArarasHealthHub.Domain.Entities.DispenseReturn", null)
+                        .WithMany("ReturnItems")
+                        .HasForeignKey("DispenseReturnId1");
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
                         .WithMany()
                         .HasForeignKey("StockLotId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("DispenseReturn");
@@ -1437,40 +1507,54 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             b1.Property<string>("Cep")
                                 .IsRequired()
                                 .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)");
+                                .HasColumnType("nvarchar(10)")
+                                .HasColumnName("Cep")
+                                .HasComment("CEP");
 
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("City")
+                                .HasComment("Cidade");
 
                             b1.Property<string>("Complement")
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Complement")
+                                .HasComment("Complemento");
 
                             b1.Property<string>("Neighborhood")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Neighborhood")
+                                .HasComment("Bairro");
 
                             b1.Property<string>("Number")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("Number")
+                                .HasComment("Número");
 
                             b1.Property<string>("State")
                                 .IsRequired()
                                 .HasMaxLength(2)
-                                .HasColumnType("nvarchar(2)");
+                                .HasColumnType("nvarchar(2)")
+                                .HasColumnName("State")
+                                .HasComment("UF");
 
                             b1.Property<string>("Street")
                                 .IsRequired()
                                 .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
+                                .HasColumnType("nvarchar(200)")
+                                .HasColumnName("Street")
+                                .HasComment("Logradouro");
 
                             b1.HasKey("FacilityId");
 
-                            b1.ToTable("Facilities");
+                            b1.ToTable("Facilities", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("FacilityId");
@@ -1497,16 +1581,20 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             b1.Property<string>("Email")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Email")
+                                .HasComment("E-mail");
 
                             b1.Property<string>("Phone")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("Phone")
+                                .HasComment("Telefone");
 
                             b1.HasKey("FacilityId");
 
-                            b1.ToTable("Facilities");
+                            b1.ToTable("Facilities", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("FacilityId");
@@ -1529,22 +1617,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "ApprovedByAccount")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByAccountId");
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "ApprovedByEmployee")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByEmployeeId");
-
-                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "CanceledByAccount")
-                        .WithMany()
-                        .HasForeignKey("CanceledByAccountId");
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "CanceledByEmployee")
-                        .WithMany()
-                        .HasForeignKey("CanceledByEmployeeId");
-
                     b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "CreatedByAccount")
                         .WithMany()
                         .HasForeignKey("CreatedByAccountId")
@@ -1557,71 +1629,43 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "FinalizedByAccount")
-                        .WithMany()
-                        .HasForeignKey("FinalizedByAccountId");
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "FinalizedByEmployee")
-                        .WithMany()
-                        .HasForeignKey("FinalizedByEmployeeId");
-
                     b.HasOne("ArarasHealthHub.Domain.Entities.Facility", "OrderFacility")
                         .WithMany()
                         .HasForeignKey("OrderFacilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "SeparatedByAccount")
-                        .WithMany()
-                        .HasForeignKey("SeparatedByAccountId");
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "SeparatedByEmployee")
-                        .WithMany()
-                        .HasForeignKey("SeparatedByEmployeeId");
-
-                    b.Navigation("ApprovedByAccount");
-
-                    b.Navigation("ApprovedByEmployee");
-
-                    b.Navigation("CanceledByAccount");
-
-                    b.Navigation("CanceledByEmployee");
 
                     b.Navigation("CreatedByAccount");
 
                     b.Navigation("CreatedByEmployee");
 
-                    b.Navigation("FinalizedByAccount");
-
-                    b.Navigation("FinalizedByEmployee");
-
                     b.Navigation("OrderFacility");
 
                     b.Navigation("OrderStatus");
-
-                    b.Navigation("SeparatedByAccount");
-
-                    b.Navigation("SeparatedByEmployee");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItem", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.Order", "Order")
-                        .WithMany("OrderItems")
+                        .WithMany("_items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Order", null)
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId1");
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -1632,15 +1676,19 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItemLot", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Entities.OrderItem", "OrderItem")
-                        .WithMany("OrderItemLots")
+                        .WithMany("_lots")
                         .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ArarasHealthHub.Domain.Entities.OrderItem", null)
+                        .WithMany("OrderItemLots")
+                        .HasForeignKey("OrderItemId1");
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
                         .WithMany()
                         .HasForeignKey("StockLotId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("OrderItem");
@@ -1656,9 +1704,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ArarasHealthHub.Domain.Entities.PresentationForm", "PresentationForm")
+                    b.HasOne("ArarasHealthHub.Domain.Entities.PackagingType", "PackagingType")
                         .WithMany("Products")
-                        .HasForeignKey("PresentationFormId")
+                        .HasForeignKey("PackagingTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1670,7 +1718,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Navigation("MainCategory");
 
-                    b.Navigation("PresentationForm");
+                    b.Navigation("PackagingType");
 
                     b.Navigation("SubCategory");
                 });
@@ -1680,11 +1728,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.Receiving", "Receiving")
-                        .WithMany("ReceivedItem")
+                        .WithMany("ReceivedItems")
                         .HasForeignKey("ReceivingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1737,13 +1785,13 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "Responsible")
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -1756,18 +1804,23 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.StockAdjustment", "StockAdjustment")
-                        .WithMany("AdjustmentItems")
+                        .WithMany("_items")
                         .HasForeignKey("StockAdjustmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ArarasHealthHub.Domain.Entities.StockAdjustment", null)
+                        .WithMany("AdjustmentItems")
+                        .HasForeignKey("StockAdjustmentId1");
+
                     b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
                         .WithMany()
-                        .HasForeignKey("StockLotId");
+                        .HasForeignKey("StockLotId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Product");
 
@@ -1797,7 +1850,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Entities.Stock", "Stock")
                         .WithMany("Lots")
                         .HasForeignKey("StockId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ReceivedItem");
@@ -1810,7 +1863,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "Responsible")
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
@@ -1845,40 +1898,54 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             b1.Property<string>("Cep")
                                 .IsRequired()
                                 .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)");
+                                .HasColumnType("nvarchar(10)")
+                                .HasColumnName("Cep")
+                                .HasComment("CEP");
 
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("City")
+                                .HasComment("Cidade");
 
                             b1.Property<string>("Complement")
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Complement")
+                                .HasComment("Complemento");
 
                             b1.Property<string>("Neighborhood")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Neighborhood")
+                                .HasComment("Bairro");
 
                             b1.Property<string>("Number")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("Number")
+                                .HasComment("Número");
 
                             b1.Property<string>("State")
                                 .IsRequired()
                                 .HasMaxLength(2)
-                                .HasColumnType("nvarchar(2)");
+                                .HasColumnType("nvarchar(2)")
+                                .HasColumnName("State")
+                                .HasComment("UF");
 
                             b1.Property<string>("Street")
                                 .IsRequired()
                                 .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
+                                .HasColumnType("nvarchar(200)")
+                                .HasColumnName("Street")
+                                .HasComment("Logradouro");
 
                             b1.HasKey("SupplierId");
 
-                            b1.ToTable("Suppliers");
+                            b1.ToTable("Suppliers", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("SupplierId");
@@ -1892,16 +1959,20 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                             b1.Property<string>("Email")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Email")
+                                .HasComment("E-mail");
 
                             b1.Property<string>("Phone")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("Phone")
+                                .HasComment("Telefone");
 
                             b1.HasKey("SupplierId");
 
-                            b1.ToTable("Suppliers");
+                            b1.ToTable("Suppliers", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("SupplierId");
@@ -1919,18 +1990,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.HasOne("ArarasHealthHub.Domain.Entities.Facility", "Facility")
                         .WithMany("Accounts")
                         .HasForeignKey("FacilityId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Facility");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -1951,21 +2014,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", null)
@@ -1978,6 +2026,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturn", b =>
                 {
                     b.Navigation("ReturnItems");
+
+                    b.Navigation("_items");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Facility", b =>
@@ -1995,14 +2045,18 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
+
+                    b.Navigation("_items");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItem", b =>
                 {
                     b.Navigation("OrderItemLots");
+
+                    b.Navigation("_lots");
                 });
 
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.PresentationForm", b =>
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.PackagingType", b =>
                 {
                     b.Navigation("Products");
                 });
@@ -2014,7 +2068,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Receiving", b =>
                 {
-                    b.Navigation("ReceivedItem");
+                    b.Navigation("ReceivedItems");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Stock", b =>
@@ -2027,6 +2081,8 @@ namespace ArarasHealthHub.Infrastructure.Migrations
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>
                 {
                     b.Navigation("AdjustmentItems");
+
+                    b.Navigation("_items");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.SubCategory", b =>

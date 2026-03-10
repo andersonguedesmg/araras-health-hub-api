@@ -1,4 +1,4 @@
-dotnet ef migrations add a2h_1.1.0 --project src/ArarasHealthHub.Infrastructure --startup-project src/ArarasHealthHub.Api
+dotnet ef migrations add a2h_1.0.2 --project src/ArarasHealthHub.Infrastructure --startup-project src/ArarasHealthHub.Api
 dotnet ef database update --project src/ArarasHealthHub.Infrastructure --startup-project src/ArarasHealthHub.Api
 
 dotnet clean
