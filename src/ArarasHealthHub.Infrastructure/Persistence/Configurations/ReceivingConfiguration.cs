@@ -17,32 +17,55 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             base.Configure(builder);
 
             builder.ToTable("Receivings", t =>
-                t.HasComment("Representa o registro de entrada no estoque"));
+            {
+                t.HasComment(
+                    "Representa o registro de entrada de produtos no estoque"
+                );
+
+                t.HasCheckConstraint(
+                    "CK_Receiving_InvoiceNumber",
+                    "[InvoiceNumber] <> ''"
+                );
+            });
 
             builder.Property(x => x.InvoiceNumber)
-                .HasMaxLength(50);
+                .HasMaxLength(50)
+                .IsRequired();
 
             builder.Property(x => x.SupplyAuthorization)
                 .HasMaxLength(50);
 
-            builder.Property(x => x.TotalValue)
-                .HasPrecision(18, 3);
+            builder.Property(x => x.Observation)
+                .HasMaxLength(500);
+
+            builder.Ignore(x => x.TotalValue);
 
             builder.HasOne(x => x.Supplier)
                 .WithMany()
-                .HasForeignKey(x => x.SupplierId);
+                .HasForeignKey(x => x.SupplierId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Responsible)
                 .WithMany()
-                .HasForeignKey(x => x.ResponsibleId);
+                .HasForeignKey(x => x.ResponsibleId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Account)
                 .WithMany()
-                .HasForeignKey(x => x.AccountId);
+                .HasForeignKey(x => x.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(x => x.ReceivedItems)
-                .WithOne(nameof(ReceivedItem.Receiving))
-                .HasForeignKey(nameof(ReceivedItem.ReceivingId));
+            builder.HasMany(x => x.Items)
+                .WithOne(x => x.Receiving)
+                .HasForeignKey(x => x.ReceivingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Navigation(x => x.Items)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            builder.Metadata
+                .FindNavigation(nameof(Receiving.Items))!
+                .SetField("_items");
         }
     }
 }

@@ -17,7 +17,18 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             base.Configure(builder);
 
             builder.ToTable("ReceivedItems", t =>
-                t.HasComment("Representa um item específico de um recebimento"));
+            {
+                t.HasComment(
+                    "Representa um item específico de um recebimento");
+
+                t.HasCheckConstraint(
+                    "CK_ReceivedItems_Quantity",
+                    "\"Quantity\" > 0");
+
+                t.HasCheckConstraint(
+                    "CK_ReceivedItems_UnitValue",
+                    "\"UnitValue\" >= 0");
+            });
 
             builder.Property(x => x.Quantity)
                 .HasPrecision(18, 3)
@@ -27,9 +38,7 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .HasPrecision(18, 2)
                 .IsRequired();
 
-            builder.Property(x => x.TotalValue)
-                .HasPrecision(18, 2)
-                .IsRequired();
+            builder.Ignore(x => x.TotalValue);
 
             builder.Property(x => x.Batch)
                 .HasMaxLength(50)
@@ -39,13 +48,16 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .HasMaxLength(100)
                 .IsRequired();
 
+            builder.Property(x => x.ExpiryDate)
+                .IsRequired();
+
             builder.HasOne(x => x.Product)
                 .WithMany()
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Receiving)
-                .WithMany(r => r.ReceivedItems)
+                .WithMany(x => x.Items)
                 .HasForeignKey(x => x.ReceivingId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

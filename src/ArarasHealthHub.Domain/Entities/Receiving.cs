@@ -5,12 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
+using ArarasHealthHub.Domain.Exceptions;
 using ArarasHealthHub.Domain.Identity;
 
 namespace ArarasHealthHub.Domain.Entities
 {
     public class Receiving : BaseEntity
     {
+        private readonly List<ReceivedItem> _items = [];
+
         public string InvoiceNumber { get; private set; } = string.Empty;
 
         public string SupplyAuthorization { get; private set; } = string.Empty;
@@ -19,7 +22,8 @@ namespace ArarasHealthHub.Domain.Entities
 
         public DateTime ReceivingDate { get; private set; }
 
-        public decimal TotalValue { get; private set; }
+        public decimal TotalValue
+            => _items.Sum(x => x.TotalValue);
 
         public int SupplierId { get; private set; }
         public Supplier Supplier { get; private set; } = null!;
@@ -30,7 +34,7 @@ namespace ArarasHealthHub.Domain.Entities
         public int AccountId { get; private set; }
         public ApplicationUser Account { get; private set; } = null!;
 
-        public ICollection<ReceivedItem> ReceivedItems { get; private set; } = new List<ReceivedItem>();
+        public IReadOnlyCollection<ReceivedItem> Items => _items;
 
         private Receiving() { }
 
@@ -38,20 +42,52 @@ namespace ArarasHealthHub.Domain.Entities
             string invoiceNumber,
             string supplyAuthorization,
             DateTime receivingDate,
-            decimal totalValue,
             int supplierId,
             int responsibleId,
             int accountId,
-            string? observation)
+            string? observation = null)
         {
-            InvoiceNumber = invoiceNumber;
-            SupplyAuthorization = supplyAuthorization;
+            if (string.IsNullOrWhiteSpace(invoiceNumber))
+                throw new DomainException(
+                    "Número da nota fiscal é obrigatório."
+                );
+
+            if (receivingDate > DateTime.UtcNow)
+                throw new DomainException(
+                    "Data de recebimento não pode ser futura."
+                );
+
+            InvoiceNumber = invoiceNumber.Trim();
+            SupplyAuthorization = supplyAuthorization.Trim();
             ReceivingDate = receivingDate;
-            TotalValue = totalValue;
+
             SupplierId = supplierId;
             ResponsibleId = responsibleId;
             AccountId = accountId;
-            Observation = observation;
+
+            Observation = observation?.Trim();
+        }
+
+        public void AddItem(ReceivedItem item)
+        {
+            if (item is null)
+                throw new DomainException(
+                    "Item do recebimento é obrigatório."
+                );
+
+            _items.Add(item);
+
+            SetUpdatedOn();
+        }
+
+        public void RemoveItem(ReceivedItem item)
+        {
+            if (!_items.Remove(item))
+                throw new DomainRuleException(
+                    "Item não encontrado no recebimento."
+                );
+
+            SetUpdatedOn();
         }
     }
 }
