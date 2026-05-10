@@ -17,7 +17,21 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             base.Configure(builder);
 
             builder.ToTable("StockMovements", t =>
-                t.HasComment("Representa uma entrada ou saída de itens do estoque"));
+            {
+                t.HasComment(
+                    "Histórico de movimentações de estoque"
+                );
+
+                t.HasCheckConstraint(
+                    "CK_StockMovement_Quantity",
+                    "[Quantity] > 0"
+                );
+
+                t.HasCheckConstraint(
+                    "CK_StockMovement_MovementCost",
+                    "[MovementCost] >= 0"
+                );
+            });
 
             builder.Property(x => x.Quantity)
                 .HasPrecision(18, 3)
@@ -30,6 +44,14 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             builder.Property(x => x.SourceDocumentType)
                 .HasMaxLength(50)
                 .IsRequired();
+
+            builder.Property(x => x.Type)
+                .HasConversion<int>()
+                .IsRequired();
+
+            builder.HasIndex(x => x.StockLotId);
+
+            builder.HasIndex(x => x.MovementDate);
 
             builder.HasOne(x => x.Responsible)
                 .WithMany()
