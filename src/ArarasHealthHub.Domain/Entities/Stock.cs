@@ -5,40 +5,127 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
+using ArarasHealthHub.Domain.Exceptions;
+
 namespace ArarasHealthHub.Domain.Entities
 {
     public class Stock : BaseEntity
     {
+        private readonly List<StockLot> _lots = [];
+
         public int ProductId { get; private set; }
+
         public Product Product { get; private set; } = null!;
 
         public decimal CurrentQuantity { get; private set; }
+
         public decimal ReservedQuantity { get; private set; }
-        public decimal AvailableQuantity { get; private set; }
+
+        public decimal AvailableQuantity
+            => CurrentQuantity - ReservedQuantity;
+
         public decimal MinQuantity { get; private set; }
 
-        public StockCost? StockCost { get; private set; }
+        public StockCost StockCost { get; private set; } = null!;
 
-        private readonly List<StockLot> _lots = new();
-        public IReadOnlyCollection<StockLot> Lots => _lots;
+        public IReadOnlyCollection<StockLot> Lots
+            => _lots.AsReadOnly();
 
-        protected Stock() { }
+        private Stock() { }
 
-        public Stock(int productId, decimal minQuantity)
+        public Stock(int productId, decimal minQuantity = 0)
         {
+            if (productId <= 0)
+                throw new DomainException("Produto inválido.");
+
+            if (minQuantity < 0)
+                throw new DomainException(
+                    "Quantidade mínima não pode ser negativa."
+                );
+
             ProductId = productId;
             MinQuantity = minQuantity;
-            CurrentQuantity = 0;
-            ReservedQuantity = 0;
-            AvailableQuantity = 0;
         }
 
-        public void UpdateQuantities(decimal current, decimal reserved)
+        public void IncreaseStock(decimal quantity)
         {
-            CurrentQuantity = current;
-            ReservedQuantity = reserved;
-            AvailableQuantity = current - reserved;
+            ValidatePositiveQuantity(quantity);
+
+            CurrentQuantity += quantity;
+
             SetUpdatedOn();
+        }
+
+        public void DecreaseStock(decimal quantity)
+        {
+            ValidatePositiveQuantity(quantity);
+
+            if (AvailableQuantity < quantity)
+            {
+                throw new DomainRuleException(
+                    $"Saldo insuficiente. Disponível: {AvailableQuantity}."
+                );
+            }
+
+            CurrentQuantity -= quantity;
+
+            SetUpdatedOn();
+        }
+
+        public void Reserve(decimal quantity)
+        {
+            ValidatePositiveQuantity(quantity);
+
+            if (AvailableQuantity < quantity)
+            {
+                throw new DomainRuleException(
+                    $"Saldo insuficiente para reserva. Disponível: {AvailableQuantity}."
+                );
+            }
+
+            ReservedQuantity += quantity;
+
+            SetUpdatedOn();
+        }
+
+        public void ReleaseReservation(decimal quantity)
+        {
+            ValidatePositiveQuantity(quantity);
+
+            if (ReservedQuantity < quantity)
+            {
+                throw new DomainRuleException(
+                    "Quantidade reservada insuficiente."
+                );
+            }
+
+            ReservedQuantity -= quantity;
+
+            SetUpdatedOn();
+        }
+
+        public void UpdateMinQuantity(decimal minQuantity)
+        {
+            if (minQuantity < 0)
+            {
+                throw new DomainException(
+                    "Quantidade mínima não pode ser negativa."
+                );
+            }
+
+            MinQuantity = minQuantity;
+
+            SetUpdatedOn();
+        }
+
+        private static void ValidatePositiveQuantity(decimal quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new DomainException(
+                    "Quantidade deve ser maior que zero."
+                );
+            }
         }
     }
 }
