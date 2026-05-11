@@ -16,13 +16,19 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
         {
             base.Configure(builder);
 
-            builder.ToTable("Orders");
+            builder.ToTable("Orders", t =>
+            {
+                t.HasComment("Representa um pedido de dispensação");
+            });
 
             builder.Property(x => x.Observation)
-                .HasMaxLength(200);
+                .HasMaxLength(500);
 
             builder.Property(x => x.CancellationReason)
                 .HasMaxLength(500);
+
+            builder.Property(x => x.CreatedAt)
+                .IsRequired();
 
             builder.HasOne(x => x.OrderFacility)
                 .WithMany()
@@ -34,9 +40,27 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .HasForeignKey(x => x.OrderStatusId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.CreatedByEmployee)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedByEmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.CreatedByAccount)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedByAccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(x => x.OrderItems)
+                .WithOne(x => x.Order)
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Navigation(x => x.OrderItems)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
             builder.Metadata
                 .FindNavigation(nameof(Order.OrderItems))!
-                .SetPropertyAccessMode(PropertyAccessMode.Field);
+                .SetField("_items");
         }
     }
 }

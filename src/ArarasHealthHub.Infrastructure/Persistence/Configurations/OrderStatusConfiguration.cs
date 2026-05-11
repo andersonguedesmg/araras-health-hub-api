@@ -17,11 +17,18 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             base.Configure(builder);
 
             builder.ToTable("OrderStatuses", t =>
-                t.HasComment("Tabela de lookup para os status possíveis de um pedido"));
+            {
+                t.HasComment(
+                    "Tabela de lookup dos status do pedido"
+                );
+            });
 
             builder.Property(x => x.Description)
                 .HasMaxLength(50)
                 .IsRequired();
+
+            builder.HasIndex(x => x.Description)
+                .IsUnique();
         }
     }
 }

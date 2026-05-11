@@ -17,14 +17,23 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             base.Configure(builder);
 
             builder.ToTable("OrderItemLots", t =>
-                t.HasComment("Registra os lotes específicos usados para atender um item de pedido durante a separação"));
+            {
+                t.HasComment(
+                    "Lotes separados para atendimento do pedido"
+                );
+            });
 
-            builder.Property(x => x.Quantity).HasPrecision(18, 3);
-            builder.Property(x => x.UnitValue).HasPrecision(18, 2);
-            builder.Property(x => x.TotalValue).HasPrecision(18, 2);
+            builder.Property(x => x.Quantity)
+                .HasPrecision(18, 3);
+
+            builder.Property(x => x.UnitValue)
+                .HasPrecision(18, 2);
+
+            builder.Property(x => x.TotalValue)
+                .HasPrecision(18, 2);
 
             builder.HasOne(x => x.OrderItem)
-                .WithMany("_lots")
+                .WithMany(x => x.OrderItemLots)
                 .HasForeignKey(x => x.OrderItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 

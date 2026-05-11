@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+using ArarasHealthHub.Domain.Exceptions;
+
 namespace ArarasHealthHub.Domain.Entities
 {
     public class OrderStatus : BaseEntity
@@ -14,7 +16,12 @@ namespace ArarasHealthHub.Domain.Entities
 
         public OrderStatus(string description)
         {
-            Description = description;
+            if (string.IsNullOrWhiteSpace(description))
+                throw new DomainException(
+                    "Descrição do status é obrigatória."
+                );
+
+            Description = description.Trim();
         }
     }
 }
