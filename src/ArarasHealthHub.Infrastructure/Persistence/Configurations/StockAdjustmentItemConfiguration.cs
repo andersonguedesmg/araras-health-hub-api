@@ -17,14 +17,23 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             base.Configure(builder);
 
             builder.ToTable("StockAdjustmentItems", t =>
-                t.HasComment("Representa um item específico do ajuste manual na quantidade do estoque"));
+            {
+                t.HasComment(
+                    "Itens de ajuste manual de estoque"
+                );
+
+                t.HasCheckConstraint(
+                    "CK_StockAdjustmentItem_Quantity",
+                    "\"Quantity\" > 0"
+                );
+            });
 
             builder.Property(x => x.Quantity)
                 .HasPrecision(18, 3)
                 .IsRequired();
 
             builder.Property(x => x.UnitValue)
-                .HasPrecision(18, 2);
+                .HasPrecision(18, 4);
 
             builder.Property(x => x.TotalValue)
                 .HasPrecision(18, 2);
@@ -35,8 +44,10 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             builder.Property(x => x.Brand)
                 .HasMaxLength(100);
 
+            builder.Property(x => x.ExpiryDate);
+
             builder.HasOne(x => x.StockAdjustment)
-                .WithMany("_items")
+                .WithMany(x => x.Items)
                 .HasForeignKey(x => x.StockAdjustmentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -49,6 +60,10 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .WithMany()
                 .HasForeignKey(x => x.StockLotId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(x => x.ProductId);
+
+            builder.HasIndex(x => x.StockLotId);
         }
     }
 }

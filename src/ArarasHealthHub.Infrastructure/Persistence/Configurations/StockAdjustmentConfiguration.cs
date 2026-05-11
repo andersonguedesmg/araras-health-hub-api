@@ -17,17 +17,22 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             base.Configure(builder);
 
             builder.ToTable("StockAdjustments", t =>
-                t.HasComment("Representa um ajuste manual na quantidade do estoque"));
+            {
+                t.HasComment(
+                    "Representa um ajuste manual de estoque"
+                );
+            });
 
             builder.Property(x => x.Type)
+                .HasConversion<int>()
                 .IsRequired();
 
             builder.Property(x => x.Reason)
-                .HasMaxLength(100)
+                .HasMaxLength(150)
                 .IsRequired();
 
             builder.Property(x => x.Observation)
-                .HasMaxLength(200);
+                .HasMaxLength(500);
 
             builder.Property(x => x.AdjustmentDate)
                 .IsRequired();
@@ -42,9 +47,17 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .HasForeignKey(x => x.AccountId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(x => x.Items)
+                .WithOne(x => x.StockAdjustment)
+                .HasForeignKey(x => x.StockAdjustmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Navigation(x => x.Items)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
             builder.Metadata
-                .FindNavigation(nameof(StockAdjustment.AdjustmentItems))!
-                .SetPropertyAccessMode(PropertyAccessMode.Field);
+                .FindNavigation(nameof(StockAdjustment.Items))!
+                .SetField("_items");
         }
     }
 }

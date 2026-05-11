@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
+using ArarasHealthHub.Domain.Exceptions;
+
 namespace ArarasHealthHub.Domain.Entities
 {
     public class StockAdjustmentItem : BaseEntity
@@ -21,10 +23,13 @@ namespace ArarasHealthHub.Domain.Entities
         public decimal Quantity { get; private set; }
 
         public decimal? UnitValue { get; private set; }
+
         public decimal? TotalValue { get; private set; }
 
         public string? Batch { get; private set; }
+
         public string? Brand { get; private set; }
+
         public DateTime? ExpiryDate { get; private set; }
 
         private StockAdjustmentItem() { }
@@ -33,14 +38,32 @@ namespace ArarasHealthHub.Domain.Entities
             int productId,
             decimal quantity,
             decimal? unitValue = null,
-            decimal? totalValue = null,
-            int? stockLotId = null)
+            int? stockLotId = null,
+            string? batch = null,
+            string? brand = null,
+            DateTime? expiryDate = null)
         {
+            if (quantity <= 0)
+                throw new DomainException(
+                    "Quantidade deve ser maior que zero."
+                );
+
+            if (unitValue.HasValue && unitValue < 0)
+                throw new DomainException(
+                    "Valor unitário inválido."
+                );
+
             ProductId = productId;
             Quantity = quantity;
             UnitValue = unitValue;
-            TotalValue = totalValue;
+            TotalValue = unitValue.HasValue
+                ? quantity * unitValue.Value
+                : null;
+
             StockLotId = stockLotId;
+            Batch = batch?.Trim();
+            Brand = brand?.Trim();
+            ExpiryDate = expiryDate;
         }
     }
 }
