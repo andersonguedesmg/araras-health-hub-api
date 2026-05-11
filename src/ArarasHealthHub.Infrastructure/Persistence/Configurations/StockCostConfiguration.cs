@@ -16,19 +16,33 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
         {
             base.Configure(builder);
 
-            builder.ToTable("StockCosts");
-
             builder.ToTable("StockCosts", t =>
-                t.HasComment("Armazena o custo médio unitário e o custo total atual do estoque consolidado"));
+            {
+                t.HasComment(
+                    "Armazena o custo médio unitário do estoque"
+                );
+
+                t.HasCheckConstraint(
+                    "CK_StockCost_AverageUnitCost",
+                    "[AverageUnitCost] >= 0"
+                );
+
+                t.HasCheckConstraint(
+                    "CK_StockCost_CurrentTotalCost",
+                    "[CurrentTotalCost] >= 0"
+                );
+            });
 
             builder.HasIndex(x => x.StockId)
                 .IsUnique();
 
             builder.Property(x => x.AverageUnitCost)
-                .HasPrecision(18, 4);
+                .HasPrecision(18, 4)
+                .IsRequired();
 
             builder.Property(x => x.CurrentTotalCost)
-                .HasPrecision(18, 2);
+                .HasPrecision(18, 2)
+                .IsRequired();
 
             builder.HasOne(x => x.Stock)
                 .WithOne(x => x.StockCost)
