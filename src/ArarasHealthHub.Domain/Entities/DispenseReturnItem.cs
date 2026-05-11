@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
+using ArarasHealthHub.Domain.Exceptions;
+
 namespace ArarasHealthHub.Domain.Entities
 {
     public class DispenseReturnItem : BaseEntity
@@ -19,11 +21,15 @@ namespace ArarasHealthHub.Domain.Entities
         public StockLot StockLot { get; private set; } = null!;
 
         public decimal Quantity { get; private set; }
+
         public decimal UnitValue { get; private set; }
+
         public decimal TotalValue { get; private set; }
 
         public string Batch { get; private set; } = string.Empty;
+
         public string Brand { get; private set; } = string.Empty;
+
         public DateTime ExpiryDate { get; private set; }
 
         private DispenseReturnItem() { }
@@ -37,13 +43,28 @@ namespace ArarasHealthHub.Domain.Entities
             string brand,
             DateTime expiryDate)
         {
+            if (quantity <= 0)
+                throw new DomainException(
+                    "Quantidade deve ser maior que zero."
+                );
+
+            if (unitValue < 0)
+                throw new DomainException(
+                    "Valor unitário inválido."
+                );
+
+            if (string.IsNullOrWhiteSpace(batch))
+                throw new DomainException(
+                    "Lote é obrigatório."
+                );
+
             ProductId = productId;
             StockLotId = stockLotId;
             Quantity = quantity;
             UnitValue = unitValue;
             TotalValue = quantity * unitValue;
-            Batch = batch;
-            Brand = brand;
+            Batch = batch.Trim();
+            Brand = brand.Trim();
             ExpiryDate = expiryDate;
         }
     }

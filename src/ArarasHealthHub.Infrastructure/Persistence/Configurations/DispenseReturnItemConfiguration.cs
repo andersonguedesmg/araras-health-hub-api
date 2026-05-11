@@ -16,21 +16,42 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
         {
             base.Configure(builder);
 
-            builder.ToTable("DispenseReturnItems");
+            builder.ToTable("DispenseReturnItems", t =>
+            {
+                t.HasComment(
+                    "Itens devolvidos ao estoque"
+                );
 
-            builder.Property(x => x.Quantity).HasPrecision(18, 3);
-            builder.Property(x => x.UnitValue).HasPrecision(18, 2);
-            builder.Property(x => x.TotalValue).HasPrecision(18, 2);
+                t.HasCheckConstraint(
+                    "CK_DispenseReturnItem_Quantity",
+                    "\"Quantity\" > 0"
+                );
+            });
+
+            builder.Property(x => x.Quantity)
+                .HasPrecision(18, 3)
+                .IsRequired();
+
+            builder.Property(x => x.UnitValue)
+                .HasPrecision(18, 4)
+                .IsRequired();
+
+            builder.Property(x => x.TotalValue)
+                .HasPrecision(18, 2)
+                .IsRequired();
 
             builder.Property(x => x.Batch)
                 .HasMaxLength(50)
                 .IsRequired();
 
             builder.Property(x => x.Brand)
-                .HasMaxLength(50);
+                .HasMaxLength(100);
+
+            builder.Property(x => x.ExpiryDate)
+                .IsRequired();
 
             builder.HasOne(x => x.DispenseReturn)
-                .WithMany("_items")
+                .WithMany(x => x.Items)
                 .HasForeignKey(x => x.DispenseReturnId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -43,6 +64,10 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .WithMany()
                 .HasForeignKey(x => x.StockLotId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(x => x.ProductId);
+
+            builder.HasIndex(x => x.StockLotId);
         }
     }
 }
