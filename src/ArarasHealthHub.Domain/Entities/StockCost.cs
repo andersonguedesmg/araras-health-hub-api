@@ -21,12 +21,27 @@ namespace ArarasHealthHub.Domain.Entities
 
         private StockCost() { }
 
-        public StockCost(int stockId)
+        public StockCost(
+            int stockId,
+            decimal averageUnitCost,
+            decimal currentTotalCost)
         {
             if (stockId <= 0)
                 throw new DomainException("Estoque inválido.");
 
+            if (averageUnitCost < 0)
+                throw new DomainException(
+                    "Custo médio não pode ser negativo."
+                );
+
+            if (currentTotalCost < 0)
+                throw new DomainException(
+                    "Custo total não pode ser negativo."
+                );
+
             StockId = stockId;
+            AverageUnitCost = averageUnitCost;
+            CurrentTotalCost = currentTotalCost;
         }
 
         public void Recalculate(

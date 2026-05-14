@@ -15,27 +15,33 @@ namespace ArarasHealthHub.Infrastructure.Repository
     {
         public ReceivingRepository(ApplicationDbContext context) : base(context) { }
 
-
-        public async Task<Receiving?> GetByIdWithDetailsAsync(int id)
+        public async Task<Receiving?> GetByIdWithDetailsAsync(
+            int id,
+            CancellationToken cancellationToken)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItems)
-                    .ThenInclude(ri => ri.Product)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .Include(r => r.Items)
+                    .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(
+                    r => r.Id == id,
+                    cancellationToken);
         }
 
-        public async Task<List<Receiving>> GetAllWithDetailsAsync()
+        public async Task<List<Receiving>> GetAllWithDetailsAsync(
+            CancellationToken cancellationToken)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(r => r.Supplier)
                 .Include(r => r.Responsible)
                 .Include(r => r.Account)
-                .Include(r => r.ReceivedItems)
-                    .ThenInclude(ri => ri.Product)
-                .ToListAsync();
+                .Include(r => r.Items)
+                    .ThenInclude(i => i.Product)
+                .ToListAsync(cancellationToken);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ArarasHealthHub.Domain.Entities
 
         public decimal MinQuantity { get; private set; }
 
-        public StockCost StockCost { get; private set; } = null!;
+        public StockCost? StockCost { get; private set; }
 
         public IReadOnlyCollection<StockLot> Lots
             => _lots.AsReadOnly();
@@ -45,6 +45,23 @@ namespace ArarasHealthHub.Domain.Entities
 
             ProductId = productId;
             MinQuantity = minQuantity;
+        }
+
+        public void InitializeCost(
+            decimal averageUnitCost,
+            decimal currentTotalCost)
+        {
+            if (StockCost is not null)
+            {
+                throw new DomainRuleException(
+                    "O custo do estoque já foi inicializado."
+                );
+            }
+
+            StockCost = new StockCost(
+                stockId: Id,
+                averageUnitCost: averageUnitCost,
+                currentTotalCost: currentTotalCost);
         }
 
         public void IncreaseStock(decimal quantity)

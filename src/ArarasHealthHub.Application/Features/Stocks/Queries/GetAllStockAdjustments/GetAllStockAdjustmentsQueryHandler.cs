@@ -32,10 +32,10 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustm
                 .AsNoTracking()
                 .Include(a => a.Responsible)
                 .Include(a => a.Account)
-                .Include(a => a.AdjustmentItems)
+                .Include(a => a.Items)
                     .ThenInclude(ai => ai.Product)
                         .ThenInclude(p => p.MainCategory)
-                .Include(a => a.AdjustmentItems)
+                .Include(a => a.Items)
                     .ThenInclude(ai => ai.Product)
                         .ThenInclude(p => p.PackagingType)
                 .AsQueryable();
@@ -46,7 +46,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustm
                 query = query.Where(a =>
                     a.Reason.ToLower().Contains(searchTerm) ||
                     a.Responsible!.Name.ToLower().Contains(searchTerm) ||
-                    a.AdjustmentItems.Any(ai => ai.Product.Name.ToLower().Contains(searchTerm))
+                    a.Items.Any(ai => ai.Product.Name.ToLower().Contains(searchTerm))
                 );
             }
 

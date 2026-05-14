@@ -3,50 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Receivings.Dtos;
-using ArarasHealthHub.Application.Interfaces.Contexts;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Application.Features.Receivings.Responses;
+using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using AutoMapper;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-
 namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingById
 {
-    public class GetReceivingByIdQueryHandler : IRequestHandler<GetReceivingByIdQuery, ApiResponseO<ReceivingDto>>
+    public sealed class GetReceivingByIdQueryHandler : IRequestHandler<GetReceivingByIdQuery, Result<ReceivingResponse>>
     {
-        private readonly IApplicationDbContext _dbContext;
+        private readonly IReceivingRepository _receivingRepository;
         private readonly IMapper _mapper;
 
-        public GetReceivingByIdQueryHandler(IApplicationDbContext dbContext, IMapper mapper)
+        public GetReceivingByIdQueryHandler(
+            IReceivingRepository receivingRepository,
+            IMapper mapper)
         {
-            _dbContext = dbContext;
+            _receivingRepository = receivingRepository;
             _mapper = mapper;
         }
 
-        public async Task<ApiResponseO<ReceivingDto>> Handle(GetReceivingByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<ReceivingResponse>> Handle(
+            GetReceivingByIdQuery request,
+            CancellationToken cancellationToken)
         {
-            var receiving = await _dbContext.Receivings
-                .Include(r => r.Supplier)
-                .Include(r => r.Responsible)
-                .Include(r => r.Account)
-                .Include(r => r.ReceivedItems)
-                    .ThenInclude(ri => ri.Product)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
+            var receiving = await _receivingRepository
+                .GetByIdWithDetailsAsync(
+                    request.Id,
+                    cancellationToken);
 
-            if (receiving == null)
+            if (receiving is null)
             {
-                return new ApiResponseO<ReceivingDto>(StatusCodes.Status404NotFound, ApiMessages.NotFoundWithId("Recebimento", request.Id), null);
+                throw new NotFoundException(
+                    "Recebimento não foi encontrado.");
             }
 
-            var receivingDto = _mapper.Map<ReceivingDto>(receiving);
-            return new ApiResponseO<ReceivingDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Recebimento"), receivingDto);
+            var response = _mapper.Map<ReceivingResponse>(
+                receiving);
+
+            return Result<ReceivingResponse>.Success(
+                response,
+                "Recebimento encontrado com sucesso.");
         }
     }
 }

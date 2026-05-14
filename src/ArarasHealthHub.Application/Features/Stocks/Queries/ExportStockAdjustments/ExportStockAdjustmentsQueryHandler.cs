@@ -31,13 +31,13 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockAdjustm
                 .AsNoTracking()
                 .Include(a => a.Responsible)
                 .Include(a => a.Account)
-                .Include(a => a.AdjustmentItems)
+                .Include(a => a.Items)
                     .ThenInclude(ai => ai.Product)
                         .ThenInclude(p => p.MainCategory)
-                .Include(a => a.AdjustmentItems)
+                .Include(a => a.Items)
                     .ThenInclude(ai => ai.Product)
                         .ThenInclude(p => p.SubCategory)
-                .Include(a => a.AdjustmentItems)
+                .Include(a => a.Items)
                     .ThenInclude(ai => ai.Product)
                         .ThenInclude(p => p.PackagingType)
                 .AsQueryable();
@@ -51,7 +51,7 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.ExportStockAdjustm
                     a.Reason.ToLower().Contains(searchTermLower) ||
                     (a.Observation != null && a.Observation.ToLower().Contains(searchTermLower)) ||
                     (a.Responsible != null && a.Responsible.Name.ToLower().Contains(searchTermLower)) ||
-                    a.AdjustmentItems.Any(ai =>
+                    a.Items.Any(ai =>
                         ai.Product.Name.ToLower().Contains(searchTermLower) ||
                         (ai.Batch != null && ai.Batch.ToLower().Contains(searchTermLower))
                     )

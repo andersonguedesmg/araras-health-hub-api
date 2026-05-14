@@ -2,66 +2,65 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using araras_health_hub_api.Common;
+
+using ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceiving;
+using ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings;
+using ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingById;
+using ArarasHealthHub.Application.Features.Receivings.Responses;
+using ArarasHealthHub.Shared.Results;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceiving;
-using ArarasHealthHub.Application.Features.Receivings.Queries.GetReceivingById;
-using ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings;
-using System.Text;
-using System.Globalization;
-using ArarasHealthHub.Shared.Responses;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Messages;
 
 namespace ArarasHealthHub.Api.Controllers
 {
-    [Route("api/receiving")]
-    [ApiController]
+    [Route("api/v1/receivings")]
     [Authorize]
-    public class ReceivingController : ControllerBase
+    public class ReceivingsController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public ReceivingController(IMediator mediator)
+        [HttpPost]
+        [Authorize(Policy = "CanManageResource")]
+        [ProducesResponseType(typeof(Result<int>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Create(
+            [FromBody] CreateReceivingCommand command,
+            CancellationToken cancellationToken)
         {
-            _mediator = mediator;
+            return await SendCreated(
+                command,
+                nameof(GetById),
+                id => new { id },
+                cancellationToken);
         }
 
-        [HttpPost("create")]
+        [HttpGet("{id:int}")]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Create(CreateReceivingCommand command)
+        [ProducesResponseType(typeof(Result<ReceivingResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(
+            typeof(ProblemDetails),
+            StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(
+            int id,
+            CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command);
-            return StatusCode(result.StatusCode, result);
+            return await Send(
+                new GetReceivingByIdQuery(id),
+                cancellationToken);
         }
 
-        [HttpGet("getById/{id}")]
+        [HttpGet]
         [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(ApiResponse<ReceivingDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        [ProducesResponseType(typeof(PagedResult<ReceivingListItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllReceivingsQuery query,
+            CancellationToken cancellationToken)
         {
-            var query = new GetReceivingByIdQuery(id);
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [HttpGet("getAll")]
-        [Authorize(Policy = "CanReadManagementResource")]
-        [ProducesResponseType(typeof(PagedResponseO<ReceivingDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllReceivingsQuery query)
-        {
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
+            return await Send(query, cancellationToken);
         }
     }
 }

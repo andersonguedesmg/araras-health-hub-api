@@ -23,13 +23,13 @@ namespace ArarasHealthHub.Application.Profiles
                 .ForMember(dest => dest.AccountUserName,
                            opt => opt.MapFrom(src => src.Account != null ? src.Account.UserName : "N/A"))
                 .ForMember(dest => dest.AdjustmentItems,
-                           opt => opt.MapFrom(src => src.AdjustmentItems));
+                           opt => opt.MapFrom(src => src.Items));
 
             CreateMap<CreateStockAdjustmentItemCommand, StockAdjustmentItem>()
                 .ForMember(dest => dest.TotalValue, opt => opt.Ignore());
 
             CreateMap<CreateStockAdjustmentCommand, StockAdjustment>()
-                .ForMember(dest => dest.AdjustmentItems,
+                .ForMember(dest => dest.Items,
                            opt => opt.MapFrom(src => src.AdjustmentItems))
                 .ForMember(dest => dest.Responsible, opt => opt.Ignore())
                 .ForMember(dest => dest.Account, opt => opt.Ignore());

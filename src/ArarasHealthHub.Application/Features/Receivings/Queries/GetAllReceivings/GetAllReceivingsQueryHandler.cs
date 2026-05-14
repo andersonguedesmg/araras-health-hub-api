@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Receivings.Dtos;
+using ArarasHealthHub.Application.Features.Receivings.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -15,97 +14,121 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings
 {
-    public class GetAllReceivingsQueryHandler : IRequestHandler<GetAllReceivingsQuery, PagedResponseO<ReceivingDto>>
+    public class GetAllReceivingsQueryHandler : IRequestHandler<GetAllReceivingsQuery, PagedResult<ReceivingListItemResponse>>
     {
         private readonly IReceivingRepository _receivingRepository;
-        private readonly IMapper _mapper;
 
-        public GetAllReceivingsQueryHandler(IReceivingRepository receivingRepository, IMapper mapper)
+        public GetAllReceivingsQueryHandler(
+            IReceivingRepository receivingRepository)
         {
             _receivingRepository = receivingRepository;
-            _mapper = mapper;
         }
 
-        public async Task<PagedResponseO<ReceivingDto>> Handle(GetAllReceivingsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<ReceivingListItemResponse>> Handle(
+            GetAllReceivingsQuery request,
+            CancellationToken cancellationToken)
         {
-            var query = _receivingRepository.AsQueryable();
-
-            query = query
-                .Include(r => r.Supplier)
-                .Include(r => r.Responsible)
-                .Include(r => r.Account)
-                .Include(r => r.ReceivedItems)
-                    .ThenInclude(ri => ri.Product);
+            IQueryable<Receiving> query = _receivingRepository
+                .AsQueryable()
+                .AsNoTracking()
+                .Include(x => x.Supplier)
+                .Include(x => x.Responsible)
+                .Include(x => x.Account)
+                .Include(x => x.Items)
+                    .ThenInclude(x => x.Product);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
+                var term = request.SearchTerm.Trim();
 
                 query = query.Where(r =>
-                    r.Id.ToString().Contains(searchTermLower) ||
-                    r.InvoiceNumber.ToLower().Contains(searchTermLower) ||
-                    r.SupplyAuthorization.ToLower().Contains(searchTermLower) ||
-                    r.Observation!.ToLower().Contains(searchTermLower) ||
-                    r.ReceivingDate.ToString().Contains(searchTermLower) ||
-                    r.TotalValue.ToString().Contains(searchTermLower) ||
+                    EF.Functions.Like(r.InvoiceNumber, $"%{term}%") ||
+                    EF.Functions.Like(r.SupplyAuthorization, $"%{term}%") ||
 
-                    (r.Supplier != null && r.Supplier.LegalName.ToLower().Contains(searchTermLower)) ||
-                    (r.Supplier != null && r.Supplier.TradeName.ToLower().Contains(searchTermLower)) ||
-                    (r.Responsible != null && r.Responsible.Name.ToLower().Contains(searchTermLower)) ||
-                    (r.Account != null && r.Account.UserName!.ToLower().Contains(searchTermLower)) ||
+                    (r.Observation != null &&
+                     EF.Functions.Like(r.Observation, $"%{term}%")) ||
 
-                    r.ReceivedItems.Any(ri =>
-                        ri.Batch.ToLower().Contains(searchTermLower) ||
-                        ri.Brand.ToLower().Contains(searchTermLower) ||
-                        ri.Product.Name.ToLower().Contains(searchTermLower)
-                    )
-                );
+                    EF.Functions.Like(
+                        r.Supplier!.LegalName,
+                        $"%{term}%") ||
+
+                    EF.Functions.Like(
+                        r.Supplier.TradeName,
+                        $"%{term}%") ||
+
+                    EF.Functions.Like(
+                        r.Responsible!.Name,
+                        $"%{term}%") ||
+
+                    EF.Functions.Like(
+                        r.Account!.UserName!,
+                        $"%{term}%") ||
+
+                    r.Items.Any(i =>
+                        EF.Functions.Like(i.Batch, $"%{term}%") ||
+                        EF.Functions.Like(i.Brand, $"%{term}%") ||
+                        EF.Functions.Like(i.Product.Name, $"%{term}%")));
             }
 
-            var totalCount = await query.CountAsync(cancellationToken);
+            var totalCount = await query
+                .CountAsync(cancellationToken);
 
-            switch (request.OrderBy?.ToLower())
+            query = request.OrderBy?.ToLower() switch
             {
-                case "invoicenumber":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderByDescending(r => r.InvoiceNumber) :
-                            query.OrderBy(r => r.InvoiceNumber);
-                    break;
-                case "receivingdate":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                           query.OrderByDescending(r => r.ReceivingDate) :
-                           query.OrderBy(r => r.ReceivingDate);
-                    break;
-                case "supplierlegalname":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderByDescending(r => r.Supplier!.LegalName) :
-                            query.OrderBy(r => r.Supplier!.LegalName);
-                    break;
-                case "suppliertradename":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                            query.OrderByDescending(r => r.Supplier!.TradeName) :
-                            query.OrderBy(r => r.Supplier!.TradeName);
-                    break;
-                default:
-                    query = request.SortOrder?.ToLower() == "asc" ?
-                            query.OrderByDescending(r => r.CreatedOn) :
-                            query.OrderBy(r => r.CreatedOn);
-                    break;
-            }
+                "invoicenumber" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.InvoiceNumber)
+                    : query.OrderBy(x => x.InvoiceNumber),
 
-            var pagedReceivings = await query
+                "receivingdate" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.ReceivingDate)
+                    : query.OrderBy(x => x.ReceivingDate),
+
+                "supplierlegalname" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Supplier!.LegalName)
+                    : query.OrderBy(x => x.Supplier!.LegalName),
+
+                "suppliertradename" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Supplier!.TradeName)
+                    : query.OrderBy(x => x.Supplier!.TradeName),
+
+                "totalvalue" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.TotalValue)
+                    : query.OrderBy(x => x.TotalValue),
+
+                _ => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.CreatedOn)
+                    : query.OrderBy(x => x.CreatedOn)
+            };
+
+            var items = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(r => new ReceivingListItemResponse(
+                    r.Id,
+                    r.InvoiceNumber,
+                    r.SupplyAuthorization,
+                    r.ReceivingDate,
+                    r.TotalValue,
+
+                    r.SupplierId,
+                    r.Supplier!.TradeName,
+
+                    r.ResponsibleId,
+                    r.Responsible!.Name,
+
+                    r.Items.Count,
+
+                    r.CreatedOn,
+                    r.IsActive
+                ))
                 .ToListAsync(cancellationToken);
 
-            var receivingDtos = _mapper.Map<List<ReceivingDto>>(pagedReceivings);
-
-            return new PagedResponseO<ReceivingDto>(
+            return PagedResult<ReceivingListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                receivingDtos
-            );
+                "Recebimentos listados com sucesso.");
         }
     }
 }
