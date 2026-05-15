@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# C# Dev Kit / Roslyn cache
+*.lscache
