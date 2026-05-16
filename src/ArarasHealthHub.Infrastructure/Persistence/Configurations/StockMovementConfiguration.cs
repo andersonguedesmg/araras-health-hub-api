@@ -45,13 +45,21 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .HasMaxLength(50)
                 .IsRequired();
 
-            builder.Property(x => x.Type)
+            builder.Property(x => x.Direction)
+                .HasConversion<int>()
+                .IsRequired();
+
+            builder.Property(x => x.Reason)
                 .HasConversion<int>()
                 .IsRequired();
 
             builder.HasIndex(x => x.StockLotId);
 
             builder.HasIndex(x => x.MovementDate);
+
+            builder.HasIndex(x => x.Direction);
+
+            builder.HasIndex(x => x.Reason);
 
             builder.HasOne(x => x.Responsible)
                 .WithMany()
