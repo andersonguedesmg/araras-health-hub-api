@@ -70,5 +70,45 @@ namespace ArarasHealthHub.Application.Services.Inventory.Costs
                 newAverageCost,
                 newTotalCost);
         }
+
+        public void ProcessOutputCost(
+            Stock stock,
+            decimal outputQuantity)
+        {
+            if (outputQuantity <= 0)
+            {
+                throw new DomainException(
+                    "Quantidade saída inválida.");
+            }
+
+            if (stock.StockCost is null)
+            {
+                return;
+            }
+
+            var movementCost =
+                stock.StockCost.AverageUnitCost *
+                outputQuantity;
+
+            var newTotalCost =
+                stock.StockCost.CurrentTotalCost -
+                movementCost;
+
+            if (newTotalCost < 0)
+            {
+                newTotalCost = 0;
+            }
+
+            if (stock.CurrentQuantity <= 0)
+            {
+                stock.StockCost.Recalculate(0, 0);
+
+                return;
+            }
+
+            stock.StockCost.Recalculate(
+                stock.StockCost.AverageUnitCost,
+                newTotalCost);
+        }
     }
 }

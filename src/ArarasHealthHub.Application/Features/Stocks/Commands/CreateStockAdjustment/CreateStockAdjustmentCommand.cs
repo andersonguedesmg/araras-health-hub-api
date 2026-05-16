@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Interfaces;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -19,8 +17,8 @@ namespace ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjust
         DateTime AdjustmentDate,
         int ResponsibleId,
         int AccountId,
-        List<CreateStockAdjustmentItemCommand> AdjustmentItems
-    ) : IRequest<ApiResponseO<int>>, ITransactionalRequest;
+        List<CreateStockAdjustmentItemCommand> Items
+    ) : IRequest<Result<int>>;
 
     public record CreateStockAdjustmentItemCommand(
         int ProductId,

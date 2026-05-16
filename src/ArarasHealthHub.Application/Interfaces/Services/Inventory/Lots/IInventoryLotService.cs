@@ -18,5 +18,12 @@ namespace ArarasHealthHub.Application.Interfaces.Services.Inventory.Lots
             decimal quantity,
             int? receivedItemId,
             CancellationToken cancellationToken);
+
+        Task<StockLot> RemoveFromLotAsync(
+            Stock stock,
+            string batch,
+            string brand,
+            decimal quantity,
+            CancellationToken cancellationToken);
     }
 }

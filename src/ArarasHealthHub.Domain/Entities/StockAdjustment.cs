@@ -24,9 +24,11 @@ namespace ArarasHealthHub.Domain.Entities
         public DateTime AdjustmentDate { get; private set; }
 
         public int ResponsibleId { get; private set; }
+
         public Employee Responsible { get; private set; } = null!;
 
         public int AccountId { get; private set; }
+
         public ApplicationUser Account { get; private set; } = null!;
 
         public IReadOnlyCollection<StockAdjustmentItem> Items => _items;
@@ -56,13 +58,6 @@ namespace ArarasHealthHub.Domain.Entities
             ArgumentNullException.ThrowIfNull(item);
 
             _items.Add(item);
-
-            SetUpdatedOn();
-        }
-
-        public void UpdateObservation(string? observation)
-        {
-            Observation = observation?.Trim();
 
             SetUpdatedOn();
         }

@@ -4,10 +4,10 @@ namespace ArarasHealthHub.Domain.Enums
     {
         Receiving = 1,
         Dispensing = 2,
-        InventoryAdjustment = 3,
-        ExpiredProduct = 4,
-        Loss = 5,
+        Adjustment = 3,
+        Loss = 4,
+        Expired = 5,
         Transfer = 6,
-        Return = 7
+        Return = 7,
     }
 }

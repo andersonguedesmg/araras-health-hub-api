@@ -13,5 +13,9 @@ namespace ArarasHealthHub.Application.Interfaces.Services.Inventory.Costs
             Stock stock,
             decimal entryQuantity,
             decimal entryUnitCost);
+
+        void ProcessOutputCost(
+            Stock stock,
+            decimal outputQuantity);
     }
 }

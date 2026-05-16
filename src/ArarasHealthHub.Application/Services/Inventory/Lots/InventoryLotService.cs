@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Lots;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Exceptions;
 
 namespace ArarasHealthHub.Application.Services.Inventory.Lots
 {
@@ -56,6 +57,29 @@ namespace ArarasHealthHub.Application.Services.Inventory.Lots
                 cancellationToken);
 
             return stockLot;
+        }
+
+        public Task<StockLot> RemoveFromLotAsync(
+            Stock stock,
+            string batch,
+            string brand,
+            decimal quantity,
+            CancellationToken cancellationToken)
+        {
+            var stockLot = stock.Lots.FirstOrDefault(x =>
+                x.Batch == batch &&
+                x.Brand == brand);
+
+            if (stockLot is null)
+            {
+                throw new DomainException(
+                    $"Lote {batch} não encontrado."
+                );
+            }
+
+            stockLot.DecreaseQuantity(quantity);
+
+            return Task.FromResult(stockLot);
         }
     }
 }
