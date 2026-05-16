@@ -8,6 +8,7 @@ using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Costs;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Entries;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Lots;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Movements;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
@@ -24,17 +25,20 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
         private readonly IReceivingRepository _receivingRepository;
         private readonly IInventoryCostService _inventoryCostService;
         private readonly IInventoryMovementService _inventoryMovementService;
+        private readonly IInventoryLotService _inventoryLotService;
 
         public InventoryEntryService(
             IApplicationDbContext dbContext,
             IReceivingRepository receivingRepository,
             IInventoryCostService inventoryCostService,
-            IInventoryMovementService inventoryMovementService)
+            IInventoryMovementService inventoryMovementService,
+            IInventoryLotService inventoryLotService)
         {
             _dbContext = dbContext;
             _receivingRepository = receivingRepository;
             _inventoryCostService = inventoryCostService;
             _inventoryMovementService = inventoryMovementService;
+            _inventoryLotService = inventoryLotService;
         }
 
         public async Task<Result<int>> CreateReceivingAsync(
@@ -129,30 +133,15 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
 
             stock.IncreaseStock(item.Quantity);
 
-            var existingLot = stock.Lots.FirstOrDefault(x =>
-                x.Batch == item.Batch &&
-                x.Brand == item.Brand &&
-                x.ExpiryDate.Date == item.ExpiryDate.Date &&
-                x.UnitValue == item.UnitValue);
-
-            if (existingLot is null)
-            {
-                existingLot = new StockLot(
-                    stockId: stock.Id,
+            var stockLot = await _inventoryLotService.GetOrCreateLotAsync(
+                    stock: stock,
                     batch: item.Batch,
                     brand: item.Brand,
                     unitValue: item.UnitValue,
                     expiryDate: item.ExpiryDate,
                     quantity: item.Quantity,
-                    receivedItemId: item.Id
-                );
-
-                _dbContext.StockLots.Add(existingLot);
-            }
-            else
-            {
-                existingLot.IncreaseQuantity(item.Quantity);
-            }
+                    receivedItemId: item.Id,
+                    cancellationToken: cancellationToken);
 
             _inventoryCostService.ProcessEntryCost(
                 stock,
@@ -160,7 +149,7 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
                 item.UnitValue);
 
             await _inventoryMovementService.CreateMovementAsync(
-                    stockLot: existingLot,
+                    stockLot: stockLot,
                     quantity: item.Quantity,
                     direction: MovementDirectionEnum.Entry,
                     reason: MovementReasonEnum.Receiving,
