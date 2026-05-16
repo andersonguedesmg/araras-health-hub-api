@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ArarasHealthHub.Application.Features.Receivings.Commands.CreateReceiving;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Costs;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Entries;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
@@ -20,13 +21,16 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IReceivingRepository _receivingRepository;
+        private readonly IInventoryCostService _inventoryCostService;
 
         public InventoryEntryService(
             IApplicationDbContext dbContext,
-            IReceivingRepository receivingRepository)
+            IReceivingRepository receivingRepository,
+            IInventoryCostService inventoryCostService)
         {
             _dbContext = dbContext;
             _receivingRepository = receivingRepository;
+            _inventoryCostService = inventoryCostService;
         }
 
         public async Task<Result<int>> CreateReceivingAsync(
@@ -146,7 +150,7 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
                 existingLot.IncreaseQuantity(item.Quantity);
             }
 
-            ProcessAverageCost(
+            _inventoryCostService.ProcessEntryCost(
                 stock,
                 item.Quantity,
                 item.UnitValue);
@@ -165,45 +169,6 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
             await _dbContext.StockMovements.AddAsync(
                 movement,
                 cancellationToken);
-        }
-
-        private static void ProcessAverageCost(
-            Stock stock,
-            decimal entryQuantity,
-            decimal entryUnitCost)
-        {
-            if (stock.StockCost is null)
-            {
-                var totalCost = entryQuantity * entryUnitCost;
-
-                stock.InitializeCost(
-                    averageUnitCost: entryUnitCost,
-                    currentTotalCost: totalCost);
-
-                return;
-            }
-
-            var currentQuantity =
-                stock.CurrentQuantity - entryQuantity;
-
-            var currentTotalCost =
-                stock.StockCost.CurrentTotalCost;
-
-            var entryTotalCost =
-                entryQuantity * entryUnitCost;
-
-            var newTotalQuantity =
-                currentQuantity + entryQuantity;
-
-            var newTotalCost =
-                currentTotalCost + entryTotalCost;
-
-            var newAverageCost =
-                newTotalCost / newTotalQuantity;
-
-            stock.StockCost.Recalculate(
-                newAverageCost,
-                newTotalCost);
         }
     }
 }
