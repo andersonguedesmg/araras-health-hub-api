@@ -8,6 +8,7 @@ using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Costs;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Entries;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Movements;
 using ArarasHealthHub.Domain.Entities;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Shared.Exceptions;
@@ -22,15 +23,18 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
         private readonly IApplicationDbContext _dbContext;
         private readonly IReceivingRepository _receivingRepository;
         private readonly IInventoryCostService _inventoryCostService;
+        private readonly IInventoryMovementService _inventoryMovementService;
 
         public InventoryEntryService(
             IApplicationDbContext dbContext,
             IReceivingRepository receivingRepository,
-            IInventoryCostService inventoryCostService)
+            IInventoryCostService inventoryCostService,
+            IInventoryMovementService inventoryMovementService)
         {
             _dbContext = dbContext;
             _receivingRepository = receivingRepository;
             _inventoryCostService = inventoryCostService;
+            _inventoryMovementService = inventoryMovementService;
         }
 
         public async Task<Result<int>> CreateReceivingAsync(
@@ -155,20 +159,17 @@ namespace ArarasHealthHub.Application.Services.Inventory.Entries
                 item.Quantity,
                 item.UnitValue);
 
-            var movement = new StockMovement(
-                quantity: item.Quantity,
-                type: MovementTypeEnum.Entry,
-                movementDate: receiving.ReceivingDate,
-                sourceDocumentId: receiving.Id,
-                sourceDocumentType: nameof(Receiving),
-                responsibleId: receiving.ResponsibleId,
-                stockLotId: existingLot.Id,
-                movementCost: item.TotalValue
-            );
-
-            await _dbContext.StockMovements.AddAsync(
-                movement,
-                cancellationToken);
+            await _inventoryMovementService.CreateMovementAsync(
+                    stockLot: existingLot,
+                    quantity: item.Quantity,
+                    direction: MovementDirectionEnum.Entry,
+                    reason: MovementReasonEnum.Receiving,
+                    movementDate: receiving.ReceivingDate,
+                    sourceDocumentId: receiving.Id,
+                    sourceDocumentType: nameof(Receiving),
+                    responsibleId: receiving.ResponsibleId,
+                    movementCost: item.TotalValue,
+                    cancellationToken: cancellationToken);
         }
     }
 }

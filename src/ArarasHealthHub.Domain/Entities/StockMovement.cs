@@ -14,7 +14,9 @@ namespace ArarasHealthHub.Domain.Entities
     {
         public decimal Quantity { get; private set; }
 
-        public MovementTypeEnum Type { get; private set; }
+        public MovementDirectionEnum Direction { get; private set; }
+
+        public MovementReasonEnum Reason { get; private set; }
 
         public DateTime MovementDate { get; private set; }
 
@@ -36,7 +38,8 @@ namespace ArarasHealthHub.Domain.Entities
 
         public StockMovement(
             decimal quantity,
-            MovementTypeEnum type,
+            MovementDirectionEnum direction,
+            MovementReasonEnum reason,
             DateTime movementDate,
             int sourceDocumentId,
             string sourceDocumentType,
@@ -65,7 +68,8 @@ namespace ArarasHealthHub.Domain.Entities
                 );
 
             Quantity = quantity;
-            Type = type;
+            Direction = direction;
+            Reason = reason;
             MovementDate = movementDate;
             SourceDocumentId = sourceDocumentId;
             SourceDocumentType = sourceDocumentType.Trim();
