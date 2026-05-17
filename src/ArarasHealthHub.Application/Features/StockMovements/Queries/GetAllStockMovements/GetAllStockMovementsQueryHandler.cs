@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.StockMovements.Dtos;
+using ArarasHealthHub.Application.Features.StockMovements.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -15,22 +14,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStockMovements
 {
-    public class GetAllStockMovementsQueryHandler : IRequestHandler<GetAllStockMovementsQuery, PagedResponseO<StockMovementDto>>
+    public class GetAllStockMovementsQueryHandler : IRequestHandler<GetAllStockMovementsQuery, PagedResult<StockMovementListItemResponse>>
     {
         private readonly IStockMovementRepository _stockMovementRepository;
-        private readonly IMapper _mapper;
 
-        public GetAllStockMovementsQueryHandler(IStockMovementRepository stockMovementRepository, IMapper mapper)
+        public GetAllStockMovementsQueryHandler(
+            IStockMovementRepository stockMovementRepository)
         {
             _stockMovementRepository = stockMovementRepository;
-            _mapper = mapper;
         }
 
-        public async Task<PagedResponseO<StockMovementDto>> Handle(GetAllStockMovementsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<StockMovementListItemResponse>> Handle(
+            GetAllStockMovementsQuery request,
+            CancellationToken cancellationToken)
         {
-            var query = _stockMovementRepository.AsQueryable();
-
-            query = query
+            IQueryable<StockMovement> query = _stockMovementRepository
+                .AsQueryable()
+                .AsNoTracking()
                 .Include(m => m.StockLot)
                     .ThenInclude(sl => sl.Stock)
                         .ThenInclude(s => s.Product)
@@ -38,63 +38,69 @@ namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStoc
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTermLower = request.SearchTerm.ToLower();
+                var term = request.SearchTerm.Trim();
 
                 query = query.Where(m =>
-                    m.Id.ToString().Contains(searchTermLower) ||
-                    m.Quantity.ToString().Contains(searchTermLower) ||
-                    m.SourceDocumentType.ToLower().Contains(searchTermLower) ||
-                    m.Type.ToString().ToLower().Contains(searchTermLower) ||
-                    m.SourceDocumentId.ToString().Contains(searchTermLower) ||
-                    (m.StockLot != null && m.StockLot.Stock.Product != null && m.StockLot.Stock.Product.Name.ToLower().Contains(searchTermLower)) ||
-                    (m.Responsible != null && m.Responsible.Name.ToLower().Contains(searchTermLower))
-                );
+                    EF.Functions.Like(m.SourceDocumentType, $"%{term}%") ||
+                    EF.Functions.Like(m.StockLot.Stock.Product.Name, $"%{term}%") ||
+                    EF.Functions.Like(m.Responsible.Name, $"%{term}%") ||
+                    EF.Functions.Like(m.StockLot.Batch, $"%{term}%") ||
+                    EF.Functions.Like(m.StockLot.Brand, $"%{term}%"));
             }
 
-            var totalCount = await query.CountAsync(cancellationToken);
+            var totalCount = await query
+                .CountAsync(cancellationToken);
 
-            switch (request.OrderBy?.ToLower())
+            query = request.OrderBy?.ToLower() switch
             {
-                case "productname":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                                query.OrderByDescending(m => m.StockLot.Stock.Product.Name) :
-                                query.OrderBy(m => m.StockLot.Stock.Product.Name);
-                    break;
-                case "sourcedocumenttype":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                               query.OrderByDescending(m => m.SourceDocumentType) :
-                               query.OrderBy(m => m.SourceDocumentType);
-                    break;
-                case "type":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                               query.OrderByDescending(m => m.Type) :
-                               query.OrderBy(m => m.Type);
-                    break;
-                case "responsible":
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                                query.OrderByDescending(m => m.Responsible.Name) :
-                                query.OrderBy(m => m.Responsible.Name);
-                    break;
-                default:
-                    query = request.SortOrder?.ToLower() == "desc" ?
-                                query.OrderBy(m => m.CreatedOn) :
-                                query.OrderByDescending(m => m.CreatedOn);
-                    break;
-            }
+                "productname" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(m => m.StockLot.Stock.Product.Name)
+                    : query.OrderBy(m => m.StockLot.Stock.Product.Name),
 
-            var pagedMovements = await query
+                "direction" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(m => m.Direction)
+                    : query.OrderBy(m => m.Direction),
+
+                "reason" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(m => m.Reason)
+                    : query.OrderBy(m => m.Reason),
+
+                "movementdate" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(m => m.MovementDate)
+                    : query.OrderBy(m => m.MovementDate),
+
+                "responsible" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(m => m.Responsible.Name)
+                    : query.OrderBy(m => m.Responsible.Name),
+
+                _ => query.OrderByDescending(m => m.CreatedOn)
+            };
+
+            var items = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(m => new StockMovementListItemResponse(
+                    m.Id,
+                    m.StockLot.Stock.ProductId,
+                    m.StockLot.Stock.Product.Name,
+                    m.Quantity,
+                    m.Direction,
+                    m.Reason,
+                    m.StockLot.Batch,
+                    m.StockLot.Brand,
+                    m.SourceDocumentId,
+                    m.SourceDocumentType,
+                    m.Responsible.Name,
+                    m.MovementCost,
+                    m.MovementDate))
                 .ToListAsync(cancellationToken);
 
-            var movementDtos = _mapper.Map<List<StockMovementDto>>(pagedMovements);
-
-            return new PagedResponseO<StockMovementDto>(
+            return PagedResult<StockMovementListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                movementDtos
-            );
+                "Movimentações de estoque listadas com sucesso.");
         }
     }
 }

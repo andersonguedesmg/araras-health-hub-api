@@ -20,17 +20,17 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             {
                 t.HasComment(
                     "Histórico de movimentações de estoque"
-                );
+                    );
 
                 t.HasCheckConstraint(
                     "CK_StockMovement_Quantity",
                     "[Quantity] > 0"
-                );
+                    );
 
                 t.HasCheckConstraint(
                     "CK_StockMovement_MovementCost",
                     "[MovementCost] >= 0"
-                );
+                    );
             });
 
             builder.Property(x => x.Quantity)
@@ -42,7 +42,7 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.Property(x => x.SourceDocumentType)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.Direction)
@@ -60,6 +60,12 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
             builder.HasIndex(x => x.Direction);
 
             builder.HasIndex(x => x.Reason);
+
+            builder.HasIndex(x => new
+            {
+                x.SourceDocumentId,
+                x.SourceDocumentType
+            });
 
             builder.HasOne(x => x.Responsible)
                 .WithMany()

@@ -3,50 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.StockMovements.Dtos;
+using araras_health_hub_api.Common;
+
 using ArarasHealthHub.Application.Features.StockMovements.Queries.GetAllStockMovements;
 using ArarasHealthHub.Application.Features.StockMovements.Queries.GetStockMovementById;
-using ArarasHealthHub.Shared.Responses;
-
-using MediatR;
+using ArarasHealthHub.Application.Features.StockMovements.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace araras_health_hub_api.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/stock-movement")]
-    [ApiController]
-    [Authorize(Policy = "CanReadManagementResource")]
-    public class StockMovementController : ControllerBase
+    [Route("api/v1/stock-movements")]
+    [Authorize]
+    public class StockMovementsController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public StockMovementController(IMediator mediator)
+        [HttpGet]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(PagedResult<StockMovementListItemResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllStockMovementsQuery query,
+            CancellationToken cancellationToken)
         {
-            _mediator = mediator;
+            return await Send(query, cancellationToken);
         }
 
-        [HttpGet("getById/{id}")]
-        [ProducesResponseType(typeof(ApiResponse<StockMovementDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("{id:int}")]
+        [Authorize(Policy = "CanReadManagementResource")]
+        [ProducesResponseType(typeof(Result<StockMovementResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(
+            int id,
+            CancellationToken cancellationToken)
         {
-            var query = new GetStockMovementByIdQuery(id);
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [HttpGet("getAll")]
-        [ProducesResponseType(typeof(PagedResponseO<StockMovementDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllStockMovementsQuery query)
-        {
-            var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
+            return await Send(new GetStockMovementByIdQuery(id), cancellationToken);
         }
     }
 }

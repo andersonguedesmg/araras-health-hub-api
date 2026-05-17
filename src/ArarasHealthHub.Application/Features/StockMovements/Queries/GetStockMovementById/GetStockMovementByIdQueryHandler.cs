@@ -3,42 +3,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.StockMovements.Dtos;
+using ArarasHealthHub.Application.Features.StockMovements.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.StockMovements.Queries.GetStockMovementById
 {
-    public class GetStockMovementByIdQueryHandler : IRequestHandler<GetStockMovementByIdQuery, ApiResponseO<StockMovementDto>>
+    public class GetStockMovementByIdQueryHandler : IRequestHandler<GetStockMovementByIdQuery, Result<StockMovementResponse>>
     {
         private readonly IStockMovementRepository _stockMovementRepository;
-        private readonly IMapper _mapper;
 
-        public GetStockMovementByIdQueryHandler(IStockMovementRepository stockMovementRepository, IMapper mapper)
+        public GetStockMovementByIdQueryHandler(
+            IStockMovementRepository stockMovementRepository)
         {
             _stockMovementRepository = stockMovementRepository;
-            _mapper = mapper;
         }
 
-        public async Task<ApiResponseO<StockMovementDto>> Handle(GetStockMovementByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<StockMovementResponse>> Handle(
+            GetStockMovementByIdQuery request,
+            CancellationToken cancellationToken)
         {
-            var movement = await _stockMovementRepository.GetByIdAsync(request.Id, cancellationToken);
+            var movement = await _stockMovementRepository
+                .AsQueryable()
+                .AsNoTracking()
+                .Include(x => x.StockLot)
+                    .ThenInclude(x => x.Stock)
+                        .ThenInclude(x => x.Product)
+                .Include(x => x.Responsible)
+                .FirstOrDefaultAsync(
+                    x => x.Id == request.Id,
+                    cancellationToken);
 
-            if (movement == null)
+            if (movement is null)
             {
-                return new ApiResponseO<StockMovementDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Movimento de estoque"), null);
+                throw new NotFoundException(
+                    "Movimentação de estoque não encontrada.");
             }
 
-            var movementDto = _mapper.Map<StockMovementDto>(movement);
-            return new ApiResponseO<StockMovementDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Movimento de estoque"), movementDto);
+            var response = new StockMovementResponse(
+                movement.Id,
+                movement.StockLotId,
+                movement.StockLot.Stock.ProductId,
+                movement.StockLot.Stock.Product.Name,
+                movement.Quantity,
+                movement.Direction,
+                movement.Reason,
+                movement.SourceDocumentId,
+                movement.SourceDocumentType,
+                movement.Responsible.Name,
+                movement.StockLot.Batch,
+                movement.StockLot.Brand,
+                movement.StockLot.ExpiryDate,
+                movement.MovementCost,
+                movement.MovementDate,
+                movement.CreatedOn
+            );
+
+            return Result<StockMovementResponse>.Success(
+                response,
+                "Movimentação encontrada com sucesso.");
         }
     }
 }
