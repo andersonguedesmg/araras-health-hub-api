@@ -11,7 +11,6 @@ using ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder;
 using ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder;
 using ArarasHealthHub.Application.Features.Orders.Dtos;
-using ArarasHealthHub.Application.Features.Orders.Queries.ExportOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetAllOrders;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderById;
 using ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails;
@@ -167,47 +166,6 @@ namespace ArarasHealthHub.Api.Controllers
 
             var fileName = $"Lista_Separacao_Pedido_{id}.pdf";
             return File(pdfBytes, "application/pdf", fileName);
-        }
-
-        [HttpGet("export")]
-        [Authorize(Policy = "CanManageResource")]
-        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Export([FromQuery] int? orderStatusId, [FromQuery] string? searchTerm)
-        {
-            var orders = await _mediator.Send(new ExportOrdersQuery
-            {
-                OrderStatusId = orderStatusId,
-                SearchTerm = searchTerm
-            });
-
-            if (orders == null || !orders.Any())
-            {
-                return NotFound(new ApiResponseO<object>(StatusCodes.Status404NotFound, ApiMessages.ExportEmpty("pedido"), null!));
-            }
-
-            var sb = new StringBuilder();
-
-            sb.AppendLine("ID, DATA, UNIDADE, SOLICITANTE, QTD ITENS, STATUS, MOTIVO CANCELAMENTO");
-
-            foreach (var order in orders)
-            {
-                sb.AppendLine(
-                    $"{order.Id}, " +
-                    $"{order.CreatedAt:dd/MM/yyyy HH:mm}, " +
-                    $"{order.OrderFacility!.Label}, " +
-                    $"{order.CreatedByEmployee!.Label}, " +
-                    $"{order.OrderItems.Count}, " +
-                    $"{order.OrderStatus!.Description}, "
-                );
-            }
-
-            var fileName = $"pedidos_{DateTime.Now:yyyyMMddHHmmss}.csv";
-
-            var utf8WithBom = new UTF8Encoding(true);
-            var fileBytes = utf8WithBom.GetBytes(sb.ToString());
-
-            return File(fileBytes, "text/csv", fileName);
         }
     }
 }
