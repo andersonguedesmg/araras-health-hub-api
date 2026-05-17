@@ -144,5 +144,18 @@ namespace ArarasHealthHub.Domain.Entities
                 );
             }
         }
+
+        public void SetMinimumQuantity(decimal quantity)
+        {
+            if (quantity < 0)
+            {
+                throw new DomainException(
+                    "Quantidade mínima inválida.");
+            }
+
+            MinQuantity = quantity;
+
+            SetUpdatedOn();
+        }
     }
 }

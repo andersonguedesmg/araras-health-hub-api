@@ -16,7 +16,7 @@ namespace ArarasHealthHub.Application.Features.Products.Responses
         int PackagingTypeId,
         string PackagingTypeName,
         DateTime CreatedOn,
-        DateTime UpdatedOn,
+        DateTime? UpdatedOn,
         bool IsActive
     );
 }

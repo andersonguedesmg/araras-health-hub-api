@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Stocks.Dtos;
+using ArarasHealthHub.Application.Features.Stocks.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -15,55 +14,80 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments
 {
-    public class GetAllStockAdjustmentsQueryHandler : IRequestHandler<GetAllStockAdjustmentsQuery, PagedResponseO<StockAdjustmentDto>>
+    public class GetAllStockAdjustmentsQueryHandler : IRequestHandler<GetAllStockAdjustmentsQuery, PagedResult<StockAdjustmentListItemResponse>>
     {
-        private readonly IStockAdjustmentRepository _repo;
-        private readonly IMapper _mapper;
+        private readonly IStockAdjustmentRepository _repository;
 
-        public GetAllStockAdjustmentsQueryHandler(IStockAdjustmentRepository repo, IMapper mapper)
+        public GetAllStockAdjustmentsQueryHandler(
+            IStockAdjustmentRepository repository)
         {
-            _repo = repo;
-            _mapper = mapper;
+            _repository = repository;
         }
 
-        public async Task<PagedResponseO<StockAdjustmentDto>> Handle(GetAllStockAdjustmentsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<StockAdjustmentListItemResponse>> Handle(
+            GetAllStockAdjustmentsQuery request,
+            CancellationToken cancellationToken)
         {
-            var query = _repo.AsQueryable()
+            IQueryable<StockAdjustment> query = _repository
+                .AsQueryable()
                 .AsNoTracking()
-                .Include(a => a.Responsible)
-                .Include(a => a.Account)
-                .Include(a => a.Items)
-                    .ThenInclude(ai => ai.Product)
-                        .ThenInclude(p => p.MainCategory)
-                .Include(a => a.Items)
-                    .ThenInclude(ai => ai.Product)
-                        .ThenInclude(p => p.PackagingType)
-                .AsQueryable();
+                .Include(x => x.Responsible)
+                .Include(x => x.Account)
+                .Include(x => x.Items);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                var searchTerm = request.SearchTerm.Trim().ToLower();
-                query = query.Where(a =>
-                    a.Reason.ToLower().Contains(searchTerm) ||
-                    a.Responsible!.Name.ToLower().Contains(searchTerm) ||
-                    a.Items.Any(ai => ai.Product.Name.ToLower().Contains(searchTerm))
-                );
+                var term = request.SearchTerm.Trim();
+
+                query = query.Where(x =>
+                    EF.Functions.Like(x.Reason, $"%{term}%") ||
+                    EF.Functions.Like(x.Responsible.Name, $"%{term}%") ||
+                    x.Items.Any(i =>
+                        EF.Functions.Like(i.Product.Name, $"%{term}%")));
             }
 
-            var totalCount = await query.CountAsync(cancellationToken);
+            var totalCount = await query
+                .CountAsync(cancellationToken);
 
-            var pagedAdjustments = await query
-                .OrderByDescending(a => a.AdjustmentDate)
+            query = request.OrderBy?.ToLower() switch
+            {
+                "type" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Type)
+                    : query.OrderBy(x => x.Type),
+
+                "reason" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Reason)
+                    : query.OrderBy(x => x.Reason),
+
+                "adjustmentdate" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.AdjustmentDate)
+                    : query.OrderBy(x => x.AdjustmentDate),
+
+                "responsible" => request.SortOrder == "desc"
+                    ? query.OrderByDescending(x => x.Responsible.Name)
+                    : query.OrderBy(x => x.Responsible.Name),
+
+                _ => query.OrderByDescending(x => x.CreatedOn)
+            };
+
+            var items = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(x => new StockAdjustmentListItemResponse(
+                    x.Id,
+                    x.Type,
+                    x.Reason,
+                    x.AdjustmentDate,
+                    x.Responsible.Name,
+                    x.Items.Count))
                 .ToListAsync(cancellationToken);
 
-            return new PagedResponseO<StockAdjustmentDto>(
+            return PagedResult<StockAdjustmentListItemResponse>.Success(
+                items,
                 request.PageNumber,
                 request.PageSize,
                 totalCount,
-                _mapper.Map<List<StockAdjustmentDto>>(pagedAdjustments)
-            );
+                "Ajustes de estoque listados com sucesso.");
         }
     }
 }

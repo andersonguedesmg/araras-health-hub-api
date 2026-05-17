@@ -9,7 +9,7 @@ using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllStockAdjustments
+namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetAllMinimumStockLevels
 {
-    public class GetAllStockAdjustmentsQuery : PagedRequest, IRequest<PagedResult<StockAdjustmentListItemResponse>> { }
+    public class GetAllMinimumStockLevelsQuery : PagedRequest, IRequest<PagedResult<MinimumStockLevelListItemResponse>> { }
 }

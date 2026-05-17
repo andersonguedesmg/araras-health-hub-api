@@ -63,9 +63,9 @@ namespace ArarasHealthHub.Application.Services.Inventory.Adjustments
                     );
                 }
 
-                var isPositive = command.Type == StockAdjustmentType.Positive;
+                var isEntry = command.Type == StockAdjustmentType.Entry;
 
-                if (isPositive)
+                if (isEntry)
                 {
                     stock.IncreaseStock(itemCommand.Quantity);
 

@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
-using ArarasHealthHub.Application.Features.Stocks.Dtos;
+
+using ArarasHealthHub.Application.Features.Products.Responses;
+using ArarasHealthHub.Application.Features.Stocks.Responses;
 using ArarasHealthHub.Domain.Entities;
+
 using AutoMapper;
 
 namespace ArarasHealthHub.Application.Profiles
@@ -13,26 +15,32 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public StockAdjustmentProfile()
         {
-            CreateMap<StockAdjustmentItem, StockAdjustmentItemDto>();
+            CreateMap<Product, ProductResponse>()
+                .ForCtorParam(
+                    nameof(ProductResponse.MainCategoryName),
+                    opt => opt.MapFrom(src => src.MainCategory!.Name))
+                .ForCtorParam(
+                    nameof(ProductResponse.SubCategoryName),
+                    opt => opt.MapFrom(src => src.SubCategory!.Name))
+                .ForCtorParam(
+                    nameof(ProductResponse.PackagingTypeName),
+                    opt => opt.MapFrom(src => src.PackagingType!.Name));
 
-            CreateMap<StockAdjustment, StockAdjustmentDto>()
-                .ForMember(dest => dest.Type,
-                           opt => opt.MapFrom(src => src.Type.ToString()))
-                .ForMember(dest => dest.ResponsibleName,
-                           opt => opt.MapFrom(src => src.Responsible != null ? src.Responsible.Name : "N/A"))
-                .ForMember(dest => dest.AccountUserName,
-                           opt => opt.MapFrom(src => src.Account != null ? src.Account.UserName : "N/A"))
-                .ForMember(dest => dest.AdjustmentItems,
-                           opt => opt.MapFrom(src => src.Items));
+            CreateMap<StockAdjustmentItem, StockAdjustmentItemResponse>()
+                .ForCtorParam(
+                    nameof(StockAdjustmentItemResponse.Product),
+                    opt => opt.MapFrom(src => src.Product));
 
-            CreateMap<CreateStockAdjustmentItemCommand, StockAdjustmentItem>()
-                .ForMember(dest => dest.TotalValue, opt => opt.Ignore());
-
-            CreateMap<CreateStockAdjustmentCommand, StockAdjustment>()
-                .ForMember(dest => dest.Items,
-                           opt => opt.MapFrom(src => src.AdjustmentItems))
-                .ForMember(dest => dest.Responsible, opt => opt.Ignore())
-                .ForMember(dest => dest.Account, opt => opt.Ignore());
+            CreateMap<StockAdjustment, StockAdjustmentResponse>()
+                .ForCtorParam(
+                    nameof(StockAdjustmentResponse.ResponsibleName),
+                    opt => opt.MapFrom(src => src.Responsible.Name))
+                .ForCtorParam(
+                    nameof(StockAdjustmentResponse.AccountUserName),
+                    opt => opt.MapFrom(src => src.Account.UserName))
+                .ForCtorParam(
+                    nameof(StockAdjustmentResponse.Items),
+                    opt => opt.MapFrom(src => src.Items));
         }
     }
 }

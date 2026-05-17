@@ -4,106 +4,68 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Stocks.Commands.CreateStockAdjustment;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Identity;
 
 using FluentValidation;
-
-using Microsoft.AspNetCore.Identity;
 
 namespace ArarasHealthHub.Application.Features.Stocks.Validation
 {
     public class CreateStockAdjustmentCommandValidator : AbstractValidator<CreateStockAdjustmentCommand>
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly IProductRepository _productRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public CreateStockAdjustmentCommandValidator(
-            IEmployeeRepository employeeRepository,
-            IProductRepository productRepository,
-            UserManager<ApplicationUser> userManager
-        )
+        public CreateStockAdjustmentCommandValidator()
         {
-            _employeeRepository = employeeRepository;
-            _productRepository = productRepository;
-            _userManager = userManager;
+            RuleFor(x => x.Type)
+                .IsInEnum();
 
-            RuleFor(c => c.Type)
-                .IsInEnum().WithMessage("O tipo de ajuste é inválido.");
+            RuleFor(x => x.Reason)
+                .NotEmpty()
+                .MaximumLength(100);
 
-            RuleFor(c => c.Reason)
-                .NotEmpty().WithMessage("O motivo do ajuste é obrigatório.")
-                .MaximumLength(100).WithMessage("O motivo do ajuste não pode exceder 100 caracteres.");
+            RuleFor(x => x.Observation)
+                .MaximumLength(500);
 
-            RuleFor(c => c.Observation)
-                .MaximumLength(200).WithMessage("A observação não pode exceder 200 caracteres.");
+            RuleFor(x => x.AdjustmentDate)
+                .LessThanOrEqualTo(DateTime.UtcNow);
 
-            RuleFor(c => c.AdjustmentDate)
-                .NotEmpty().WithMessage("A data do ajuste é obrigatória.")
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("A data do ajuste não pode ser futura.");
+            RuleFor(x => x.ResponsibleId)
+                .GreaterThan(0);
 
-            RuleFor(c => c.ResponsibleId)
-                .NotEmpty().WithMessage("O ID do responsável é obrigatório.")
-                .MustAsync(EmployeeExists).WithMessage("Responsável não encontrado.");
+            RuleFor(x => x.AccountId)
+                .GreaterThan(0);
 
-            RuleFor(c => c.AccountId)
-                .NotEmpty().WithMessage("O ID da conta é obrigatório.")
-                .MustAsync(AccountExists).WithMessage("Conta não encontrada.");
+            RuleFor(x => x.Items)
+                .NotEmpty();
 
-            RuleFor(c => c.AdjustmentItems)
-                .NotEmpty().WithMessage("É necessário informar pelo menos um item para o ajuste de estoque.")
-                .Must(items => items != null && items.Any()).WithMessage("É necessário informar pelo menos um item para o ajuste de estoque.")
-                .ForEach(item => item.SetValidator(new CreateStockAdjustmentItemCommandValidator(_productRepository)));
-        }
-
-        private async Task<bool> EmployeeExists(int employeeId, CancellationToken cancellationToken)
-        {
-            return await _employeeRepository.EmployeeExistsAsync(employeeId, cancellationToken);
-        }
-
-        private async Task<bool> AccountExists(int accountId, CancellationToken cancellationToken)
-        {
-            var user = await _userManager.FindByIdAsync(accountId.ToString());
-            return user != null;
+            RuleForEach(x => x.Items)
+                .SetValidator(
+                    new CreateStockAdjustmentItemCommandValidator());
         }
     }
 
     public class CreateStockAdjustmentItemCommandValidator : AbstractValidator<CreateStockAdjustmentItemCommand>
     {
-        private readonly IProductRepository _productRepository;
-
-        public CreateStockAdjustmentItemCommandValidator(IProductRepository productRepository)
+        public CreateStockAdjustmentItemCommandValidator()
         {
-            _productRepository = productRepository;
+            RuleFor(x => x.ProductId)
+                .GreaterThan(0);
 
-            RuleFor(i => i.ProductId)
-                .NotEmpty().WithMessage("O ID do produto é obrigatório.")
-                .MustAsync(ProductExists).WithMessage("Produto não encontrado.");
+            RuleFor(x => x.Quantity)
+                .GreaterThan(0);
 
-            RuleFor(i => i.Quantity)
-                .NotEqual(0).WithMessage("A quantidade ajustada do item deve ser maior que zero.")
-                .GreaterThan(0).WithMessage("A quantidade deve ser um valor positivo. O tipo de ajuste define a direção (Entrada/Saída).");
+            RuleFor(x => x.Batch)
+                .NotEmpty()
+                .MaximumLength(50);
 
-            RuleFor(i => i.UnitValue)
-                .NotNull().When(i => i.Quantity > 0, ApplyConditionTo.CurrentValidator).WithMessage("O valor unitário é obrigatório para ajustes de entrada (positivos).")
-                .GreaterThanOrEqualTo(0).When(i => i.UnitValue.HasValue).WithMessage("O valor unitário do item não pode ser negativo.");
+            RuleFor(x => x.Brand)
+                .NotEmpty()
+                .MaximumLength(100);
 
-            RuleFor(i => i.ExpiryDate)
-                .NotNull().When(i => i.Quantity > 0, ApplyConditionTo.CurrentValidator).WithMessage("A data de validade é obrigatória para ajustes de entrada (positivos).");
+            RuleFor(x => x.UnitValue)
+                .GreaterThanOrEqualTo(0)
+                .When(x => x.UnitValue.HasValue);
 
-            RuleFor(i => i.Batch)
-                .NotEmpty().WithMessage("O lote do item é obrigatório.")
-                .MaximumLength(50).WithMessage("O lote do item não pode exceder 50 caracteres.");
-
-            RuleFor(i => i.Brand)
-                .NotEmpty().WithMessage("A marca do item é obrigatória.")
-                .MaximumLength(100).WithMessage("A marca do item não pode exceder 100 caracteres.");
-        }
-
-        private async Task<bool> ProductExists(int productId, CancellationToken cancellationToken)
-        {
-            return await _productRepository.ProductExists(productId);
+            RuleFor(x => x.ExpiryDate)
+                .GreaterThan(DateTime.UtcNow)
+                .When(x => x.ExpiryDate.HasValue);
         }
     }
 }

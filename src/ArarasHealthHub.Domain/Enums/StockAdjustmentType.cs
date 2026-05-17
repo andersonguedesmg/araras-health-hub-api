@@ -2,7 +2,7 @@ namespace ArarasHealthHub.Domain.Enums
 {
     public enum StockAdjustmentType
     {
-        Positive = 1,
-        Negative = 2,
+        Entry = 1,
+        Output = 2
     }
 }
