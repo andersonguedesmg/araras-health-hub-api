@@ -5,7 +5,7 @@ using araras_health_hub_api.Authorization;
 
 using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
-using ArarasHealthHub.Application.Common.Interfaces;
+using ArarasHealthHub.Application.Common.Interfaces.Providers;
 using ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts;
 using ArarasHealthHub.Application.Features.Employees.Queries.GetAllEmployees;
 using ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFacilities;
@@ -13,8 +13,6 @@ using ArarasHealthHub.Application.Features.MainCategories.Queries.GetAllMainCate
 using ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetAllPackagingTypes;
 using ArarasHealthHub.Application.Features.Products.Queries.GetAllProducts;
 using ArarasHealthHub.Application.Features.Receivings.Queries.GetAllReceivings;
-using ArarasHealthHub.Application.Features.Stocks.Queries.GetCriticalStockOverview;
-using ArarasHealthHub.Application.Features.Stocks.Queries.GetStockGeneralOverview;
 using ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCategories;
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Contexts;
@@ -26,6 +24,7 @@ using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Infrastructure.Data;
+using ArarasHealthHub.Infrastructure.Providers;
 using ArarasHealthHub.Infrastructure.Repository;
 using ArarasHealthHub.Infrastructure.Services;
 using ArarasHealthHub.Shared;
@@ -280,7 +279,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IStockAllocationService, StockAllocationService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
 
-builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
 // Registra os Authorization Handlers
 builder.Services.AddScoped<IAuthorizationHandler, AccountManagementAuthorizationHandler>();
@@ -330,8 +329,6 @@ builder.Services.AddValidatorsFromAssembly(typeof(GetAllPackagingTypesQuery).Ass
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllFacilitiesQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllReceivingsQuery).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllAccountsQuery).Assembly);
-builder.Services.AddValidatorsFromAssembly(typeof(GetStockGeneralOverviewQuery).Assembly);
-builder.Services.AddValidatorsFromAssembly(typeof(GetCriticalStockOverviewQuery).Assembly);
 
 
 // ===============================================

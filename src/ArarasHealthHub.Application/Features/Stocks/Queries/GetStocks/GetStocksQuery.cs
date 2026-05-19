@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Stocks.Responses;
+using ArarasHealthHub.Shared.Pagination;
 using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStockByProductId
+namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetStocks
 {
-    public record GetStockByProductIdQuery(int ProductId) : IRequest<Result<StockResponse>>;
+    public class GetStocksQuery : PagedRequest, IRequest<PagedResult<StockListItemResponse>> { }
 }
