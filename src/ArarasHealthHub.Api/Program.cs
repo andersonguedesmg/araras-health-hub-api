@@ -18,7 +18,17 @@ using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Application.Interfaces.Services;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Adjustments;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Costs;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Entries;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Lots;
+using ArarasHealthHub.Application.Interfaces.Services.Inventory.Movements;
 using ArarasHealthHub.Application.Profiles;
+using ArarasHealthHub.Application.Services.Inventory.Adjustments;
+using ArarasHealthHub.Application.Services.Inventory.Costs;
+using ArarasHealthHub.Application.Services.Inventory.Entries;
+using ArarasHealthHub.Application.Services.Inventory.Lots;
+using ArarasHealthHub.Application.Services.Inventory.Movements;
 using ArarasHealthHub.Application.Services.StockAllocation;
 using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Enums;
@@ -42,7 +52,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using QuestPDF.Infrastructure;
-
 QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -255,7 +264,7 @@ builder.Services.AddAuthorization(options =>
 // 6. INJEÇÃO DE DEPENDÊNCIA (SERVICES, REPOSITORIES, HANDLERS)
 // ===============================================
 
-// Registra Repositórios e Interfaces de Infraestrutura
+// Registra Repositórios, Services e Interfaces de Infraestrutura
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
@@ -274,6 +283,12 @@ builder.Services.AddScoped<IStockAdjustmentRepository, StockAdjustmentRepository
 builder.Services.AddScoped<IStockAdjustmentItemRepository, StockAdjustmentItemRepository>();
 builder.Services.AddScoped<IStockLotRepository, StockLotRepository>();
 builder.Services.AddScoped<IStockCostRepository, StockCostRepository>();
+
+builder.Services.AddScoped<IInventoryAdjustmentService, InventoryAdjustmentService>();
+builder.Services.AddScoped<IInventoryCostService, InventoryCostService>();
+builder.Services.AddScoped<IInventoryEntryService, InventoryEntryService>();
+builder.Services.AddScoped<IInventoryLotService, InventoryLotService>();
+builder.Services.AddScoped<IInventoryMovementService, InventoryMovementService>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IStockAllocationService, StockAllocationService>();
