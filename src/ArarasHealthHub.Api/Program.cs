@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 
 using araras_health_hub_api.Authorization;
+using araras_health_hub_api.Middlewares;
 
 using ArarasHealthHub.Api.Middlewares;
 using ArarasHealthHub.Application.Behaviors;
@@ -17,28 +18,41 @@ using ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCatego
 using ArarasHealthHub.Application.Features.Suppliers.Queries.GetAllSuppliers;
 using ArarasHealthHub.Application.Interfaces.Contexts;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Application.Interfaces.Security.CurrentUser;
 using ArarasHealthHub.Application.Interfaces.Services;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Adjustments;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Costs;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Entries;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Lots;
 using ArarasHealthHub.Application.Interfaces.Services.Inventory.Movements;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Approval;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Creation;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Finalization;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Picking;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Return;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Separation;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Shared;
 using ArarasHealthHub.Application.Profiles;
 using ArarasHealthHub.Application.Services.Inventory.Adjustments;
 using ArarasHealthHub.Application.Services.Inventory.Costs;
 using ArarasHealthHub.Application.Services.Inventory.Entries;
 using ArarasHealthHub.Application.Services.Inventory.Lots;
 using ArarasHealthHub.Application.Services.Inventory.Movements;
-using ArarasHealthHub.Application.Services.StockAllocation;
+using ArarasHealthHub.Application.Services.Orders.Approval;
+using ArarasHealthHub.Application.Services.Orders.Creation;
+using ArarasHealthHub.Application.Services.Orders.Finalization;
+using ArarasHealthHub.Application.Services.Orders.Picking;
+using ArarasHealthHub.Application.Services.Orders.Return;
+using ArarasHealthHub.Application.Services.Orders.Separation;
+using ArarasHealthHub.Application.Services.Orders.Shared;
 using ArarasHealthHub.Domain.Authorization;
 using ArarasHealthHub.Domain.Enums;
 using ArarasHealthHub.Domain.Identity;
 using ArarasHealthHub.Infrastructure.Data;
 using ArarasHealthHub.Infrastructure.Providers;
 using ArarasHealthHub.Infrastructure.Repository;
+using ArarasHealthHub.Infrastructure.Security.CurrentUser;
 using ArarasHealthHub.Infrastructure.Services;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -196,32 +210,17 @@ builder.Services.AddAuthentication(options =>
         OnChallenge = context =>
         {
             context.HandleResponse();
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            context.Response.ContentType = "application/json";
 
-            var response = new ApiResponseO<object>(
-                StatusCodes.Status401Unauthorized,
-                ApiMessages.AuthorizationRequired,
-                (List<string>)null!,
-                false
-            );
+            context.Response.StatusCode = 401;
 
-            return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            return Task.CompletedTask;
         },
 
         OnForbidden = context =>
         {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = 403;
 
-            var response = new ApiResponseO<object>(
-                StatusCodes.Status403Forbidden,
-                ApiMessages.InsufficientPermissions,
-                (List<string>)null!,
-                false
-            );
-
-            return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            return Task.CompletedTask;
         }
     };
 });
@@ -289,10 +288,17 @@ builder.Services.AddScoped<IInventoryCostService, InventoryCostService>();
 builder.Services.AddScoped<IInventoryEntryService, InventoryEntryService>();
 builder.Services.AddScoped<IInventoryLotService, InventoryLotService>();
 builder.Services.AddScoped<IInventoryMovementService, InventoryMovementService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IOrderValidationService, OrderValidationService>();
+builder.Services.AddScoped<IOrderStockService, OrderStockService>();
+builder.Services.AddScoped<IOrderCreationService, OrderCreationService>();
+builder.Services.AddScoped<IOrderApprovalService, OrderApprovalService>();
+builder.Services.AddScoped<IOrderSeparationService, OrderSeparationService>();
+builder.Services.AddScoped<IOrderFinalizationService, OrderFinalizationService>();
+builder.Services.AddScoped<IOrderReturnService, OrderReturnService>();
+builder.Services.AddScoped<IOrderPickingService, OrderPickingService>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IStockAllocationService, StockAllocationService>();
-builder.Services.AddScoped<IPdfService, PdfService>();
 
 builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
@@ -333,6 +339,9 @@ builder.Services.AddAutoMapper(typeof(FacilityProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ReceivingProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(AccountProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(StockProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(StockMovementProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(StockAdjustmentProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(OrderProfile).Assembly);
 
 // Configuração do FluentValidation
 builder.Services.AddValidatorsFromAssembly(typeof(GetAllSuppliersQuery).Assembly);
@@ -384,6 +393,7 @@ app.UseHttpsRedirection();
 
 // Middleware customizado para capturar e formatar exceções (tratamento de erros global)
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<AuthenticationProblemDetailsMiddleware>();
 
 // Adiciona os middlewares de autenticação e autorização
 app.UseAuthentication();

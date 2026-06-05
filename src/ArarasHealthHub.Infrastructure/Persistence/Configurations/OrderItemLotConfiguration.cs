@@ -18,9 +18,7 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
 
             builder.ToTable("OrderItemLots", t =>
             {
-                t.HasComment(
-                    "Lotes separados para atendimento do pedido"
-                );
+                t.HasComment("Lotes efetivamente separados para atendimento do item do pedido");
             });
 
             builder.Property(x => x.Quantity)

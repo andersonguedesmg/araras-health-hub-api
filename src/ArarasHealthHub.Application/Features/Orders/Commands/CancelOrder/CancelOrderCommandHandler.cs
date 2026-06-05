@@ -3,95 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Stocks.Commands.UpdateStockReservation;
-using ArarasHealthHub.Application.Interfaces.Repositories;
-using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Cancellation;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Orders.Commands.CancelOrder
 {
-    public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, ApiResponseO<bool>>
+    public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Result<int>>
     {
-        private readonly IOrderRepository _orderRepo;
-        private readonly IMediator _mediator;
-        private readonly IEmployeeRepository _employeeRepo;
+        private readonly IOrderCancellationService _service;
 
-        public CancelOrderCommandHandler(IOrderRepository orderRepo, IMediator mediator, IEmployeeRepository employeeRepo)
+        public CancelOrderCommandHandler(
+            IOrderCancellationService service)
         {
-            _orderRepo = orderRepo;
-            _mediator = mediator;
-            _employeeRepo = employeeRepo;
+            _service = service;
         }
 
-        public async Task<ApiResponseO<bool>> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(
+            CancelOrderCommand request,
+            CancellationToken cancellationToken)
         {
-            // var order = await _orderRepo.GetByIdWithItemsAsync(request.OrderId);
-
-            // if (order == null)
-            // {
-            //     return new ApiResponseO<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
-            // }
-
-            // var orderStatus = (OrderStatusEnum)order.OrderStatusId;
-
-            // if (orderStatus == OrderStatusEnum.Completed || orderStatus == OrderStatusEnum.ReadyForFinalization)
-            // {
-            //     return new ApiResponseO<bool>(StatusCodes.Status400BadRequest, ApiMessages.CannotCancelOrderInStatus(orderStatus.ToString()), false);
-            // }
-
-            // if (orderStatus == OrderStatusEnum.Cancelled)
-            // {
-            //     return new ApiResponseO<bool>(StatusCodes.Status400BadRequest, ApiMessages.OrderAlreadyCancelled, false);
-            // }
-
-            // var responsible = await _employeeRepo.GetByIdAsync(request.CanceledByEmployeeId, cancellationToken);
-            // if (responsible == null)
-            // {
-            //     return new ApiResponseO<bool>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Responsável"), false);
-            // }
-
-            // if (orderStatus != OrderStatusEnum.PendingApproval)
-            // {
-            //     var itemsToRelease = order.OrderItems.Where(oi => oi.ReservedQuantity > 0).ToList();
-
-            //     var releaseTasks = new List<Task<ApiResponseO<bool>>>();
-
-            //     foreach (var item in itemsToRelease)
-            //     {
-            //         decimal quantityAdjustment = -item.ReservedQuantity;
-            //         var releaseCommand = new UpdateStockReservationCommand(item.ProductId, quantityAdjustment);
-            //         releaseTasks.Add(_mediator.Send(releaseCommand, cancellationToken));
-            //         item.ReservedQuantity = 0;
-            //     }
-
-            //     var releaseResults = await Task.WhenAll(releaseTasks);
-
-            //     if (releaseResults.Any(r => !r.Success))
-            //     {
-            //         return new ApiResponseO<bool>(
-            //             StatusCodes.Status500InternalServerError,
-            //             ApiMessages.StockReleaseFailed,
-            //             false
-            //         );
-            //     }
-            // }
-
-            // order.OrderStatusId = (int)OrderStatusEnum.Cancelled;
-            // order.CanceledByEmployeeId = request.CanceledByEmployeeId;
-            // order.CanceledByAccountId = request.CanceledByAccountId;
-            // order.CancellationReason = request.CancellationReason;
-            // order.CanceledAt = DateTime.UtcNow;
-
-            // _orderRepo.UpdateWithoutSaving(order);
-            // await _orderRepo.SaveAllAsync(cancellationToken);
-
-            return new ApiResponseO<bool>(StatusCodes.Status200OK, ApiMessages.OrderCancelledSuccessfully, true);
+            return await _service.CancelAsync(
+                request,
+                cancellationToken);
         }
     }
 }

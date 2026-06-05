@@ -47,7 +47,7 @@ namespace ArarasHealthHub.Domain.Entities
             Quantity = quantity;
             UnitValue = unitValue;
 
-            TotalValue = quantity * unitValue;
+            TotalValue = decimal.Round(quantity * unitValue, 2, MidpointRounding.ToEven);
         }
     }
 }

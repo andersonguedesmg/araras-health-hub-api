@@ -89,7 +89,7 @@ namespace ArarasHealthHub.Domain.Entities
             SetUpdatedOn();
         }
 
-        public void Reserve(decimal quantity)
+        public void ReserveQuantity(decimal quantity)
         {
             ValidatePositiveQuantity(quantity);
 

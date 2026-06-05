@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -14,14 +13,11 @@ namespace ArarasHealthHub.Application.Features.Orders.Validation
     {
         public FinalizeOrderCommandValidator()
         {
-            RuleFor(c => c.OrderId)
-                .NotEmpty().WithMessage(ApiMessages.NotFound("ID do pedido"));
+            RuleFor(x => x.OrderId)
+                .GreaterThan(0);
 
-            RuleFor(c => c.FinalizedByEmployeeId)
-                .NotEmpty().WithMessage(ApiMessages.NotFound("ID do funcionário de finalização"));
-
-            RuleFor(c => c.FinalizedByAccountId)
-                .NotEmpty().WithMessage(ApiMessages.NotFound("ID da conta de finalização"));
+            RuleFor(x => x.FinalizedByEmployeeId)
+                .GreaterThan(0);
         }
     }
 }

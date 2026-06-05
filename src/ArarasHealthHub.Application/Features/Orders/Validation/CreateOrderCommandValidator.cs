@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Orders.Commands.CreateOrder;
-using ArarasHealthHub.Application.Features.Orders.Dtos;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 
@@ -15,29 +13,26 @@ namespace ArarasHealthHub.Application.Features.Orders.Validation
     {
         public CreateOrderCommandValidator()
         {
-            RuleFor(c => c.CreatedByEmployeeId)
-                .NotEmpty().WithMessage(ApiMessages.NotFound("ID do funcionário"));
+            RuleFor(x => x.CreatedByEmployeeId)
+                .GreaterThan(0);
 
-            RuleFor(c => c.CreatedByAccountId)
-                .NotEmpty().WithMessage(ApiMessages.NotFound("ID da conta"));
+            RuleFor(x => x.Items)
+                .NotEmpty();
 
-            RuleFor(c => c.OrderItems)
-                .NotEmpty().WithMessage("O pedido deve conter pelo menos um item.");
-
-            RuleForEach(c => c.OrderItems)
-                .SetValidator(new CreateOrderItemDtoValidator());
+            RuleForEach(x => x.Items)
+                .SetValidator(new CreateOrderItemCommandValidator());
         }
     }
 
-    public class CreateOrderItemDtoValidator : AbstractValidator<CreateOrderItemDto>
+    public class CreateOrderItemCommandValidator : AbstractValidator<CreateOrderItemCommand>
     {
-        public CreateOrderItemDtoValidator()
+        public CreateOrderItemCommandValidator()
         {
-            RuleFor(i => i.ProductId)
-                .NotEmpty().WithMessage(ApiMessages.NotFound("ID do produto"));
+            RuleFor(x => x.ProductId)
+                .GreaterThan(0);
 
-            RuleFor(i => i.RequestedQuantity)
-                .GreaterThan(0).WithMessage("A quantidade solicitada deve ser maior que zero.");
+            RuleFor(x => x.RequestedQuantity)
+                .GreaterThan(0);
         }
     }
 }

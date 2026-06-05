@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -15,7 +13,11 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.SeparateOrder
     public record SeparateOrderCommand(
         int OrderId,
         int SeparatedByEmployeeId,
-        int SeparatedByAccountId,
-        List<SeparateOrderItemDto> OrderItems
-    ) : IRequest<ApiResponseO<OrderDto>>, ITransactionalRequest;
+        List<SeparateOrderItemCommand> OrderItems
+    ) : IRequest<Result<int>>, ITransactionalRequest;
+
+    public record SeparateOrderItemCommand(
+        int OrderItemId,
+        decimal ActualQuantity
+    );
 }

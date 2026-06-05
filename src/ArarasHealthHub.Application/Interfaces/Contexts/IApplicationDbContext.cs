@@ -35,8 +35,8 @@ namespace ArarasHealthHub.Application.Interfaces.Contexts
         DbSet<StockLot> StockLots { get; }
         DbSet<StockCost> StockCosts { get; }
         DbSet<OrderItemLot> OrderItemLots { get; }
-        DbSet<DispenseReturn> DispenseReturns { get; }
-        DbSet<DispenseReturnItem> DispenseReturnItems { get; }
+        DbSet<OrderReturn> OrderReturns { get; }
+        DbSet<OrderReturnItem> OrderReturnItems { get; }
 
         DbSet<TEntity> Set<TEntity>() where TEntity : class;
 

@@ -42,8 +42,8 @@ namespace ArarasHealthHub.Infrastructure.Data
         public DbSet<StockLot> StockLots => Set<StockLot>();
         public DbSet<StockCost> StockCosts => Set<StockCost>();
         public DbSet<OrderItemLot> OrderItemLots => Set<OrderItemLot>();
-        public DbSet<DispenseReturn> DispenseReturns => Set<DispenseReturn>();
-        public DbSet<DispenseReturnItem> DispenseReturnItems => Set<DispenseReturnItem>();
+        public DbSet<OrderReturn> OrderReturns => Set<OrderReturn>();
+        public DbSet<OrderReturnItem> OrderReturnItems => Set<OrderReturnItem>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

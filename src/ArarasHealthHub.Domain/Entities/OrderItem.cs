@@ -64,16 +64,81 @@ namespace ArarasHealthHub.Domain.Entities
             SetUpdatedOn();
         }
 
+        public void ReserveQuantity(decimal quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new DomainException(
+                    "Quantidade reservada inválida."
+                );
+            }
+
+            if (ReservedQuantity + quantity > ApprovedQuantity)
+            {
+                throw new DomainRuleException(
+                    "Reserva excede quantidade aprovada."
+                );
+            }
+
+            ReservedQuantity += quantity;
+
+            SetUpdatedOn();
+        }
+
+        public void ReleaseReservation(decimal quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new DomainException(
+                    "Quantidade inválida."
+                );
+            }
+
+            if (quantity > ReservedQuantity)
+            {
+                throw new DomainRuleException(
+                    "Liberação excede reserva atual."
+                );
+            }
+
+            ReservedQuantity -= quantity;
+
+            SetUpdatedOn();
+        }
+
         public void AddLot(OrderItemLot lot)
         {
             ArgumentNullException.ThrowIfNull(lot);
 
+            if (ActualQuantity + lot.Quantity > ApprovedQuantity)
+            {
+                throw new DomainRuleException(
+                    "Separação excede quantidade aprovada."
+                );
+            }
+
             _lots.Add(lot);
 
-            ReservedQuantity += lot.Quantity;
             ActualQuantity += lot.Quantity;
 
             SetUpdatedOn();
+        }
+
+        public void SeparateQuantity(decimal quantity)
+        {
+            if (quantity < 0)
+            {
+                throw new DomainRuleException(
+                    "Quantidade separada inválida.");
+            }
+
+            if (quantity > ReservedQuantity)
+            {
+                throw new DomainRuleException(
+                    "Quantidade separada não pode exceder a reservada.");
+            }
+
+            ActualQuantity = quantity;
         }
     }
 }

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Orders.Dtos;
 using ArarasHealthHub.Application.Interfaces;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Responses;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
@@ -14,7 +12,6 @@ namespace ArarasHealthHub.Application.Features.Orders.Commands.FinalizeOrder
 {
     public record FinalizeOrderCommand(
         int OrderId,
-        int FinalizedByEmployeeId,
-        int FinalizedByAccountId
-    ) : IRequest<ApiResponseO<OrderDto>>, ITransactionalRequest;
+        int FinalizedByEmployeeId
+    ) : IRequest<Result<int>>, ITransactionalRequest;
 }

@@ -4,86 +4,55 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-using ArarasHealthHub.Application.Features.Orders.Dtos;
+using ArarasHealthHub.Application.Features.Orders.Responses;
 using ArarasHealthHub.Application.Interfaces.Repositories;
+using ArarasHealthHub.Application.Interfaces.Services.Orders.Picking;
 using ArarasHealthHub.Domain.Enums;
-using ArarasHealthHub.Shared;
-using ArarasHealthHub.Shared.Messages;
-using ArarasHealthHub.Shared.Responses;
-
-using AutoMapper;
+using ArarasHealthHub.Shared.Exceptions;
+using ArarasHealthHub.Shared.Results;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http;
-
 namespace ArarasHealthHub.Application.Features.Orders.Queries.GetOrderPickingDetails
 {
-    public class GetOrderPickingDetailsQueryHandler : IRequestHandler<GetOrderPickingDetailsQuery, ApiResponseO<OrderDto>>
+    public class GetOrderPickingDetailsQueryHandler : IRequestHandler<
+            GetOrderPickingDetailsQuery,
+            Result<OrderPickingResponse>>
     {
-        private readonly IOrderRepository _orderRepo;
-        private readonly IStockLotRepository _stockLotRepo;
-        private readonly IMapper _mapper;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderPickingService _orderPickingService;
 
-        public GetOrderPickingDetailsQueryHandler(IOrderRepository orderRepo, IStockLotRepository stockLotRepo, IMapper mapper)
+        public GetOrderPickingDetailsQueryHandler(
+            IOrderRepository orderRepository,
+            IOrderPickingService orderPickingService)
         {
-            _orderRepo = orderRepo;
-            _stockLotRepo = stockLotRepo;
-            _mapper = mapper;
+            _orderRepository = orderRepository;
+            _orderPickingService = orderPickingService;
         }
 
-        public async Task<ApiResponseO<OrderDto>> Handle(GetOrderPickingDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<OrderPickingResponse>> Handle(
+            GetOrderPickingDetailsQuery request,
+            CancellationToken cancellationToken)
         {
-            var order = await _orderRepo.GetByIdWithItemsAsync(request.Id);
+            var order = await _orderRepository.GetByIdForPickingAsync(
+                request.Id,
+                cancellationToken);
 
-            if (order == null)
+            if (order is null)
             {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status404NotFound, ApiMessages.NotFound("Pedido"), false);
+                throw new NotFoundException("Pedido não foi encontrado.");
             }
 
             if (order.OrderStatusId != (int)OrderStatusEnum.ReadyForPicking)
             {
-                return new ApiResponseO<OrderDto>(StatusCodes.Status400BadRequest, ApiMessages.OrderCannotBeSeparated, false);
+                throw new BadRequestException("Pedido não pode ser separado.");
             }
 
-            var orderDto = _mapper.Map<OrderDto>(order);
+            var response = await _orderPickingService.BuildPickingAsync(
+                order,
+                cancellationToken);
 
-            foreach (var orderItemDto in orderDto.OrderItems)
-            {
-                var remainingQuantityToAllocate = orderItemDto.ApprovedQuantity;
-
-                orderItemDto.LotsToSeparate = new List<OrderItemLotDto>();
-
-                if (remainingQuantityToAllocate <= 0) continue;
-
-                var availableLots = await _stockLotRepo.GetAvailableLotsByProductIdFEFOAsync(orderItemDto.ProductId);
-
-                foreach (var lot in availableLots)
-                {
-                    if (remainingQuantityToAllocate <= 0)
-                    {
-                        break;
-                    }
-
-                    var quantityFromThisLot = Math.Min(remainingQuantityToAllocate, lot.AvailableQuantity);
-
-                    if (quantityFromThisLot > 0)
-                    {
-                        orderItemDto.LotsToSeparate.Add(new OrderItemLotDto
-                        {
-                            StockLotId = lot.Id,
-                            Batch = lot.Batch,
-                            ExpiryDate = lot.ExpiryDate,
-                            QuantityToSeparate = quantityFromThisLot,
-                            UnitValue = lot.UnitValue
-                        });
-
-                        remainingQuantityToAllocate -= quantityFromThisLot;
-                    }
-                }
-            }
-
-            return new ApiResponseO<OrderDto>(StatusCodes.Status200OK, ApiMessages.FoundSuccessfully("Pedido"), orderDto);
+            return Result<OrderPickingResponse>.Success(response, "Detalhes da separação carregados com sucesso.");
         }
     }
 }

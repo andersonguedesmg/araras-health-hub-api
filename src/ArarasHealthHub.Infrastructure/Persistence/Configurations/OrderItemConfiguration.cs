@@ -18,7 +18,7 @@ namespace ArarasHealthHub.Infrastructure.Persistence.Configurations
 
             builder.ToTable("OrderItems", t =>
             {
-                t.HasComment("Itens do pedido");
+                t.HasComment("Itens pertencentes ao pedido de dispensação");
             });
 
             builder.Property(x => x.RequestedQuantity)
