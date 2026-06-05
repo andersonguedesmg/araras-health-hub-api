@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArarasHealthHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260510144740_a2h_1.0.2")]
+    [Migration("20260605195626_a2h_1.0.2")]
     partial class a2h_102
     {
         /// <inheritdoc />
@@ -24,139 +24,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturn", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasComment("Identificador único do registro.");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2")
-                        .HasComment("Data de criação do registro.");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true)
-                        .HasComment("Indica se o registro está ativo.");
-
-                    b.Property<int>("OriginalOrderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("ReturnDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ReturnedByAccountId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReturnedByEmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalReturnedValue")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2")
-                        .HasComment("Data da última atualização do registro.");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OriginalOrderId");
-
-                    b.HasIndex("ReturnDate");
-
-                    b.HasIndex("ReturnedByAccountId");
-
-                    b.HasIndex("ReturnedByEmployeeId");
-
-                    b.ToTable("DispenseReturns", null, t =>
-                        {
-                            t.HasComment("Representa devoluções de itens dispensados");
-                        });
-                });
-
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturnItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasComment("Identificador único do registro.");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Batch")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2")
-                        .HasComment("Data de criação do registro.");
-
-                    b.Property<int>("DispenseReturnId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true)
-                        .HasComment("Indica se o registro está ativo.");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
-                    b.Property<int>("StockLotId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalValue")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("UnitValue")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime2")
-                        .HasComment("Data da última atualização do registro.");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DispenseReturnId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("StockLotId");
-
-                    b.ToTable("DispenseReturnItems", null, t =>
-                        {
-                            t.HasComment("Itens devolvidos ao estoque");
-
-                            t.HasCheckConstraint("CK_DispenseReturnItem_Quantity", "\"Quantity\" > 0");
-                        });
-                });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Employee", b =>
                 {
@@ -393,13 +260,29 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApprovedByAccountId");
+
+                    b.HasIndex("ApprovedByEmployeeId");
+
+                    b.HasIndex("CanceledByAccountId");
+
+                    b.HasIndex("CanceledByEmployeeId");
+
                     b.HasIndex("CreatedByAccountId");
 
                     b.HasIndex("CreatedByEmployeeId");
 
+                    b.HasIndex("FinalizedByAccountId");
+
+                    b.HasIndex("FinalizedByEmployeeId");
+
                     b.HasIndex("OrderFacilityId");
 
                     b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("SeparatedByAccountId");
+
+                    b.HasIndex("SeparatedByEmployeeId");
 
                     b.ToTable("Orders", null, t =>
                         {
@@ -460,7 +343,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.ToTable("OrderItems", null, t =>
                         {
-                            t.HasComment("Itens do pedido");
+                            t.HasComment("Itens pertencentes ao pedido de dispensação");
                         });
                 });
 
@@ -513,7 +396,129 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.ToTable("OrderItemLots", null, t =>
                         {
-                            t.HasComment("Lotes separados para atendimento do pedido");
+                            t.HasComment("Lotes efetivamente separados para atendimento do item do pedido");
+                        });
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderReturn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
+
+                    b.Property<int>("OriginalOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("ReturnedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReturnedByAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReturnedByEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalReturnedValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OriginalOrderId");
+
+                    b.HasIndex("ReturnedAt");
+
+                    b.HasIndex("ReturnedByAccountId");
+
+                    b.HasIndex("ReturnedByEmployeeId");
+
+                    b.HasIndex("OriginalOrderId", "ReturnedAt");
+
+                    b.ToTable("OrderReturns", null, t =>
+                        {
+                            t.HasComment("Representa devoluções de produtos dispensados em pedidos");
+                        });
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderReturnItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("Identificador único do registro.");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data de criação do registro.");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Indica se o registro está ativo.");
+
+                    b.Property<int>("OrderReturnId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("StockLotId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitValue")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Data da última atualização do registro.");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderReturnId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StockLotId");
+
+                    b.ToTable("OrderReturnItems", null, t =>
+                        {
+                            t.HasComment("Itens devolvidos ao estoque");
+
+                            t.HasCheckConstraint("CK_OrderReturnItem_Quantity", "\"Quantity\" > 0");
                         });
                 });
 
@@ -1137,6 +1142,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasComment("Data de criação do registro.");
 
+                    b.Property<int>("Direction")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -1154,6 +1162,9 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
+                    b.Property<int>("Reason")
+                        .HasColumnType("int");
+
                     b.Property<int>("ResponsibleId")
                         .HasColumnType("int");
 
@@ -1162,13 +1173,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.Property<string>("SourceDocumentType")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("StockLotId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -1177,11 +1185,17 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Direction");
+
                     b.HasIndex("MovementDate");
+
+                    b.HasIndex("Reason");
 
                     b.HasIndex("ResponsibleId");
 
                     b.HasIndex("StockLotId");
+
+                    b.HasIndex("SourceDocumentId", "SourceDocumentType");
 
                     b.ToTable("StockMovements", null, t =>
                         {
@@ -1470,60 +1484,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturn", b =>
-                {
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Order", "OriginalOrder")
-                        .WithMany()
-                        .HasForeignKey("OriginalOrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "ReturnedByAccount")
-                        .WithMany()
-                        .HasForeignKey("ReturnedByAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "ReturnedByEmployee")
-                        .WithMany()
-                        .HasForeignKey("ReturnedByEmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("OriginalOrder");
-
-                    b.Navigation("ReturnedByAccount");
-
-                    b.Navigation("ReturnedByEmployee");
-                });
-
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturnItem", b =>
-                {
-                    b.HasOne("ArarasHealthHub.Domain.Entities.DispenseReturn", "DispenseReturn")
-                        .WithMany("Items")
-                        .HasForeignKey("DispenseReturnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
-                        .WithMany()
-                        .HasForeignKey("StockLotId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DispenseReturn");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("StockLot");
-                });
-
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Facility", b =>
                 {
                     b.OwnsOne("ArarasHealthHub.Domain.ValueObjects.Address", "Address", b1 =>
@@ -1644,6 +1604,26 @@ namespace ArarasHealthHub.Infrastructure.Migrations
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "ApprovedByAccount")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "ApprovedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "CanceledByAccount")
+                        .WithMany()
+                        .HasForeignKey("CanceledByAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "CanceledByEmployee")
+                        .WithMany()
+                        .HasForeignKey("CanceledByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "CreatedByAccount")
                         .WithMany()
                         .HasForeignKey("CreatedByAccountId")
@@ -1655,6 +1635,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .HasForeignKey("CreatedByEmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "FinalizedByAccount")
+                        .WithMany()
+                        .HasForeignKey("FinalizedByAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "FinalizedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("FinalizedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ArarasHealthHub.Domain.Entities.Facility", "OrderFacility")
                         .WithMany()
@@ -1668,13 +1658,39 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "SeparatedByAccount")
+                        .WithMany()
+                        .HasForeignKey("SeparatedByAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "SeparatedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("SeparatedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ApprovedByAccount");
+
+                    b.Navigation("ApprovedByEmployee");
+
+                    b.Navigation("CanceledByAccount");
+
+                    b.Navigation("CanceledByEmployee");
+
                     b.Navigation("CreatedByAccount");
 
                     b.Navigation("CreatedByEmployee");
 
+                    b.Navigation("FinalizedByAccount");
+
+                    b.Navigation("FinalizedByEmployee");
+
                     b.Navigation("OrderFacility");
 
                     b.Navigation("OrderStatus");
+
+                    b.Navigation("SeparatedByAccount");
+
+                    b.Navigation("SeparatedByEmployee");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderItem", b =>
@@ -1711,6 +1727,60 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("OrderItem");
+
+                    b.Navigation("StockLot");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderReturn", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Order", "OriginalOrder")
+                        .WithMany()
+                        .HasForeignKey("OriginalOrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Identity.ApplicationUser", "ReturnedByAccount")
+                        .WithMany()
+                        .HasForeignKey("ReturnedByAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Employee", "ReturnedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("ReturnedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("OriginalOrder");
+
+                    b.Navigation("ReturnedByAccount");
+
+                    b.Navigation("ReturnedByEmployee");
+                });
+
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderReturnItem", b =>
+                {
+                    b.HasOne("ArarasHealthHub.Domain.Entities.OrderReturn", "OrderReturn")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderReturnId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ArarasHealthHub.Domain.Entities.StockLot", "StockLot")
+                        .WithMany()
+                        .HasForeignKey("StockLotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("OrderReturn");
+
+                    b.Navigation("Product");
 
                     b.Navigation("StockLot");
                 });
@@ -2038,11 +2108,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.DispenseReturn", b =>
-                {
-                    b.Navigation("Items");
-                });
-
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.Facility", b =>
                 {
                     b.Navigation("Accounts");
@@ -2065,6 +2130,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     b.Navigation("OrderItemLots");
                 });
 
+            modelBuilder.Entity("ArarasHealthHub.Domain.Entities.OrderReturn", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.PackagingType", b =>
                 {
                     b.Navigation("Products");
@@ -2084,8 +2154,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     b.Navigation("Lots");
 
-                    b.Navigation("StockCost")
-                        .IsRequired();
+                    b.Navigation("StockCost");
                 });
 
             modelBuilder.Entity("ArarasHealthHub.Domain.Entities.StockAdjustment", b =>

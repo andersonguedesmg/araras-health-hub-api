@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Accounts.Commands.ChangeAccountPassword;
-using ArarasHealthHub.Shared.Messages;
 
 using FluentValidation;
 

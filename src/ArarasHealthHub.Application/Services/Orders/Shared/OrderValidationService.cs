@@ -128,7 +128,7 @@ namespace ArarasHealthHub.Application.Services.Orders.Shared
 
                 var returnedQuantity = returnedByProduct.GetValueOrDefault(item.ProductId);
 
-                if (returnedQuantity + item.ReturnQuantity > dispensedQuantity)
+                if (returnedQuantity + item.Quantity > dispensedQuantity)
                 {
                     throw new DomainRuleException($"Produto {item.ProductId}: devolução excede a quantidade dispensada.");
                 }

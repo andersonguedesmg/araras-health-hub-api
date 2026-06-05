@@ -57,7 +57,10 @@ namespace ArarasHealthHub.Application.Features.Stocks.Queries.GetCriticalStocks
                     x.AvailableQuantity,
                     x.MinQuantity,
                     x.StockCost != null ? x.StockCost.AverageUnitCost : 0,
-                    true))
+                    true,
+                    x.CreatedOn,
+                    x.UpdatedOn
+                ))
                 .ToListAsync(cancellationToken);
 
             return PagedResult<StockListItemResponse>.Success(

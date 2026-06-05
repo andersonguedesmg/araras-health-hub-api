@@ -296,14 +296,62 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Orders_ApplicationUsers_ApprovedByAccountId",
+                        column: x => x.ApprovedByAccountId,
+                        principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_ApplicationUsers_CanceledByAccountId",
+                        column: x => x.CanceledByAccountId,
+                        principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Orders_ApplicationUsers_CreatedByAccountId",
                         column: x => x.CreatedByAccountId,
                         principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Orders_ApplicationUsers_FinalizedByAccountId",
+                        column: x => x.FinalizedByAccountId,
+                        principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_ApplicationUsers_SeparatedByAccountId",
+                        column: x => x.SeparatedByAccountId,
+                        principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_Employees_ApprovedByEmployeeId",
+                        column: x => x.ApprovedByEmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_Employees_CanceledByEmployeeId",
+                        column: x => x.CanceledByEmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Orders_Employees_CreatedByEmployeeId",
                         column: x => x.CreatedByEmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_Employees_FinalizedByEmployeeId",
+                        column: x => x.FinalizedByEmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_Employees_SeparatedByEmployeeId",
+                        column: x => x.SeparatedByEmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -438,14 +486,14 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 comment: "Representa um produto");
 
             migrationBuilder.CreateTable(
-                name: "DispenseReturns",
+                name: "OrderReturns",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OriginalOrderId = table.Column<int>(type: "int", nullable: false),
                     Reason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReturnedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReturnedByEmployeeId = table.Column<int>(type: "int", nullable: false),
                     ReturnedByAccountId = table.Column<int>(type: "int", nullable: false),
                     TotalReturnedValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
@@ -455,27 +503,27 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DispenseReturns", x => x.Id);
+                    table.PrimaryKey("PK_OrderReturns", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DispenseReturns_ApplicationUsers_ReturnedByAccountId",
+                        name: "FK_OrderReturns_ApplicationUsers_ReturnedByAccountId",
                         column: x => x.ReturnedByAccountId,
                         principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_DispenseReturns_Employees_ReturnedByEmployeeId",
+                        name: "FK_OrderReturns_Employees_ReturnedByEmployeeId",
                         column: x => x.ReturnedByEmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_DispenseReturns_Orders_OriginalOrderId",
+                        name: "FK_OrderReturns_Orders_OriginalOrderId",
                         column: x => x.OriginalOrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Representa devoluções de itens dispensados");
+                comment: "Representa devoluções de produtos dispensados em pedidos");
 
             migrationBuilder.CreateTable(
                 name: "OrderItems",
@@ -509,7 +557,7 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Itens do pedido");
+                comment: "Itens pertencentes ao pedido de dispensação");
 
             migrationBuilder.CreateTable(
                 name: "ReceivedItems",
@@ -641,50 +689,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 comment: "Representa o estoque por lote");
 
             migrationBuilder.CreateTable(
-                name: "DispenseReturnItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DispenseReturnId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    StockLotId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
-                    UnitValue = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
-                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Batch = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Brand = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DispenseReturnItems", x => x.Id);
-                    table.CheckConstraint("CK_DispenseReturnItem_Quantity", "\"Quantity\" > 0");
-                    table.ForeignKey(
-                        name: "FK_DispenseReturnItems_DispenseReturns_DispenseReturnId",
-                        column: x => x.DispenseReturnId,
-                        principalTable: "DispenseReturns",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DispenseReturnItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DispenseReturnItems_StockLots_StockLotId",
-                        column: x => x.StockLotId,
-                        principalTable: "StockLots",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                },
-                comment: "Itens devolvidos ao estoque");
-
-            migrationBuilder.CreateTable(
                 name: "OrderItemLots",
                 columns: table => new
                 {
@@ -715,7 +719,48 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "Lotes separados para atendimento do pedido");
+                comment: "Lotes efetivamente separados para atendimento do item do pedido");
+
+            migrationBuilder.CreateTable(
+                name: "OrderReturnItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderReturnId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    StockLotId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    UnitValue = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    TotalValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Data de criação do registro."),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Data da última atualização do registro."),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true, comment: "Indica se o registro está ativo.")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderReturnItems", x => x.Id);
+                    table.CheckConstraint("CK_OrderReturnItem_Quantity", "\"Quantity\" > 0");
+                    table.ForeignKey(
+                        name: "FK_OrderReturnItems_OrderReturns_OrderReturnId",
+                        column: x => x.OrderReturnId,
+                        principalTable: "OrderReturns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderReturnItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OrderReturnItems_StockLots_StockLotId",
+                        column: x => x.StockLotId,
+                        principalTable: "StockLots",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                },
+                comment: "Itens devolvidos ao estoque");
 
             migrationBuilder.CreateTable(
                 name: "StockAdjustmentItems",
@@ -768,10 +813,11 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false, comment: "Identificador único do registro.")
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
+                    Direction = table.Column<int>(type: "int", nullable: false),
+                    Reason = table.Column<int>(type: "int", nullable: false),
                     MovementDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SourceDocumentId = table.Column<int>(type: "int", nullable: false),
-                    SourceDocumentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SourceDocumentType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ResponsibleId = table.Column<int>(type: "int", nullable: false),
                     StockLotId = table.Column<int>(type: "int", nullable: false),
                     MovementCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
@@ -850,41 +896,6 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturnItems_DispenseReturnId",
-                table: "DispenseReturnItems",
-                column: "DispenseReturnId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturnItems_ProductId",
-                table: "DispenseReturnItems",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturnItems_StockLotId",
-                table: "DispenseReturnItems",
-                column: "StockLotId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturns_OriginalOrderId",
-                table: "DispenseReturns",
-                column: "OriginalOrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturns_ReturnDate",
-                table: "DispenseReturns",
-                column: "ReturnDate");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturns_ReturnedByAccountId",
-                table: "DispenseReturns",
-                column: "ReturnedByAccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DispenseReturns_ReturnedByEmployeeId",
-                table: "DispenseReturns",
-                column: "ReturnedByEmployeeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Employees_Cpf",
                 table: "Employees",
                 column: "Cpf",
@@ -917,6 +928,66 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderReturnItems_OrderReturnId",
+                table: "OrderReturnItems",
+                column: "OrderReturnId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderReturnItems_ProductId",
+                table: "OrderReturnItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderReturnItems_StockLotId",
+                table: "OrderReturnItems",
+                column: "StockLotId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderReturns_OriginalOrderId",
+                table: "OrderReturns",
+                column: "OriginalOrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderReturns_OriginalOrderId_ReturnedAt",
+                table: "OrderReturns",
+                columns: new[] { "OriginalOrderId", "ReturnedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderReturns_ReturnedAt",
+                table: "OrderReturns",
+                column: "ReturnedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderReturns_ReturnedByAccountId",
+                table: "OrderReturns",
+                column: "ReturnedByAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderReturns_ReturnedByEmployeeId",
+                table: "OrderReturns",
+                column: "ReturnedByEmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_ApprovedByAccountId",
+                table: "Orders",
+                column: "ApprovedByAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_ApprovedByEmployeeId",
+                table: "Orders",
+                column: "ApprovedByEmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CanceledByAccountId",
+                table: "Orders",
+                column: "CanceledByAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CanceledByEmployeeId",
+                table: "Orders",
+                column: "CanceledByEmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CreatedByAccountId",
                 table: "Orders",
                 column: "CreatedByAccountId");
@@ -927,6 +998,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 column: "CreatedByEmployeeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_FinalizedByAccountId",
+                table: "Orders",
+                column: "FinalizedByAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_FinalizedByEmployeeId",
+                table: "Orders",
+                column: "FinalizedByEmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_OrderFacilityId",
                 table: "Orders",
                 column: "OrderFacilityId");
@@ -935,6 +1016,16 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "IX_Orders_OrderStatusId",
                 table: "Orders",
                 column: "OrderStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_SeparatedByAccountId",
+                table: "Orders",
+                column: "SeparatedByAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_SeparatedByEmployeeId",
+                table: "Orders",
+                column: "SeparatedByEmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderStatuses_Description",
@@ -1030,14 +1121,29 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 columns: new[] { "StockId", "Batch", "ExpiryDate" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_StockMovements_Direction",
+                table: "StockMovements",
+                column: "Direction");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StockMovements_MovementDate",
                 table: "StockMovements",
                 column: "MovementDate");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StockMovements_Reason",
+                table: "StockMovements",
+                column: "Reason");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StockMovements_ResponsibleId",
                 table: "StockMovements",
                 column: "ResponsibleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockMovements_SourceDocumentId_SourceDocumentType",
+                table: "StockMovements",
+                columns: new[] { "SourceDocumentId", "SourceDocumentType" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockMovements_StockLotId",
@@ -1070,10 +1176,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "DispenseReturnItems");
+                name: "OrderItemLots");
 
             migrationBuilder.DropTable(
-                name: "OrderItemLots");
+                name: "OrderReturnItems");
 
             migrationBuilder.DropTable(
                 name: "StockAdjustmentItems");
@@ -1085,10 +1191,10 @@ namespace ArarasHealthHub.Infrastructure.Migrations
                 name: "StockMovements");
 
             migrationBuilder.DropTable(
-                name: "DispenseReturns");
+                name: "OrderItems");
 
             migrationBuilder.DropTable(
-                name: "OrderItems");
+                name: "OrderReturns");
 
             migrationBuilder.DropTable(
                 name: "StockAdjustments");
