@@ -1,242 +1,400 @@
-# Arquitetura do Projeto - ArarasHealthHub
+# Arquitetura do Projeto — Araras Health Hub
 
----
+Documento central de arquitetura do sistema.
 
 ## 1. Visão Geral
 
-O projeto ArarasHealthHub segue os princípios de:
+O Araras Health Hub é uma plataforma para gestão logística de medicamentos e insumos da rede municipal de saúde.
+
+#### O sistema contempla todo o ciclo operacional:
+
+- Recebimento de produtos
+- Controle de estoque
+- Controle de lotes
+- Controle de validade
+- Controle de custo médio
+- Gestão de pedidos
+- Aprovação de pedidos
+- Separação baseada em FEFO
+- Dispensação
+- Estornos
+- Rastreabilidade completa de movimentações
+
+## 2. Objetivos Arquiteturais
+
+#### A arquitetura foi projetada para garantir:
+
+- Alta coesão
+- Baixo acoplamento
+- Escalabilidade
+- Testabilidade
+- Manutenibilidade
+- Evolução sustentável
+- Separação explícita de responsabilidades
+
+## 3. Princípios Adotados
+
+#### O projeto utiliza:
 
 - Clean Architecture
-- CQRS (Command Query Responsibility Segregation)
-- Separação explícita de responsabilidades
-- Padronização definitiva de responses via Result<T>
-- Tratamento centralizado de exceções via ProblemDetails (RFC 7807)
-- EF Core com consultas otimizadas (projeção direta)
+- CQRS
+- Domain-Driven Design (DDD Lite)
+- Repository Pattern
+- Service Layer
+- Dependency Injection
+- Fluent Validation
+- ProblemDetails (RFC 7807)
+- Policy-Based Authorization
 
-O objetivo é garantir:
+## 4. Estrutura de Camadas
 
-- Escalabilidade previsível
-- Alta coesão e baixo acoplamento
-- Testabilidade isolada por camada
-- Governança arquitetural clara
-- Evolução sustentável a longo prazo
+```text
+┌─────────────────────────┐
+│        API Layer        │
+└────────────┬────────────┘
+             │
+┌────────────▼────────────┐
+│    Application Layer    │
+└────────────┬────────────┘
+             │
+┌────────────▼────────────┐
+│      Domain Layer       │
+└────────────┬────────────┘
+             │
+┌────────────▼────────────┐
+│   Infrastructure Layer  │
+└─────────────────────────┘
+```
 
----
+## 5. Domain Layer
 
-## 2. Estrutura de Camadas
+#### Responsável por representar o núcleo do negócio.
 
-### 2.1 Domain
+Contém:
 
-Responsável por:
-
-- Entidades
-- Value Objects
+- Entities
 - Enums
-- Regras centrais de negócio
+- Value Objects
+- Regras de negócio
 
-Regras obrigatórias:
+Diretrizes:
 
 - Não depende de nenhuma outra camada
-- Não conhece Application, Infrastructure ou API
-- Não contém lógica de persistência
-- Não contém dependência de framework
+- Não conhece banco de dados
+- Não conhece HTTP
+- Não conhece EF Core
+- Não conhece MediatR
 
----
+#### As entidades são responsáveis por proteger seus próprios invariantes.
 
-### 2.2 Application
+Falhas de domínio são representadas por:
 
-Responsável por:
+- DomainException
+- DomainRuleException
+
+## 6. Application Layer
+
+#### Responsável pelos casos de uso do sistema.
+
+Contém:
 
 - Commands
 - Queries
 - Handlers
 - Validators
-- Responses (records imutáveis)
-- Interfaces de serviços
-- Pipeline Behaviors
-- Exceções de aplicação
+- Responses
+- Services
+- Interfaces
+- Exceptions
 
-Diretrizes definitivas:
+### 6.1 Commands
 
-- Nunca acessar HttpContext
-- Nunca acessar banco diretamente (usar abstrações)
-- Não utilizar Include quando projeção resolver
-- Queries devem usar projeção direta no Select
-- Não usar ToLower() em consultas (evitar impacto no SQL Server)
-- Commands retornam Result ou Result<T>
-- Queries retornam Result<T> ou PagedResult<T>
-- Falhas são representadas exclusivamente por Exceptions
+#### Commands representam operações que alteram estado.
 
----
+Exemplos:
 
-### 2.3 Infrastructure
+- CreateOrderCommand
+- ApproveOrderCommand
+- SeparateOrderCommand
+- FinalizeOrderCommand
+- CancelOrderCommand
 
-Responsável por:
+Diretrizes:
+
+- Alteram estado
+- Nunca executam consultas complexas
+- Retornam Result ou Result<T>
+
+### 6.2 Queries
+
+#### Queries representam operações de leitura.
+
+Exemplos:
+
+- GetOrderByIdQuery
+- GetAllOrdersQuery
+- GetOrderPickingDetailsQuery
+
+Diretrizes:
+
+- Não alteram estado
+- Devem utilizar projeção direta quando possível
+- Devem utilizar paginação quando aplicável
+
+### 6.3 Services
+
+#### Services encapsulam regras de negócio complexas e reutilizáveis.
+
+Atuam como orquestradores de processos.
+
+Exemplos atuais:
+
+### Orders
+
+- IOrderCreationService
+- IOrderApprovalService
+- IOrderPickingService
+- IOrderSeparationService
+- IOrderFinalizationService
+- IOrderCancellationService
+- IOrderReturnService
+
+### Receivings
+
+- IInventoryEntryService
+
+Responsabilidades típicas:
+
+- Coordenar múltiplos repositórios
+- Aplicar regras transacionais
+- Centralizar lógica compartilhada
+- Evitar duplicação entre handlers
+
+### 6.4 Validators
+
+#### Responsáveis apenas por validações básicas.
+
+Exemplos:
+
+- Campos obrigatórios
+- Limites de tamanho
+- Formato de dados
+
+Não devem:
+
+- Consultar banco
+- Executar regras de negócio
+- Manipular entidades
+
+## 7. Infrastructure Layer
+
+#### Responsável pelos detalhes técnicos.
+
+Contém:
 
 - EF Core
-- Configuração de entidades
-- Implementação de repositories
-- Implementação de serviços externos
+- Repositories
+- Migrations
+- Configurações de entidades
+- Serviços externos
 
-Regras:
+Diretrizes:
 
-- Pode depender de Application
+- Pode depender da Application
 - Não deve conter regra de negócio
-- Configurações de relacionamento ficam aqui
-- Não deve retornar DTOs (retorna entidades)
+- Não deve retornar DTOs
+- Deve retornar entidades ou projeções específicas
 
----
+### 7.1 Persistência
 
-### 2.4 API
+#### Banco principal:
 
-Responsável por:
+- SQL Server
+
+#### ORM:
+
+- Entity Framework Core
+
+Características:
+
+- Fluent API
+- Check Constraints
+- DeleteBehavior.Restrict
+- Soft Delete
+- Auditoria automática
+
+## 8. API Layer
+
+#### Responsável pela exposição HTTP.
+
+Contém:
 
 - Controllers
 - Middlewares
+- Configurações
 - Autorização
-- Configuração de DI
 
-Regras:
+Diretrizes:
 
 - Não contém regra de negócio
 - Apenas delega para MediatR
-- Sempre aceitar CancellationToken
-- Utilizar BaseApiController
-- Converter exceções em ProblemDetails via middleware
-- Utilizar ProducesResponseType explícito para erros relevantes
+- Utiliza BaseApiController
+- Utiliza CancellationToken
 
----
+## 9. CQRS
 
-## 3. Padrão CQRS
+#### O projeto adota separação explícita entre leitura e escrita.
 
-Separação obrigatória:
+### Escrita
 
-- Commands alteram estado
-- Queries apenas consultam
+Command → Handler → Service → Repository
 
-Regras:
+### Leitura
 
-- Commands nunca retornam entidades
-- Queries nunca alteram estado
-- Toda operação deve ser explícita
-- Validators apenas validam formato e consistência básica
-- Validação de existência ocorre no Handler
+Query → Handler → Repository
 
----
+Benefícios:
 
-## 4. Modelo de Resposta
+- Responsabilidades isoladas
+- Código mais simples
+- Melhor escalabilidade
+- Melhor testabilidade
 
-### 4.1 Sucesso
+## 10. Modelo de Resposta
 
-Utiliza:
+#### O sistema utiliza:
 
 - Result
 - Result<T>
 - PagedResult<T>
 
-Estrutura de sucesso:
+Utilizados exclusivamente para operações bem-sucedidas.
 
-{
-  "isSuccess": true,
-  "message": "Mensagem clara",
-  "data": {}
-}
+### Paginação
 
-### 4.2 Paginação
+#### Consultas paginadas retornam:
 
-PagedResult<T> inclui:
+- PageNumber
+- PageSize
+- TotalCount
+- TotalPages
+- Data
 
-- pageNumber
-- pageSize
-- totalCount
-- totalPages
-- data
+## 11. Tratamento de Erros
 
-A paginação é aplicada via extensão ApplyPagination.
+#### Falhas são representadas por Exceptions.
 
-### 4.3 Erros
+O middleware global converte exceções para ProblemDetails (RFC 7807).
 
-Erros são tratados exclusivamente via Exceptions.
+Tipos utilizados:
 
-Convertidos para ProblemDetails (RFC 7807):
-
-{
-  "type": "https://httpstatuses.com/400",
-  "title": "Erro de validação",
-  "status": 400,
-  "detail": "Ocorreram erros de validação.",
-  "errors": {
-    "Field": ["Mensagem"]
-  }
-}
-
-Não utilizamos Result para representar falhas.
-
----
-
-## 5. Exceções Customizadas
-
-- DomainException
-- BusinessRuleException
 - ApplicationValidationException
 - NotFoundException
 - UnauthorizedException
 - ForbiddenException
+- DomainException
+- DomainRuleException
 
-Regra arquitetural:
+Diretriz:
 
-Exceptions representam falhas.
-Result representa sucesso.
+- Result representa sucesso
+- Exceptions representam falhas
 
----
+## 12. Segurança
 
-## 6. Autorização
+#### Autenticação:
+
+- JWT Bearer
+
+#### Autorização:
 
 - Policy-Based Authorization
-- Claims geradas via TokenService
-- Roles e Scopes via Enums
-- Application não acessa HttpContext
 
----
+Características:
 
-## 7. Padrões de Nomeação
+- Claims
+- Scopes
+- Policies
+- ASP.NET Identity
 
-Commands:
-<CreateEntidade>Command
+A camada Application nunca acessa HttpContext.
 
-Queries:
-<GetEntidade>Query
-<GetAllEntidade>Query
+## 13. Convenções de Projeto
 
-Responses:
-<Entidade>Response
-<Entidade>ListItemResponse
-<Entidade>CreatedResponse (quando necessário)
+### Commands
 
-Validators:
-<Classe>Validator
+```text
+<CreateEntity>Command
+<UpdateEntity>Command
+<DeleteEntity>Command
+```
 
-Handlers:
-<Classe>Handler
+### Queries
 
----
+```text
+<GetEntityById>Query
+<GetAllEntities>Query
+```
 
-## 8. Governança do Projeto
+### Responses
 
-- Commits devem seguir commit-pattern.md
-- Cada feature deve possuir documentação própria
-- Não misturar responsabilidades no mesmo commit
+```text
+<Entity>Response
+<Entity>ListItemResponse
+```
+
+### Validators
+
+```text
+<ClassName>Validator
+```
+
+### Services
+
+```text
+<IEntityService>
+<EntityService>
+```
+
+## 14. Documentação
+
+#### A documentação está organizada em:
+
+```text
+docs/
+├─ architecture/
+│  └─ overview.md
+└─ features/
+   ├─ accounts.md
+   ├─ employees.md
+   ├─ facilities.md
+   ├─ orders.md
+   ├─ products.md
+   ├─ receivings.md
+   ├─ stocks.md
+   └─ suppliers.md
+```
+
+Cada feature deve possuir documentação própria.
+
+## 15. Governança
+
+#### Regras obrigatórias:
+
+- Commits seguem commit-pattern.md
+- Features possuem documentação própria
+- Não misturar responsabilidades em um único commit
 - Não criar abstrações desnecessárias
-- Evitar arquivos globais de mensagens
+- Não duplicar regras de negócio
+- Priorizar clareza sobre complexidade
 
----
+## 16. Objetivo Estratégico
 
-## 9. Objetivo Estratégico
+#### Garantir que o sistema:
 
-Garantir que o projeto:
-
-- Cresça sem degradação estrutural
+- Cresça sem degradação arquitetural
 - Permita onboarding rápido
-- Seja auditável
+- Seja facilmente auditável
 - Seja previsível
 - Seja sustentável a longo prazo
+- Mantenha alta qualidade técnica
