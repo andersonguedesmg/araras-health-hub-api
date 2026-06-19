@@ -28,8 +28,12 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductDropdo
         {
             var query = _productRepository
                 .AsQueryable()
-                .AsNoTracking()
-                .Where(e => e.IsActive);
+                .AsNoTracking();
+
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
