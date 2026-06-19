@@ -13,11 +13,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDropdown
 {
-    public class GetSupplierDropdownQueryHandler : IRequestHandler<GetSupplierDropdownQuery, PagedResult<DropdownItemResponse>>
+    public class GetSupplierDropdownQueryHandler
+        : IRequestHandler<GetSupplierDropdownQuery, PagedResult<DropdownItemResponse>>
     {
         private readonly ISupplierRepository _supplierRepository;
 
-        public GetSupplierDropdownQueryHandler(ISupplierRepository supplierRepository)
+        public GetSupplierDropdownQueryHandler(
+            ISupplierRepository supplierRepository)
         {
             _supplierRepository = supplierRepository;
         }
@@ -36,18 +38,23 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
                 var term = request.SearchTerm.Trim();
 
                 query = query.Where(s =>
-                    EF.Functions.Like(s.LegalName, $"%{term}%"));
+                    EF.Functions.Like(s.LegalName, $"%{term}%") ||
+                    EF.Functions.Like(s.TradeName!, $"%{term}%"));
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
 
             var items = await query
-                .OrderBy(s => s.LegalName)
+                .OrderBy(s => string.IsNullOrWhiteSpace(s.TradeName)
+                    ? s.LegalName
+                    : s.TradeName)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(s => new DropdownItemResponse(
                     s.Id,
-                    s.TradeName))
+                    string.IsNullOrWhiteSpace(s.TradeName)
+                        ? s.LegalName
+                        : s.TradeName))
                 .ToListAsync(cancellationToken);
 
             return PagedResult<DropdownItemResponse>.Success(
