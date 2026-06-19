@@ -29,8 +29,12 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
         {
             var query = _mainCategoryRepository
                 .AsQueryable()
-                .AsNoTracking()
-                .Where(mc => mc.IsActive);
+                .AsNoTracking();
+
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
