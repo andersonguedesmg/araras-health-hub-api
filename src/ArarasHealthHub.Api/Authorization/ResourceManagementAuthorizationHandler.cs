@@ -13,16 +13,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace araras_health_hub_api.Authorization
 {
-    public class ResourceManagementAuthorizationHandler : AuthorizationHandler<ResourceManagementRequirement>
+    public class ResourceManagementAuthorizationHandler
+        : AuthorizationHandler<ResourceManagementRequirement>
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ResourceManagementAuthorizationHandler(UserManager<ApplicationUser> userManager)
+        public ResourceManagementAuthorizationHandler(
+            UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
 
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceManagementRequirement requirement)
+        protected override async Task HandleRequirementAsync(
+            AuthorizationHandlerContext context,
+            ResourceManagementRequirement requirement)
         {
             if (context.User.Identity?.IsAuthenticated != true)
             {
@@ -30,31 +34,27 @@ namespace araras_health_hub_api.Authorization
                 return;
             }
 
-            var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            var subjectUser = await _userManager.GetUserAsync(context.User);
+
+            if (subjectUser is null || !subjectUser.IsActive)
             {
                 context.Fail();
                 return;
             }
 
-            var subjectUser = await _userManager.FindByIdAsync(userId);
-            if (subjectUser == null)
+            if (subjectUser.Scope != AccountScopeEnum.Management)
             {
                 context.Fail();
                 return;
             }
 
-            var subjectRoles = await _userManager.GetRolesAsync(subjectUser);
-
-            if (subjectUser.Scope == AccountScopeEnum.Management &&
-                (subjectRoles.Contains("Master") || subjectRoles.Contains("Admin")))
+            if (subjectUser.Role is AccountRoleEnum.Master or AccountRoleEnum.Admin)
             {
                 context.Succeed(requirement);
+                return;
             }
-            else
-            {
-                context.Fail();
-            }
+
+            context.Fail();
         }
     }
 }

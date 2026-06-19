@@ -11,11 +11,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace araras_health_hub_api.Authorization
 {
-    public class AccountManagementAuthorizationHandler : AuthorizationHandler<ManageAccountRequirement>
+    public class AccountManagementAuthorizationHandler
+        : AuthorizationHandler<ManageAccountRequirement>
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountManagementAuthorizationHandler(UserManager<ApplicationUser> userManager)
+        public AccountManagementAuthorizationHandler(
+            UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
@@ -31,25 +33,20 @@ namespace araras_health_hub_api.Authorization
             }
 
             var subjectUser = await _userManager.GetUserAsync(context.User);
-            if (subjectUser == null || !subjectUser.IsActive)
+
+            if (subjectUser is null || !subjectUser.IsActive)
             {
                 context.Fail();
                 return;
             }
 
-            var subjectRole = subjectUser.Role;
-            var subjectScope = subjectUser.Scope;
-
-            var targetScope = requirement.TargetScope;
-            var targetRole = requirement.TargetRole;
-
-            if (subjectScope != targetScope)
+            if (subjectUser.Scope != requirement.TargetScope)
             {
                 context.Fail();
                 return;
             }
 
-            if (subjectRole <= targetRole)
+            if (subjectUser.Role <= requirement.TargetRole)
             {
                 context.Succeed(requirement);
                 return;
