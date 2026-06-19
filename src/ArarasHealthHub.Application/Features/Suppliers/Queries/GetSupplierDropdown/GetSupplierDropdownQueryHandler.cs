@@ -30,8 +30,12 @@ namespace ArarasHealthHub.Application.Features.Suppliers.Queries.GetSupplierDrop
         {
             var query = _supplierRepository
                 .AsQueryable()
-                .AsNoTracking()
-                .Where(s => s.IsActive);
+                .AsNoTracking();
+
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

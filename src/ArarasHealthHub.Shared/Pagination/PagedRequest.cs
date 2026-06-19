@@ -14,5 +14,6 @@ namespace ArarasHealthHub.Shared.Pagination
         public string SortOrder { get; init; } = "asc";
 
         public string? SearchTerm { get; init; }
+        public bool? IsActive { get; init; }
     }
 }
