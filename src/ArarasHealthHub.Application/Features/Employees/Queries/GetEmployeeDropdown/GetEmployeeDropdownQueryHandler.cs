@@ -29,8 +29,12 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeDrop
         {
             var query = _employeeRepository
                 .AsQueryable()
-                .AsNoTracking()
-                .Where(e => e.IsActive);
+                .AsNoTracking();
+
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
