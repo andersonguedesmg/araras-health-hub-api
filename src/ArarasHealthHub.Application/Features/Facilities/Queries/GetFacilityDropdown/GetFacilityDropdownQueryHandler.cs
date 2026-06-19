@@ -29,8 +29,12 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetFacilityDro
         {
             var query = _facilityRepository
                 .AsQueryable()
-                .AsNoTracking()
-                .Where(f => f.IsActive);
+                .AsNoTracking();
+
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

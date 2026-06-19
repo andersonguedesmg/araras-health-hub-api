@@ -33,6 +33,11 @@ namespace ArarasHealthHub.Application.Features.Facilities.Queries.GetAllFaciliti
                 .AsQueryable()
                 .AsNoTracking();
 
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
+
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var term = request.SearchTerm.Trim();
