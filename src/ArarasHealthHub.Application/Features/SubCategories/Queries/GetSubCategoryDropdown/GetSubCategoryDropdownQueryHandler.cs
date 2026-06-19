@@ -30,9 +30,12 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
             var query = _subCategoryRepository
                 .AsQueryable()
                 .AsNoTracking()
-                .Where(x =>
-                    x.IsActive &&
-                    x.MainCategoryId == request.MainCategoryId);
+                .Where(x => x.MainCategoryId == request.MainCategoryId);
+
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {

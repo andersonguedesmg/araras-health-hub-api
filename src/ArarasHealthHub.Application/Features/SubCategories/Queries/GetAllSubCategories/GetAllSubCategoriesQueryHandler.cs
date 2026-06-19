@@ -38,6 +38,11 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetAllSubCa
                     sc.MainCategoryId == request.MainCategoryId);
             }
 
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
+
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var term = request.SearchTerm.Trim();
