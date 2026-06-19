@@ -34,6 +34,11 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
                 .AsNoTracking()
                 .AsQueryable();
 
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
+
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var term = request.SearchTerm.Trim();
@@ -62,6 +67,8 @@ namespace ArarasHealthHub.Application.Features.Accounts.Queries.GetAllAccounts
             };
 
             var items = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .Select(a => new AccountListItemResponse(
                     a.Id,
                     a.UserName!,
