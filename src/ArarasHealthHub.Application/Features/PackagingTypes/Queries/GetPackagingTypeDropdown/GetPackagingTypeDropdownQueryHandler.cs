@@ -29,8 +29,12 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetPackagi
         {
             var query = _packagingTypeRepository
                 .AsQueryable()
-                .AsNoTracking()
-                .Where(x => x.IsActive);
+                .AsNoTracking();
+
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == request.IsActive.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
