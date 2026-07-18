@@ -15,23 +15,15 @@ namespace ArarasHealthHub.Application.Profiles
         public StockMovementProfile()
         {
             CreateMap<StockMovement, StockMovementResponse>()
-                .ForMember(dest => dest.ProductName,
-                           opt => opt.MapFrom(src => src.StockLot.Stock.Product.Name))
-
-                .ForMember(dest => dest.ProductId,
-                           opt => opt.MapFrom(src => src.StockLot.Stock.ProductId))
-
-                .ForMember(dest => dest.Batch,
-                           opt => opt.MapFrom(src => src.StockLot.Batch))
-
-                .ForMember(dest => dest.Brand,
-                           opt => opt.MapFrom(src => src.StockLot.Brand))
-
-                .ForMember(dest => dest.ExpiryDate,
-                           opt => opt.MapFrom(src => src.StockLot.ExpiryDate))
-
-                .ForMember(dest => dest.ResponsibleName,
-                           opt => opt.MapFrom(src => src.Responsible.Name));
+                .ForCtorParam(
+                    nameof(StockMovementResponse.ProductId),
+                    opt => opt.MapFrom(src => src.StockLot.Stock.ProductId))
+                .ForCtorParam(
+                    nameof(StockMovementResponse.ProductName),
+                    opt => opt.MapFrom(src => src.StockLot.Stock.Product.Name))
+                .ForCtorParam(
+                    nameof(StockMovementResponse.ResponsibleName),
+                    opt => opt.MapFrom(src => src.Responsible.Name));
         }
     }
 }
