@@ -15,15 +15,12 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public SubCategoryProfile()
         {
-            CreateMap<SubCategory, DropdownItemResponse>();
+            CreateMap<SubCategory, DropdownItemResponse>()
+                .ForCtorParam("Label", opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<SubCategory, SubCategoryResponse>()
-                .ForMember(dest => dest.MainCategoryName,
-                    opt => opt.MapFrom(src => src.MainCategory!.Name));
+            CreateMap<SubCategory, SubCategoryResponse>();
 
-            CreateMap<SubCategory, SubCategoryListItemResponse>()
-                .ForMember(dest => dest.MainCategoryName,
-                    opt => opt.MapFrom(src => src.MainCategory!.Name));
+            CreateMap<SubCategory, SubCategoryListItemResponse>();
         }
     }
 }
