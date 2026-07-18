@@ -8,8 +8,6 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
-using AutoMapper;
-
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +17,10 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
     public class GetSubCategoryByIdQueryHandler : IRequestHandler<GetSubCategoryByIdQuery, Result<SubCategoryResponse>>
     {
         private readonly ISubCategoryRepository _subCategoryRepository;
-        private readonly IMapper _mapper;
 
-        public GetSubCategoryByIdQueryHandler(
-            ISubCategoryRepository subCategoryRepository,
-            IMapper mapper)
+        public GetSubCategoryByIdQueryHandler(ISubCategoryRepository subCategoryRepository)
         {
             _subCategoryRepository = subCategoryRepository;
-            _mapper = mapper;
         }
 
         public async Task<Result<SubCategoryResponse>> Handle(
@@ -42,7 +36,15 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Queries.GetSubCateg
             if (subCategory is null)
                 throw new NotFoundException("Subcategoria não encontrada.");
 
-            var response = _mapper.Map<SubCategoryResponse>(subCategory);
+            var response = new SubCategoryResponse(
+                subCategory.Id,
+                subCategory.Name,
+                subCategory.MainCategoryId,
+                subCategory.MainCategory?.Name ?? string.Empty,
+                subCategory.CreatedOn,
+                subCategory.UpdatedOn,
+                subCategory.IsActive
+            );
 
             return Result<SubCategoryResponse>.Success(
                 response,

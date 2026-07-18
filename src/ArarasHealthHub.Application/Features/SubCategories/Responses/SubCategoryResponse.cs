@@ -11,7 +11,7 @@ namespace ArarasHealthHub.Application.Features.SubCategories.Responses
         int MainCategoryId,
         string MainCategoryName,
         DateTime CreatedOn,
-        DateTime UpdatedOn,
+        DateTime? UpdatedOn,
         bool IsActive
     );
 }
