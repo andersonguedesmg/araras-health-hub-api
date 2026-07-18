@@ -16,10 +16,10 @@ namespace ArarasHealthHub.Application.Profiles
         public EmployeeProfile()
         {
             CreateMap<Employee, EmployeeResponse>();
-
             CreateMap<Employee, EmployeeListItemResponse>();
 
-            CreateMap<Employee, DropdownItemResponse>();
+            CreateMap<Employee, DropdownItemResponse>()
+                .ForCtorParam("Label", opt => opt.MapFrom(src => src.Name));
         }
     }
 }
