@@ -8,8 +8,6 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
-using AutoMapper;
-
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetPackagingTypeById
@@ -17,14 +15,10 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetPackagi
     public class GetPackagingTypeByIdQueryHandler : IRequestHandler<GetPackagingTypeByIdQuery, Result<PackagingTypeResponse>>
     {
         private readonly IPackagingTypeRepository _packagingTypeRepository;
-        private readonly IMapper _mapper;
 
-        public GetPackagingTypeByIdQueryHandler(
-            IPackagingTypeRepository packagingTypeRepository,
-            IMapper mapper)
+        public GetPackagingTypeByIdQueryHandler(IPackagingTypeRepository packagingTypeRepository)
         {
             _packagingTypeRepository = packagingTypeRepository;
-            _mapper = mapper;
         }
 
         public async Task<Result<PackagingTypeResponse>> Handle(
@@ -37,7 +31,13 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Queries.GetPackagi
             if (packagingType is null)
                 throw new NotFoundException("Tipo de embalagem não foi encontrado.");
 
-            var response = _mapper.Map<PackagingTypeResponse>(packagingType);
+            var response = new PackagingTypeResponse(
+                packagingType.Id,
+                packagingType.Name,
+                packagingType.CreatedOn,
+                packagingType.UpdatedOn,
+                packagingType.IsActive
+            );
 
             return Result<PackagingTypeResponse>.Success(
                 response,

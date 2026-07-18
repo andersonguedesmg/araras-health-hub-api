@@ -10,7 +10,7 @@ namespace ArarasHealthHub.Application.Features.PackagingTypes.Responses
         int Id,
         string Name,
         DateTime CreatedOn,
-        DateTime UpdatedOn,
+        DateTime? UpdatedOn,
         bool IsActive
     );
 }
