@@ -8,8 +8,6 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
-using AutoMapper;
-
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCategoryById
@@ -17,14 +15,10 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
     public class GetMainCategoryByIdQueryHandler : IRequestHandler<GetMainCategoryByIdQuery, Result<MainCategoryResponse>>
     {
         private readonly IMainCategoryRepository _mainCategoryRepository;
-        private readonly IMapper _mapper;
 
-        public GetMainCategoryByIdQueryHandler(
-            IMainCategoryRepository mainCategoryRepository,
-            IMapper mapper)
+        public GetMainCategoryByIdQueryHandler(IMainCategoryRepository mainCategoryRepository)
         {
             _mainCategoryRepository = mainCategoryRepository;
-            _mapper = mapper;
         }
 
         public async Task<Result<MainCategoryResponse>> Handle(
@@ -36,7 +30,13 @@ namespace ArarasHealthHub.Application.Features.MainCategories.Queries.GetMainCat
             if (mainCategory is null)
                 throw new NotFoundException("Categoria principal não foi encontrada.");
 
-            var response = _mapper.Map<MainCategoryResponse>(mainCategory);
+            var response = new MainCategoryResponse(
+                mainCategory.Id,
+                mainCategory.Name,
+                mainCategory.CreatedOn,
+                mainCategory.UpdatedOn,
+                mainCategory.IsActive
+            );
 
             return Result<MainCategoryResponse>.Success(response, "Categoria principal encontrada com sucesso.");
         }
