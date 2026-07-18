@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using ArarasHealthHub.Application.Features.Orders.Responses;
 using ArarasHealthHub.Domain.Entities;
+using ArarasHealthHub.Shared.Responses;
 
 using AutoMapper;
 
@@ -14,22 +15,13 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public OrderProfile()
         {
-            CreateMap<OrderItem, OrderItemResponse>()
-                .ForCtorParam(
-                    "ProductId",
-                    opt => opt.MapFrom(src => src.ProductId))
-                .ForCtorParam(
-                    "ProductName",
-                    opt => opt.MapFrom(src => src.Product!.Name))
-                .ForCtorParam(
-                    "RequestedQuantity",
-                    opt => opt.MapFrom(src => src.RequestedQuantity))
-                .ForCtorParam(
-                    "ApprovedQuantity",
-                    opt => opt.MapFrom(src => src.ApprovedQuantity))
-                .ForCtorParam(
-                    "ActualQuantity",
-                    opt => opt.MapFrom(src => src.ActualQuantity));
+            CreateMap<OrderItem, OrderItemResponse>();
+
+            CreateMap<Facility, DropdownItemResponse>()
+                .ForCtorParam("Label", opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<Employee, DropdownItemResponse>()
+                .ForCtorParam("Label", opt => opt.MapFrom(src => src.Name));
 
             CreateMap<Order, OrderResponse>();
         }
