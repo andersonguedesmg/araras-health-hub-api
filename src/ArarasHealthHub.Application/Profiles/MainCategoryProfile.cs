@@ -19,7 +19,8 @@ namespace ArarasHealthHub.Application.Profiles
 
             CreateMap<MainCategory, MainCategoryListItemResponse>();
 
-            CreateMap<MainCategory, DropdownItemResponse>();
+            CreateMap<MainCategory, DropdownItemResponse>()
+                .ForCtorParam("Label", opt => opt.MapFrom(src => src.Name));
         }
     }
 }
