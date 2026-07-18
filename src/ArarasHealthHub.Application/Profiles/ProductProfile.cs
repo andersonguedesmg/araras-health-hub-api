@@ -15,23 +15,12 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public ProductProfile()
         {
-            CreateMap<Product, DropdownItemResponse>();
+            CreateMap<Product, DropdownItemResponse>()
+                .ForCtorParam("Label", opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<Product, ProductResponse>()
-                .ForMember(dest => dest.MainCategoryName,
-                    opt => opt.MapFrom(src => src.MainCategory!.Name))
-                .ForMember(dest => dest.SubCategoryName,
-                    opt => opt.MapFrom(src => src.SubCategory!.Name))
-                .ForMember(dest => dest.PackagingTypeName,
-                    opt => opt.MapFrom(src => src.PackagingType!.Name));
+            CreateMap<Product, ProductResponse>();
 
-            CreateMap<Product, ProductListItemResponse>()
-                .ForMember(dest => dest.MainCategoryName,
-                    opt => opt.MapFrom(src => src.MainCategory!.Name))
-                .ForMember(dest => dest.SubCategoryName,
-                    opt => opt.MapFrom(src => src.SubCategory!.Name))
-                .ForMember(dest => dest.PackagingTypeName,
-                    opt => opt.MapFrom(src => src.PackagingType!.Name));
+            CreateMap<Product, ProductListItemResponse>();
         }
     }
 }
