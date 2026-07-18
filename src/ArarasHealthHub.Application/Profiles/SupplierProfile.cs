@@ -20,8 +20,7 @@ namespace ArarasHealthHub.Application.Profiles
             CreateMap<Supplier, SupplierListItemResponse>();
 
             CreateMap<Supplier, DropdownItemResponse>()
-                .ForMember(dest => dest.Label,
-                    opt => opt.MapFrom(src => src.TradeName));
+                .ForCtorParam("Label", opt => opt.MapFrom(src => src.TradeName));
         }
     }
 }
