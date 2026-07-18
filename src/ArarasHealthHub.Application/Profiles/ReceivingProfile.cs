@@ -14,11 +14,7 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public ReceivingProfile()
         {
-            CreateMap<Receiving, ReceivingResponse>()
-                .ForCtorParam(
-                    nameof(ReceivingResponse.Items),
-                    opt => opt.MapFrom(src => src.Items)
-                );
+            CreateMap<Receiving, ReceivingResponse>();
 
             CreateMap<ReceivedItem, ReceivingItemResponse>();
         }
