@@ -8,8 +8,6 @@ using ArarasHealthHub.Application.Interfaces.Repositories;
 using ArarasHealthHub.Shared.Exceptions;
 using ArarasHealthHub.Shared.Results;
 
-using AutoMapper;
-
 using MediatR;
 
 namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
@@ -17,27 +15,31 @@ namespace ArarasHealthHub.Application.Features.Employees.Queries.GetEmployeeById
     public class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, Result<EmployeeResponse>>
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IMapper _mapper;
 
-        public GetEmployeeByIdQueryHandler(
-            IEmployeeRepository employeeRepository,
-            IMapper mapper)
+        public GetEmployeeByIdQueryHandler(IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
-            _mapper = mapper;
         }
 
         public async Task<Result<EmployeeResponse>> Handle(
             GetEmployeeByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var employee = await _employeeRepository
-                .GetByIdAsync(request.Id, cancellationToken);
+            var employee = await _employeeRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (employee is null)
                 throw new NotFoundException("Funcionário não foi encontrado.");
 
-            var response = _mapper.Map<EmployeeResponse>(employee);
+            var response = new EmployeeResponse(
+                employee.Id,
+                employee.Name,
+                employee.Cpf,
+                employee.Function,
+                employee.Phone,
+                employee.CreatedOn,
+                employee.UpdatedOn,
+                employee.IsActive
+            );
 
             return Result<EmployeeResponse>.Success(
                 response,

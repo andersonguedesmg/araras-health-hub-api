@@ -12,7 +12,7 @@ namespace ArarasHealthHub.Application.Features.Employees.Responses
         string Function,
         string Phone,
         DateTime CreatedOn,
-        DateTime UpdatedOn,
+        DateTime? UpdatedOn,
         bool IsActive
     );
 }
