@@ -46,6 +46,15 @@ namespace ArarasHealthHub.Infrastructure.Repository
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<Product?> GetByIdWithIncludesAsync(int id, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Products
+                .Include(p => p.MainCategory)
+                .Include(p => p.SubCategory)
+                .Include(p => p.PackagingType)
+                .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        }
+
         public IQueryable<Product> AsQueryableWithIncludes()
         {
             return _dbContext.Products

@@ -17,6 +17,8 @@ namespace ArarasHealthHub.Application.Interfaces.Repositories
 
         Task<Product?> GetByIdWithStockAsync(int id);
 
+        Task<Product?> GetByIdWithIncludesAsync(int id, CancellationToken cancellationToken);
+
         IQueryable<Product> AsQueryableWithIncludes();
     }
 }

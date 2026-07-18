@@ -25,7 +25,7 @@ namespace ArarasHealthHub.Application.Features.Products.Queries.GetProductById
             GetProductByIdQuery request,
             CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
+            var product = await _productRepository.GetByIdWithIncludesAsync(request.Id, cancellationToken);
 
             if (product is null)
                 throw new NotFoundException("Produto não foi encontrado.");
