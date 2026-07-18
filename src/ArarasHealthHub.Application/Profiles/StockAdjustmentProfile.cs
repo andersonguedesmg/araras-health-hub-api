@@ -15,21 +15,9 @@ namespace ArarasHealthHub.Application.Profiles
     {
         public StockAdjustmentProfile()
         {
-            CreateMap<Product, ProductResponse>()
-                .ForCtorParam(
-                    nameof(ProductResponse.MainCategoryName),
-                    opt => opt.MapFrom(src => src.MainCategory!.Name))
-                .ForCtorParam(
-                    nameof(ProductResponse.SubCategoryName),
-                    opt => opt.MapFrom(src => src.SubCategory!.Name))
-                .ForCtorParam(
-                    nameof(ProductResponse.PackagingTypeName),
-                    opt => opt.MapFrom(src => src.PackagingType!.Name));
+            CreateMap<Product, ProductResponse>();
 
-            CreateMap<StockAdjustmentItem, StockAdjustmentItemResponse>()
-                .ForCtorParam(
-                    nameof(StockAdjustmentItemResponse.Product),
-                    opt => opt.MapFrom(src => src.Product));
+            CreateMap<StockAdjustmentItem, StockAdjustmentItemResponse>();
 
             CreateMap<StockAdjustment, StockAdjustmentResponse>()
                 .ForCtorParam(
@@ -37,10 +25,7 @@ namespace ArarasHealthHub.Application.Profiles
                     opt => opt.MapFrom(src => src.Responsible.Name))
                 .ForCtorParam(
                     nameof(StockAdjustmentResponse.AccountUserName),
-                    opt => opt.MapFrom(src => src.Account.UserName))
-                .ForCtorParam(
-                    nameof(StockAdjustmentResponse.Items),
-                    opt => opt.MapFrom(src => src.Items));
+                    opt => opt.MapFrom(src => src.Account.UserName));
         }
     }
 }
